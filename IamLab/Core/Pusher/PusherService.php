@@ -33,7 +33,7 @@ class PusherService extends Injectable
             // Build options array, only including host and port if they're not empty
             $options = [
                 'cluster' => $this->config['cluster'],
-                'useTLS' => true , //$this->config['use_tls'] ?? true,
+                'useTLS' => $this->config['use_tls'] ?? true,
                 'scheme' => $this->config['scheme'] ?? 'https',
                 'curl_options' => [
                     CURLOPT_SSL_VERIFYHOST => $this->config['verify_ssl'] ?? 2,
