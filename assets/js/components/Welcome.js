@@ -11,7 +11,10 @@ const Welcome = {
                                 m("h2.card-title.text-2xl.mb-4", "🔐 Authentication"),
                                 m("p.text-base-content.opacity-70.mb-6", "Complete user authentication system with login, logout, and session management."),
                                 m(".card-actions.justify-center", [
-                                    m("a.btn.btn-primary[href='/login']", {oncreate: m.route.link}, "Login")
+                                    m(m.route.Link, {
+                                        class: "btn btn-primary",
+                                        href: "/login"
+                                    }, "Login")
                                 ])
                             ])
                         ]),

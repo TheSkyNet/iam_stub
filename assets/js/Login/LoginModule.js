@@ -206,15 +206,15 @@ const LoginForm = {
                                 m("button.btn.btn-primary.w-full.mb-4[type=submit]", "Sign In"),
                                 m(".text-center.space-y-2", [
                                     m("div", [
-                                        m("a.link.link-primary.text-sm", {
-                                            href: "/register",
-                                            oncreate: m.route.link
+                                        m(m.route.Link, {
+                                            class: "link link-primary text-sm",
+                                            href: "/register"
                                         }, "Don't have an account? Sign up")
                                     ]),
                                     m("div", [
-                                        m("a.link.link-primary.text-sm", {
-                                            href: "/forgot-password",
-                                            oncreate: m.route.link
+                                        m(m.route.Link, {
+                                            class: "link link-primary text-sm",
+                                            href: "/forgot-password"
                                         }, "Forgot your password?")
                                     ])
                                 ])
@@ -296,9 +296,9 @@ const RegisterForm = {
                                 ]),
                                 m("button.btn.btn-primary.w-full.mb-4[type=submit]", "Create Account"),
                                 m(".text-center.space-y-2", [
-                                    m("a.link.link-primary.text-sm", {
-                                        href: "/login",
-                                        oncreate: m.route.link
+                                    m(m.route.Link, {
+                                        class: "link link-primary text-sm",
+                                        href: "/login"
                                     }, "Already have an account? Sign in")
                                 ])
                             ])
@@ -343,9 +343,9 @@ const ForgotPasswordForm = {
                                 ]),
                                 m("button.btn.btn-primary.w-full.mb-4[type=submit]", "Send Reset Link"),
                                 m(".text-center.space-y-2", [
-                                    m("a.link.link-primary.text-sm", {
-                                        href: "/login",
-                                        oncreate: m.route.link
+                                    m(m.route.Link, {
+                                        class: "link link-primary text-sm",
+                                        href: "/login"
                                     }, "Back to login")
                                 ])
                             ])

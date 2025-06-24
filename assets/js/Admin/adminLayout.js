@@ -7,8 +7,9 @@ function adminLayout(view) {
                 // Top navigation using DaisyUI navbar
                 m("nav.navbar.bg-primary.text-primary-content", [
                     m(".navbar-start", [
-                        m("a.btn.btn-ghost.text-xl", {
-                            href: "#"
+                        m(m.route.Link, {
+                            class: "btn btn-ghost text-xl",
+                            href: "/"
                         }, "Admin Panel")
                     ]),
                     m(".navbar-end", [
