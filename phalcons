@@ -48,6 +48,9 @@ function display_help {
     echo "${YELLOW}Phalcon Commands:${NC}"
     echo "  ${GREEN}phalcons phalcon ...${NC}          Run an Phalcon command"
     echo "  ${GREEN}phalcons phalcon queue:work${NC}"
+    echo "  ${GREEN}phalcons command ...${NC}          Run a custom command"
+    echo "  ${GREEN}phalcons command list${NC}         List all available commands"
+    echo "  ${GREEN}phalcons command test:mail user@example.com -v${NC}"
     echo
     echo "${YELLOW}PHP Commands:${NC}"
     echo "  ${GREEN}phalcons php ...${NC}   Run a snippet of PHP code"
@@ -198,6 +201,18 @@ elif [ "$1" == "bin" ]; then
         ARGS+=(exec -u phalcons)
         [ ! -t 0 ] && ARGS+=(-T)
         ARGS+=("$APP_SERVICE" ./vendor/bin/"$@")
+    else
+        phalcons_is_not_running
+    fi
+
+# Proxy custom commands to the command runner...
+elif [ "$1" == "command" ]; then
+    shift 1
+
+    if [ "$EXEC" == "yes" ]; then
+        ARGS+=(exec -u phalcons)
+        [ ! -t 0 ] && ARGS+=(-T)
+        ARGS+=("$APP_SERVICE" "php" "bin/command.php" "$@")
     else
         phalcons_is_not_running
     fi
