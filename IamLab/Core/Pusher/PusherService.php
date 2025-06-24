@@ -28,21 +28,30 @@ class PusherService extends Injectable
                 throw new Exception("Pusher PHP package not installed. Run: composer require pusher/pusher-php-server");
             }
 
+            // Build options array, only including host and port if they're not empty
+            $options = [
+                'cluster' => $this->config['cluster'],
+                'useTLS' => true , //$this->config['use_tls'] ?? true,
+                'scheme' => $this->config['scheme'] ?? 'https',
+                'curl_options' => [
+                    CURLOPT_SSL_VERIFYHOST => $this->config['verify_ssl'] ?? 2,
+                    CURLOPT_SSL_VERIFYPEER => $this->config['verify_ssl'] ?? true,
+                ]
+            ];
+
+            // Only add host and port if they're not empty
+            if (!empty($this->config['host'])) {
+                $options['host'] = $this->config['host'];
+            }
+            if (!empty($this->config['port'])) {
+                $options['port'] = $this->config['port'];
+            }
+
             $this->pusher = new \Pusher\Pusher(
                 $this->config['key'],
                 $this->config['secret'],
                 $this->config['app_id'],
-                [
-                    'cluster' => $this->config['cluster'],
-                    'useTLS' => $this->config['use_tls'] ?? true,
-                    'host' => $this->config['host'] ?? null,
-                    'port' => $this->config['port'] ?? null,
-                    'scheme' => $this->config['scheme'] ?? 'https',
-                    'curl_options' => [
-                        CURLOPT_SSL_VERIFYHOST => $this->config['verify_ssl'] ?? 2,
-                        CURLOPT_SSL_VERIFYPEER => $this->config['verify_ssl'] ?? true,
-                    ]
-                ]
+                $options
             );
         } catch (Exception $e) {
             $this->lastError = $e->getMessage();
@@ -239,8 +248,8 @@ class PusherService extends Injectable
             'key' => $this->config['key'],
             'cluster' => $this->config['cluster'],
             'forceTLS' => $this->config['use_tls'] ?? true,
-            'host' => $this->config['host'] ?? null,
-            'port' => $this->config['port'] ?? null,
+            'host' => !empty($this->config['host']) ? $this->config['host'] : null,
+            'port' => !empty($this->config['port']) ? $this->config['port'] : null,
             'disableStats' => $this->config['disable_stats'] ?? false,
             'enabledTransports' => $this->config['enabled_transports'] ?? ['ws', 'wss'],
         ];
