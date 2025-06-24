@@ -1,9 +1,11 @@
 {
-  "name": "iam-lab/iam-stub",
-  "description": "the project showcace for kevins iam lab",
+  "name": "iam-lab/phalcon-stub",
+  "description": "A clean, minimal Phalcon PHP framework stub project for generating new PHfalcon and Miral projects",
   "type": "project",
+  "keywords": ["phalcon", "php", "framework", "stub", "template", "skeleton", "starter"],
+  "homepage": "https://github.com/iam-lab/phalcon-stub",
   "minimum-stability": "dev",
-  "license": "mit",
+  "license": "MIT",
   "authors": [
     {
       "name": "Kev Morton",
@@ -49,5 +51,17 @@
       "type": "vcs",
       "url": "https://github.com/escribiendocodigo/phalcon-devtools.git"
     }
-  ]
+  ],
+  "scripts": {
+    "post-create-project-cmd": [
+      "@php -r \"copy('.env.example', '.env');\"",
+      "@php -r \"echo '\\n🚀 Phalcon Stub Project Created Successfully!\\n';\"",
+      "@php -r \"echo '\\nNext steps:\\n';\"",
+      "@php -r \"echo '1. Update .env file with your configuration\\n';\"",
+      "@php -r \"echo '2. Run: ./phalcons up -d\\n';\"",
+      "@php -r \"echo '3. Run: ./phalcons migrate\\n';\"",
+      "@php -r \"echo '4. Visit: http://localhost:8080\\n';\"",
+      "@php -r \"echo '\\nFor more information, see README.md\\n\\n';\""
+    ]
+  }
 }
