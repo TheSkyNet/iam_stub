@@ -2,6 +2,7 @@
 
 namespace IamLab\Core\API;
 
+use JetBrains\PhpStorm\NoReturn;
 use Phalcon\Di\Injectable;
 use function App\Core\Helpers\cast;
 
@@ -12,14 +13,14 @@ abstract class aAPI extends Injectable
 
     }
 
-    protected function dispatch($data)
+    #[NoReturn] protected function dispatch($data): void
     {
         $this->response->setContentType('application/json', 'UTF-8');
         $this->response->setContent(json_encode($data));
         $this->response->send();
         exit();
     }
-    protected function delete($data)
+    protected function delete($data): void
     {
         if ($data->delete() === false) {
             $this->dispatchError($data->getMessages());
@@ -28,7 +29,7 @@ abstract class aAPI extends Injectable
         $this->response->setContent(json_encode($data));
         $this->response->send();
     }
-    protected function save($data)
+    protected function save($data): void
     {
 
         if ($data->save() === false) {
@@ -39,7 +40,7 @@ abstract class aAPI extends Injectable
         $this->response->send();
     }
 
-    protected function dispatchError($data)
+    #[NoReturn] protected function dispatchError($data): void
     {
         $this->response->setContentType('application/json', 'UTF-8');
         $this->response->setContent(json_encode($data));
@@ -52,14 +53,14 @@ abstract class aAPI extends Injectable
         return json_decode($this->request->getRawBody(), true);
     }
 
-    protected function getParam($name, $default = null, $cast = null)
+    protected function getParam($name, $default = null, $cast = null): float|bool|int|string
     {
         $data = $this->getData();
         $data = !isset($data[$name]) ? $default : $data[$name];
         return cast($data, $cast);
     }
 
-    protected function hasParam(string $string)
+    protected function hasParam(string $string): bool
     {
         return isset($this->getData()[$string]);
     }

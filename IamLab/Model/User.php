@@ -204,7 +204,7 @@ class User extends Model
      *
      * @return User|Model
      */
-    public static function findFirst($parameters = null)
+    public static function findFirst($parameters = null):mixed
     {
         return parent::findFirst($parameters);
     }
