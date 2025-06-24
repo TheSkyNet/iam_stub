@@ -53,7 +53,7 @@ abstract class aAPI extends Injectable
         return json_decode($this->request->getRawBody(), true);
     }
 
-    protected function getParam($name, $default = null, $cast = null): float|bool|int|string
+    protected function getParam($name, $default = null, $cast = null): mixed
     {
         $data = $this->getData();
         $data = !isset($data[$name]) ? $default : $data[$name];
