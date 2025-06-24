@@ -5,17 +5,43 @@ const Welcome = {
                 m(".text-center", [
                     m("h1.text-5xl.font-bold.text-base-content.mb-6", "Welcome to Your Phalcon Stub Project"),
                     m("p.text-xl.text-base-content.opacity-80.mb-8", "This is a clean, minimal Phalcon PHP framework stub project designed to serve as a foundation for generating new applications."),
-                    m(".grid.grid-cols-1.md:grid-cols-2.gap-6.mt-12", [
+                    m(".grid.grid-cols-1.md:grid-cols-2.lg:grid-cols-3.gap-6.mt-12", [
                         m(".card.bg-base-100.shadow-xl.h-full", [
                             m(".card-body", [
                                 m("h2.card-title.text-2xl.mb-4", "🔐 Authentication"),
-                                m("p.text-base-content.opacity-70.mb-6", "Complete user authentication system with login, logout, and session management."),
+                                m("p.text-base-content.opacity-70.mb-6", "Complete user authentication system with login, register, forgot password, and session management."),
                                 m(".card-actions.justify-center", [
                                     m(m.route.Link, {
-                                        class: "btn btn-primary",
+                                        class: "btn btn-primary btn-sm",
                                         href: "/login"
-                                    }, "Login")
+                                    }, "Try Login")
                                 ])
+                            ])
+                        ]),
+                        m(".card.bg-base-100.shadow-xl.h-full", [
+                            m(".card-body", [
+                                m("h2.card-title.text-2xl.mb-4", "📧 Email Service"),
+                                m("p.text-base-content.opacity-70.mb-4", "Configurable email service with MailHog and Resend providers for development and production."),
+                                m("p.text-base-content.opacity-50.text-sm", "Ready for password resets & notifications")
+                            ])
+                        ]),
+                        m(".card.bg-base-100.shadow-xl.h-full", [
+                            m(".card-body", [
+                                m("h2.card-title.text-2xl.mb-4", "⚡ Real-time"),
+                                m("p.text-base-content.opacity-70.mb-4", "Pusher.js integration for real-time WebSocket communication and live updates."),
+                                m(".card-actions.justify-center", [
+                                    m(m.route.Link, {
+                                        class: "btn btn-secondary btn-sm",
+                                        href: "/pusher-test"
+                                    }, "Test Pusher")
+                                ])
+                            ])
+                        ]),
+                        m(".card.bg-base-100.shadow-xl.h-full", [
+                            m(".card-body", [
+                                m("h2.card-title.text-2xl.mb-4", "📁 File Upload"),
+                                m("p.text-base-content.opacity-70.mb-4", "FilePond integration for modern file uploads with drag & drop support."),
+                                m("p.text-base-content.opacity-50.text-sm", "Ready for images, documents & more")
                             ])
                         ]),
                         m(".card.bg-base-100.shadow-xl.h-full", [
@@ -23,6 +49,13 @@ const Welcome = {
                                 m("h2.card-title.text-2xl.mb-4", "⚙️ Settings"),
                                 m("p.text-base-content.opacity-70.mb-4", "Flexible site settings management system for configuration and customization."),
                                 m("p.text-base-content.opacity-50.text-sm", "Available after login")
+                            ])
+                        ]),
+                        m(".card.bg-base-100.shadow-xl.h-full", [
+                            m(".card-body", [
+                                m("h2.card-title.text-2xl.mb-4", "🛠️ Developer Tools"),
+                                m("p.text-base-content.opacity-70.mb-4", "Docker setup, Tailwind CSS, DaisyUI, and modern build tools included."),
+                                m("p.text-base-content.opacity-50.text-sm", "Ready for development")
                             ])
                         ])
                     ]),

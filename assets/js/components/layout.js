@@ -16,6 +16,12 @@ function layout(view) {
                         m("ul.menu.menu-horizontal.px-1", [
                             m("li", [
                                 m(m.route.Link, {
+                                    "class": "btn btn-ghost btn-sm", 
+                                    "href": "/pusher-test"
+                                }, "Pusher Test")
+                            ]),
+                            m("li", [
+                                m(m.route.Link, {
                                     "class": "btn btn-primary", 
                                     "href": "/login"
                                 }, "Login")
