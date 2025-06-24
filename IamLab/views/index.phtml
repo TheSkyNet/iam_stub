@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <!-- Primary Meta Tags -->
+    <?php foreach ($settings['meta'] as $name => $content): ?>
+        <meta name="<?= htmlspecialchars($name) ?>" content="<?= htmlspecialchars($content) ?>">
+    <?php endforeach; ?>
+
+    <!-- Open Graph -->
+    <?php foreach ($settings['og'] as $prop => $content): ?>
+        <meta property="og:<?= htmlspecialchars($prop) ?>" content="<?= htmlspecialchars($content) ?>">
+    <?php endforeach; ?>
+
+    <!-- Twitter -->
+    <?php foreach ($settings['twitter'] as $prop => $content): ?>
+        <meta property="twitter:<?= htmlspecialchars($prop) ?>" content="<?= htmlspecialchars($content) ?>">
+    <?php endforeach; ?>
+
+    <!-- Resources -->
+    <link rel="preload" href="//unpkg.com/mithril/mithril.js" as="script">
+    <link rel="preload" href="/css/ImaLab.css" as="style">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/octicons/3.5.0/octicons.min.css">
+    <link rel="stylesheet" href="/css/ImaLab.css">
+
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+        <?= json_encode($settings['structured_data'], JSON_PRETTY_PRINT) ?>
+    </script>
+
+    <!-- Application Settings -->
+    <script>
+        window.APP_CONFIG = <?= json_encode($settings['config']) ?>;
+        window.APP_THEME = <?= json_encode($settings['theme']) ?>;
+    </script>
+</head>
+<body>
+<?php if ($settings['config']['maintenance']): ?>
+    <div class="maintenance-banner">
+        This site is currently in maintenance mode.
+    </div>
+<?php endif; ?>
+
+<div id="app"></div>
+
+<!-- Scripts -->
+<script src="//unpkg.com/mithril/mithril.js"></script>
+<script src="/js/App.js" defer></script>
+
+<?php if ($settings['config']['analytics']['enabled']): ?>
+    <script async src="<?= htmlspecialchars($settings['config']['analytics']['script']) ?>"></script>
+<?php endif; ?>
+</body>
+</html>

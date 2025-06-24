@@ -1,0 +1,13 @@
+/vendor
+.idea
+/node_modules
+/assets/components
+.phalcon/*
+composer.lock
+/public/css/*
+/public/files/*
+
+/public/js/*
+/public/temp/*
+
+package-lock.json

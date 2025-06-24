@@ -1,0 +1,51 @@
+{
+  "name": "iam-lab/iam-lab",
+  "description": "the project showcace for kevins iam lab",
+  "type": "project",
+  "minimum-stability": "dev",
+  "license": "mit",
+  "authors": [
+    {
+      "name": "Kev Morton",
+      "email": "kev@kevs.biz"
+    }
+  ],
+  "require": {
+    "marc-mabe/php-enum": "v4.7.1",
+    "symfony/var-dumper": "^3.1",
+    "symfony/finder": "^3.1",
+    "filp/whoops": "^2.1",
+    "ext-memcache": "*",
+    "ext-sodium": "*",
+    "defuse/php-encryption": "dev-master",
+    "nesbot/carbon": "3.x-dev",
+    "league/flysystem": "3.6.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "IamLab\\": "IamLab/"
+    },
+    "files": [
+      "IamLab/Core/Helpers/include.php"
+    ],
+
+    "include-path": ["IamLab/Core/Helpers/"]
+  },
+  "require-dev": {
+    "roave/security-advisories": "dev-latest",
+    "phalcon/devtools": "5.0.x",
+    "phalcon/migrations": "3.0.x",
+    "mpyw/php-hyper-builtin-server": "^3.0",
+    "phalcon/ide-stubs": "dev-master"
+  },
+  "repositories": [
+    {
+      "type": "vcs",
+      "url": "https://github.com/twistersfury/phalcon-migrations.git"
+    },
+    {
+      "type": "vcs",
+      "url": "https://github.com/escribiendocodigo/phalcon-devtools.git"
+    }
+  ]
+}

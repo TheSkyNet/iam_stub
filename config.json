@@ -1,0 +1,7 @@
+{
+  "migration" : {
+    "migrations": "IamLab/Migrations"
+  },
+  "controller" : {
+  }
+}

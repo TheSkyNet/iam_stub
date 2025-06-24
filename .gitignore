@@ -1,0 +1,13 @@
+/vendor
+.idea
+/node_modules
+/assets/components
+composer.lock
+/public/css
+/public/files
+/public/js
+/public/temp
+/.phalcon/*
+
+.env
+*.ini
