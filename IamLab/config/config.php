@@ -74,9 +74,26 @@ return new Config([
         'disk' => App\Core\Helpers\env('FILEPOND_DISK', 'local'),
         'validation_rules' => [],
 
+    ],
+
+    'email' => [
+        'provider' => App\Core\Helpers\env('MAIL_PROVIDER', 'mailhog'),
+        'from_email' => App\Core\Helpers\env('MAIL_FROM_EMAIL', 'noreply@example.com'),
+        'from_name' => App\Core\Helpers\env('MAIL_FROM_NAME', 'Phalcon Stub'),
+
+        'mailhog' => [
+            'host' => App\Core\Helpers\env('MAILHOG_HOST', 'mailhog'),
+            'port' => App\Core\Helpers\env('MAILHOG_PORT', 1025),
+            'username' => App\Core\Helpers\env('MAILHOG_USERNAME', ''),
+            'password' => App\Core\Helpers\env('MAILHOG_PASSWORD', ''),
+            'encryption' => App\Core\Helpers\env('MAILHOG_ENCRYPTION', ''),
+        ],
+
+        'resend' => [
+            'api_key' => App\Core\Helpers\env('RESEND_API_KEY', ''),
+            'endpoint' => App\Core\Helpers\env('RESEND_ENDPOINT', 'https://api.resend.com'),
+        ],
     ]
 
 
 ]);
-
-
