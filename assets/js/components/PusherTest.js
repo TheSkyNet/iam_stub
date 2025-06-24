@@ -153,7 +153,7 @@ const PusherTest = {
                                 type: "text",
                                 placeholder: "Enter your test message...",
                                 value: this.testMessage,
-                                onchange: (e) => {
+                                oninput: (e) => {
                                     this.testMessage = e.target.value;
                                 },
                                 onkeypress: (e) => {

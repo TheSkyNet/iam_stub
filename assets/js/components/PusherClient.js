@@ -1,5 +1,7 @@
 // PusherClient.js - Pusher WebSocket client for real-time functionality
 
+import Pusher from 'pusher-js';
+
 class PusherClient {
     constructor() {
         this.pusher = null;
@@ -27,12 +29,6 @@ class PusherClient {
             }
 
             this.config = response.data;
-
-            // Check if Pusher is available
-            if (typeof Pusher === 'undefined') {
-                console.error("Pusher library not loaded. Make sure to include pusher-js in your build.");
-                return false;
-            }
 
             // Initialize Pusher client
             this.pusher = new Pusher(this.config.key, {
@@ -176,7 +172,7 @@ class PusherClient {
      */
     subscribePresence(channelName, callbacks = {}) {
         const channel = this.subscribe(`presence-${channelName}`, callbacks);
-        
+
         if (channel) {
             // Bind presence-specific events
             channel.bind('pusher:subscription_succeeded', (members) => {
@@ -279,10 +275,11 @@ class PusherClient {
 // Create global instance
 const pusherClient = new PusherClient();
 
-// Export for use in other modules
-if (typeof module !== 'undefined' && module.exports) {
-    module.exports = { PusherClient, pusherClient };
-} else {
+// Make available globally for browser compatibility
+if (typeof window !== 'undefined') {
     window.PusherClient = PusherClient;
     window.pusherClient = pusherClient;
 }
+
+// ES6 module exports
+export { PusherClient, pusherClient };
