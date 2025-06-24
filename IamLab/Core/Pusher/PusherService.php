@@ -2,12 +2,14 @@
 
 namespace IamLab\Core\Pusher;
 
+use GuzzleHttp\Exception\GuzzleException;
 use Phalcon\Di\Injectable;
 use Exception;
+use Pusher\Pusher;
 
 class PusherService extends Injectable
 {
-    private $pusher = null;
+    private ?Pusher $pusher = null;
     private array $config;
     private string $lastError = '';
 
@@ -67,6 +69,8 @@ class PusherService extends Injectable
      * @param array $data Event data
      * @param array $options Additional options
      * @return bool Success status
+     *
+     * @throws GuzzleException
      */
     public function trigger(string $channel, string $event, array $data = [], array $options = []): bool
     {
@@ -77,7 +81,7 @@ class PusherService extends Injectable
 
         try {
             $result = $this->pusher->trigger($channel, $event, $data, $options);
-            return $result !== false;
+            return $result != false;
         } catch (Exception $e) {
             $this->lastError = $e->getMessage();
             return false;
@@ -92,6 +96,8 @@ class PusherService extends Injectable
      * @param array $data Event data
      * @param array $options Additional options
      * @return bool Success status
+     *
+     * @throws GuzzleException
      */
     public function triggerBatch(array $channels, string $event, array $data = [], array $options = []): bool
     {
