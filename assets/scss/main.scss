@@ -1,7 +1,10 @@
 // Main application styles
 // Add your custom styles here
 
-@import "bootstrap/scss/bootstrap";
+// Tailwind CSS imports
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 // Basic layout styles
 body {
