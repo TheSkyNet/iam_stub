@@ -27,16 +27,11 @@ class EmailService extends Injectable
         $providerName = $this->config['provider'] ?? 'mailhog';
 
         try {
-            switch ($providerName) {
-                case 'mailhog':
-                    $this->provider = new MailHogProvider($this->config);
-                    break;
-                case 'resend':
-                    $this->provider = new ResendProvider($this->config);
-                    break;
-                default:
-                    throw new Exception("Unsupported email provider: {$providerName}");
-            }
+            $this->provider = match ($providerName) {
+                'mailhog' => new MailHogProvider($this->config),
+                'resend' => new ResendProvider($this->config),
+                default => throw new Exception("Unsupported email provider: {$providerName}"),
+            };
 
             if (!$this->provider->validateConfig()) {
                 throw new Exception("Invalid configuration for email provider: {$providerName}");

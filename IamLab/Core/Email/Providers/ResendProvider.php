@@ -172,7 +172,7 @@ class ResendProvider implements EmailProviderInterface
      * @param array $payload Request payload
      * @return array|false Response data or false on failure
      */
-    private function makeApiRequest(string $endpoint, array $payload)
+    private function makeApiRequest(string $endpoint, array $payload): bool|array
     {
         try {
             $apiKey = $this->config['api_key'] ?? '';
