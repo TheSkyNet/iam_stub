@@ -61,7 +61,7 @@ const Welcome = {
                     ]),
                     m(".mt-12", [
                         m("h3.text-3xl.font-bold.text-base-content.mb-4", "Ready to Build Something Amazing?"),
-                        m("p.text-base-content.opacity-70", "Start customizing this stub for your next PHfalcon or Miral project!")
+                        m("p.text-base-content.opacity-70", "Start customizing this stub for your next Phalcon or Mithril.js project!")
                     ])
                 ])
             ])
