@@ -40,6 +40,8 @@ $app->get('/auth', function () use ($app) {
 });
 $app->post('/auth/logout', [(new Auth()), "logoutAction"]);
 $app->post('/auth', [(new Auth()), "authAction"]);
+$app->post('/auth/register', [(new Auth()), "registerAction"]);
+$app->post('/auth/forgot-password', [(new Auth()), "forgotPasswordAction"]);
 $app->get('/auth', [(new Auth()), "userAction"]);
 /**
  * Not found handler
@@ -48,4 +50,3 @@ $app->notFound(function () use ($app) {
     $app->response->setStatusCode(404, "Not Found")->sendHeaders();
     echo $app['view']->render('404');
 });
-
