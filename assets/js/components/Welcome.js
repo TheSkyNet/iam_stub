@@ -1,33 +1,31 @@
 const Welcome = {
     view: function() {
-        return m("div.container.mt-5", [
-            m("div.row.justify-content-center", [
-                m("div.col-md-8.text-center", [
-                    m("h1.display-4.mb-4", "Welcome to Your Phalcon Stub Project"),
-                    m("p.lead.mb-4", "This is a clean, minimal Phalcon PHP framework stub project designed to serve as a foundation for generating new applications."),
-                    m("div.row.mt-5", [
-                        m("div.col-md-6.mb-4", [
-                            m("div.card.h-100", [
-                                m("div.card-body", [
-                                    m("h5.card-title", "🔐 Authentication"),
-                                    m("p.card-text", "Complete user authentication system with login, logout, and session management."),
+        return m(".min-h-screen.flex.items-center.justify-center.p-8", [
+            m(".container.mx-auto.max-w-4xl", [
+                m(".text-center", [
+                    m("h1.text-5xl.font-bold.text-base-content.mb-6", "Welcome to Your Phalcon Stub Project"),
+                    m("p.text-xl.text-base-content.opacity-80.mb-8", "This is a clean, minimal Phalcon PHP framework stub project designed to serve as a foundation for generating new applications."),
+                    m(".grid.grid-cols-1.md:grid-cols-2.gap-6.mt-12", [
+                        m(".card.bg-base-100.shadow-xl.h-full", [
+                            m(".card-body", [
+                                m("h2.card-title.text-2xl.mb-4", "🔐 Authentication"),
+                                m("p.text-base-content.opacity-70.mb-6", "Complete user authentication system with login, logout, and session management."),
+                                m(".card-actions.justify-center", [
                                     m("a.btn.btn-primary[href='/login']", {oncreate: m.route.link}, "Login")
                                 ])
                             ])
                         ]),
-                        m("div.col-md-6.mb-4", [
-                            m("div.card.h-100", [
-                                m("div.card-body", [
-                                    m("h5.card-title", "⚙️ Settings"),
-                                    m("p.card-text", "Flexible site settings management system for configuration and customization."),
-                                    m("p.text-muted.small", "Available after login")
-                                ])
+                        m(".card.bg-base-100.shadow-xl.h-full", [
+                            m(".card-body", [
+                                m("h2.card-title.text-2xl.mb-4", "⚙️ Settings"),
+                                m("p.text-base-content.opacity-70.mb-4", "Flexible site settings management system for configuration and customization."),
+                                m("p.text-base-content.opacity-50.text-sm", "Available after login")
                             ])
                         ])
                     ]),
-                    m("div.mt-5", [
-                        m("h3.mb-3", "Ready to Build Something Amazing?"),
-                        m("p.text-muted", "Start customizing this stub for your next PHfalcon or Miral project!")
+                    m(".mt-12", [
+                        m("h3.text-3xl.font-bold.text-base-content.mb-4", "Ready to Build Something Amazing?"),
+                        m("p.text-base-content.opacity-70", "Start customizing this stub for your next PHfalcon or Miral project!")
                     ])
                 ])
             ])

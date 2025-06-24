@@ -1,7 +1,7 @@
 require("./bootstrap")
 import {adminLayout} from "./Admin/adminLayout";
 import {AdminUserList} from "./Admin/AdminUsers";
-import {Auth, LoginList} from "./Login/LoginModule";
+import {Auth, LoginForm} from "./Login/LoginModule";
 import {AdminSettings} from "./Admin/AdminSettings";
 import AdminDashboard from "./Admin/AdminDashboard";
 
@@ -25,7 +25,7 @@ m.request({
           });
       }else {
           m.route(root, "/", {
-              "/": LoginList
+              "/": LoginForm
           });
       }
 

@@ -4,49 +4,41 @@ function adminLayout(view) {
     return {
         view: (vnode) => {
             return [
-                // Simple top navigation
-                m("nav.navbar.sticky-top", {
-                    style: {
-                        background: '#8198c4',
-                        padding: '1rem'
-                    }
-                }, [
-                    m("a.navbar-brand.text-white", {
-                        href: "#",
-                        style: { fontSize: '1.2rem' }
-                    }, "Admin Panel"),
-                    m("a.nav-link.text-white", {
-                        onclick: Logout.logout,
-                        style: { cursor: 'pointer' }
-                    }, "Sign out")
+                // Top navigation using DaisyUI navbar
+                m("nav.navbar.bg-primary.text-primary-content", [
+                    m(".navbar-start", [
+                        m("a.btn.btn-ghost.text-xl", {
+                            href: "#"
+                        }, "Admin Panel")
+                    ]),
+                    m(".navbar-end", [
+                        m("button.btn.btn-ghost", {
+                            onclick: Logout.logout
+                        }, "Sign out")
+                    ])
                 ]),
 
-                // Main container
-                m("div.container-fluid", [
-                    m("div.row", [
-                        // Simple sidebar
-                        m("nav.col-md-3.sidebar", {
-                            style: {
-                                background: '#f8f9fa',
-                                minHeight: 'calc(100vh - 60px)',
-                                padding: '1rem'
-                            }
-                        }, [
-                            m("ul.nav.flex-column", [
-                                navItem("/", "Dashboard", "octicon-home"),
-                                navItem("/user", "Users", "octicon-person"),
-                                navItem("/settings", "Settings", "octicon-gear")
-                            ])
-                        ]),
+                // Main container using DaisyUI drawer
+                m(".drawer.lg:drawer-open", [
+                    m("input#drawer-toggle.drawer-toggle[type=checkbox]"),
 
-                        // Main content
-                        m("main.col-md-9", {
-                            role: "main",
-                            style: {
-                                padding: '2rem',
-                                minHeight: 'calc(100vh - 60px)'
-                            }
+                    // Main content
+                    m(".drawer-content.flex.flex-col", [
+                        m("main.flex-1.p-6.bg-base-200.min-h-screen", {
+                            role: "main"
                         }, m(view, vnode.attrs))
+                    ]),
+
+                    // Sidebar
+                    m(".drawer-side", [
+                        m("label.drawer-overlay[for=drawer-toggle]"),
+                        m("aside.w-64.min-h-full.bg-base-100", [
+                            m("ul.menu.p-4.space-y-2", [
+                                navItem("/", "Dashboard"),
+                                navItem("/user", "Users"),
+                                navItem("/settings", "Settings")
+                            ])
+                        ])
                     ])
                 ])
             ]
@@ -54,32 +46,14 @@ function adminLayout(view) {
     }
 }
 
-// Helper function for nav items
-function navItem(href, text, icon) {
-    return m("li.nav-item",
+// Helper function for nav items using DaisyUI menu
+function navItem(href, text) {
+    return m("li", [
         m(m.route.Link, {
-            class: "nav-link",
-            href: href,
-            style: {
-                color: '#333',
-                padding: '0.5rem 1rem',
-                borderRadius: '0.25rem',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.5rem',
-                textDecoration: 'none',
-                transition: 'background 0.2s'
-            }
-        }, [
-            m("i.octicon", {
-                class: icon,
-                style: {
-                    fontSize: '14px'
-                }
-            }),
-            text
-        ])
-    )
+            class: "btn btn-ghost justify-start",
+            href: href
+        }, text)
+    ])
 }
 
 module.exports = { adminLayout }
