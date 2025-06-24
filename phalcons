@@ -367,7 +367,7 @@ elif [ "$1" == "migrate" ]; then
     if [ "$EXEC" == "yes" ]; then
         ARGS+=(exec -u phalcons)
         [ ! -t 0 ] && ARGS+=(-T)
-        ARGS+=("$APP_SERVICE" ./vendor/bin/phalcon-migrations run --config=migrations.php)
+        ARGS+=("$APP_SERVICE" ./vendor/bin/phalcon-migrations run --config=./bin/migrations.php)
     else
         phalcons_is_not_running
     fi
@@ -381,7 +381,7 @@ elif [ "$1" == "migrate:generate" ]; then
         [ ! -t 0 ] && ARGS+=(-T)
         if [ $# -gt 0 ]; then
             # If there are additional arguments, pass them through
-            ARGS+=("$APP_SERVICE" ./vendor/bin/phalcon-migrations generate --config=migrations.php "$@")
+            ARGS+=("$APP_SERVICE" ./vendor/bin/phalcon-migrations generate --config=./bin/migrations.php "$@")
         else
             # If no additional arguments, run basic generate
             ARGS+=("$APP_SERVICE" ./vendor/bin/phalcon-migrations generate --config=migrations.php)

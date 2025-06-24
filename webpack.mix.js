@@ -11,9 +11,9 @@ if (process.env.MIX_BROWSER_SYNC) {
 */
 
 
-mix.js('assets/js/App.js', 'public/js')
-    .js('assets/js/Admin.js', 'public/js')
-    .sass('assets/scss/ImaLab.scss', 'public/css')
-    .sass('assets/scss/Admin.scss', 'public/css')
+mix.js('assets/js/app.js', 'public/js')
+    .js('assets/js/admin.js', 'public/js')
+    .sass('assets/scss/main.scss', 'public/css')
+    .sass('assets/scss/admin.scss', 'public/css')
     .sourceMaps()
 

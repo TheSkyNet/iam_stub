@@ -73,19 +73,9 @@ try {
         exit(1);
     }
 
-    // Run post seeder
-    echo "\nStarting to seed posts...\n";
-    $postSeeder = new PostSeeder();
-    $postSeeder->run();
-    echo "\nStarting to seed packages...\n";
-    $packageSeeder = new PackageSeeder();
-    $packageSeeder->run();
-    echo "\nStarting to seed projects...\n";
-    $projectSeeder = new ProjectSeeder();
-    $projectSeeder->run();
     echo "\nStarting to seed site settings...\n";
-    $siteSettingsSeeder = new \IamLab\Migrations\Seeders\SiteSettingsSeeder();
-    $siteSettingsSeeder->run();
+ /*   $siteSettingsSeeder = new \IamLab\Migrations\Seeders\SiteSettingsSeeder();
+    $siteSettingsSeeder->run();*/
 
     // Commit transaction
     $di->get('db')->commit();

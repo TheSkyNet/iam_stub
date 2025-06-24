@@ -1,5 +1,5 @@
 // LoginModule.js
-const {MessageDisplay} = require("../components/MessageDisplay");
+
 const Login = {
     user: {
         email: '',
@@ -14,12 +14,12 @@ const Login = {
             body: Login.user,
         }).then(function(result) {
             if (!result.success) {
-                MessageDisplay.setMessage(result.message, 'error');
+             //   MessageDisplay.setMessage(result.message, 'error');
                 return;
             }
 
             Object.assign(Auth, result.data);
-            MessageDisplay.setMessage(result.message, 'success');
+        //    MessageDisplay.setMessage(result.message, 'success');
             setTimeout(() => {
                 window.location.reload();
             }, 1500);
@@ -32,7 +32,7 @@ const Login = {
                 errorMessage = 'Too many attempts. Please try again later.';
             }
 
-            MessageDisplay.setMessage(errorMessage, 'error');
+         //   MessageDisplay.setMessage(errorMessage, 'error');
             console.error("Login failed:", error);
         });
     }
@@ -45,10 +45,10 @@ const Logout = {
             withCredentials: true
         }).then(function(result) {
             if (!result.success) {
-                MessageDisplay.setMessage(result.message, 'error');
+            //    MessageDisplay.setMessage(result.message, 'error');
                 return;
             }
-            MessageDisplay.setMessage(result.message, 'success');
+         //   MessageDisplay.setMessage(result.message, 'success');
             setTimeout(() => {
                 window.location.href = '/';  // Changed from '/login' to '/'
             }, 1500);
@@ -61,7 +61,7 @@ const Logout = {
                 errorMessage = 'Too many attempts. Please try again later.';
             }
 
-            MessageDisplay.setMessage(errorMessage, 'error');
+           // MessageDisplay.setMessage(errorMessage, 'error');
             console.error("Logout failed:", error);
         });
     }
