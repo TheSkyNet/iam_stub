@@ -63,3 +63,11 @@ function email(string $to, string $subject, string $body, array $options = []): 
         return false;
     }
 }
+
+function table(array $data, string $title = null): void
+{
+    $table = new \IamLab\Core\Console\Table\Table();
+    $table->setData($data)
+          ->setTitle($title)
+          ->render();
+}
