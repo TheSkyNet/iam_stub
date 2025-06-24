@@ -20,7 +20,8 @@
     "defuse/php-encryption": "dev-master",
     "nesbot/carbon": "3.x-dev",
     "league/flysystem": "3.6.0",
-    "ext-curl": "*"
+    "ext-curl": "*",
+    "pusher/pusher-php-server": "^7.2"
   },
   "autoload": {
     "psr-4": {

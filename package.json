@@ -8,6 +8,7 @@
     "extract-colors": "^3.0.0",
     "filepond": "^4.30.4",
     "imagesloaded": "^5.0.0",
+    "pusher-js": "^8.4.0",
     "vibrant": "^0.0.1"
   },
   "author": "",
