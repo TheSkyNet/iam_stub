@@ -3,6 +3,7 @@
 namespace App\Core\Helpers;
 use IamLab\Core\Env\Env;
 use Phalcon\Di\FactoryDefault;
+use Exception;
 
 /** @var FactoryDefault $di */
 
@@ -34,9 +35,6 @@ function env($key, $default = null)
 
 function moveTo(string $disk, string $from, string $to)
 {
-
-    //return di($disk)->listContents($from);
-    // dd(di($disk)->listContents('/tmp')->toArray(), $from);
     return di($disk)->move($from, $to);
 }
 
@@ -49,4 +47,19 @@ function dd(...$variable)
 
 function loadEnv($path =''){
       (new Env($path))->load();
+}
+
+function email(string $to, string $subject, string $body, array $options = []): bool
+{
+    try {
+        // Get the Email Service from DI container
+        $emailService = new \IamLab\Core\Email\EmailService();
+
+        // Send the email using the service
+        return $emailService->send($to, $subject, $body, $options);
+    } catch (Exception $e) {
+        // Log error if needed and return false
+        error_log("Email helper error: " . $e->getMessage());
+        return false;
+    }
 }

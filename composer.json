@@ -1,5 +1,5 @@
 {
-  "name": "iam-lab/iam-lab",
+  "name": "iam-lab/iam-stub",
   "description": "the project showcace for kevins iam lab",
   "type": "project",
   "minimum-stability": "dev",
@@ -19,7 +19,8 @@
     "ext-sodium": "*",
     "defuse/php-encryption": "dev-master",
     "nesbot/carbon": "3.x-dev",
-    "league/flysystem": "3.6.0"
+    "league/flysystem": "3.6.0",
+    "ext-curl": "*"
   },
   "autoload": {
     "psr-4": {
