@@ -16,7 +16,7 @@ class Auth extends aAPI
     /**
      * @return void
      */
-    public function authAction(): void
+    public function loginAction(): void
     {
         $email = $this->getParam('email');
         $password = $this->getParam('password');
@@ -185,6 +185,140 @@ class Auth extends aAPI
         } catch (Exception $e) {
             $this->dispatch(['success' => false, 'message' => 'An error occurred during logout', 'debug' => $e->getMessage() // Only include in development
             ]);
+        }
+    }
+
+    /**
+     * Refresh access token using refresh token
+     */
+    public function refreshTokenAction(): void
+    {
+        $refreshToken = $this->getParam('refresh_token');
+
+        if (empty($refreshToken)) {
+            $this->dispatch(['success' => false, 'message' => 'Refresh token is required']);
+            return;
+        }
+
+        try {
+            $authService = new AuthService();
+            $result = $authService->refreshToken($refreshToken);
+
+            if ($result) {
+                $this->dispatch(['success' => true, 'message' => 'Token refreshed successfully', 'data' => $result]);
+                return;
+            }
+
+            $this->dispatch(['success' => false, 'message' => 'Invalid or expired refresh token']);
+
+        } catch (Exception $e) {
+            $this->dispatch(['success' => false, 'message' => 'An error occurred during token refresh', 'debug' => $e->getMessage()]);
+        }
+    }
+
+    /**
+     * Generate API key for authenticated user
+     */
+    public function generateApiKeyAction(): void
+    {
+        try {
+            $authService = new AuthService();
+
+            if (!$authService->isAuthenticated()) {
+                $this->dispatch(['success' => false, 'message' => 'Authentication required']);
+                return;
+            }
+
+            $user = $authService->getUser();
+            if (!$user) {
+                $this->dispatch(['success' => false, 'message' => 'User not found']);
+                return;
+            }
+
+            $apiKey = $authService->generateApiKey($user);
+
+            $this->dispatch(['success' => true, 'message' => 'API key generated successfully', 'data' => ['api_key' => $apiKey]]);
+
+        } catch (Exception $e) {
+            $this->dispatch(['success' => false, 'message' => 'An error occurred while generating API key', 'debug' => $e->getMessage()]);
+        }
+    }
+
+    /**
+     * Get user profile information
+     */
+    public function profileAction(): void
+    {
+        try {
+            $authService = new AuthService();
+
+            if (!$authService->isAuthenticated()) {
+                $this->dispatch(['success' => false, 'message' => 'Authentication required']);
+                return;
+            }
+
+            $user = $authService->getUser();
+            if (!$user) {
+                $this->dispatch(['success' => false, 'message' => 'User not found']);
+                return;
+            }
+
+            $profile = [
+                'id' => $user->getId(),
+                'name' => $user->getName(),
+                'email' => $user->getEmail(),
+                'api_key' => $user->getKey() ? '***' . substr($user->getKey(), -8) : null // Show only last 8 characters for security
+            ];
+
+            $this->dispatch(['success' => true, 'data' => $profile]);
+
+        } catch (Exception $e) {
+            $this->dispatch(['success' => false, 'message' => 'An error occurred while fetching profile', 'debug' => $e->getMessage()]);
+        }
+    }
+
+    /**
+     * Update user profile
+     */
+    public function updateProfileAction(): void
+    {
+        try {
+            $authService = new AuthService();
+
+            if (!$authService->isAuthenticated()) {
+                $this->dispatch(['success' => false, 'message' => 'Authentication required']);
+                return;
+            }
+
+            $user = $authService->getUser();
+            if (!$user) {
+                $this->dispatch(['success' => false, 'message' => 'User not found']);
+                return;
+            }
+
+            $name = $this->getParam('name');
+            $email = $this->getParam('email');
+
+            if (!empty($name)) {
+                $user->setName($name);
+            }
+
+            if (!empty($email)) {
+                if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                    $this->dispatch(['success' => false, 'message' => 'Please provide a valid email address']);
+                    return;
+                }
+                $user->setEmail($email);
+            }
+
+            if ($user->save()) {
+                $this->dispatch(['success' => true, 'message' => 'Profile updated successfully']);
+            } else {
+                $this->dispatch(['success' => false, 'message' => 'Failed to update profile']);
+            }
+
+        } catch (Exception $e) {
+            $this->dispatch(['success' => false, 'message' => 'An error occurred while updating profile', 'debug' => $e->getMessage()]);
         }
     }
 

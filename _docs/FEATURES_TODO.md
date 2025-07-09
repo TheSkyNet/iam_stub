@@ -58,11 +58,11 @@ This document outlines common features that can be added to stub projects to mak
   - Facebook OAuth
   - Generic OAuth2 provider
 
-- [ ] **API Authentication**
-  - JWT tokens
-  - API key management
-  - Rate limiting
-  - Token refresh mechanism
+- [x] **API Authentication**
+  - [x] JWT tokens
+  - [x] API key management
+  - [ ] Rate limiting
+  - [x] Token refresh mechanism
 
 ### Content Management
 - [ ] **Blog/CMS System**

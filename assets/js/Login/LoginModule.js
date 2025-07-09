@@ -1,7 +1,8 @@
 // LoginModule.js
 
-// Import MessageDisplay
+// Import MessageDisplay and AuthService
 const {MessageDisplay} = require("../components/MessageDisplay");
+const {AuthService} = require("../services/AuthserviceService");
 
 // Authentication state
 const Auth = {};
@@ -14,34 +15,24 @@ const Login = {
     },
 
     login: function() {
-        return m.request({
-            method: "POST",
-            url: "/auth",
-            withCredentials: true,
-            body: Login.user,
-        }).then(function(result) {
-            if (!result.success) {
-                MessageDisplay.setMessage(result.message, 'error');
-                return;
-            }
+        return AuthService.login(Login.user.email, Login.user.password)
+            .then(function(result) {
+                MessageDisplay.setMessage(result.message, 'success');
+                setTimeout(() => {
+                    m.route.set('/');
+                    m.redraw();
+                }, 1500);
+            })
+            .catch(error => {
+                let errorMessage = 'Unable to connect to the server. Please try again later.';
 
-            Object.assign(Auth, result.data);
-            MessageDisplay.setMessage(result.message, 'success');
-            setTimeout(() => {
-                window.location.reload();
-            }, 1500);
-        }).catch(error => {
-            let errorMessage = 'Unable to connect to the server. Please try again later.';
+                if (error.message) {
+                    errorMessage = error.message;
+                }
 
-            if (error.response && error.response.message) {
-                errorMessage = error.response.message;
-            } else if (error.code === 429) {
-                errorMessage = 'Too many attempts. Please try again later.';
-            }
-
-            MessageDisplay.setMessage(errorMessage, 'error');
-            console.error("Login failed:", error);
-        });
+                MessageDisplay.setMessage(errorMessage, 'error');
+                console.error("Login failed:", error);
+            });
     }
 };
 
@@ -60,35 +51,24 @@ const Register = {
             return;
         }
 
-        return m.request({
-            method: "POST",
-            url: "/auth/register",
-            withCredentials: true,
-            body: {
-                name: Register.user.name,
-                email: Register.user.email,
-                password: Register.user.password
-            },
-        }).then(function(result) {
-            if (!result.success) {
-                MessageDisplay.setMessage(result.message, 'error');
-                return;
-            }
+        return AuthService.register(Register.user.name, Register.user.email, Register.user.password)
+            .then(function(result) {
+                MessageDisplay.setMessage("Registration successful! You are now logged in.", 'success');
+                setTimeout(() => {
+                    m.route.set('/');
+                    m.redraw();
+                }, 1500);
+            })
+            .catch(error => {
+                let errorMessage = 'Unable to connect to the server. Please try again later.';
 
-            MessageDisplay.setMessage("Registration successful! Redirecting to login...", 'success');
-            setTimeout(() => {
-                m.route.set('/login');
-            }, 1500);
-        }).catch(error => {
-            let errorMessage = 'Unable to connect to the server. Please try again later.';
+                if (error.message) {
+                    errorMessage = error.message;
+                }
 
-            if (error.response && error.response.message) {
-                errorMessage = error.response.message;
-            }
-
-            MessageDisplay.setMessage(errorMessage, 'error');
-            console.error("Registration failed:", error);
-        });
+                MessageDisplay.setMessage(errorMessage, 'error');
+                console.error("Registration failed:", error);
+            });
     }
 };
 

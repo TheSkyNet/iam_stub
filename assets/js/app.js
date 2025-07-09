@@ -3,6 +3,7 @@ import {LoginForm, RegisterForm, ForgotPasswordForm, LoginList} from "./Login/Lo
 import {layout} from "./components/layout";
 import {Welcome} from "./components/Welcome";
 import {PusherTest} from "./components/PusherTest";
+import {Profile} from "./components/Profile";
 
 const root = document.getElementById('app');
 
@@ -13,4 +14,5 @@ m.route(root, "/", {
     "/register": layout(RegisterForm),
     "/forgot-password": layout(ForgotPasswordForm),
     "/pusher-test": layout(PusherTest),
+    "/profile": layout(Profile),
 });

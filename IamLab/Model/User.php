@@ -44,7 +44,7 @@ class User extends Model
      */
     protected $key;
 
-    public function getKey(): string
+    public function getKey(): ?string
     {
         return $this->key;
     }

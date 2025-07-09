@@ -109,4 +109,13 @@ return new Config([
         'enabled_transports' => ['ws', 'wss'],
     ],
 
+    'jwt' => [
+        'secret' => App\Core\Helpers\env('JWT_SECRET', 'your-secret-key-change-this-in-production'),
+        'algorithm' => App\Core\Helpers\env('JWT_ALGORITHM', 'HS256'),
+        'access_token_expiry' => App\Core\Helpers\env('JWT_ACCESS_TOKEN_EXPIRY', 3600), // 1 hour
+        'refresh_token_expiry' => App\Core\Helpers\env('JWT_REFRESH_TOKEN_EXPIRY', 604800), // 7 days
+        'issuer' => App\Core\Helpers\env('JWT_ISSUER', 'phalcon-stub'),
+        'audience' => App\Core\Helpers\env('JWT_AUDIENCE', 'phalcon-stub-users'),
+    ],
+
 ]);

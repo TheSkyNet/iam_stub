@@ -49,11 +49,23 @@ $app->post('/api/pusher/webhook', [(new PusherApi()), "webhookAction"]);
 $app->get('/auth', function () use ($app) {
     echo $app['view']->render('auth');
 });
+
+// Authentication API endpoints
 $app->post('/auth/logout', [(new Auth()), "logoutAction"]);
-$app->post('/auth', [(new Auth()), "authAction"]);
+$app->post('/auth/login', [(new Auth()), "loginAction"]);
 $app->post('/auth/register', [(new Auth()), "registerAction"]);
 $app->post('/auth/forgot-password', [(new Auth()), "forgotPasswordAction"]);
-$app->get('/auth', [(new Auth()), "userAction"]);
+$app->get('/auth/user', [(new Auth()), "userAction"]);
+$app->post('/auth/change-password', [(new Auth()), "changePasswordAction"]);
+$app->post('/auth/reset-password', [(new Auth()), "resetPasswordAction"]);
+$app->post('/auth/verify-email', [(new Auth()), "verifyEmailAction"]);
+
+
+// JWT-related endpoints
+$app->post('/auth/refresh-token', [(new Auth()), "refreshTokenAction"]);
+$app->post('/auth/generate-api-key', [(new Auth()), "generateApiKeyAction"]);
+$app->get('/auth/profile', [(new Auth()), "profileAction"]);
+$app->post('/auth/update-profile', [(new Auth()), "updateProfileAction"]);
 /**
  * Not found handler
  */

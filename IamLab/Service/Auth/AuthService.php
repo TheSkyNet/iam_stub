@@ -11,13 +11,32 @@ namespace IamLab\Service\Auth;
 
 use IamLab\Core\API\aAPI;
 use IamLab\Model\User;
+use IamLab\Service\Auth\JwtService;
 use Phalcon\Mvc\User\Component;
+use Exception;
 use function App\Core\Helpers\dd;
 
 class AuthService extends aAPI
 {
     public $isAuthenticated;
     public $state;
+    private ?JwtService $jwtService = null;
+
+    public function __construct()
+    {
+        // No need to call parent constructor as aAPI doesn't have one
+    }
+
+    /**
+     * Get or create JwtService instance
+     */
+    private function getJwtService(): JwtService
+    {
+        if ($this->jwtService === null) {
+            $this->jwtService = new JwtService();
+        }
+        return $this->jwtService;
+    }
 
     public function isAuthenticated()
     {
@@ -30,14 +49,15 @@ class AuthService extends aAPI
     public function getUser()
     {
         $identity = $this->getIdentity();
-        return User::findFirstById($identity['id']);
+        if (!$identity) {
+            return null;
+        }
+        return User::findFirstById($identity['user_id']);
     }
 
     public function authenticate(User $user, $authMethod = "post")
     {
-
         if ($authMethod == "post") {
-
             return $this->authenticatePost($user);
         }
 
@@ -46,9 +66,7 @@ class AuthService extends aAPI
 
     private function authenticatePost(User $user)
     {
-
         $password = $user->getPassword();
-
         $user = User::findFirst("email='{$user->getEmail()}'");
 
         if (!$user) {
@@ -56,9 +74,20 @@ class AuthService extends aAPI
         }
 
         if (password_verify($password, $user->getPassword())) {
+            // Generate JWT tokens
+            $accessToken = $this->getJwtService()->generateAccessToken($user);
+            $refreshToken = $this->getJwtService()->generateRefreshToken($user);
+
+            // Set identity for session compatibility (optional)
             $this->setIdentity($user);
 
-            return $user;
+            return [
+                'user' => $user,
+                'access_token' => $accessToken,
+                'refresh_token' => $refreshToken,
+                'expires_in' => 3600, // 1 hour
+                'token_type' => 'Bearer'
+            ];
         }
         return false;
     }
@@ -71,7 +100,20 @@ class AuthService extends aAPI
 
     public function getIdentity()
     {
+        // First try to get identity from JWT token
+        $token = $this->getJwtService()->extractTokenFromHeader();
+        if ($token) {
+            try {
+                $payload = $this->getJwtService()->validateToken($token);
+                if ($payload['type'] === 'access') {
+                    return $payload;
+                }
+            } catch (Exception $e) {
+                // Token is invalid, fall back to session
+            }
+        }
 
+        // Fall back to session-based identity for backward compatibility
         return $this->session->get('auth-identity');
     }
 
@@ -136,6 +178,44 @@ class AuthService extends aAPI
             }
             throw $e;
         }
+    }
+
+    /**
+     * Refresh access token using refresh token
+     */
+    public function refreshToken(string $refreshToken): ?array
+    {
+        return $this->getJwtService()->refreshAccessToken($refreshToken);
+    }
+
+    /**
+     * Generate API key for user
+     */
+    public function generateApiKey(User $user): string
+    {
+        $apiKey = $this->getJwtService()->generateApiKey($user);
+
+        // Update user's key field in database
+        $user->setKey($apiKey);
+        $user->save();
+
+        return $apiKey;
+    }
+
+    /**
+     * Validate API key and return user
+     */
+    public function validateApiKey(string $apiKey): ?User
+    {
+        return $this->getJwtService()->validateApiKey($apiKey);
+    }
+
+    /**
+     * Get user from JWT token
+     */
+    public function getUserFromToken(string $token): ?User
+    {
+        return $this->getJwtService()->getUserFromToken($token);
     }
 
 }
