@@ -107,7 +107,6 @@ return new Config([
         'verify_ssl' => App\Core\Helpers\env('PUSHER_VERIFY_SSL', true),
         'disable_stats' => App\Core\Helpers\env('PUSHER_DISABLE_STATS', false),
         'enabled_transports' => ['ws', 'wss'],
-    ]
-
+    ],
 
 ]);

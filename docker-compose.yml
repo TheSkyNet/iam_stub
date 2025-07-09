@@ -7,6 +7,8 @@ volumes:
         driver: local
     phalcons-redis:
         driver: local
+    ollama-data:
+        driver: local
 services:
     laravel.test:
         build:
@@ -32,6 +34,7 @@ services:
             - mysql
             - redis
             - mailhog
+            - ollama
     mysql:
         image: 'mysql/mysql-server:8.0'
         ports:
@@ -61,10 +64,7 @@ services:
         networks:
             - phalcons
         healthcheck:
-            test:
-                - CMD
-                - redis-cli
-                - ping
+            test: ["CMD", "redis-cli", "ping"]
             retries: 3
             timeout: 5s
     mailhog:
@@ -74,3 +74,19 @@ services:
             - '${FORWARD_MAILHOG_DASHBOARD_PORT:-8025}:8025'
         networks:
             - phalcons
+    ollama:
+        image: 'ollama/ollama:latest'
+        ports:
+            - '${FORWARD_OLLAMA_PORT:-11435}:11434'
+        volumes:
+            - 'ollama-data:/root/.ollama'
+        networks:
+            - phalcons
+        environment:
+            - OLLAMA_HOST=0.0.0.0
+        restart: unless-stopped
+        healthcheck:
+            test: ["CMD", "curl", "-f", "http://localhost:11434/api/tags"]
+            interval: 30s
+            timeout: 10s
+            retries: 3
