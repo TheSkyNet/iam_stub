@@ -12,26 +12,31 @@ return [
         'class' => 'IamLab\\Commands\\TestMailCommand',
         'description' => 'Send a test email to verify email functionality'
     ],
-    
+
     'test:pusher' => [
         'class' => 'IamLab\\Commands\\TestPusherCommand',
         'description' => 'Test Pusher real-time functionality'
     ],
-    
+
     'make:command' => [
         'class' => 'IamLab\\Commands\\MakeCommandCommand',
         'description' => 'Generate a new command class'
     ],
-    
+
     'cache:clear' => [
         'class' => 'IamLab\\Commands\\CacheClearCommand',
         'description' => 'Clear application cache'
     ],
-    
+
     'user:create' => [
         'class' => 'IamLab\\Commands\\UserCreateCommand',
         'description' => 'Create a new user account'
     ],
-    
+
+    'make:js' => [
+        'class' => 'IamLab\\Commands\\MakeJsCommand',
+        'description' => 'Generate Mithril.js views, services, and API controllers'
+    ],
+
     // Add more commands here as needed
 ];
