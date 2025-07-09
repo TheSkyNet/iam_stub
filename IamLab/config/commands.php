@@ -38,5 +38,10 @@ return [
         'description' => 'Generate Mithril.js views, services, and API controllers'
     ],
 
+    'make:zephir' => [
+        'class' => 'IamLab\\Commands\\MakeZephirCommand',
+        'description' => 'Generate a new Zephir extension with proper structure'
+    ],
+
     // Add more commands here as needed
 ];
