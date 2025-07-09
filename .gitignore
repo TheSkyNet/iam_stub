@@ -8,6 +8,6 @@ composer.lock
 /public/js
 /public/temp
 /.phalcon/*
-
+/junk
 .env
 *.ini
