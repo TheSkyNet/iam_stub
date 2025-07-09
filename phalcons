@@ -434,6 +434,32 @@ elif [ "$1" == "migrate:seed" ]; then
         phalcons_is_not_running
     fi
 
+# Handle build command with Zephir compilation
+elif [ "$1" == "build" ]; then
+    shift 1
+
+    echo "${BOLD}Building application with Zephir extensions...${NC}"
+
+    # First run the Docker build
+    echo "${YELLOW}Running Docker build...${NC}"
+    "${DOCKER_COMPOSE[@]}" build "$@"
+    BUILD_RESULT=$?
+
+    if [ $BUILD_RESULT -eq 0 ]; then
+        # After successful build, compile Zephir extensions inside the container
+        echo "${YELLOW}Compiling Zephir extensions inside container...${NC}"
+        if "${DOCKER_COMPOSE[@]}" run --rm "$APP_SERVICE" php bin/compile-zephir.php -v; then
+            echo "${GREEN}Zephir extensions compiled successfully.${NC}"
+        else
+            echo "${BOLD}Zephir compilation failed inside container.${NC}" >&2
+        fi
+    else
+        echo "${BOLD}Docker build failed. Skipping Zephir compilation.${NC}" >&2
+    fi
+
+    # Exit with the build result
+    exit $BUILD_RESULT
+
 # Pass unknown commands to the "docker-compose" binary...
 else
     ARGS+=("$@")
