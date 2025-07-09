@@ -38,5 +38,10 @@ return [
         'description' => 'Generate Mithril.js views, services, and API controllers'
     ],
 
+    'ollama' => [
+        'class' => 'IamLab\\Commands\\OllamaCommand',
+        'description' => 'Enable or disable Ollama Docker service'
+    ],
+
     // Add more commands here as needed
 ];

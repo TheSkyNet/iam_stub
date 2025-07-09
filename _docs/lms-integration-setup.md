@@ -19,7 +19,7 @@ The LMS Integration Service provides a unified interface for integrating with va
 
 ### 1. Docker Setup
 
-The service includes Ollama in the Docker configuration for local testing. Start the services:
+Start the basic services:
 
 ```bash
 docker-compose up -d
@@ -29,8 +29,9 @@ This will start:
 - Main application container
 - MySQL database
 - Redis cache
-- Ollama LLM service
 - MailHog for email testing
+
+**Note:** Ollama is disabled by default and must be enabled separately (see Ollama Management section below).
 
 ### 2. Ollama Model Setup
 
@@ -47,6 +48,83 @@ docker-compose exec ollama ollama pull mistral
 
 Available models can be found at: https://ollama.ai/library
 
+## Ollama Management
+
+Ollama is disabled by default to reduce resource usage. Use the built-in command to manage the Ollama service:
+
+### Enable Ollama
+
+```bash
+# Enable Ollama service
+./phalcons command ollama enable
+
+# This will:
+# 1. Add Ollama service to docker-compose.yml
+# 2. Update .env to set LMS_OLLAMA_ENABLED=true
+# 3. Provide instructions to start the Docker service
+```
+
+After running the enable command, you'll need to start the Docker service from your host system:
+
+```bash
+# Run this from your project root (outside the container)
+docker compose up -d ollama
+```
+
+### Disable Ollama
+
+```bash
+# Disable Ollama service
+./phalcons command ollama disable
+
+# This will:
+# 1. Update .env to set LMS_OLLAMA_ENABLED=false
+# 2. Remove Ollama service from docker-compose.yml completely
+# 3. Provide instructions to stop the Docker service
+```
+
+After running the disable command, stop the Docker service from your host system:
+
+```bash
+# Run this from your project root (outside the container)
+docker compose stop ollama
+docker compose rm -f ollama
+```
+
+### Check Ollama Status
+
+```bash
+# Check current status
+./phalcons command ollama status
+
+# This will show:
+# - Configuration status (enabled/disabled)
+# - Docker service status
+# - Connection test results
+# - Configuration details
+```
+
+### Restart Ollama
+
+```bash
+# Restart the service (if enabled)
+./phalcons command ollama restart
+```
+
+### Command Options
+
+All Ollama commands support these options:
+
+- `--force` - Skip confirmation prompts
+- `-v, --verbose` - Show detailed output
+
+Examples:
+```bash
+./phalcons command ollama enable -v
+./phalcons command ollama disable --force
+./phalcons command ollama status -v
+```
+
 ### 3. Environment Configuration
 
 Add the following configuration to your `.env` file:
@@ -57,7 +135,8 @@ LMS_GEMINI_ENABLED=false
 LMS_GEMINI_API_KEY=your_gemini_api_key_here
 LMS_GEMINI_MODEL=gemini-pro
 
-LMS_OLLAMA_ENABLED=true
+# Ollama is disabled by default - use './phalcons command ollama enable' to enable
+LMS_OLLAMA_ENABLED=false
 LMS_OLLAMA_HOST=http://ollama:11434
 LMS_OLLAMA_MODEL=llama2
 
@@ -67,7 +146,7 @@ LMS_TENCENT_EDU_SECRET_KEY=your_tencent_secret_key
 LMS_TENCENT_EDU_REGION=ap-beijing
 
 # Docker port forwarding (optional)
-FORWARD_OLLAMA_PORT=11434
+FORWARD_OLLAMA_PORT=11435
 ```
 
 ## API Keys Setup

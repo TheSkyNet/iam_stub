@@ -34,7 +34,6 @@ services:
             - mysql
             - redis
             - mailhog
-            - ollama
     mysql:
         image: 'mysql/mysql-server:8.0'
         ports:
