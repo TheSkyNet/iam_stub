@@ -1,0 +1,13 @@
+# Compiled extension files
+/ext
+.zephir
+compile.log
+compile-errors.log
+
+# IDE files
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db

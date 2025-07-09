@@ -110,6 +110,9 @@ class ZephirCompiler
                 return false;
             }
 
+            // Fix header file naming issue by creating symbolic links
+            $this->fixHeaderFileNaming($extensionName);
+
             // Compile the extension
             $result = $this->executeCommand('zephir compile');
             if ($result !== 0) {
@@ -125,6 +128,47 @@ class ZephirCompiler
         } finally {
             // Always return to original directory
             chdir($originalDir);
+        }
+    }
+
+    private function fixHeaderFileNaming($extensionName)
+    {
+        $extDir = 'ext';
+        if (!is_dir($extDir)) {
+            return;
+        }
+
+        // Read config to get the namespace and name
+        $configFile = 'config.json';
+        if (!file_exists($configFile)) {
+            return;
+        }
+
+        $config = json_decode(file_get_contents($configFile), true);
+        if (!$config || !isset($config['namespace']) || !isset($config['name'])) {
+            return;
+        }
+
+        $namespace = $config['namespace'];
+        $name = $config['name'];
+
+        // Create symbolic links from lowercase name to namespace-based filename
+        // Fix header file (.h)
+        $actualHeaderFile = "ext/php_{$namespace}.h";
+        $expectedHeaderFile = "ext/php_{$name}.h";
+
+        if (file_exists($actualHeaderFile) && !file_exists($expectedHeaderFile)) {
+            $this->log("Creating symbolic link: {$expectedHeaderFile} -> php_{$namespace}.h");
+            symlink("php_{$namespace}.h", $expectedHeaderFile);
+        }
+
+        // Fix source file (.c)
+        $actualSourceFile = "ext/{$namespace}.c";
+        $expectedSourceFile = "ext/{$name}.c";
+
+        if (file_exists($actualSourceFile) && !file_exists($expectedSourceFile)) {
+            $this->log("Creating symbolic link: {$expectedSourceFile} -> {$namespace}.c");
+            symlink("{$namespace}.c", $expectedSourceFile);
         }
     }
 
