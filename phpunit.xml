@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.5/phpunit.xsd"
+         bootstrap="tests/bootstrap.php"
+         colors="true"
+         cacheDirectory=".phpunit.cache"
+         executionOrder="depends,defects"
+         requireCoverageMetadata="false"
+         beStrictAboutCoverageMetadata="true"
+         beStrictAboutOutputDuringTests="true"
+         failOnRisky="true"
+         failOnWarning="true">
+    
+    <testsuites>
+        <testsuite name="LMS">
+            <directory>tests/Unit/Service/LMS</directory>
+            <directory>tests/Feature/LMS</directory>
+        </testsuite>
+        <testsuite name="Unit">
+            <directory>tests/Unit</directory>
+        </testsuite>
+        <testsuite name="Feature">
+            <directory>tests/Feature</directory>
+        </testsuite>
+    </testsuites>
+
+    <source>
+        <include>
+            <directory>IamLab/Service/LMS</directory>
+        </include>
+    </source>
+
+    <php>
+        <env name="APP_ENV" value="testing"/>
+        <env name="LMS_OLLAMA_ENABLED" value="true"/>
+        <env name="LMS_OLLAMA_HOST" value="http://ollama:11434"/>
+        <env name="LMS_OLLAMA_MODEL" value="llama2"/>
+        <env name="LMS_GEMINI_ENABLED" value="false"/>
+        <env name="LMS_GEMINI_API_KEY" value=""/>
+        <env name="LMS_TENCENT_EDU_ENABLED" value="false"/>
+        <env name="LMS_TENCENT_EDU_APP_ID" value=""/>
+        <env name="LMS_TENCENT_EDU_SECRET_KEY" value=""/>
+    </php>
+
+    <logging>
+        <testdoxHtml outputFile="tests/results/testdox.html"/>
+        <testdoxText outputFile="tests/results/testdox.txt"/>
+        <junit outputFile="tests/results/junit.xml"/>
+    </logging>
+</phpunit>

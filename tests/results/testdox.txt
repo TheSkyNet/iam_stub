@@ -1,0 +1,46 @@
+Configuration Manager (Tests\Unit\Service\LMS\Configuration\ConfigurationManager)
+ [x] Can be instantiated
+ [x] Get all configurations
+ [x] Get integration config
+ [x] Is integration enabled
+ [x] Get enabled integrations
+ [x] Validate configuration
+ [x] Get non existent integration config
+ [x] Is non existent integration enabled
+
+Integration Factory (Tests\Unit\Service\LMS\Factory\IntegrationFactory)
+ [x] Get supported integrations
+ [x] Is supported
+ [x] Create ollama integration
+ [x] Create gemini integration
+ [x] Create tencent edu integration
+ [x] Create unsupported integration throws exception
+ [x] Create with invalid configuration throws exception
+ [x] Get integration class
+ [x] Create from config
+ [x] Validate config
+ [x] Get integration capabilities
+ [x] Register and unregister integration
+ [x] Register invalid class throws exception
+
+LMSService (Tests\Unit\Service\LMS\LMSService)
+ [x] Can be instantiated
+ [x] Initialize
+ [x] Get configuration manager
+ [x] Get integration registry
+ [x] Get available integrations
+ [x] Is integration available
+ [x] Get integration status
+ [x] Generate content with valid integration
+ [x] Generate content with invalid integration
+ [x] Create course with valid integration
+ [x] Create course with invalid integration
+ [x] Analyze text with valid integration
+ [x] Analyze text with invalid integration
+ [x] Generate content with fallback
+ [x] Get best integration for
+ [x] Get integration capabilities
+ [x] Get statistics
+ [x] Refresh health status
+ [x] Multiple initialization calls are safe
+
