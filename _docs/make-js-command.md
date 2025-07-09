@@ -7,7 +7,7 @@ The `make:js` command is a powerful code generator for creating Mithril.js views
 ## Command Signature
 
 ```bash
-./phalcons command make:js <name> [--type=] [--api] [--controller] [-v|--verbose]
+./phalcons command make:js <name> [--type=] [--api] [--controller] [-a|--all] [-v|--verbose]
 ```
 
 ## Arguments
@@ -22,6 +22,7 @@ The `make:js` command is a powerful code generator for creating Mithril.js views
   - `both`: Generate both view and service (default)
 - `--api`: Generate API controller along with JS components
 - `--controller`: Generate API controller only
+- `-a, --all`: Generate all components (view, service, and API controller)
 - `-v, --verbose`: Enable verbose output
 
 ## Usage Examples
@@ -54,6 +55,21 @@ The `make:js` command is a powerful code generator for creating Mithril.js views
 ```bash
 # Enable verbose output to see detailed generation process
 ./phalcons command make:js Product --api -v
+```
+
+### Generate All Components
+
+```bash
+# Generate all components (view, service, and API controller) with the -a flag
+./phalcons command make:js Item -a
+
+# Same as above but with verbose output
+./phalcons command make:js Category --all -v
+
+# The -a flag is equivalent to --type=both --api
+./phalcons command make:js Product -a
+# is the same as:
+./phalcons command make:js Product --type=both --api
 ```
 
 ## Generated Files

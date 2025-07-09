@@ -13,7 +13,7 @@ class MakeJsCommand extends BaseCommand
      */
     public function getSignature(): string
     {
-        return 'make:js <name> [--type=] [--api] [--controller] [-v|--verbose]';
+        return 'make:js <name> [--type=] [--api] [--controller] [-a|--all] [-v|--verbose]';
     }
 
     /**
@@ -46,6 +46,7 @@ Options:
   --type=TYPE          Type of component to generate (view|service|both) [default: both]
   --api                Generate API controller along with JS components
   --controller         Generate API controller only
+  -a, --all            Generate all components (view, service, and API controller)
   -v, --verbose        Enable verbose output
 
 Examples:
@@ -53,6 +54,7 @@ Examples:
   ./phalcons command make:js Product --type=view     # Generate Product view only
   ./phalcons command make:js Order --api             # Generate Order view, service, and API controller
   ./phalcons command make:js Customer --controller   # Generate Customer API controller only
+  ./phalcons command make:js Item -a                 # Generate all components (view, service, and API controller)
 HELP;
     }
 
@@ -76,6 +78,13 @@ HELP;
         $type = $this->option('type', 'both');
         $generateApi = $this->hasOption('api');
         $controllerOnly = $this->hasOption('controller');
+        $generateAll = $this->hasOption('all') || $this->hasOption('a');
+
+        // If --all flag is used, generate everything
+        if ($generateAll) {
+            $type = 'both';
+            $generateApi = true;
+        }
 
         $this->info("Generating components for: {$name}");
 
