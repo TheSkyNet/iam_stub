@@ -7,7 +7,15 @@ use Exception;
 use IamLab\Core\API\aAPI;
 use IamLab\Model\User;
 use IamLab\Model\PasswordResetToken;
+use IamLab\Model\QRLoginSession;
 use IamLab\Service\Auth\AuthService;
+use Endroid\QrCode\Builder\Builder;
+use Endroid\QrCode\Encoding\Encoding;
+use Endroid\QrCode\ErrorCorrectionLevel\ErrorCorrectionLevelLow;
+use Endroid\QrCode\Label\Alignment\LabelAlignmentCenter;
+use Endroid\QrCode\Label\Font\NotoSans;
+use Endroid\QrCode\RoundBlockSizeMode\RoundBlockSizeModeMargin;
+use Endroid\QrCode\Writer\PngWriter;
 use function App\Core\Helpers\email;
 
 class Auth extends aAPI
@@ -24,7 +32,6 @@ class Auth extends aAPI
         // Validate input
         if (empty($email) || empty($password)) {
             $this->dispatch(['success' => false, 'message' => 'Email and password are required']);
-            return;
         }
 
         try {
@@ -32,7 +39,6 @@ class Auth extends aAPI
 
             if ($auth) {
                 $this->dispatch(['success' => true, 'message' => 'Login successful', 'data' => $auth]);
-                return;
             }
 
             $this->dispatch(['success' => false, 'message' => 'Invalid email or password']);
@@ -319,6 +325,175 @@ class Auth extends aAPI
 
         } catch (Exception $e) {
             $this->dispatch(['success' => false, 'message' => 'An error occurred while updating profile', 'debug' => $e->getMessage()]);
+        }
+    }
+
+    /**
+     * Generate QR code for login
+     */
+    public function generateQRCodeAction(): void
+    {
+        try {
+            // Clean up expired sessions first
+            QRLoginSession::cleanupExpired();
+
+            // Create new QR login session
+            $session = QRLoginSession::createSession(5); // 5 minutes expiration
+
+            if (!$session->save()) {
+                $this->dispatch(['success' => false, 'message' => 'Failed to create QR login session']);
+                return;
+            }
+
+            // Generate QR code data (JSON with session token and base URL)
+            $qrData = json_encode([
+                'type' => 'qr_login',
+                'session_token' => $session->getSessionToken(),
+                'base_url' => $this->request->getScheme() . '://' . $this->request->getHttpHost(),
+                'expires_at' => $session->expires_at
+            ]);
+
+            // Generate QR code image
+            $result = Builder::create()
+                ->writer(new PngWriter())
+                ->data($qrData)
+                ->encoding(new Encoding('UTF-8'))
+                ->errorCorrectionLevel(new ErrorCorrectionLevelLow())
+                ->size(300)
+                ->margin(10)
+                ->roundBlockSizeMode(new RoundBlockSizeModeMargin())
+                ->build();
+
+            // Convert to base64 for easy frontend consumption
+            $qrCodeBase64 = base64_encode($result->getString());
+
+            $this->dispatch([
+                'success' => true,
+                'data' => [
+                    'session_token' => $session->getSessionToken(),
+                    'qr_code' => 'data:image/png;base64,' . $qrCodeBase64,
+                    'expires_at' => $session->expires_at,
+                    'expires_in' => 300 // 5 minutes in seconds
+                ]
+            ]);
+
+        } catch (Exception $e) {
+            $this->dispatch(['success' => false, 'message' => 'An error occurred while generating QR code', 'debug' => $e->getMessage()]);
+        }
+    }
+
+    /**
+     * Check QR code authentication status
+     */
+    public function checkQRStatusAction(): void
+    {
+        try {
+            $sessionToken = $this->getParam('session_token');
+
+            if (empty($sessionToken)) {
+                $this->dispatch(['success' => false, 'message' => 'Session token is required']);
+                return;
+            }
+
+            $session = QRLoginSession::findByToken($sessionToken);
+
+            if (!$session) {
+                $this->dispatch(['success' => false, 'message' => 'Invalid session token']);
+                return;
+            }
+
+            // Check if session is expired
+            if (!$session->isValid() && $session->getStatus() !== 'authenticated') {
+                $session->expire();
+                $this->dispatch(['success' => false, 'message' => 'Session expired', 'status' => 'expired']);
+                return;
+            }
+
+            if ($session->isAuthenticated()) {
+                // Get user and generate auth tokens
+                $user = User::findFirstById($session->getUserId());
+                if (!$user) {
+                    $this->dispatch(['success' => false, 'message' => 'User not found']);
+                    return;
+                }
+
+                $authService = new AuthService();
+                $authData = $authService->generateAuthData($user);
+
+                // Clean up the session
+                $session->delete();
+
+                $this->dispatch([
+                    'success' => true, 
+                    'message' => 'Authentication successful',
+                    'status' => 'authenticated',
+                    'data' => $authData
+                ]);
+                return;
+            }
+
+            $this->dispatch([
+                'success' => true,
+                'status' => 'pending',
+                'message' => 'Waiting for authentication'
+            ]);
+
+        } catch (Exception $e) {
+            $this->dispatch(['success' => false, 'message' => 'An error occurred while checking QR status', 'debug' => $e->getMessage()]);
+        }
+    }
+
+    /**
+     * Authenticate QR code session (called from mobile)
+     */
+    public function authenticateQRAction(): void
+    {
+        try {
+            $authService = new AuthService();
+
+            // Check if user is authenticated
+            if (!$authService->isAuthenticated()) {
+                $this->dispatch(['success' => false, 'message' => 'Authentication required']);
+                return;
+            }
+
+            $sessionToken = $this->getParam('session_token');
+
+            if (empty($sessionToken)) {
+                $this->dispatch(['success' => false, 'message' => 'Session token is required']);
+                return;
+            }
+
+            $session = QRLoginSession::findByToken($sessionToken);
+
+            if (!$session) {
+                $this->dispatch(['success' => false, 'message' => 'Invalid session token']);
+                return;
+            }
+
+            if (!$session->isValid()) {
+                $this->dispatch(['success' => false, 'message' => 'Session expired or already used']);
+                return;
+            }
+
+            $user = $authService->getUser();
+            if (!$user) {
+                $this->dispatch(['success' => false, 'message' => 'User not found']);
+                return;
+            }
+
+            // Authenticate the session
+            if ($session->authenticate($user->getId())) {
+                $this->dispatch([
+                    'success' => true,
+                    'message' => 'QR code authenticated successfully'
+                ]);
+            } else {
+                $this->dispatch(['success' => false, 'message' => 'Failed to authenticate QR session']);
+            }
+
+        } catch (Exception $e) {
+            $this->dispatch(['success' => false, 'message' => 'An error occurred while authenticating QR code', 'debug' => $e->getMessage()]);
         }
     }
 

@@ -36,6 +36,95 @@ const Login = {
     }
 };
 
+// QR Code Login service
+const QRLogin = {
+    qrData: null,
+    sessionToken: null,
+    isPolling: false,
+    showQR: false,
+
+    generateQR: function() {
+        QRLogin.showQR = true;
+        QRLogin.qrData = null;
+        QRLogin.sessionToken = null;
+
+        return AuthService.generateQRCode()
+            .then(function(result) {
+                if (result.success) {
+                    QRLogin.qrData = result.data;
+                    QRLogin.sessionToken = result.data.session_token;
+                    QRLogin.startPolling();
+                    m.redraw();
+                } else {
+                    MessageDisplay.setMessage(result.message || 'Failed to generate QR code', 'error');
+                }
+            })
+            .catch(error => {
+                MessageDisplay.setMessage('Failed to generate QR code. Please try again.', 'error');
+                console.error("QR generation failed:", error);
+            });
+    },
+
+    startPolling: function() {
+        if (QRLogin.isPolling || !QRLogin.sessionToken) return;
+
+        QRLogin.isPolling = true;
+
+        AuthService.startQRPolling(
+            QRLogin.sessionToken,
+            // onSuccess
+            function(response) {
+                QRLogin.isPolling = false;
+                QRLogin.showQR = false;
+                MessageDisplay.setMessage('Login successful via QR code!', 'success');
+                setTimeout(() => {
+                    m.route.set('/');
+                    m.redraw();
+                }, 1500);
+            },
+            // onError
+            function(error) {
+                QRLogin.isPolling = false;
+                MessageDisplay.setMessage('QR login failed. Please try again.', 'error');
+                console.error("QR login failed:", error);
+                m.redraw();
+            },
+            // onExpired
+            function() {
+                QRLogin.isPolling = false;
+                QRLogin.showQR = false;
+                MessageDisplay.setMessage('QR code expired. Please generate a new one.', 'warning');
+                m.redraw();
+            }
+        );
+    },
+
+    cancelQR: function() {
+        QRLogin.isPolling = false;
+        QRLogin.showQR = false;
+        QRLogin.qrData = null;
+        QRLogin.sessionToken = null;
+        m.redraw();
+    },
+
+    authenticateFromMobile: function(sessionToken) {
+        return AuthService.authenticateQR(sessionToken)
+            .then(function(result) {
+                if (result.success) {
+                    MessageDisplay.setMessage('QR code authenticated successfully!', 'success');
+                } else {
+                    MessageDisplay.setMessage(result.message || 'Failed to authenticate QR code', 'error');
+                }
+                return result;
+            })
+            .catch(error => {
+                MessageDisplay.setMessage('Failed to authenticate QR code. Please try again.', 'error');
+                console.error("QR authentication failed:", error);
+                throw error;
+            });
+    }
+};
+
 // Register service
 const Register = {
     user: {
@@ -147,7 +236,24 @@ const LoginForm = {
                             m("p.text-sm.text-base-content.opacity-70", "Please sign in to continue")
                         ]),
                         m(".card-body.px-8.py-6", [
-                            m("form", {
+                            // Login method toggle
+                            m(".tabs.tabs-boxed.mb-6", [
+                                m("a.tab", {
+                                    class: !QRLogin.showQR ? "tab-active" : "",
+                                    onclick: () => {
+                                        QRLogin.cancelQR();
+                                    }
+                                }, "Email & Password"),
+                                m("a.tab", {
+                                    class: QRLogin.showQR ? "tab-active" : "",
+                                    onclick: () => {
+                                        QRLogin.generateQR();
+                                    }
+                                }, "QR Code")
+                            ]),
+
+                            // Traditional login form
+                            !QRLogin.showQR ? m("form", {
                                 onsubmit: (e) => {
                                     e.preventDefault();
                                     Login.login();
@@ -183,22 +289,55 @@ const LoginForm = {
                                         m("span.label-text.text-sm", "Remember me")
                                     ])
                                 ]),
-                                m("button.btn.btn-primary.w-full.mb-4[type=submit]", "Sign In"),
-                                m(".text-center.space-y-2", [
-                                    m("div", [
-                                        m(m.route.Link, {
-                                            class: "link link-primary text-sm",
-                                            href: "/register"
-                                        }, "Don't have an account? Sign up")
-                                    ]),
-                                    m("div", [
-                                        m(m.route.Link, {
-                                            class: "link link-primary text-sm",
-                                            href: "/forgot-password"
-                                        }, "Forgot your password?")
+                                m("button.btn.btn-primary.w-full.mb-4[type=submit]", "Sign In")
+                            ]) : 
+
+                            // QR Code login section
+                            m(".text-center", [
+                                QRLogin.qrData ? [
+                                    m("div.mb-4", [
+                                        m("p.text-sm.text-base-content.opacity-70.mb-4", "Scan this QR code with your mobile device to login"),
+                                        m("div.flex.justify-center.mb-4", [
+                                            m("img", {
+                                                src: QRLogin.qrData.qr_code,
+                                                alt: "QR Code for Login",
+                                                style: "max-width: 250px; height: auto;"
+                                            })
+                                        ]),
+                                        QRLogin.isPolling ? [
+                                            m("div.flex.items-center.justify-center.gap-2.mb-4", [
+                                                m("span.loading.loading-spinner.loading-sm"),
+                                                m("span.text-sm", "Waiting for authentication...")
+                                            ]),
+                                            m("p.text-xs.text-base-content.opacity-50", "QR code expires in 5 minutes")
+                                        ] : null,
+                                        m("button.btn.btn-outline.btn-sm", {
+                                            onclick: QRLogin.cancelQR
+                                        }, "Cancel")
                                     ])
+                                ] : [
+                                    m("div.flex.items-center.justify-center.gap-2.mb-4", [
+                                        m("span.loading.loading-spinner.loading-sm"),
+                                        m("span.text-sm", "Generating QR code...")
+                                    ])
+                                ]
+                            ]),
+
+                            // Links (only show when not in QR mode)
+                            !QRLogin.showQR ? m(".text-center.space-y-2", [
+                                m("div", [
+                                    m(m.route.Link, {
+                                        class: "link link-primary text-sm",
+                                        href: "/register"
+                                    }, "Don't have an account? Sign up")
+                                ]),
+                                m("div", [
+                                    m(m.route.Link, {
+                                        class: "link link-primary text-sm",
+                                        href: "/forgot-password"
+                                    }, "Forgot your password?")
                                 ])
-                            ])
+                            ]) : null
                         ])
                     ])
                 ])
@@ -349,5 +488,6 @@ module.exports = {
     Register, 
     ForgotPassword, 
     Auth, 
-    Logout 
+    Logout,
+    QRLogin
 };

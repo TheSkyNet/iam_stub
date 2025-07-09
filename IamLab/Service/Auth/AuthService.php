@@ -218,4 +218,25 @@ class AuthService extends aAPI
         return $this->getJwtService()->getUserFromToken($token);
     }
 
+    /**
+     * Generate authentication data for a user (for QR login)
+     */
+    public function generateAuthData(User $user): array
+    {
+        // Generate JWT tokens
+        $accessToken = $this->getJwtService()->generateAccessToken($user);
+        $refreshToken = $this->getJwtService()->generateRefreshToken($user);
+
+        // Set identity for session compatibility
+        $this->setIdentity($user);
+
+        return [
+            'user' => $user,
+            'access_token' => $accessToken,
+            'refresh_token' => $refreshToken,
+            'expires_in' => 3600, // 1 hour
+            'token_type' => 'Bearer'
+        ];
+    }
+
 }

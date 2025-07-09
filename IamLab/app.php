@@ -66,6 +66,11 @@ $app->post('/auth/refresh-token', [(new Auth()), "refreshTokenAction"]);
 $app->post('/auth/generate-api-key', [(new Auth()), "generateApiKeyAction"]);
 $app->get('/auth/profile', [(new Auth()), "profileAction"]);
 $app->post('/auth/update-profile', [(new Auth()), "updateProfileAction"]);
+
+// QR Code login endpoints
+$app->post('/auth/generate-qr-code', [(new Auth()), "generateQRCodeAction"]);
+$app->post('/auth/check-qr-status', [(new Auth()), "checkQRStatusAction"]);
+$app->post('/auth/authenticate-qr', [(new Auth()), "authenticateQRAction"]);
 /**
  * Not found handler
  */

@@ -243,6 +243,78 @@ const AuthService = {
      */
     getUser: function() {
         return this.user;
+    },
+
+    /**
+     * Generate QR code for login
+     */
+    generateQRCode: function() {
+        return m.request({
+            method: 'POST',
+            url: `${this.baseUrl}/generate-qr-code`
+        });
+    },
+
+    /**
+     * Check QR code authentication status
+     */
+    checkQRStatus: function(sessionToken) {
+        return m.request({
+            method: 'POST',
+            url: `${this.baseUrl}/check-qr-status`,
+            body: { session_token: sessionToken }
+        });
+    },
+
+    /**
+     * Authenticate QR code session (called from mobile)
+     */
+    authenticateQR: function(sessionToken) {
+        return m.request({
+            method: 'POST',
+            url: `${this.baseUrl}/authenticate-qr`,
+            headers: this.getAuthHeaders(),
+            body: { session_token: sessionToken }
+        });
+    },
+
+    /**
+     * Start QR login polling
+     */
+    startQRPolling: function(sessionToken, onSuccess, onError, onExpired) {
+        const pollInterval = 2000; // Poll every 2 seconds
+        const maxAttempts = 150; // 5 minutes (150 * 2 seconds)
+        let attempts = 0;
+
+        const poll = () => {
+            if (attempts >= maxAttempts) {
+                onExpired && onExpired();
+                return;
+            }
+
+            this.checkQRStatus(sessionToken)
+                .then((response) => {
+                    if (response.success && response.status === 'authenticated') {
+                        // Set auth data and call success callback
+                        this.setAuthData(response.data);
+                        onSuccess && onSuccess(response);
+                    } else if (response.success && response.status === 'pending') {
+                        // Continue polling
+                        attempts++;
+                        setTimeout(poll, pollInterval);
+                    } else if (response.status === 'expired') {
+                        onExpired && onExpired();
+                    } else {
+                        onError && onError(response);
+                    }
+                })
+                .catch((error) => {
+                    onError && onError(error);
+                });
+        };
+
+        // Start polling
+        poll();
     }
 };
 
