@@ -34,7 +34,6 @@ class OAuth extends aAPI
                     'success' => false,
                     'message' => 'OAuth is not enabled'
                 ]);
-                return;
             }
 
             // Check each provider
@@ -96,7 +95,6 @@ class OAuth extends aAPI
                     'success' => false,
                     'message' => 'Provider parameter is required'
                 ]);
-                return;
             }
 
             $oauthService = $this->getOAuthService($provider);
@@ -138,7 +136,6 @@ class OAuth extends aAPI
                     'success' => false,
                     'message' => 'OAuth error: ' . $error
                 ], 400);
-                return;
             }
 
             // Validate required parameters
@@ -147,7 +144,6 @@ class OAuth extends aAPI
                     'success' => false,
                     'message' => 'Missing required OAuth parameters'
                 ], 400);
-                return;
             }
 
             // Validate state parameter
@@ -159,7 +155,6 @@ class OAuth extends aAPI
                     'success' => false,
                     'message' => 'Invalid OAuth state parameter'
                 ], 400);
-                return;
             }
 
             // Clear session state
@@ -215,7 +210,6 @@ class OAuth extends aAPI
                     'success' => false,
                     'message' => 'User not authenticated'
                 ], 401);
-                return;
             }
 
             $provider = $this->request->get('provider');
@@ -225,7 +219,6 @@ class OAuth extends aAPI
                     'success' => false,
                     'message' => 'Provider parameter is required'
                 ], 400);
-                return;
             }
 
             // Check if user has a password set (for security)
@@ -234,7 +227,6 @@ class OAuth extends aAPI
                     'success' => false,
                     'message' => 'Cannot unlink OAuth provider without setting a password first'
                 ], 400);
-                return;
             }
 
             // Unlink OAuth provider

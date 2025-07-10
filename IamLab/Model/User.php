@@ -4,7 +4,6 @@ namespace IamLab\Model;
 
 use Phalcon\Mvc\Model;
 use Phalcon\Mvc\Model\ResultsetInterface;
-use Phalcon\Mvc\Model\Validator\Email as Email;
 
 /**
  * @method static findFirstByEmail(string $getEmail)
@@ -332,20 +331,8 @@ class User extends Model
      */
     public function validation()
     {
-        return true;
-        $this->validate(
-            new Email(
-                [
-                    'field' => 'email',
-                    'required' => true,
-                ]
-            )
-        );
-
-        if ($this->validationHasFailed() == true) {
-            return false;
-        }
-
+        // Basic email validation can be handled at the application level
+        // or through database constraints and frontend validation
         return true;
     }
 

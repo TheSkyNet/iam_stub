@@ -74,7 +74,7 @@ const QRLogin = {
         AuthService.startQRPolling(
             QRLogin.sessionToken,
             // onSuccess
-            function(response) {
+            function() {
                 QRLogin.isPolling = false;
                 QRLogin.showQR = false;
                 MessageDisplay.setMessage('Login successful via QR code!', 'success');
@@ -142,7 +142,7 @@ const Register = {
         }
 
         return AuthService.register(Register.user.name, Register.user.email, Register.user.password)
-            .then(function(result) {
+            .then(function() {
                 MessageDisplay.setMessage("Registration successful! You are now logged in.", 'success');
                 setTimeout(() => {
                     m.route.set('/');
