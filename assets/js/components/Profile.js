@@ -9,6 +9,15 @@ const Profile = {
         isProcessing: false
     },
 
+    // Quick Mobile Login state (reverse flow)
+    quickMobileLogin: {
+        isGenerating: false,
+        qrData: null,
+        sessionToken: null,
+        isPolling: false,
+        showQR: false
+    },
+
     oninit: () => {
         // Redirect to login if not authenticated
         if (!AuthService.isLoggedIn()) {
@@ -204,6 +213,130 @@ const Profile = {
                                     m("li", "2. Click the 'QR Code' tab on the login form"),
                                     m("li", "3. Use this scanner to scan the QR code displayed"),
                                     m("li", "4. Click 'Authenticate Desktop' to complete the login")
+                                ])
+                            ])
+                        ])
+                    ]),
+
+                    // Quick Mobile Login Section (Reverse Flow)
+                    m(".mb-8", [
+                        m("h2.text-xl.font-semibold.text-gray-700.mb-4", "Quick Mobile Login"),
+                        m(".bg-green-50.p-4.rounded-lg", [
+                            m("p.text-sm.text-gray-600.mb-4", 
+                                "Generate a QR code on your mobile device that you can scan from your PC to quickly log into your mobile device. Perfect for when you're already logged in on your computer and want to quickly access your account on your phone."
+                            ),
+
+                            // QR Generation Interface
+                            !Profile.quickMobileLogin.showQR ? [
+                                m(".flex.items-center.justify-between.mb-4", [
+                                    m("div", [
+                                        m("p.font-medium", "Mobile QR Code Generator"),
+                                        m("p.text-sm.text-gray-500", "Generate QR code for desktop to scan")
+                                    ]),
+                                    m("button.btn.btn-success", {
+                                        disabled: Profile.quickMobileLogin.isGenerating,
+                                        onclick: () => {
+                                            Profile.quickMobileLogin.isGenerating = true;
+                                            Profile.quickMobileLogin.showQR = true;
+
+                                            AuthService.generateMobileQRCode()
+                                                .then(response => {
+                                                    Profile.quickMobileLogin.isGenerating = false;
+                                                    if (response.success) {
+                                                        Profile.quickMobileLogin.qrData = response.data;
+                                                        Profile.quickMobileLogin.sessionToken = response.data.session_token;
+                                                        Profile.quickMobileLogin.isPolling = true;
+
+                                                        // Start polling for desktop authentication
+                                                        AuthService.startMobileQRPolling(
+                                                            Profile.quickMobileLogin.sessionToken,
+                                                            // onSuccess
+                                                            function(response) {
+                                                                Profile.quickMobileLogin.isPolling = false;
+                                                                Profile.quickMobileLogin.showQR = false;
+                                                                MessageDisplay.setMessage('Mobile login successful! You are now logged in.', 'success');
+                                                                m.redraw();
+                                                            },
+                                                            // onError
+                                                            function(error) {
+                                                                Profile.quickMobileLogin.isPolling = false;
+                                                                MessageDisplay.setMessage('Mobile login failed. Please try again.', 'error');
+                                                                console.error("Mobile QR login failed:", error);
+                                                                m.redraw();
+                                                            },
+                                                            // onExpired
+                                                            function() {
+                                                                Profile.quickMobileLogin.isPolling = false;
+                                                                Profile.quickMobileLogin.showQR = false;
+                                                                MessageDisplay.setMessage('QR code expired. Please generate a new one.', 'warning');
+                                                                m.redraw();
+                                                            }
+                                                        );
+
+                                                        m.redraw();
+                                                    } else {
+                                                        MessageDisplay.setMessage(response.message || 'Failed to generate mobile QR code', 'error');
+                                                        Profile.quickMobileLogin.showQR = false;
+                                                        m.redraw();
+                                                    }
+                                                })
+                                                .catch(error => {
+                                                    Profile.quickMobileLogin.isGenerating = false;
+                                                    Profile.quickMobileLogin.showQR = false;
+                                                    MessageDisplay.setMessage('Failed to generate mobile QR code. Please try again.', 'error');
+                                                    console.error("Mobile QR generation failed:", error);
+                                                    m.redraw();
+                                                });
+                                        }
+                                    }, Profile.quickMobileLogin.isGenerating ? "Generating..." : "Generate QR Code")
+                                ])
+                            ] : [
+                                // QR Code Display
+                                m(".text-center.mb-4", [
+                                    Profile.quickMobileLogin.qrData ? [
+                                        m("div.mb-4", [
+                                            m("p.text-sm.text-gray-600.mb-4", "Scan this QR code from your PC to log into this mobile device"),
+                                            m("div.flex.justify-center.mb-4", [
+                                                m("img", {
+                                                    src: Profile.quickMobileLogin.qrData.qr_code,
+                                                    alt: "QR Code for Mobile Login",
+                                                    style: "max-width: 250px; height: auto;"
+                                                })
+                                            ]),
+                                            Profile.quickMobileLogin.isPolling ? [
+                                                m("div.flex.items-center.justify-center.gap-2.mb-4", [
+                                                    m("span.loading.loading-spinner.loading-sm"),
+                                                    m("span.text-sm", "Waiting for PC authentication...")
+                                                ]),
+                                                m("p.text-xs.text-gray-500", "QR code expires in 5 minutes")
+                                            ] : null,
+                                            m("button.btn.btn-outline.btn-sm", {
+                                                onclick: () => {
+                                                    Profile.quickMobileLogin.isPolling = false;
+                                                    Profile.quickMobileLogin.showQR = false;
+                                                    Profile.quickMobileLogin.qrData = null;
+                                                    Profile.quickMobileLogin.sessionToken = null;
+                                                    m.redraw();
+                                                }
+                                            }, "Cancel")
+                                        ])
+                                    ] : [
+                                        m("div.flex.items-center.justify-center.gap-2.mb-4", [
+                                            m("span.loading.loading-spinner.loading-sm"),
+                                            m("span.text-sm", "Generating QR code...")
+                                        ])
+                                    ]
+                                ])
+                            ],
+
+                            // Instructions
+                            m(".mt-4.p-3.bg-green-100.rounded-lg", [
+                                m("h4.font-semibold.text-green-800.mb-2", "How to use Quick Mobile Login:"),
+                                m("ol.text-sm.text-green-700.space-y-1", [
+                                    m("li", "1. Click 'Generate QR Code' on your mobile device"),
+                                    m("li", "2. Open your browser on your PC and make sure you're logged in"),
+                                    m("li", "3. Scan the QR code from your PC (you can use your browser or any QR scanner)"),
+                                    m("li", "4. Your mobile device will automatically log in once scanned")
                                 ])
                             ])
                         ])

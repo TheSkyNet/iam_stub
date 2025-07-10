@@ -315,6 +315,82 @@ const AuthService = {
 
         // Start polling
         poll();
+    },
+
+    /**
+     * Generate QR code for mobile login (reverse flow)
+     * Mobile device generates QR code for desktop to scan
+     */
+    generateMobileQRCode: function() {
+        return m.request({
+            method: 'POST',
+            url: `${this.baseUrl}/generate-mobile-qr-code`,
+            headers: this.getAuthHeaders()
+        });
+    },
+
+    /**
+     * Check mobile QR code authentication status
+     * Mobile device polls this to check if desktop has authenticated
+     */
+    checkMobileQRStatus: function(sessionToken) {
+        return m.request({
+            method: 'POST',
+            url: `${this.baseUrl}/check-mobile-qr-status`,
+            body: { session_token: sessionToken }
+        });
+    },
+
+    /**
+     * Authenticate mobile QR code session (called from desktop)
+     * Desktop scans mobile QR code and authenticates the mobile session
+     */
+    authenticateMobileQR: function(sessionToken) {
+        return m.request({
+            method: 'POST',
+            url: `${this.baseUrl}/authenticate-mobile-qr`,
+            headers: this.getAuthHeaders(),
+            body: { session_token: sessionToken }
+        });
+    },
+
+    /**
+     * Start mobile QR login polling (mobile polls for desktop authentication)
+     */
+    startMobileQRPolling: function(sessionToken, onSuccess, onError, onExpired) {
+        const pollInterval = 2000; // Poll every 2 seconds
+        const maxAttempts = 150; // 5 minutes (150 * 2 seconds)
+        let attempts = 0;
+
+        const poll = () => {
+            if (attempts >= maxAttempts) {
+                onExpired && onExpired();
+                return;
+            }
+
+            this.checkMobileQRStatus(sessionToken)
+                .then((response) => {
+                    if (response.success && response.status === 'authenticated') {
+                        // Set auth data and call success callback
+                        this.setAuthData(response.data);
+                        onSuccess && onSuccess(response);
+                    } else if (response.success && response.status === 'pending') {
+                        // Continue polling
+                        attempts++;
+                        setTimeout(poll, pollInterval);
+                    } else if (response.status === 'expired') {
+                        onExpired && onExpired();
+                    } else {
+                        onError && onError(response);
+                    }
+                })
+                .catch((error) => {
+                    onError && onError(error);
+                });
+        };
+
+        // Start polling
+        poll();
     }
 };
 

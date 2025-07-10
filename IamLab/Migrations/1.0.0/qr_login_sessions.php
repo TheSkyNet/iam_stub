@@ -55,7 +55,7 @@ class QrLoginSessionsMigration_100 extends Migration
                     [
                         'type' => Column::TYPE_ENUM,
                         'notNull' => true,
-                        'size' => "'pending','authenticated','expired'",
+                        'size' => "'pending','authenticated','expired','pending_mobile_auth','mobile_authenticated'",
                         'default' => 'pending',
                         'after' => 'user_id'
                     ]

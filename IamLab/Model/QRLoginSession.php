@@ -21,7 +21,7 @@ class QRLoginSession extends Model
     public function initialize()
     {
         $this->setSource('qr_login_sessions');
-        
+
         // Set up relationships
         $this->belongsTo('user_id', User::class, 'id');
     }
@@ -44,7 +44,7 @@ class QRLoginSession extends Model
         $session->status = 'pending';
         $session->created_at = date('Y-m-d H:i:s');
         $session->expires_at = date('Y-m-d H:i:s', strtotime("+{$expirationMinutes} minutes"));
-        
+
         return $session;
     }
 
@@ -60,11 +60,11 @@ class QRLoginSession extends Model
     }
 
     /**
-     * Check if session is valid (not expired and pending)
+     * Check if session is valid (not expired and in a pending state)
      */
     public function isValid(): bool
     {
-        return $this->status === 'pending' && 
+        return ($this->status === 'pending' || $this->status === 'pending_mobile_auth') && 
                strtotime($this->expires_at) > time();
     }
 
@@ -80,7 +80,7 @@ class QRLoginSession extends Model
         $this->user_id = $userId;
         $this->status = 'authenticated';
         $this->authenticated_at = date('Y-m-d H:i:s');
-        
+
         return $this->save();
     }
 

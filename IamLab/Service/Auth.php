@@ -497,4 +497,207 @@ class Auth extends aAPI
         }
     }
 
+    /**
+     * Generate QR code for mobile login (reverse flow)
+     * Mobile device generates QR code, desktop scans it to authenticate mobile
+     */
+    public function generateMobileQRCodeAction(): void
+    {
+        try {
+            $authService = new AuthService();
+
+            // Check if user is authenticated on mobile
+            if (!$authService->isAuthenticated()) {
+                $this->dispatch(['success' => false, 'message' => 'Authentication required']);
+                return;
+            }
+
+            // Clean up expired sessions first
+            QRLoginSession::cleanupExpired();
+
+            // Create new QR login session for mobile authentication
+            $session = QRLoginSession::createSession(5); // 5 minutes expiration
+
+            // Set the user ID immediately since mobile user is already authenticated
+            $user = $authService->getUser();
+            if (!$user) {
+                $this->dispatch(['success' => false, 'message' => 'User not found']);
+                return;
+            }
+
+            $session->user_id = $user->getId();
+            $session->status = 'pending_mobile_auth'; // Different status for reverse flow
+
+            if (!$session->save()) {
+                $this->dispatch(['success' => false, 'message' => 'Failed to create mobile QR login session']);
+                return;
+            }
+
+            // Generate QR code data for mobile authentication
+            $qrData = json_encode([
+                'type' => 'mobile_qr_login',
+                'session_token' => $session->getSessionToken(),
+                'user_id' => $user->getId(),
+                'base_url' => $this->request->getScheme() . '://' . $this->request->getHttpHost(),
+                'expires_at' => $session->expires_at
+            ]);
+
+            // Generate QR code image
+            $result = Builder::create()
+                ->writer(new PngWriter())
+                ->data($qrData)
+                ->encoding(new Encoding('UTF-8'))
+                ->errorCorrectionLevel(new ErrorCorrectionLevelLow())
+                ->size(300)
+                ->margin(10)
+                ->roundBlockSizeMode(new RoundBlockSizeModeMargin())
+                ->build();
+
+            // Convert to base64 for easy frontend consumption
+            $qrCodeBase64 = base64_encode($result->getString());
+
+            $this->dispatch([
+                'success' => true,
+                'data' => [
+                    'session_token' => $session->getSessionToken(),
+                    'qr_code' => 'data:image/png;base64,' . $qrCodeBase64,
+                    'expires_at' => $session->expires_at,
+                    'expires_in' => 300, // 5 minutes in seconds
+                    'user_name' => $user->getName()
+                ]
+            ]);
+
+        } catch (Exception $e) {
+            $this->dispatch(['success' => false, 'message' => 'An error occurred while generating mobile QR code', 'debug' => $e->getMessage()]);
+        }
+    }
+
+    /**
+     * Authenticate mobile QR code session (called from desktop)
+     * Desktop scans mobile QR code and authenticates the mobile session
+     */
+    public function authenticateMobileQRAction(): void
+    {
+        try {
+            $authService = new AuthService();
+
+            // Check if user is authenticated on desktop
+            if (!$authService->isAuthenticated()) {
+                $this->dispatch(['success' => false, 'message' => 'Desktop authentication required']);
+                return;
+            }
+
+            $sessionToken = $this->getParam('session_token');
+
+            if (empty($sessionToken)) {
+                $this->dispatch(['success' => false, 'message' => 'Session token is required']);
+                return;
+            }
+
+            $session = QRLoginSession::findByToken($sessionToken);
+
+            if (!$session) {
+                $this->dispatch(['success' => false, 'message' => 'Invalid session token']);
+                return;
+            }
+
+            if (!$session->isValid() && $session->getStatus() !== 'pending_mobile_auth') {
+                $this->dispatch(['success' => false, 'message' => 'Session expired or already used']);
+                return;
+            }
+
+            $desktopUser = $authService->getUser();
+            $mobileUser = User::findFirstById($session->getUserId());
+
+            if (!$desktopUser || !$mobileUser) {
+                $this->dispatch(['success' => false, 'message' => 'User not found']);
+                return;
+            }
+
+            // Verify that the same user is trying to authenticate
+            if ($desktopUser->getId() !== $mobileUser->getId()) {
+                $this->dispatch(['success' => false, 'message' => 'User mismatch - you can only authenticate your own mobile sessions']);
+                return;
+            }
+
+            // Authenticate the mobile session
+            $session->status = 'mobile_authenticated';
+            $session->authenticated_at = date('Y-m-d H:i:s');
+
+            if ($session->save()) {
+                $this->dispatch([
+                    'success' => true,
+                    'message' => 'Mobile session authenticated successfully'
+                ]);
+            } else {
+                $this->dispatch(['success' => false, 'message' => 'Failed to authenticate mobile session']);
+            }
+
+        } catch (Exception $e) {
+            $this->dispatch(['success' => false, 'message' => 'An error occurred while authenticating mobile QR code', 'debug' => $e->getMessage()]);
+        }
+    }
+
+    /**
+     * Check mobile QR code authentication status (called from mobile)
+     * Mobile device polls this to check if desktop has authenticated the session
+     */
+    public function checkMobileQRStatusAction(): void
+    {
+        try {
+            $sessionToken = $this->getParam('session_token');
+
+            if (empty($sessionToken)) {
+                $this->dispatch(['success' => false, 'message' => 'Session token is required']);
+                return;
+            }
+
+            $session = QRLoginSession::findByToken($sessionToken);
+
+            if (!$session) {
+                $this->dispatch(['success' => false, 'message' => 'Invalid session token']);
+                return;
+            }
+
+            // Check if session is expired
+            if (!$session->isValid() && $session->getStatus() !== 'mobile_authenticated') {
+                $session->expire();
+                $this->dispatch(['success' => false, 'message' => 'Session expired', 'status' => 'expired']);
+                return;
+            }
+
+            if ($session->getStatus() === 'mobile_authenticated') {
+                // Mobile session has been authenticated by desktop
+                $user = User::findFirstById($session->getUserId());
+                if (!$user) {
+                    $this->dispatch(['success' => false, 'message' => 'User not found']);
+                    return;
+                }
+
+                $authService = new AuthService();
+                $authData = $authService->generateAuthData($user);
+
+                // Clean up the session
+                $session->delete();
+
+                $this->dispatch([
+                    'success' => true, 
+                    'message' => 'Mobile authentication successful',
+                    'status' => 'authenticated',
+                    'data' => $authData
+                ]);
+                return;
+            }
+
+            $this->dispatch([
+                'success' => true,
+                'status' => 'pending',
+                'message' => 'Waiting for desktop authentication'
+            ]);
+
+        } catch (Exception $e) {
+            $this->dispatch(['success' => false, 'message' => 'An error occurred while checking mobile QR status', 'debug' => $e->getMessage()]);
+        }
+    }
+
 }

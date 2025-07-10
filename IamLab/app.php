@@ -71,6 +71,11 @@ $app->post('/auth/update-profile', [(new Auth()), "updateProfileAction"]);
 $app->post('/auth/generate-qr-code', [(new Auth()), "generateQRCodeAction"]);
 $app->post('/auth/check-qr-status', [(new Auth()), "checkQRStatusAction"]);
 $app->post('/auth/authenticate-qr', [(new Auth()), "authenticateQRAction"]);
+
+// Reverse QR Code login endpoints (mobile generates QR, desktop scans)
+$app->post('/auth/generate-mobile-qr-code', [(new Auth()), "generateMobileQRCodeAction"]);
+$app->post('/auth/check-mobile-qr-status', [(new Auth()), "checkMobileQRStatusAction"]);
+$app->post('/auth/authenticate-mobile-qr', [(new Auth()), "authenticateMobileQRAction"]);
 /**
  * Not found handler
  */
