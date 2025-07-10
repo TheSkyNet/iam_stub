@@ -52,11 +52,11 @@ This document outlines common features that can be added to stub projects to mak
   - Backup codes
   - QR code generation
 
-- [ ] **OAuth Integration**
-  - Google OAuth
-  - GitHub OAuth
-  - Facebook OAuth
-  - Generic OAuth2 provider
+- [x] **OAuth Integration**
+  - [x] Google OAuth
+  - [x] GitHub OAuth
+  - [x] Facebook OAuth
+  - [x] Generic OAuth2 provider
 
 - [x] **API Authentication**
   - [x] JWT tokens

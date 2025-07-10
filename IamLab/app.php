@@ -7,6 +7,7 @@
 
 use IamLab\Service\Auth;
 use IamLab\Service\Filepond\FilepondApi;
+use IamLab\Service\OAuth;
 use IamLab\Service\PusherApi;
 use IamLab\Service\SettingsService;
 use Phalcon\Mvc\Micro;
@@ -44,6 +45,14 @@ $app->post('/api/pusher/trigger', [(new PusherApi()), "triggerAction"]);
 $app->get('/api/pusher/channel-info', [(new PusherApi()), "channelInfoAction"]);
 $app->get('/api/pusher/channels', [(new PusherApi()), "channelsAction"]);
 $app->post('/api/pusher/webhook', [(new PusherApi()), "webhookAction"]);
+
+/*
+ * OAuth API
+ */
+$app->get('/api/oauth/providers', [(new OAuth()), "providersAction"]);
+$app->get('/api/oauth/redirect', [(new OAuth()), "redirectAction"]);
+$app->get('/api/oauth/callback', [(new OAuth()), "callbackAction"]);
+$app->post('/api/oauth/unlink', [(new OAuth()), "unlinkAction"]);
 
 
 $app->get('/auth', function () use ($app) {

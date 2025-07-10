@@ -118,4 +118,44 @@ return new Config([
         'audience' => App\Core\Helpers\env('JWT_AUDIENCE', 'phalcon-stub-users'),
     ],
 
+    'oauth' => [
+        'enabled' => App\Core\Helpers\env('OAUTH_ENABLED', false),
+        'redirect_uri' => App\Core\Helpers\env('OAUTH_REDIRECT_URI', '/auth/oauth/callback'),
+
+        'google' => [
+            'enabled' => App\Core\Helpers\env('OAUTH_GOOGLE_ENABLED', false),
+            'client_id' => App\Core\Helpers\env('OAUTH_GOOGLE_CLIENT_ID', ''),
+            'client_secret' => App\Core\Helpers\env('OAUTH_GOOGLE_CLIENT_SECRET', ''),
+            'redirect_uri' => App\Core\Helpers\env('OAUTH_GOOGLE_REDIRECT_URI', '/auth/oauth/google/callback'),
+            'scopes' => ['openid', 'profile', 'email'],
+        ],
+
+        'github' => [
+            'enabled' => App\Core\Helpers\env('OAUTH_GITHUB_ENABLED', false),
+            'client_id' => App\Core\Helpers\env('OAUTH_GITHUB_CLIENT_ID', ''),
+            'client_secret' => App\Core\Helpers\env('OAUTH_GITHUB_CLIENT_SECRET', ''),
+            'redirect_uri' => App\Core\Helpers\env('OAUTH_GITHUB_REDIRECT_URI', '/auth/oauth/github/callback'),
+            'scopes' => ['user:email'],
+        ],
+
+        'facebook' => [
+            'enabled' => App\Core\Helpers\env('OAUTH_FACEBOOK_ENABLED', false),
+            'client_id' => App\Core\Helpers\env('OAUTH_FACEBOOK_CLIENT_ID', ''),
+            'client_secret' => App\Core\Helpers\env('OAUTH_FACEBOOK_CLIENT_SECRET', ''),
+            'redirect_uri' => App\Core\Helpers\env('OAUTH_FACEBOOK_REDIRECT_URI', '/auth/oauth/facebook/callback'),
+            'scopes' => ['email', 'public_profile'],
+        ],
+
+        'generic' => [
+            'enabled' => App\Core\Helpers\env('OAUTH_GENERIC_ENABLED', false),
+            'client_id' => App\Core\Helpers\env('OAUTH_GENERIC_CLIENT_ID', ''),
+            'client_secret' => App\Core\Helpers\env('OAUTH_GENERIC_CLIENT_SECRET', ''),
+            'redirect_uri' => App\Core\Helpers\env('OAUTH_GENERIC_REDIRECT_URI', '/auth/oauth/generic/callback'),
+            'authorization_url' => App\Core\Helpers\env('OAUTH_GENERIC_AUTHORIZATION_URL', ''),
+            'token_url' => App\Core\Helpers\env('OAUTH_GENERIC_TOKEN_URL', ''),
+            'user_info_url' => App\Core\Helpers\env('OAUTH_GENERIC_USER_INFO_URL', ''),
+            'scopes' => explode(',', App\Core\Helpers\env('OAUTH_GENERIC_SCOPES', 'openid,profile,email')),
+        ],
+    ],
+
 ]);

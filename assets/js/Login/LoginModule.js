@@ -3,6 +3,7 @@
 // Import MessageDisplay and AuthService
 const {MessageDisplay} = require("../components/MessageDisplay");
 const {AuthService} = require("../services/AuthserviceService");
+const {OAuthButtons, OAuthCallback} = require("../components/OAuthButtons");
 
 // Authentication state
 const Auth = {};
@@ -289,7 +290,10 @@ const LoginForm = {
                                         m("span.label-text.text-sm", "Remember me")
                                     ])
                                 ]),
-                                m("button.btn.btn-primary.w-full.mb-4[type=submit]", "Sign In")
+                                m("button.btn.btn-primary.w-full.mb-4[type=submit]", "Sign In"),
+
+                                // OAuth buttons
+                                m(OAuthButtons)
                             ]) : 
 
                             // QR Code login section
@@ -489,5 +493,6 @@ module.exports = {
     ForgotPassword, 
     Auth, 
     Logout,
-    QRLogin
+    QRLogin,
+    OAuthCallback
 };

@@ -44,6 +44,42 @@ class User extends Model
      */
     protected $key;
 
+    /**
+     * @var string
+     * @Column(type="string", length=255, nullable=true)
+     */
+    protected $avatar;
+
+    /**
+     * @var string
+     * @Column(type="string", length=50, nullable=true)
+     */
+    protected $oauth_provider;
+
+    /**
+     * @var string
+     * @Column(type="string", length=255, nullable=true)
+     */
+    protected $oauth_id;
+
+    /**
+     * @var boolean
+     * @Column(type="boolean", nullable=false, default=false)
+     */
+    protected $email_verified;
+
+    /**
+     * @var string
+     * @Column(type="datetime", nullable=true)
+     */
+    protected $created_at;
+
+    /**
+     * @var string
+     * @Column(type="datetime", nullable=true)
+     */
+    protected $updated_at;
+
     public function getKey(): ?string
     {
         return $this->key;
@@ -149,6 +185,144 @@ class User extends Model
     public function getPassword(): string
     {
         return $this->password;
+    }
+
+    /**
+     * Method to set the value of field avatar
+     *
+     * @param string $avatar
+     *
+     * @return $this
+     */
+    public function setAvatar(string $avatar): static
+    {
+        $this->avatar = $avatar;
+        return $this;
+    }
+
+    /**
+     * Returns the value of field avatar
+     *
+     * @return string
+     */
+    public function getAvatar(): ?string
+    {
+        return $this->avatar;
+    }
+
+    /**
+     * Method to set the value of field oauth_provider
+     *
+     * @param string $oauth_provider
+     *
+     * @return $this
+     */
+    public function setOauthProvider(?string $oauth_provider): static
+    {
+        $this->oauth_provider = $oauth_provider;
+        return $this;
+    }
+
+    /**
+     * Returns the value of field oauth_provider
+     *
+     * @return string
+     */
+    public function getOauthProvider(): ?string
+    {
+        return $this->oauth_provider;
+    }
+
+    /**
+     * Method to set the value of field oauth_id
+     *
+     * @param string $oauth_id
+     *
+     * @return $this
+     */
+    public function setOauthId(?string $oauth_id): static
+    {
+        $this->oauth_id = $oauth_id;
+        return $this;
+    }
+
+    /**
+     * Returns the value of field oauth_id
+     *
+     * @return string
+     */
+    public function getOauthId(): ?string
+    {
+        return $this->oauth_id;
+    }
+
+    /**
+     * Method to set the value of field email_verified
+     *
+     * @param bool $email_verified
+     *
+     * @return $this
+     */
+    public function setEmailVerified(bool $email_verified): static
+    {
+        $this->email_verified = $email_verified;
+        return $this;
+    }
+
+    /**
+     * Returns the value of field email_verified
+     *
+     * @return bool
+     */
+    public function getEmailVerified(): bool
+    {
+        return (bool)$this->email_verified;
+    }
+
+    /**
+     * Method to set the value of field created_at
+     *
+     * @param string $created_at
+     *
+     * @return $this
+     */
+    public function setCreatedAt(string $created_at): static
+    {
+        $this->created_at = $created_at;
+        return $this;
+    }
+
+    /**
+     * Returns the value of field created_at
+     *
+     * @return string
+     */
+    public function getCreatedAt(): ?string
+    {
+        return $this->created_at;
+    }
+
+    /**
+     * Method to set the value of field updated_at
+     *
+     * @param string $updated_at
+     *
+     * @return $this
+     */
+    public function setUpdatedAt(string $updated_at): static
+    {
+        $this->updated_at = $updated_at;
+        return $this;
+    }
+
+    /**
+     * Returns the value of field updated_at
+     *
+     * @return string
+     */
+    public function getUpdatedAt(): ?string
+    {
+        return $this->updated_at;
     }
 
     /**
