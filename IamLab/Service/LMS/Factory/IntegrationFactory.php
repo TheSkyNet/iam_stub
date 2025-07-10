@@ -2,12 +2,14 @@
 
 namespace IamLab\Service\LMS\Factory;
 
+use Exception;
 use IamLab\Service\LMS\Integrations\LMSIntegrationInterface;
 use IamLab\Service\LMS\Integrations\GeminiIntegration;
 use IamLab\Service\LMS\Integrations\OllamaIntegration;
 use IamLab\Service\LMS\Integrations\TencentEduIntegration;
 use IamLab\Service\LMS\Exception\IntegrationNotFoundException;
 use IamLab\Service\LMS\Exception\InvalidConfigurationException;
+use InvalidArgumentException;
 
 /**
  * Integration Factory
@@ -42,13 +44,13 @@ class IntegrationFactory
         
         try {
             return new $className($config);
-        } catch (\InvalidArgumentException $e) {
+        } catch (InvalidArgumentException $e) {
             throw new InvalidConfigurationException(
                 "Invalid configuration for integration '{$integration}': " . $e->getMessage(),
                 0,
                 $e
             );
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             throw new InvalidConfigurationException(
                 "Failed to create integration '{$integration}': " . $e->getMessage(),
                 0,
@@ -81,7 +83,7 @@ class IntegrationFactory
     public static function register(string $name, string $className): void
     {
         if (!is_subclass_of($className, LMSIntegrationInterface::class)) {
-            throw new \InvalidArgumentException(
+            throw new InvalidArgumentException(
                 "Class '{$className}' must implement LMSIntegrationInterface"
             );
         }

@@ -1,12 +1,22 @@
 <?php
 
 namespace App\Core\Helpers;
+use IamLab\Core\Console\Table\Table;
+use IamLab\Core\Email\EmailService;
 use IamLab\Core\Env\Env;
+use JetBrains\PhpStorm\NoReturn;
 use Phalcon\Di\FactoryDefault;
 use Exception;
 
 /** @var FactoryDefault $di */
 
+/**
+ * Get a value from the configuration.
+ *
+ * @param string $key The key to retrieve, using dot notation for nested values.
+ * @param mixed|null $default The default value to return if the key is not found.
+ * @return mixed The configuration value.
+ */
 function config($key, $default = null)
 {
 
@@ -21,39 +31,79 @@ function config($key, $default = null)
     return $config;
 }
 
-function di($service)
+/**
+ * Get a service from the dependency injection container.
+ *
+ * @param string $service The name of the service to retrieve.
+ * @return mixed The service instance.
+ */
+function di(string $service): mixed
 {
 
     global $di;
     return $di->get($service);
 }
 
-function env($key, $default = null)
+/**
+ * Get an environment variable.
+ *
+ * @param string $key The environment variable key.
+ * @param mixed|null $default The default value if the environment variable is not set.
+ * @return mixed The value of the environment variable.
+ */
+function env(string $key, mixed $default = null): mixed
 {
     return getenv($key) ?: $default;
 }
 
-function moveTo(string $disk, string $from, string $to)
+/**
+ * Move a file from one location to another on a specified disk.
+ *
+ * @param string $disk The filesystem disk service name from the DI container.
+ * @param string $from The source path.
+ * @param string $to The destination path.
+ * @return bool True on success, false on failure.
+ */
+function moveTo(string $disk, string $from, string $to): bool
 {
     return di($disk)->move($from, $to);
 }
 
-function dd(...$variable)
+/**
+ * Dump the passed variables and end the script.
+ *
+ * @param mixed ...$variable The variables to dump.
+ */
+#[NoReturn] function dd(...$variable): void
 {
     echo '<pre>';
     die(var_dump($variable));
-    echo '</pre>';
 }
 
-function loadEnv($path =''){
-      (new Env($path))->load();
+/**
+ * Load environment variables from a .env file.
+ *
+ * @param string $path The path to the .env file.
+ */
+function loadEnv(string $path =''): void
+{
+    (new Env($path))->load();
 }
 
+/**
+ * Send an email.
+ *
+ * @param string $to The recipient's email address.
+ * @param string $subject The subject of the email.
+ * @param string $body The body of the email.
+ * @param array $options Additional options for the email (e.g., attachments, CC, BCC).
+ * @return bool True if the email was sent successfully, false otherwise.
+ */
 function email(string $to, string $subject, string $body, array $options = []): bool
 {
     try {
         // Get the Email Service from DI container
-        $emailService = new \IamLab\Core\Email\EmailService();
+        $emailService = new EmailService();
 
         // Send the email using the service
         return $emailService->send($to, $subject, $body, $options);
@@ -64,10 +114,16 @@ function email(string $to, string $subject, string $body, array $options = []): 
     }
 }
 
+/**
+ * Render a console table.
+ *
+ * @param array $data The data to display in the table.
+ * @param string|null $title The title of the table.
+ */
 function table(array $data, string $title = null): void
 {
-    $table = new \IamLab\Core\Console\Table\Table();
+    $table = new Table();
     $table->setData($data)
-          ->setTitle($title)
-          ->render();
+        ->setTitle($title)
+        ->render();
 }

@@ -49,7 +49,7 @@ class PusherService extends Injectable
                 $options['port'] = $this->config['port'];
             }
 
-            $this->pusher = new \Pusher\Pusher(
+            $this->pusher = new Pusher(
                 $this->config['key'],
                 $this->config['secret'],
                 $this->config['app_id'],

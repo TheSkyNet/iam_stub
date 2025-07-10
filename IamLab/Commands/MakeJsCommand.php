@@ -2,6 +2,7 @@
 
 namespace IamLab\Commands;
 
+use Exception;
 use IamLab\Core\Command\BaseCommand;
 
 class MakeJsCommand extends BaseCommand
@@ -107,7 +108,7 @@ HELP;
 
             $this->success("Successfully generated components for {$name}");
             return 0;
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->error("Error generating components: " . $e->getMessage());
             return 1;
         }

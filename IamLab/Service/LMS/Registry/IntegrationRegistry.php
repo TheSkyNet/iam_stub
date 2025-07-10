@@ -2,6 +2,7 @@
 
 namespace IamLab\Service\LMS\Registry;
 
+use Exception;
 use IamLab\Service\LMS\Integrations\LMSIntegrationInterface;
 use IamLab\Service\LMS\Factory\IntegrationFactory;
 use IamLab\Service\LMS\Configuration\ConfigurationManager;
@@ -277,7 +278,7 @@ class IntegrationRegistry
                 }
                 
                 $lastError = $result['error'] ?? 'Unknown error';
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 $lastError = $e->getMessage();
                 continue;
             }

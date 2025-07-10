@@ -2,6 +2,8 @@
 
 namespace IamLab\Service\LMS\Exception;
 
+use Throwable;
+
 /**
  * Exception thrown when integration configuration is invalid
  */
@@ -9,7 +11,7 @@ class InvalidConfigurationException extends LMSException
 {
     private array $validationErrors = [];
 
-    public function __construct(string $message = "", int $code = 0, ?\Throwable $previous = null, array $validationErrors = [])
+    public function __construct(string $message = "", int $code = 0, ?Throwable $previous = null, array $validationErrors = [])
     {
         parent::__construct($message, $code, $previous);
         $this->validationErrors = $validationErrors;

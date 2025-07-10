@@ -2,6 +2,7 @@
 
 namespace Tests\Unit\Service\LMS\Factory;
 
+use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 use IamLab\Service\LMS\Factory\IntegrationFactory;
 use IamLab\Service\LMS\Integrations\LMSIntegrationInterface;
@@ -10,6 +11,7 @@ use IamLab\Service\LMS\Integrations\GeminiIntegration;
 use IamLab\Service\LMS\Integrations\TencentEduIntegration;
 use IamLab\Service\LMS\Exception\IntegrationNotFoundException;
 use IamLab\Service\LMS\Exception\InvalidConfigurationException;
+use stdClass;
 
 class IntegrationFactoryTest extends TestCase
 {
@@ -244,9 +246,9 @@ class IntegrationFactoryTest extends TestCase
 
     public function testRegisterInvalidClassThrowsException(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage("Class 'stdClass' must implement LMSIntegrationInterface");
         
-        IntegrationFactory::register('invalid', \stdClass::class);
+        IntegrationFactory::register('invalid', stdClass::class);
     }
 }

@@ -2,6 +2,9 @@
 
 namespace IamLab\Service\LMS\Integrations;
 
+use Exception;
+use InvalidArgumentException;
+
 /**
  * Google Gemini Integration
  * 
@@ -9,19 +12,17 @@ namespace IamLab\Service\LMS\Integrations;
  */
 class GeminiIntegration implements LMSIntegrationInterface
 {
-    private array $config;
     private string $apiKey;
     private string $model;
     private string $baseUrl = 'https://generativelanguage.googleapis.com/v1beta/models/';
 
     public function __construct(array $config)
     {
-        $this->config = $config;
         $this->apiKey = $config['api_key'] ?? '';
         $this->model = $config['model'] ?? 'gemini-pro';
 
         if (empty($this->apiKey)) {
-            throw new \InvalidArgumentException('Gemini API key is required');
+            throw new InvalidArgumentException('Gemini API key is required');
         }
     }
 
@@ -63,7 +64,7 @@ class GeminiIntegration implements LMSIntegrationInterface
                 'response' => $response
             ];
 
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return [
                 'success' => false,
                 'error' => $e->getMessage()
@@ -115,7 +116,7 @@ class GeminiIntegration implements LMSIntegrationInterface
         try {
             $result = $this->generateContent("Hello, this is a health check.", ['max_tokens' => 50]);
             return $result['success'] ?? false;
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return false;
         }
     }
@@ -156,16 +157,16 @@ class GeminiIntegration implements LMSIntegrationInterface
         curl_close($ch);
 
         if ($error) {
-            throw new \Exception("cURL error: " . $error);
+            throw new Exception("cURL error: " . $error);
         }
 
         if ($httpCode !== 200) {
-            throw new \Exception("HTTP error: " . $httpCode . " - " . $response);
+            throw new Exception("HTTP error: " . $httpCode . " - " . $response);
         }
 
         $decoded = json_decode($response, true);
         if (json_last_error() !== JSON_ERROR_NONE) {
-            throw new \Exception("JSON decode error: " . json_last_error_msg());
+            throw new Exception("JSON decode error: " . json_last_error_msg());
         }
 
         return $decoded;

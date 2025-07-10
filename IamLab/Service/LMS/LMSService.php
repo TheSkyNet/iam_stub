@@ -2,14 +2,16 @@
 
 namespace IamLab\Service\LMS;
 
+use Exception;
 use IamLab\Service\LMS\Configuration\ConfigurationManager;
 use IamLab\Service\LMS\Registry\IntegrationRegistry;
 use IamLab\Service\LMS\Exception\IntegrationNotFoundException;
 use IamLab\Service\LMS\Exception\LMSException;
+use Phalcon\Di\Injectable;
 
 // Conditionally use Phalcon Injectable if available
 if (class_exists('Phalcon\Di\Injectable')) {
-    class LMSServiceBase extends \Phalcon\Di\Injectable {}
+    class LMSServiceBase extends Injectable {}
 } else {
     class LMSServiceBase {}
 }
@@ -110,7 +112,7 @@ class LMSService extends LMSServiceBase
             return $result;
         } catch (IntegrationNotFoundException $e) {
             return $this->formatErrorResponse($e, $integration, 'content_generation');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return $this->formatErrorResponse($e, $integration, 'content_generation');
         }
     }
@@ -133,7 +135,7 @@ class LMSService extends LMSServiceBase
             return $result;
         } catch (IntegrationNotFoundException $e) {
             return $this->formatErrorResponse($e, $integration, 'course_creation');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return $this->formatErrorResponse($e, $integration, 'course_creation');
         }
     }
@@ -156,7 +158,7 @@ class LMSService extends LMSServiceBase
             return $result;
         } catch (IntegrationNotFoundException $e) {
             return $this->formatErrorResponse($e, $integration, 'text_analysis');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return $this->formatErrorResponse($e, $integration, 'text_analysis');
         }
     }
@@ -250,7 +252,7 @@ class LMSService extends LMSServiceBase
     /**
      * Format error response consistently
      */
-    private function formatErrorResponse(\Exception $e, string $integration, string $operation): array
+    private function formatErrorResponse(Exception $e, string $integration, string $operation): array
     {
         $response = [
             'success' => false,

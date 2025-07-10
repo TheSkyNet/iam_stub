@@ -2,6 +2,7 @@
 
 namespace IamLab\Commands;
 
+use Exception;
 use IamLab\Core\Command\BaseCommand;
 use IamLab\Core\Pusher\PusherService;
 
@@ -68,7 +69,7 @@ HELP;
         // Initialize Pusher service
         try {
             $pusherService = new PusherService();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->error("Failed to initialize Pusher service: " . $e->getMessage());
             return 1;
         }
@@ -139,7 +140,7 @@ HELP;
                 $this->error("Failed to send test event: " . $pusherService->getLastError());
                 return 1;
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->error("Exception occurred while sending event: " . $e->getMessage());
             $this->debug("Stack trace: " . $e->getTraceAsString());
             return 1;
@@ -165,7 +166,7 @@ HELP;
             } else {
                 $this->verbose("Could not retrieve channel info: " . $pusherService->getLastError());
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->verbose("Channel info test failed: " . $e->getMessage());
         }
     }

@@ -22,7 +22,7 @@ const Profile = {
         // Redirect to login if not authenticated
         if (!AuthService.isLoggedIn()) {
             m.route.set('/login');
-            return;
+
         }
     },
 
@@ -251,7 +251,7 @@ const Profile = {
                                                         AuthService.startMobileQRPolling(
                                                             Profile.quickMobileLogin.sessionToken,
                                                             // onSuccess
-                                                            function(response) {
+                                                            function() {
                                                                 Profile.quickMobileLogin.isPolling = false;
                                                                 Profile.quickMobileLogin.showQR = false;
                                                                 MessageDisplay.setMessage('Mobile login successful! You are now logged in.', 'success');

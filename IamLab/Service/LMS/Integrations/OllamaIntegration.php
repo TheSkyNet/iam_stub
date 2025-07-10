@@ -2,6 +2,8 @@
 
 namespace IamLab\Service\LMS\Integrations;
 
+use Exception;
+
 /**
  * Ollama Integration
  * 
@@ -9,13 +11,11 @@ namespace IamLab\Service\LMS\Integrations;
  */
 class OllamaIntegration implements LMSIntegrationInterface
 {
-    private array $config;
     private string $host;
     private string $model;
 
     public function __construct(array $config)
     {
-        $this->config = $config;
         $this->host = rtrim($config['host'] ?? 'http://ollama:11434', '/');
         $this->model = $config['model'] ?? 'llama2';
     }
@@ -59,7 +59,7 @@ class OllamaIntegration implements LMSIntegrationInterface
                 'response' => $response
             ];
 
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return [
                 'success' => false,
                 'error' => $e->getMessage()
@@ -145,7 +145,7 @@ class OllamaIntegration implements LMSIntegrationInterface
             $result = $this->generateContent("Hello", ['max_tokens' => 10]);
             return $result['success'] ?? false;
 
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return false;
         }
     }
@@ -187,7 +187,7 @@ class OllamaIntegration implements LMSIntegrationInterface
             }
 
             return [];
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return [];
         }
     }
@@ -207,7 +207,7 @@ class OllamaIntegration implements LMSIntegrationInterface
                 'status' => $response['status'] ?? 'unknown',
                 'response' => $response
             ];
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return [
                 'success' => false,
                 'error' => $e->getMessage()
@@ -242,16 +242,16 @@ class OllamaIntegration implements LMSIntegrationInterface
         curl_close($ch);
 
         if ($error) {
-            throw new \Exception("cURL error: " . $error);
+            throw new Exception("cURL error: " . $error);
         }
 
         if ($httpCode !== 200) {
-            throw new \Exception("HTTP error: " . $httpCode . " - " . $response);
+            throw new Exception("HTTP error: " . $httpCode . " - " . $response);
         }
 
         $decoded = json_decode($response, true);
         if (json_last_error() !== JSON_ERROR_NONE) {
-            throw new \Exception("JSON decode error: " . json_last_error_msg());
+            throw new Exception("JSON decode error: " . json_last_error_msg());
         }
 
         return $decoded;

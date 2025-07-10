@@ -13,7 +13,7 @@ const DesktopQRScanner = {
         // Redirect to login if not authenticated
         if (!AuthService.isLoggedIn()) {
             m.route.set('/login');
-            return;
+
         }
     },
 

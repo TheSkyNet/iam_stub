@@ -2,6 +2,9 @@
 
 namespace IamLab\Service\LMS\Integrations;
 
+use Exception;
+use InvalidArgumentException;
+
 /**
  * Tencent Education Cloud Integration
  * 
@@ -10,7 +13,6 @@ namespace IamLab\Service\LMS\Integrations;
  */
 class TencentEduIntegration implements LMSIntegrationInterface
 {
-    private array $config;
     private string $appId;
     private string $secretKey;
     private string $region;
@@ -25,7 +27,7 @@ class TencentEduIntegration implements LMSIntegrationInterface
         $this->baseUrl = "https://lcic.tencentcloudapi.com";
 
         if (empty($this->appId) || empty($this->secretKey)) {
-            throw new \InvalidArgumentException('Tencent Education app_id and secret_key are required');
+            throw new InvalidArgumentException('Tencent Education app_id and secret_key are required');
         }
     }
 
@@ -46,7 +48,7 @@ class TencentEduIntegration implements LMSIntegrationInterface
                 default:
                     return $this->generateGenericContent($prompt, $options);
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return [
                 'success' => false,
                 'error' => $e->getMessage()
@@ -98,7 +100,7 @@ class TencentEduIntegration implements LMSIntegrationInterface
                 'response' => $response
             ];
 
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return [
                 'success' => false,
                 'error' => $e->getMessage()
@@ -132,7 +134,7 @@ class TencentEduIntegration implements LMSIntegrationInterface
 
             return $analysis;
 
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return [
                 'success' => false,
                 'error' => $e->getMessage()
@@ -152,7 +154,7 @@ class TencentEduIntegration implements LMSIntegrationInterface
             $response = $this->makeRequest($action, $params);
             return isset($response['Response']);
 
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return false;
         }
     }
@@ -202,7 +204,7 @@ class TencentEduIntegration implements LMSIntegrationInterface
                 'error' => 'Course not found'
             ];
 
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return [
                 'success' => false,
                 'error' => $e->getMessage()
@@ -229,7 +231,7 @@ class TencentEduIntegration implements LMSIntegrationInterface
                 'response' => $response['Response'] ?? null
             ];
 
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return [
                 'success' => false,
                 'error' => $e->getMessage()
@@ -328,16 +330,16 @@ class TencentEduIntegration implements LMSIntegrationInterface
         curl_close($ch);
 
         if ($error) {
-            throw new \Exception("cURL error: " . $error);
+            throw new Exception("cURL error: " . $error);
         }
 
         if ($httpCode !== 200) {
-            throw new \Exception("HTTP error: " . $httpCode . " - " . $response);
+            throw new Exception("HTTP error: " . $httpCode . " - " . $response);
         }
 
         $decoded = json_decode($response, true);
         if (json_last_error() !== JSON_ERROR_NONE) {
-            throw new \Exception("JSON decode error: " . json_last_error_msg());
+            throw new Exception("JSON decode error: " . json_last_error_msg());
         }
 
         return $decoded;

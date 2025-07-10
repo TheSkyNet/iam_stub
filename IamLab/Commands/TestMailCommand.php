@@ -2,6 +2,7 @@
 
 namespace IamLab\Commands;
 
+use Exception;
 use IamLab\Core\Command\BaseCommand;
 use function App\Core\Helpers\email;
 
@@ -111,7 +112,7 @@ HELP;
                 $this->error("Failed to send test email");
                 return 1;
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->error("Exception occurred while sending email: " . $e->getMessage());
             $this->debug("Stack trace: " . $e->getTraceAsString());
             return 1;
@@ -129,7 +130,7 @@ HELP;
         
         return <<<HTML
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <title>Test Email</title>
     <style>

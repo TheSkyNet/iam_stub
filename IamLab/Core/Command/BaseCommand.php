@@ -2,6 +2,7 @@
 
 namespace IamLab\Core\Command;
 
+use Exception;
 use Phalcon\Di\Injectable;
 
 abstract class BaseCommand extends Injectable implements CommandInterface
@@ -27,7 +28,7 @@ abstract class BaseCommand extends Injectable implements CommandInterface
 
         try {
             return $this->handle();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->error("Command failed: " . $e->getMessage());
             if ($this->debug) {
                 $this->error("Stack trace:");
