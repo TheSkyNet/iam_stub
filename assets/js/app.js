@@ -20,7 +20,7 @@ function authGuard(component) {
             }
             // Call component's oninit if it exists
             if (component.oninit) {
-                component.oninit.call(this, vnode);
+                component.oninit.call(component, vnode);
             }
         },
         view: function(vnode) {
