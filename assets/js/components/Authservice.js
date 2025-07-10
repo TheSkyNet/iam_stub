@@ -1,19 +1,18 @@
-const Authservice = {
+const AuthService = {
     data: {
         items: [],
         loading: false,
         error: null
     },
-
-    oninit: function(vnode) {
-        this.loadAuthservices();
+    oninit: function() {
+        this.loadAuthServices();
     },
 
-    loadAuthservices: function() {
+    loadAuthServices: function() {
         this.data.loading = true;
         this.data.error = null;
 
-        AuthserviceService.getAll()
+        AuthService.getAll()
             .then(response => {
                 this.data.items = response.data || [];
                 this.data.loading = false;
@@ -26,9 +25,9 @@ const Authservice = {
             });
     },
 
-    view: function(vnode) {
+    view: function() {
         return m(".container.mx-auto.p-6", [
-            m("h1.text-3xl.font-bold.text-base-content.mb-6", "Authservice Management"),
+            m("h1.text-3xl.font-bold.text-base-content.mb-6", "AuthService Management"),
 
             // Error display
             this.data.error ? m(".alert.alert-error.mb-4", [
@@ -44,10 +43,10 @@ const Authservice = {
             !this.data.loading ? m(".card.bg-base-100.shadow-xl", [
                 m(".card-body", [
                     m(".flex.justify-between.items-center.mb-4", [
-                        m("h2.card-title", "Authservices"),
+                        m("h2.card-title", "AuthServices"),
                         m("button.btn.btn-primary", {
-                            onclick: () => this.createAuthservice()
-                        }, "Add Authservice")
+                            onclick: () => this.createAuthService()
+                        }, "Add AuthService")
                     ]),
 
                     // Items list
@@ -70,10 +69,10 @@ const Authservice = {
                                             m("td", item.created_at ? new Date(item.created_at).toLocaleDateString() : 'N/A'),
                                             m("td", [
                                                 m("button.btn.btn-sm.btn-outline.mr-2", {
-                                                    onclick: () => this.editAuthservice(item)
+                                                    onclick: () => this.editAuthService(item)
                                                 }, "Edit"),
                                                 m("button.btn.btn-sm.btn-error", {
-                                                    onclick: () => this.deleteAuthservice(item)
+                                                    onclick: () => this.deleteAuthService(item)
                                                 }, "Delete")
                                             ])
                                         ])
@@ -84,29 +83,29 @@ const Authservice = {
                         m(".text-center.py-8", [
                             m("p.text-base-content.opacity-70", "No authservices found"),
                             m("button.btn.btn-primary.mt-4", {
-                                onclick: () => this.createAuthservice()
-                            }, "Create First Authservice")
+                                onclick: () => this.createAuthService()
+                            }, "Create First AuthService")
                         ])
                 ])
             ]) : null
         ]);
     },
 
-    createAuthservice: function() {
+    createAuthService: function() {
         // TODO: Implement create functionality
-        console.log('Create Authservice');
+        console.log('Create AuthService');
     },
 
-    editAuthservice: function(item) {
+    editAuthService: function(item) {
         // TODO: Implement edit functionality
-        console.log('Edit Authservice', item);
+        console.log('Edit AuthService', item);
     },
 
-    deleteAuthservice: function(item) {
+    deleteAuthService: function(item) {
         if (confirm(`Are you sure you want to delete this authservice?`)) {
-            AuthserviceService.delete(item.id)
+            AuthService.delete(item.id)
                 .then(() => {
-                    this.loadAuthservices();
+                    this.loadAuthServices();
                 })
                 .catch(error => {
                     this.data.error = error.message || 'Failed to delete authservice';
@@ -116,4 +115,4 @@ const Authservice = {
     }
 };
 
-export {Authservice};
+export {AuthService};

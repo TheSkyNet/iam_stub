@@ -5,9 +5,9 @@ namespace IamLab\Core\API;
 class Rest
 {
 
-    protected $ammends = [];
+    protected array $ammends = [];
 
-    protected $comands = [];
+    protected array $comands = [];
 
 
 

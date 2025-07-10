@@ -54,11 +54,6 @@ $app->get('/api/oauth/redirect', [(new OAuth()), "redirectAction"]);
 $app->get('/api/oauth/callback', [(new OAuth()), "callbackAction"]);
 $app->post('/api/oauth/unlink', [(new OAuth()), "unlinkAction"]);
 
-
-$app->get('/auth', function () use ($app) {
-    echo $app['view']->render('auth');
-});
-
 // Authentication API endpoints
 $app->post('/auth/logout', [(new Auth()), "logoutAction"]);
 $app->post('/auth/login', [(new Auth()), "loginAction"]);
@@ -89,6 +84,19 @@ $app->post('/auth/authenticate-mobile-qr', [(new Auth()), "authenticateMobileQRA
  * Not found handler
  */
 $app->notFound(function () use ($app) {
-    $app->response->setStatusCode(404, "Not Found")->sendHeaders();
-    echo $app['view']->render('404');
+    /**
+     * Check if the request is AJAX or accepts a JSON response.
+     */
+    if ($app->request->isAjax() || str_contains($app->request->getHeader('Accept'), 'application/json')) {
+        $app->response->setStatusCode(404, 'Not Found');
+        $app->response->setContentType('application/json', 'UTF-8');
+        $app->response->setJsonContent([
+            'status' => 'error',
+            'message' => 'The requested resource was not found.'
+        ]);
+        $app->response->send();
+    } else {
+        $app->response->setStatusCode(404, "Not Found")->sendHeaders();
+        echo $app['view']->render('404');
+    }
 });

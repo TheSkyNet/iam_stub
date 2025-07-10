@@ -9,11 +9,11 @@ use function App\Core\Helpers\merge_objects;
 
 abstract class Entity extends Model implements JsonSerializable
 {
-    protected $casts = [];
-    protected $amends = [];
+    protected array $casts = [];
+    protected array $amends = [];
 
 
-    protected function cast()
+    protected function cast(): object
     {
         $ca = [];
         foreach ($this->casts as $key => $value) {
@@ -32,7 +32,7 @@ abstract class Entity extends Model implements JsonSerializable
         return (object)$ca;
     }
 
-    protected function amend()
+    protected function amend(): object
     {
         $ca = [];
         foreach ($this->amends as $key => $value) {
