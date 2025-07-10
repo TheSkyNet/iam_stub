@@ -418,6 +418,10 @@ const RegisterForm = {
                                     })
                                 ]),
                                 m("button.btn.btn-primary.w-full.mb-4[type=submit]", "Create Account"),
+
+                                // OAuth buttons
+                                m(OAuthButtons),
+
                                 m(".text-center.space-y-2", [
                                     m(m.route.Link, {
                                         class: "link link-primary text-sm",

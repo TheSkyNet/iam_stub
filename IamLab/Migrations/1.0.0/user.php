@@ -63,7 +63,7 @@ class UserMigration_100 extends Migration
                     'password',
                     [
                         'type' => Column::TYPE_VARCHAR,
-                        'notNull' => true,
+                        'notNull' => false,
                         'size' => 255,
                         'after' => 'email'
                     ]

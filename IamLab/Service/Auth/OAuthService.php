@@ -66,6 +66,7 @@ abstract class OAuthService extends aAPI
             $user->email = $oauthUser['email'];
             $user->name = $oauthUser['name'] ?? '';
             $user->avatar = $oauthUser['avatar'] ?? '';
+            $user->password = null; // OAuth users don't have passwords
             $user->oauth_provider = $this->provider;
             $user->oauth_id = $oauthUser['id'];
             $user->email_verified = true; // OAuth providers typically verify emails
