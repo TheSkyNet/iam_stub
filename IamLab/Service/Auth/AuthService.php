@@ -9,96 +9,52 @@
 
 namespace IamLab\Service\Auth;
 
+use Exception;
 use IamLab\Core\API\aAPI;
 use IamLab\Model\User;
-use IamLab\Service\Auth\JwtService;
-use Phalcon\Mvc\User\Component;
-use Exception;
-use function App\Core\Helpers\dd;
 
+/**
+ * Class AuthService
+ * Handles user authentication, registration, and session management.
+ * Integrates JWT for stateless API authentication and falls back to session-based auth.
+ *
+ * @package IamLab\Service\Auth
+ */
 class AuthService extends aAPI
 {
-    public $isAuthenticated;
-    public $state;
-    private ?JwtService $jwtService = null;
-
-    public function __construct()
-    {
-        // No need to call parent constructor as aAPI doesn't have one
-    }
+    /**
+     * @var bool Tracks the current authentication status.
+     */
+    public bool $isAuthenticated;
 
     /**
-     * Get or create JwtService instance
+     * @var mixed Stores the state or identity of the authenticated user.
      */
-    private function getJwtService(): JwtService
-    {
-        if ($this->jwtService === null) {
-            $this->jwtService = new JwtService();
-        }
-        return $this->jwtService;
-    }
+    public mixed $state;
 
-    public function isAuthenticated()
+    /**
+     * @var JwtService|null Holds the instance of the JWT service.
+     */
+    private ?JwtService $jwtService = null;
+
+    /**
+     * Checks if a user is currently authenticated.
+     *
+     * @return bool True if authenticated, false otherwise.
+     */
+    public function isAuthenticated(): bool
     {
         return (bool)$this->getIdentity();
     }
 
     /**
-     * @return mixed
+     * Retrieves the identity of the current user.
+     * It first attempts to validate a JWT from the Authorization header,
+     * then falls back to checking the session for backward compatibility.
+     *
+     * @return array|null The user's identity data or null if not authenticated.
      */
-    public function getUser()
-    {
-        $identity = $this->getIdentity();
-        if (!$identity) {
-            return null;
-        }
-        return User::findFirstById($identity['user_id']);
-    }
-
-    public function authenticate(User $user, $authMethod = "post")
-    {
-        if ($authMethod == "post") {
-            return $this->authenticatePost($user);
-        }
-
-        return false;
-    }
-
-    private function authenticatePost(User $user)
-    {
-        $password = $user->getPassword();
-        $user = User::findFirst("email='{$user->getEmail()}'");
-
-        if (!$user) {
-            return false;
-        }
-
-        if (password_verify($password, $user->getPassword())) {
-            // Generate JWT tokens
-            $accessToken = $this->getJwtService()->generateAccessToken($user);
-            $refreshToken = $this->getJwtService()->generateRefreshToken($user);
-
-            // Set identity for session compatibility (optional)
-            $this->setIdentity($user);
-
-            return [
-                'user' => $user,
-                'access_token' => $accessToken,
-                'refresh_token' => $refreshToken,
-                'expires_in' => 3600, // 1 hour
-                'token_type' => 'Bearer'
-            ];
-        }
-        return false;
-    }
-
-    private function setIdentity($user)
-    {
-
-        $this->session->set('auth-identity', ['id' => $user->id, 'name' => $user->name, 'email' => $user->email,]);
-    }
-
-    public function getIdentity()
+    public function getIdentity(): ?array
     {
         // First try to get identity from JWT token
         $token = $this->getJwtService()->extractTokenFromHeader();
@@ -117,13 +73,99 @@ class AuthService extends aAPI
         return $this->session->get('auth-identity');
     }
 
+    /**
+     * Lazily initializes and returns an instance of the JwtService.
+     *
+     * @return JwtService The JWT service instance.
+     */
+    private function getJwtService(): JwtService
+    {
+        if ($this->jwtService === null) {
+            $this->jwtService = new JwtService();
+        }
+        return $this->jwtService;
+    }
 
     /**
-     * @param User $user
+     * Retrieves the full User model for the currently authenticated user.
      *
-     * @return array|false Returns authentication data array on success, false on failure
+     * @return User|null The User object or null if not found or not authenticated.
      */
-    public function register(User $user)
+    public function getUser(): ?User
+    {
+        $identity = $this->getIdentity();
+        if (!$identity) {
+            return null;
+        }
+        return User::findFirstById($identity['user_id']);
+    }
+
+    /**
+     * Authenticates a user based on the provided method.
+     *
+     * @param User $user The user object with credentials.
+     * @param string $authMethod The authentication strategy to use (e.g., "post").
+     * @return array|false Auth data on success, false on failure.
+     */
+    public function authenticate(User $user, string $authMethod = "post"): bool|array
+    {
+        if ($authMethod == "post") {
+            return $this->authenticatePost($user);
+        }
+
+        return false;
+    }
+
+    /**
+     * Handles standard email/password authentication.
+     * Verifies credentials and generates JWT tokens upon success.
+     *
+     * @param User $user The user attempting to log in.
+     * @return array|false An array with tokens and user data on success, false otherwise.
+     */
+    private function authenticatePost(User $user): bool|array
+    {
+        $password = $user->getPassword();
+        $user = User::findFirst("email='{$user->getEmail()}'");
+
+        if (!$user) {
+            return false;
+        }
+
+        if (password_verify($password, $user->getPassword())) {
+            // Generate JWT tokens
+            $accessToken = $this->getJwtService()->generateAccessToken($user);
+            $refreshToken = $this->getJwtService()->generateRefreshToken($user);
+
+            // Set identity for session compatibility (optional)
+            $this->setIdentity($user);
+
+            return ['user' => $user, 'access_token' => $accessToken, 'refresh_token' => $refreshToken, 'expires_in' => 3600, // 1 hour
+                'token_type' => 'Bearer'];
+        }
+        return false;
+    }
+
+    /**
+     * Stores the user's identity in the session.
+     *
+     * @param User $user The user to identify in the session.
+     */
+    private function setIdentity(User $user): void
+    {
+
+        $this->session->set('auth-identity', ['id' => $user->id, 'name' => $user->name, 'email' => $user->email,]);
+    }
+
+    /**
+     * Registers a new user.
+     * Hashes the password, validates the data, and creates the user record.
+     * On success, it generates and returns authentication tokens.
+     *
+     * @param User $user The new user data.
+     * @return array|false Returns authentication data array on success, false on failure.
+     */
+    public function register(User $user): bool|array
     {
         $user->setPassword(password_hash($user->getPassword(), PASSWORD_DEFAULT));
 
@@ -137,7 +179,7 @@ class AuthService extends aAPI
             return false;
         }
 
-        if ($user->save() == false) {
+        if (!$user->save()) {
             dump($user->getMessages());
             return false;
 
@@ -151,19 +193,15 @@ class AuthService extends aAPI
         $this->setIdentity($user);
 
         // Return the same authentication data structure as login
-        return [
-            'user' => $user,
-            'access_token' => $accessToken,
-            'refresh_token' => $refreshToken,
-            'expires_in' => 3600, // 1 hour
-            'token_type' => 'Bearer'
-        ];
+        return ['user' => $user, 'access_token' => $accessToken, 'refresh_token' => $refreshToken, 'expires_in' => 3600, // 1 hour
+            'token_type' => 'Bearer'];
     }
+
     /**
-     * Deauthenticates the current user by destroying their session and clearing identity
+     * Deauthenticates the current user by destroying their session and clearing identity.
      *
-     * @return bool Returns true if deauthentication was successful
-     * @throws Exception If session destruction fails
+     * @return bool Returns true if deauthentication was successful.
+     * @throws Exception If session destruction fails.
      */
     public function deauthenticate(): bool
     {
@@ -193,7 +231,10 @@ class AuthService extends aAPI
     }
 
     /**
-     * Refresh access token using refresh token
+     * Refreshes an expired access token using a valid refresh token.
+     *
+     * @param string $refreshToken The refresh token.
+     * @return array|null A new set of tokens on success, null on failure.
      */
     public function refreshToken(string $refreshToken): ?array
     {
@@ -201,7 +242,10 @@ class AuthService extends aAPI
     }
 
     /**
-     * Generate API key for user
+     * Generates a new API key for a given user and saves it to the database.
+     *
+     * @param User $user The user for whom to generate the key.
+     * @return string The newly generated API key.
      */
     public function generateApiKey(User $user): string
     {
@@ -215,7 +259,10 @@ class AuthService extends aAPI
     }
 
     /**
-     * Validate API key and return user
+     * Validates an API key and returns the associated user if valid.
+     *
+     * @param string $apiKey The API key to validate.
+     * @return User|null The user associated with the key, or null if invalid.
      */
     public function validateApiKey(string $apiKey): ?User
     {
@@ -223,7 +270,10 @@ class AuthService extends aAPI
     }
 
     /**
-     * Get user from JWT token
+     * Retrieves a user from a JWT token payload.
+     *
+     * @param string $token The JWT access token.
+     * @return User|null The user object or null if the token is invalid.
      */
     public function getUserFromToken(string $token): ?User
     {
@@ -231,10 +281,19 @@ class AuthService extends aAPI
     }
 
     /**
-     * Generate authentication data for a user (for QR login)
+     * Generates a full authentication data payload for a user.
+     * Used for login methods like QR code scanning where credentials aren't posted.
+     *
+     * @param User $user The user to generate auth data for.
+     * @return array The authentication data payload.
      */
-    public function generateAuthData(User $user): array
+    public function generateAuthData(User $user , $options = []): array
     {
+        $defaultOptions =[
+            'expires_in' => 3600, // 1 hour
+            'token_type' => 'Bearer'
+        ];
+        $options = array_merge($defaultOptions, $options);
         // Generate JWT tokens
         $accessToken = $this->getJwtService()->generateAccessToken($user);
         $refreshToken = $this->getJwtService()->generateRefreshToken($user);
@@ -246,9 +305,10 @@ class AuthService extends aAPI
             'user' => $user,
             'access_token' => $accessToken,
             'refresh_token' => $refreshToken,
-            'expires_in' => 3600, // 1 hour
-            'token_type' => 'Bearer'
+            'expires_in' => $options['expires_in'],
+            'token_type' => $options['token_type']
         ];
+
     }
 
 }

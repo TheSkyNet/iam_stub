@@ -133,15 +133,13 @@ $di->set(
         );
 
         // Memcached connection settings
-        $cache = new Memory(
+        return new Memory(
             $frontCache,
             [
                 "host" => "localhost",
                 "port" => "11211",
             ]
         );
-
-        return $cache;
     }
 );
 

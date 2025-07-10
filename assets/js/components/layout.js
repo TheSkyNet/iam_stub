@@ -57,7 +57,6 @@ function layout(view) {
                                             m("li", [
                                                 m("a", {
                                                     onclick: () => {
-                                                        // Navigate to profile page (you can create this route)
                                                         m.route.set('/profile');
                                                     }
                                                 }, [

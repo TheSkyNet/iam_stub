@@ -10,10 +10,10 @@ use stdClass;
  * Cast a value to a specified type.
  *
  * @param mixed $value The value to cast.
- * @param string $cast The target type ('int', 'float', 'bool', 'string').
+ * @param string|null $cast The target type ('int', 'float', 'bool', 'string').
  * @return mixed The casted value, or the original value if the cast type is not supported.
  */
-function cast(mixed $value, string $cast): mixed
+function cast(mixed $value, ?string $cast): mixed
 {
     // cast a value in to a type
     return match ($cast) {

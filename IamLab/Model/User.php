@@ -7,6 +7,7 @@ use Phalcon\Mvc\Model\ResultsetInterface;
 
 /**
  * @method static findFirstByEmail(string $getEmail)
+ * @method static findFirstById(mixed $user_id)
  */
 class User extends Model
 {
