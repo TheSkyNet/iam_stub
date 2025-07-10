@@ -92,10 +92,10 @@ class Auth extends aAPI
                 ->setPassword($password);
 
             $authService = new AuthService();
-            $result = $authService->register($user);
+            $authData = $authService->register($user);
 
-            if ($result) {
-                $this->dispatch(['success' => true, 'message' => 'Registration successful! You are now logged in.', 'data' => $authService->getIdentity()]);
+            if ($authData) {
+                $this->dispatch(['success' => true, 'message' => 'Registration successful! You are now logged in.', 'data' => $authData]);
                 return;
             }
 

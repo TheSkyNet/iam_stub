@@ -121,9 +121,9 @@ class AuthService extends aAPI
     /**
      * @param User $user
      *
-     * @return bool
+     * @return array|false Returns authentication data array on success, false on failure
      */
-    public function register(User $user): bool
+    public function register(User $user)
     {
         $user->setPassword(password_hash($user->getPassword(), PASSWORD_DEFAULT));
 
@@ -143,9 +143,21 @@ class AuthService extends aAPI
 
         }
 
+        // Generate JWT tokens for the newly registered user
+        $accessToken = $this->getJwtService()->generateAccessToken($user);
+        $refreshToken = $this->getJwtService()->generateRefreshToken($user);
+
+        // Set identity for session compatibility
         $this->setIdentity($user);
 
-        return true;
+        // Return the same authentication data structure as login
+        return [
+            'user' => $user,
+            'access_token' => $accessToken,
+            'refresh_token' => $refreshToken,
+            'expires_in' => 3600, // 1 hour
+            'token_type' => 'Bearer'
+        ];
     }
     /**
      * Deauthenticates the current user by destroying their session and clearing identity
