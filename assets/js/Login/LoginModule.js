@@ -13,10 +13,11 @@ const Login = {
     user: {
         email: '',
         password: '',
+        rememberMe: false,
     },
 
     login: function() {
-        return AuthService.login(Login.user.email, Login.user.password)
+        return AuthService.login(Login.user.email, Login.user.password, Login.user.rememberMe)
             .then(function(result) {
                 MessageDisplay.setMessage(result.message, 'success');
                 setTimeout(() => {
@@ -286,7 +287,12 @@ const LoginForm = {
                                 ]),
                                 m(".form-control.w-full.mb-4", [
                                     m(".label.cursor-pointer.justify-start.gap-3", [
-                                        m("input.checkbox.checkbox-primary.checkbox-sm[type=checkbox]"),
+                                        m("input.checkbox.checkbox-primary.checkbox-sm[type=checkbox]", {
+                                            checked: Login.user.rememberMe,
+                                            onchange: (e) => {
+                                                Login.user.rememberMe = e.target.checked;
+                                            }
+                                        }),
                                         m("span.label-text.text-sm", "Remember me")
                                     ])
                                 ]),

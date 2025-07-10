@@ -20,11 +20,11 @@ const AuthService = {
     /**
      * Login with email and password
      */
-    login: function(email, password) {
+    login: function(email, password, rememberMe = false) {
         return m.request({
             method: 'POST',
             url: `${this.baseUrl}/login`,
-            body: { email, password }
+            body: { email, password, remember_me: rememberMe }
         }).then((response) => {
             if (response.success && response.data) {
                 this.setAuthData(response.data);

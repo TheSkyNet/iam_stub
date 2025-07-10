@@ -105,12 +105,13 @@ class AuthService extends aAPI
      *
      * @param User $user The user object with credentials.
      * @param string $authMethod The authentication strategy to use (e.g., "post").
+     * @param bool $rememberMe Whether to extend token expiration for "Remember me" functionality.
      * @return array|false Auth data on success, false on failure.
      */
-    public function authenticate(User $user, string $authMethod = "post"): bool|array
+    public function authenticate(User $user, string $authMethod = "post", bool $rememberMe = false): bool|array
     {
         if ($authMethod == "post") {
-            return $this->authenticatePost($user);
+            return $this->authenticatePost($user, $rememberMe);
         }
 
         return false;
@@ -121,9 +122,10 @@ class AuthService extends aAPI
      * Verifies credentials and generates JWT tokens upon success.
      *
      * @param User $user The user attempting to log in.
+     * @param bool $rememberMe Whether to extend token expiration for "Remember me" functionality.
      * @return array|false An array with tokens and user data on success, false otherwise.
      */
-    private function authenticatePost(User $user): bool|array
+    private function authenticatePost(User $user, bool $rememberMe = false): bool|array
     {
         $password = $user->getPassword();
         $user = User::findFirst("email='{$user->getEmail()}'");
@@ -133,14 +135,17 @@ class AuthService extends aAPI
         }
 
         if (password_verify($password, $user->getPassword())) {
-            // Generate JWT tokens
-            $accessToken = $this->getJwtService()->generateAccessToken($user);
-            $refreshToken = $this->getJwtService()->generateRefreshToken($user);
+            // Generate JWT tokens with extended expiration if "Remember me" is checked
+            $accessToken = $this->getJwtService()->generateAccessToken($user, $rememberMe);
+            $refreshToken = $this->getJwtService()->generateRefreshToken($user, $rememberMe);
 
             // Set identity for session compatibility (optional)
             $this->setIdentity($user);
 
-            return ['user' => $user, 'access_token' => $accessToken, 'refresh_token' => $refreshToken, 'expires_in' => 3600, // 1 hour
+            // Set appropriate expires_in based on remember me option
+            $expiresIn = $rememberMe ? (30 * 24 * 3600) : 3600; // 30 days or 1 hour
+
+            return ['user' => $user, 'access_token' => $accessToken, 'refresh_token' => $refreshToken, 'expires_in' => $expiresIn,
                 'token_type' => 'Bearer'];
         }
         return false;

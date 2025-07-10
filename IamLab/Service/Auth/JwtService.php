@@ -40,13 +40,16 @@ class JwtService extends Injectable
     /**
      * Generate access token for user
      */
-    public function generateAccessToken(User $user): string
+    public function generateAccessToken(User $user, bool $rememberMe = false): string
     {
+        // Use extended expiration if "Remember me" is checked (30 days), otherwise use default
+        $expiry = $rememberMe ? (30 * 24 * 3600) : $this->accessTokenExpiry;
+
         $payload = [
             'iss' => $this->issuer, // Issuer
             'aud' => $this->audience, // Audience
             'iat' => time(), // Issued at
-            'exp' => time() + $this->accessTokenExpiry, // Expiration
+            'exp' => time() + $expiry, // Expiration
             'user_id' => $user->getId(),
             'email' => $user->getEmail(),
             'name' => $user->getName(),
@@ -59,13 +62,16 @@ class JwtService extends Injectable
     /**
      * Generate refresh token for user
      */
-    public function generateRefreshToken(User $user): string
+    public function generateRefreshToken(User $user, bool $rememberMe = false): string
     {
+        // Use extended expiration if "Remember me" is checked (60 days), otherwise use default
+        $expiry = $rememberMe ? (60 * 24 * 3600) : $this->refreshTokenExpiry;
+
         $payload = [
             'iss' => $this->issuer,
             'aud' => $this->audience,
             'iat' => time(),
-            'exp' => time() + $this->refreshTokenExpiry,
+            'exp' => time() + $expiry,
             'user_id' => $user->getId(),
             'type' => 'refresh'
         ];

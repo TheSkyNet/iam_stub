@@ -28,6 +28,7 @@ class Auth extends aAPI
     {
         $email = $this->getParam('email');
         $password = $this->getParam('password');
+        $rememberMe = $this->getParam('remember_me', false);
 
         // Validate input
         if (empty($email) || empty($password)) {
@@ -35,7 +36,7 @@ class Auth extends aAPI
         }
 
         try {
-            $auth = (new AuthService())->authenticate((new User())->setEmail($email)->setPassword($password));
+            $auth = (new AuthService())->authenticate((new User())->setEmail($email)->setPassword($password), "post", $rememberMe);
 
             if ($auth) {
                 $this->dispatch(['success' => true, 'message' => 'Login successful', 'data' => $auth]);
