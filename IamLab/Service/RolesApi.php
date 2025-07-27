@@ -4,56 +4,20 @@ namespace IamLab\Service;
 
 use Exception;
 use IamLab\Core\API\aAPI;
-use IamLab\Model\Roles;
+use IamLab\Model\Role;
 
 class RolesApi extends aAPI
 {
     /**
-     * Get all roless
+     * Get all roles
      * GET /api/roles
      */
     public function indexAction(): void
     {
+        $this->requireAdmin();
+        
         try {
-            $roless = Roles::find();
-
-            $this->dispatch([
-                'success' => true,
-                'data' => $roless->toArray()
-            ]);
-        } catch (Exception $e) {
-            $this->dispatchError([
-                'success' => false,
-                'message' => 'Failed to retrieve roless',
-                'error' => $e->getMessage()
-            ]);
-        }
-    }
-
-    /**
-     * Get roles by ID
-     * GET /api/roles/:id
-     */
-    public function showAction(): void
-    {
-        try {
-            $id = $this->getParam('id');
-            if (!$id) {
-                $this->dispatchError([
-                    'success' => false,
-                    'message' => 'ID parameter is required'
-                ]);
-                return;
-            }
-
-            $roles = Roles::findFirst($id);
-            if (!$roles) {
-                $this->dispatchError([
-                    'success' => false,
-                    'message' => 'Roles not found'
-                ]);
-                return;
-            }
+            $roles = Role::find();
 
             $this->dispatch([
                 'success' => true,
@@ -69,40 +33,13 @@ class RolesApi extends aAPI
     }
 
     /**
-     * Create new roles
-     * POST /api/roles
+     * Get role by ID
+     * GET /api/roles/:id
      */
-    public function createAction(): void
+    public function showAction(): void
     {
-        try {
-            $roles = new Roles();
-
-            // Set properties from request data
-            $name = $this->getParam('name');
-            if ($name) {
-                $roles->setName($name);
-            }
-
-            // Add more property assignments as needed
-            // $roles->setDescription($this->getParam('description'));
-            // $roles->setStatus($this->getParam('status', 'active'));
-
-            $this->save($roles);
-        } catch (Exception $e) {
-            $this->dispatchError([
-                'success' => false,
-                'message' => 'Failed to create roles',
-                'error' => $e->getMessage()
-            ]);
-        }
-    }
-
-    /**
-     * Update roles
-     * PUT /api/roles/:id
-     */
-    public function updateAction(): void
-    {
+        $this->requireAdmin();
+        
         try {
             $id = $this->getParam('id');
             if (!$id) {
@@ -113,11 +50,87 @@ class RolesApi extends aAPI
                 return;
             }
 
-            $roles = Roles::findFirst($id);
-            if (!$roles) {
+            $role = Role::findFirst($id);
+            if (!$role) {
                 $this->dispatchError([
                     'success' => false,
-                    'message' => 'Roles not found'
+                    'message' => 'Role not found'
+                ]);
+                return;
+            }
+
+            $this->dispatch([
+                'success' => true,
+                'data' => $role->toArray()
+            ]);
+        } catch (Exception $e) {
+            $this->dispatchError([
+                'success' => false,
+                'message' => 'Failed to retrieve role',
+                'error' => $e->getMessage()
+            ]);
+        }
+    }
+
+    /**
+     * Create new role
+     * POST /api/roles
+     */
+    public function createAction(): void
+    {
+        $this->requireAdmin();
+        
+        try {
+            $role = new Role();
+
+            // Set properties from request data
+            $name = $this->getParam('name');
+            if ($name) {
+                $role->setName($name);
+            }
+
+            $description = $this->getParam('description');
+            if ($description) {
+                $role->setDescription($description);
+            }
+
+            // Set timestamps
+            $role->setCreatedAt(date('Y-m-d H:i:s'));
+            $role->setUpdatedAt(date('Y-m-d H:i:s'));
+
+            $this->save($role);
+        } catch (Exception $e) {
+            $this->dispatchError([
+                'success' => false,
+                'message' => 'Failed to create role',
+                'error' => $e->getMessage()
+            ]);
+        }
+    }
+
+    /**
+     * Update role
+     * PUT /api/roles/:id
+     */
+    public function updateAction(): void
+    {
+        $this->requireAdmin();
+        
+        try {
+            $id = $this->getParam('id');
+            if (!$id) {
+                $this->dispatchError([
+                    'success' => false,
+                    'message' => 'ID parameter is required'
+                ]);
+                return;
+            }
+
+            $role = Role::findFirst($id);
+            if (!$role) {
+                $this->dispatchError([
+                    'success' => false,
+                    'message' => 'Role not found'
                 ]);
                 return;
             }
@@ -125,30 +138,35 @@ class RolesApi extends aAPI
             // Update properties from request data
             $name = $this->getParam('name');
             if ($name !== null) {
-                $roles->setName($name);
+                $role->setName($name);
             }
 
-            // Add more property updates as needed
-            // if ($this->hasParam('description')) {
-            //     $roles->setDescription($this->getParam('description'));
-            // }
+            $description = $this->getParam('description');
+            if ($description !== null) {
+                $role->setDescription($description);
+            }
 
-            $this->save($roles);
+            // Update timestamp
+            $role->setUpdatedAt(date('Y-m-d H:i:s'));
+
+            $this->save($role);
         } catch (Exception $e) {
             $this->dispatchError([
                 'success' => false,
-                'message' => 'Failed to update roles',
+                'message' => 'Failed to update role',
                 'error' => $e->getMessage()
             ]);
         }
     }
 
     /**
-     * Delete roles
+     * Delete role
      * DELETE /api/roles/:id
      */
     public function deleteAction(): void
     {
+        $this->requireAdmin();
+        
         try {
             $id = $this->getParam('id');
             if (!$id) {
@@ -159,31 +177,33 @@ class RolesApi extends aAPI
                 return;
             }
 
-            $roles = Roles::findFirst($id);
-            if (!$roles) {
+            $role = Role::findFirst($id);
+            if (!$role) {
                 $this->dispatchError([
                     'success' => false,
-                    'message' => 'Roles not found'
+                    'message' => 'Role not found'
                 ]);
                 return;
             }
 
-            $this->delete($roles);
+            $this->delete($role);
         } catch (Exception $e) {
             $this->dispatchError([
                 'success' => false,
-                'message' => 'Failed to delete roles',
+                'message' => 'Failed to delete role',
                 'error' => $e->getMessage()
             ]);
         }
     }
 
     /**
-     * Search roless
+     * Search roles
      * GET /api/roles/search
      */
     public function searchAction(): void
     {
+        $this->requireAdmin();
+        
         try {
             $query = $this->getParam('q', '');
             if (empty($query)) {
@@ -195,14 +215,14 @@ class RolesApi extends aAPI
             }
 
             // Implement search logic based on your model structure
-            $roless = Roles::find([
-                "name LIKE :query:",
+            $roles = Role::find([
+                "name LIKE :query: OR description LIKE :query:",
                 'bind' => ['query' => "%$query%"]
             ]);
 
             $this->dispatch([
                 'success' => true,
-                'data' => $roless->toArray(),
+                'data' => $roles->toArray(),
                 'query' => $query
             ]);
         } catch (Exception $e) {

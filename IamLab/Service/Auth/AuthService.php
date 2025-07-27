@@ -145,8 +145,21 @@ class AuthService extends aAPI
             // Set appropriate expires_in based on remember me option
             $expiresIn = $rememberMe ? (30 * 24 * 3600) : 3600; // 30 days or 1 hour
 
-            return ['user' => $user, 'access_token' => $accessToken, 'refresh_token' => $refreshToken, 'expires_in' => $expiresIn,
-                'token_type' => 'Bearer'];
+            // Create user data with roles
+            $userData = [
+                'id' => $user->getId(),
+                'name' => $user->getName(),
+                'email' => $user->getEmail(),
+                'roles' => $user->getRoles()
+            ];
+
+            return [
+                'user' => $userData, 
+                'access_token' => $accessToken, 
+                'refresh_token' => $refreshToken, 
+                'expires_in' => $expiresIn,
+                'token_type' => 'Bearer'
+            ];
         }
         return false;
     }
@@ -158,8 +171,15 @@ class AuthService extends aAPI
      */
     private function setIdentity(User $user): void
     {
-
-        $this->session->set('auth-identity', ['id' => $user->id, 'name' => $user->name, 'email' => $user->email,]);
+        // Get user roles
+        $roles = $user->getRoles();
+        
+        $this->session->set('auth-identity', [
+            'id' => $user->id, 
+            'name' => $user->name, 
+            'email' => $user->email,
+            'roles' => $roles
+        ]);
     }
 
     /**
@@ -197,9 +217,22 @@ class AuthService extends aAPI
         // Set identity for session compatibility
         $this->setIdentity($user);
 
+        // Create user data with roles
+        $userData = [
+            'id' => $user->getId(),
+            'name' => $user->getName(),
+            'email' => $user->getEmail(),
+            'roles' => $user->getRoles()
+        ];
+
         // Return the same authentication data structure as login
-        return ['user' => $user, 'access_token' => $accessToken, 'refresh_token' => $refreshToken, 'expires_in' => 3600, // 1 hour
-            'token_type' => 'Bearer'];
+        return [
+            'user' => $userData, 
+            'access_token' => $accessToken, 
+            'refresh_token' => $refreshToken, 
+            'expires_in' => 3600, // 1 hour
+            'token_type' => 'Bearer'
+        ];
     }
 
     /**
@@ -306,8 +339,16 @@ class AuthService extends aAPI
         // Set identity for session compatibility
         $this->setIdentity($user);
 
+        // Create user data with roles
+        $userData = [
+            'id' => $user->getId(),
+            'name' => $user->getName(),
+            'email' => $user->getEmail(),
+            'roles' => $user->getRoles()
+        ];
+
         return [
-            'user' => $user,
+            'user' => $userData,
             'access_token' => $accessToken,
             'refresh_token' => $refreshToken,
             'expires_in' => $options['expires_in'],

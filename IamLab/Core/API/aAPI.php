@@ -2,6 +2,7 @@
 
 namespace IamLab\Core\API;
 
+use IamLab\Service\Auth\AuthService;
 use JetBrains\PhpStorm\NoReturn;
 use Phalcon\Di\Injectable;
 use function App\Core\Helpers\cast;
@@ -112,6 +113,134 @@ abstract class aAPI extends Injectable
     protected function hasParam(string $string): bool
     {
         return isset($this->getData()[$string]);
+    }
+
+    /**
+     * Requires user authentication. Dispatches error if not authenticated.
+     *
+     * @return void
+     */
+    protected function requireAuth(): void
+    {
+        $authService = new AuthService();
+        if (!$authService->isAuthenticated()) {
+            $this->dispatch([
+                'success' => false,
+                'message' => 'Authentication required',
+                'error' => 'UNAUTHORIZED'
+            ], 401);
+        }
+    }
+
+    /**
+     * Requires user to have admin role. Also checks authentication.
+     *
+     * @return void
+     */
+    protected function requireAdmin(): void
+    {
+        $this->requireAuth();
+        
+        $authService = new AuthService();
+        $user = $authService->getUser();
+        
+        if (!$user || !$user->hasRole('admin')) {
+            $this->dispatch([
+                'success' => false,
+                'message' => 'Admin access required',
+                'error' => 'FORBIDDEN'
+            ], 403);
+        }
+    }
+
+    /**
+     * Requires user to have specific role(s). Also checks authentication.
+     *
+     * @param string|array $roles Single role name or array of role names
+     * @return void
+     */
+    protected function requireRole($roles): void
+    {
+        $this->requireAuth();
+        
+        $authService = new AuthService();
+        $user = $authService->getUser();
+        
+        if (!$user) {
+            $this->dispatch([
+                'success' => false,
+                'message' => 'Authentication required',
+                'error' => 'UNAUTHORIZED'
+            ], 401);
+        }
+
+        // Ensure roles is an array
+        if (is_string($roles)) {
+            $roles = [$roles];
+        }
+
+        // Check if user has any of the required roles
+        $hasRole = false;
+        foreach ($roles as $role) {
+            if ($user->hasRole($role)) {
+                $hasRole = true;
+                break;
+            }
+        }
+
+        if (!$hasRole) {
+            $rolesList = implode(', ', $roles);
+            $this->dispatch([
+                'success' => false,
+                'message' => "Access denied. Required role(s): {$rolesList}",
+                'error' => 'FORBIDDEN'
+            ], 403);
+        }
+    }
+
+    /**
+     * Requires user to have all specified roles. Also checks authentication.
+     *
+     * @param array $roles Array of role names
+     * @return void
+     */
+    protected function requireAllRoles(array $roles): void
+    {
+        $this->requireAuth();
+        
+        $authService = new AuthService();
+        $user = $authService->getUser();
+        
+        if (!$user) {
+            $this->dispatch([
+                'success' => false,
+                'message' => 'Authentication required',
+                'error' => 'UNAUTHORIZED'
+            ], 401);
+        }
+
+        // Check if user has all required roles
+        foreach ($roles as $role) {
+            if (!$user->hasRole($role)) {
+                $rolesList = implode(', ', $roles);
+                $this->dispatch([
+                    'success' => false,
+                    'message' => "Access denied. Required roles: {$rolesList}",
+                    'error' => 'FORBIDDEN'
+                ], 403);
+            }
+        }
+    }
+
+    /**
+     * Gets the currently authenticated user.
+     *
+     * @return \IamLab\Model\User|null
+     */
+    protected function getCurrentUser()
+    {
+        $authService = new AuthService();
+        return $authService->getUser();
     }
 
 }

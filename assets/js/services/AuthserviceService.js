@@ -246,6 +246,53 @@ const AuthService = {
     },
 
     /**
+     * Check if user has a specific role
+     */
+    hasRole: function(roleName) {
+        if (!this.isLoggedIn() || !this.user || !this.user.roles) {
+            return false;
+        }
+        return this.user.roles.includes(roleName);
+    },
+
+    /**
+     * Check if user has any of the specified roles
+     */
+    hasAnyRole: function(roleNames) {
+        if (!this.isLoggedIn() || !this.user || !this.user.roles) {
+            return false;
+        }
+        return roleNames.some(role => this.user.roles.includes(role));
+    },
+
+    /**
+     * Check if user has all of the specified roles
+     */
+    hasAllRoles: function(roleNames) {
+        if (!this.isLoggedIn() || !this.user || !this.user.roles) {
+            return false;
+        }
+        return roleNames.every(role => this.user.roles.includes(role));
+    },
+
+    /**
+     * Check if user is an admin
+     */
+    isAdmin: function() {
+        return this.hasRole('admin');
+    },
+
+    /**
+     * Get user roles
+     */
+    getUserRoles: function() {
+        if (!this.isLoggedIn() || !this.user || !this.user.roles) {
+            return [];
+        }
+        return this.user.roles;
+    },
+
+    /**
      * Generate QR code for login
      */
     generateQRCode: function() {
