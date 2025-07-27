@@ -4,6 +4,8 @@ import {layout} from "./components/layout";
 import {Welcome} from "./components/Welcome";
 import {PusherTest} from "./components/PusherTest";
 import {Profile} from "./components/Profile";
+import {AdminPage} from "./components/AdminPage";
+import {Roles} from "./components/Roles";
 const {AuthService} = require("./services/AuthserviceService");
 
 const root = document.getElementById('app');
@@ -111,8 +113,8 @@ m.route(root, "/", {
     "/pusher-test": layout(authGuard(PusherTest)),
     "/profile": layout(authGuard(Profile)),
     // Admin-only routes
-    "/admin": layout(adminGuard(Welcome)), // Example admin route
-    "/admin/roles": layout(adminGuard(Welcome)), // Role management (admin only)
+    "/admin": layout(adminGuard(AdminPage)), // Admin dashboard
+    "/admin/roles": layout(adminGuard(Roles)), // Role management (admin only)
     // Role-based routes examples
     "/editor": layout(roleGuard(Welcome, 'editor')), // Editor only
     "/member": layout(roleGuard(Welcome, 'member')), // Member only

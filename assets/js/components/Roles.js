@@ -1,3 +1,5 @@
+import {RolesService} from "../services/RolesService";
+
 const Roles = {
     data: {
         items: [],
@@ -6,10 +8,10 @@ const Roles = {
     },
 
     oninit: function(vnode) {
-        this.loadRoless();
+        this.loadRoles();
     },
 
-    loadRoless: function() {
+    loadRoles: function() {
         this.data.loading = true;
         this.data.error = null;
 
@@ -20,7 +22,7 @@ const Roles = {
                 m.redraw();
             })
             .catch(error => {
-                this.data.error = error.message || 'Failed to load roless';
+                this.data.error = error.message || 'Failed to load roles';
                 this.data.loading = false;
                 m.redraw();
             });
@@ -44,7 +46,7 @@ const Roles = {
             !this.data.loading ? m(".card.bg-base-100.shadow-xl", [
                 m(".card-body", [
                     m(".flex.justify-between.items-center.mb-4", [
-                        m("h2.card-title", "Roless"),
+                        m("h2.card-title", "Roles"),
                         m("button.btn.btn-primary", {
                             onclick: () => this.createRoles()
                         }, "Add Roles")
@@ -82,7 +84,7 @@ const Roles = {
                             ])
                         ]) :
                         m(".text-center.py-8", [
-                            m("p.text-base-content.opacity-70", "No roless found"),
+                            m("p.text-base-content.opacity-70", "No roles found"),
                             m("button.btn.btn-primary.mt-4", {
                                 onclick: () => this.createRoles()
                             }, "Create First Roles")
@@ -106,7 +108,7 @@ const Roles = {
         if (confirm(`Are you sure you want to delete this roles?`)) {
             RolesService.delete(item.id)
                 .then(() => {
-                    this.loadRoless();
+                    this.loadRoles();
                 })
                 .catch(error => {
                     this.data.error = error.message || 'Failed to delete roles';

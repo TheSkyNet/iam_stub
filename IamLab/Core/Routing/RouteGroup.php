@@ -220,15 +220,18 @@ class RouteGroup
     private function wrapHandler($originalHandler): callable
     {
         $app = $this->app;
+        $guards = $this->guards;
+        $middleware = $this->middleware;
+        $routeGroup = $this;
         
-        return function () use ($originalHandler, $app) {
+        return function () use ($originalHandler, $app, $guards, $middleware, $routeGroup) {
             // Apply guards first
-            foreach ($this->guards as $guard) {
-                $this->applyGuard($guard);
+            foreach ($guards as $guard) {
+                $routeGroup->applyGuard($guard);
             }
 
             // Apply middleware
-            foreach ($this->middleware as $middleware) {
+            foreach ($middleware as $middleware) {
                 $middleware();
             }
 

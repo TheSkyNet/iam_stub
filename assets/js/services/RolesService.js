@@ -2,7 +2,7 @@ const RolesService = {
     baseUrl: '/api/roles',
 
     /**
-     * Get all roless
+     * Get all roles
      */
     getAll: function() {
         return m.request({
@@ -54,7 +54,7 @@ const RolesService = {
     },
 
     /**
-     * Search roless
+     * Search roles
      */
     search: function(query) {
         return m.request({

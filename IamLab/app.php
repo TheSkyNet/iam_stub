@@ -98,7 +98,7 @@ RouteGroup::create($app, '/auth')
         $group->post('/generate-qr-code', [(new Auth()), "generateQRCodeAction"]);
         $group->post('/check-qr-status', [(new Auth()), "checkQRStatusAction"]);
         $group->post('/generate-mobile-qr-code', [(new Auth()), "generateMobileQRCodeAction"]);
-        $group->post('/c    heck-mobile-qr-status', [(new Auth()), "checkMobileQRStatusAction"]);
+        $group->post('/check-mobile-qr-status', [(new Auth()), "checkMobileQRStatusAction"]);
     });
 
 // =============================================================================
