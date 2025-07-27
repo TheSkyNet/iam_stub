@@ -5,81 +5,120 @@
  * @var Micro $app
  */
 
+use IamLab\Core\Routing\RouteGroup;
 use IamLab\Service\Auth;
 use IamLab\Service\Filepond\FilepondApi;
 use IamLab\Service\OAuth;
 use IamLab\Service\PusherApi;
+use IamLab\Service\RolesApi;
 use IamLab\Service\SettingsService;
 use Phalcon\Mvc\Micro;
 
 /**
- * Add your routes here
+ * Route Groups - Organized routing with guards
  */
-$app->get('/', function () use ($app) {
-    $settingsService = new SettingsService();
-    $settingsService->initialize();
 
-    echo $app['view']->render('index', ['settings' => $settingsService->getFormatted(),
-    ]);
-});
-$app->get('/admin', function () use ($app) {
-    $settingsService = new SettingsService();
-    $settingsService->initialize();
+// =============================================================================
+// PUBLIC ROUTES (No authentication required)
+// =============================================================================
+RouteGroup::create($app)
+    ->group(function ($group) {
+        // Home page
+        $group->get('/', function ($app) {
+            $settingsService = new SettingsService();
+            $settingsService->initialize();
+            echo $app['view']->render('index', ['settings' => $settingsService->getFormatted()]);
+        });
+    });
 
-    echo $app['view']->render('admin', ['settings' => $settingsService->getFormatted(),
-    ]);
-});
+// =============================================================================
+// PUBLIC API ROUTES (No authentication required)
+// =============================================================================
+RouteGroup::create($app, '/api')
+    ->group(function ($group) {
+        // File upload API
+        $group->post('/v1/file', [(new FilepondApi()), "process"]);
+        $group->patch('/v1/file', [(new FilepondApi()), "patch"]);
+        
+        // OAuth API (public endpoints)
+        $group->get('/oauth/providers', [(new OAuth()), "providersAction"]);
+        $group->get('/oauth/redirect', [(new OAuth()), "redirectAction"]);
+        $group->get('/oauth/callback', [(new OAuth()), "callbackAction"]);
+        
+        // Pusher public endpoints
+        $group->get('/pusher/config', [(new PusherApi()), "configAction"]);
+        $group->post('/pusher/webhook', [(new PusherApi()), "webhookAction"]);
+    });
 
-/*
- * API
- */
-$app->post('/api/v1/file', [(new FilepondApi()), "process"]);
-$app->patch('/api/v1/file', [(new FilepondApi()), "patch"]);
+// =============================================================================
+// AUTHENTICATED API ROUTES (Authentication required)
+// =============================================================================
+RouteGroup::create($app, '/api')
+    ->requireAuth()
+    ->group(function ($group) {
+        // Pusher authenticated endpoints
+        $group->post('/pusher/auth', [(new PusherApi()), "authAction"]);
+        $group->post('/pusher/trigger', [(new PusherApi()), "triggerAction"]);
+        $group->get('/pusher/channel-info', [(new PusherApi()), "channelInfoAction"]);
+        $group->get('/pusher/channels', [(new PusherApi()), "channelsAction"]);
+        
+        // OAuth authenticated endpoints
+        $group->post('/oauth/unlink', [(new OAuth()), "unlinkAction"]);
+    });
 
-/*
- * Pusher API
- */
-$app->get('/api/pusher/config', [(new PusherApi()), "configAction"]);
-$app->post('/api/pusher/auth', [(new PusherApi()), "authAction"]);
-$app->post('/api/pusher/trigger', [(new PusherApi()), "triggerAction"]);
-$app->get('/api/pusher/channel-info', [(new PusherApi()), "channelInfoAction"]);
-$app->get('/api/pusher/channels', [(new PusherApi()), "channelsAction"]);
-$app->post('/api/pusher/webhook', [(new PusherApi()), "webhookAction"]);
+// =============================================================================
+// ADMIN API ROUTES (Admin role required)
+// =============================================================================
+RouteGroup::create($app, '/api')
+    ->requireAdmin()
+    ->group(function ($group) {
+        // Role management API
+        $group->get('/roles', [(new RolesApi()), "indexAction"]);
+        $group->get('/roles/{id}', [(new RolesApi()), "showAction"]);
+        $group->post('/roles', [(new RolesApi()), "createAction"]);
+        $group->put('/roles/{id}', [(new RolesApi()), "updateAction"]);
+        $group->delete('/roles/{id}', [(new RolesApi()), "deleteAction"]);
+        $group->get('/roles/search', [(new RolesApi()), "searchAction"]);
+    });
 
-/*
- * OAuth API
- */
-$app->get('/api/oauth/providers', [(new OAuth()), "providersAction"]);
-$app->get('/api/oauth/redirect', [(new OAuth()), "redirectAction"]);
-$app->get('/api/oauth/callback', [(new OAuth()), "callbackAction"]);
-$app->post('/api/oauth/unlink', [(new OAuth()), "unlinkAction"]);
+// =============================================================================
+// PUBLIC AUTH ROUTES (No authentication required)
+// =============================================================================
+RouteGroup::create($app, '/auth')
+    ->group(function ($group) {
+        // Public authentication endpoints
+        $group->post('/login', [(new Auth()), "loginAction"]);
+        $group->post('/register', [(new Auth()), "registerAction"]);
+        $group->post('/forgot-password', [(new Auth()), "forgotPasswordAction"]);
+        $group->post('/reset-password', [(new Auth()), "resetPasswordAction"]);
+        $group->post('/verify-email', [(new Auth()), "verifyEmailAction"]);
+        $group->post('/refresh-token', [(new Auth()), "refreshTokenAction"]);
+        
+        // QR Code public endpoints
+        $group->post('/generate-qr-code', [(new Auth()), "generateQRCodeAction"]);
+        $group->post('/check-qr-status', [(new Auth()), "checkQRStatusAction"]);
+        $group->post('/generate-mobile-qr-code', [(new Auth()), "generateMobileQRCodeAction"]);
+        $group->post('/c    heck-mobile-qr-status', [(new Auth()), "checkMobileQRStatusAction"]);
+    });
 
-// Authentication API endpoints
-$app->post('/auth/logout', [(new Auth()), "logoutAction"]);
-$app->post('/auth/login', [(new Auth()), "loginAction"]);
-$app->post('/auth/register', [(new Auth()), "registerAction"]);
-$app->post('/auth/forgot-password', [(new Auth()), "forgotPasswordAction"]);
-$app->get('/auth/user', [(new Auth()), "userAction"]);
-$app->post('/auth/change-password', [(new Auth()), "changePasswordAction"]);
-$app->post('/auth/reset-password', [(new Auth()), "resetPasswordAction"]);
-$app->post('/auth/verify-email', [(new Auth()), "verifyEmailAction"]);
-
-
-// JWT-related endpoints
-$app->post('/auth/refresh-token', [(new Auth()), "refreshTokenAction"]);
-$app->post('/auth/generate-api-key', [(new Auth()), "generateApiKeyAction"]);
-$app->get('/auth/profile', [(new Auth()), "profileAction"]);
-$app->post('/auth/update-profile', [(new Auth()), "updateProfileAction"]);
-
-// QR Code login endpoints
-$app->post('/auth/generate-qr-code', [(new Auth()), "generateQRCodeAction"]);
-$app->post('/auth/check-qr-status', [(new Auth()), "checkQRStatusAction"]);
-$app->post('/auth/authenticate-qr', [(new Auth()), "authenticateQRAction"]);
-
-// Reverse QR Code login endpoints (mobile generates QR, desktop scans)
-$app->post('/auth/generate-mobile-qr-code', [(new Auth()), "generateMobileQRCodeAction"]);
-$app->post('/auth/check-mobile-qr-status', [(new Auth()), "checkMobileQRStatusAction"]);
-$app->post('/auth/authenticate-mobile-qr', [(new Auth()), "authenticateMobileQRAction"]);
+// =============================================================================
+// PROTECTED AUTH ROUTES (Authentication required)
+// =============================================================================
+RouteGroup::create($app, '/auth')
+    ->requireAuth()
+    ->group(function ($group) {
+        // Authenticated user endpoints
+        $group->post('/logout', [(new Auth()), "logoutAction"]);
+        $group->get('/user', [(new Auth()), "userAction"]);
+        $group->post('/change-password', [(new Auth()), "changePasswordAction"]);
+        $group->post('/generate-api-key', [(new Auth()), "generateApiKeyAction"]);
+        $group->get('/profile', [(new Auth()), "profileAction"]);
+        $group->post('/update-profile', [(new Auth()), "updateProfileAction"]);
+        
+        // QR Code authenticated endpoints
+        $group->post('/authenticate-qr', [(new Auth()), "authenticateQRAction"]);
+        $group->post('/authenticate-mobile-qr', [(new Auth()), "authenticateMobileQRAction"]);
+    });
 /**
  * Not found handler
  */
