@@ -43,5 +43,10 @@ return [
         'description' => 'Enable or disable Ollama Docker service'
     ],
 
+    'user:add-role' => [
+        'class' => 'IamLab\\Commands\\AddRoleCommand',
+        'description' => 'Add a role to a user account'
+    ],
+
     // Add more commands here as needed
 ];

@@ -4,6 +4,7 @@
 use IamLab\Migrations\Seeders\PackageSeeder;
 use IamLab\Migrations\Seeders\PostSeeder;
 use IamLab\Migrations\Seeders\ProjectSeeder;
+use IamLab\Migrations\Seeders\RolesSeeder;
 use IamLab\Model\User;
 use Phalcon\Di\FactoryDefault;
 use Phalcon\Loader;
@@ -64,6 +65,16 @@ try {
 
     if ($user->save()) {
         echo "Successfully created user: {$email}\n";
+        
+        // Run roles seeder
+        echo "\nStarting to seed roles...\n";
+        $rolesSeeder = new RolesSeeder();
+        $rolesSeeder->run();
+        
+        // Assign admin role to the created user
+        echo "\nAssigning admin role to user...\n";
+        $rolesSeeder->assignAdminRole($email);
+        
     } else {
         echo "Failed to create user: {$email}\n";
         foreach ($user->getMessages() as $message) {

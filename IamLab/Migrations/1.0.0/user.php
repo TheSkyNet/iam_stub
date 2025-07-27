@@ -19,6 +19,7 @@ class UserMigration_100 extends Migration
      */
     public function morph(): void
     {
+        // Create base table structure with minimal columns
         $this->morphTable('user', [
             'columns' => [
                 new Column(
@@ -32,45 +33,8 @@ class UserMigration_100 extends Migration
                         'primary' => true
                     ]
                 ),
-                new Column(
-                    'name',
-                    [
-                        'type' => Column::TYPE_VARCHAR,
-                        'notNull' => true,
-                        'size' => 50,
-                        'after' => 'id'
-                    ]
-                ),
-                new Column(
-                    'email',
-                    [
-                        'type' => Column::TYPE_VARCHAR,
-                        'notNull' => true,
-                        'size' => 50,
-                        'after' => 'name'
-                    ]
-                ),
-                new Column(
-                    'key',
-                    [
-                        'type' => Column::TYPE_VARCHAR,
-                        'notNull' => false,
-                        'size' => 255,
-                        'after' => 'password'
-                    ]
-                ),
-                new Column(
-                    'password',
-                    [
-                        'type' => Column::TYPE_VARCHAR,
-                        'notNull' => false,
-                        'size' => 255,
-                        'after' => 'email'
-                    ]
-                ),
             ],
             'indexes' => [
-                new Index('user_email_uindex', ['email'], ''),
                 new Index('user_id_uindex', ['id'], ''),
                 new Index('user_pkey', ['id'], ''),
             ],
@@ -90,21 +54,180 @@ class UserMigration_100 extends Migration
      */
     public function up(): void
     {
-        $this->getConnection()->insert(
+        // Add name column
+        $this->getConnection()->addColumn(
             'user',
-            [
-                'Admin',
-                \App\Core\Helpers\env('PASSWORD_USERNAME', 'PASSWORD_USERNAME'),
-                password_hash(
-                    \App\Core\Helpers\env('PASSWORD_DEFAULT', 'PASSWORD_DEFAULT'),
-                    PASSWORD_DEFAULT
-                )
-            ],
-            [
+            null,
+            new Column(
                 'name',
+                [
+                    'type' => Column::TYPE_VARCHAR,
+                    'notNull' => true,
+                    'size' => 50,
+                    'after' => 'id'
+                ]
+            )
+        );
+
+        // Add email column
+        $this->getConnection()->addColumn(
+            'user',
+            null,
+            new Column(
                 'email',
+                [
+                    'type' => Column::TYPE_VARCHAR,
+                    'notNull' => true,
+                    'size' => 50,
+                    'after' => 'name'
+                ]
+            )
+        );
+
+        // Add password column
+        $this->getConnection()->addColumn(
+            'user',
+            null,
+            new Column(
                 'password',
-            ]
+                [
+                    'type' => Column::TYPE_VARCHAR,
+                    'notNull' => false,
+                    'size' => 255,
+                    'after' => 'email'
+                ]
+            )
+        );
+
+        // Add key column
+        $this->getConnection()->addColumn(
+            'user',
+            null,
+            new Column(
+                'key',
+                [
+                    'type' => Column::TYPE_VARCHAR,
+                    'notNull' => false,
+                    'size' => 255,
+                    'after' => 'password'
+                ]
+            )
+        );
+
+        // Add avatar column
+        $this->getConnection()->addColumn(
+            'user',
+            null,
+            new Column(
+                'avatar',
+                [
+                    'type' => Column::TYPE_VARCHAR,
+                    'notNull' => false,
+                    'size' => 255,
+                    'after' => 'key'
+                ]
+            )
+        );
+
+        // Add oauth_provider column
+        $this->getConnection()->addColumn(
+            'user',
+            null,
+            new Column(
+                'oauth_provider',
+                [
+                    'type' => Column::TYPE_VARCHAR,
+                    'notNull' => false,
+                    'size' => 50,
+                    'after' => 'avatar'
+                ]
+            )
+        );
+
+        // Add oauth_id column
+        $this->getConnection()->addColumn(
+            'user',
+            null,
+            new Column(
+                'oauth_id',
+                [
+                    'type' => Column::TYPE_VARCHAR,
+                    'notNull' => false,
+                    'size' => 100,
+                    'after' => 'oauth_provider'
+                ]
+            )
+        );
+
+        // Add email_verified column
+        $this->getConnection()->addColumn(
+            'user',
+            null,
+            new Column(
+                'email_verified',
+                [
+                    'type' => Column::TYPE_BOOLEAN,
+                    'notNull' => true,
+                    'default' => 0,
+                    'after' => 'oauth_id'
+                ]
+            )
+        );
+
+        // Add created_at column
+        $this->getConnection()->addColumn(
+            'user',
+            null,
+            new Column(
+                'created_at',
+                [
+                    'type' => Column::TYPE_TIMESTAMP,
+                    'notNull' => true,
+                    'default' => 'CURRENT_TIMESTAMP',
+                    'after' => 'email_verified'
+                ]
+            )
+        );
+
+        // Add updated_at column
+        $this->getConnection()->addColumn(
+            'user',
+            null,
+            new Column(
+                'updated_at',
+                [
+                    'type' => Column::TYPE_TIMESTAMP,
+                    'notNull' => true,
+                    'default' => 'CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP',
+                    'after' => 'created_at'
+                ]
+            )
+        );
+
+        // Add email index
+        $this->getConnection()->addIndex(
+            'user',
+            null,
+            new Index('user_email_uindex', ['email'], '')
+        );
+
+        // Add indexes for OAuth fields
+        $this->getConnection()->addIndex(
+            'user',
+            null,
+            new Index('user_oauth_provider_index', ['oauth_provider'], '')
+        );
+
+        $this->getConnection()->addIndex(
+            'user',
+            null,
+            new Index('user_oauth_id_index', ['oauth_id'], '')
+        );
+
+        $this->getConnection()->addIndex(
+            'user',
+            null,
+            new Index('user_email_verified_index', ['email_verified'], '')
         );
     }
 

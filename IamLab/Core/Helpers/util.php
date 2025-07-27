@@ -76,8 +76,19 @@ function moveTo(string $disk, string $from, string $to): bool
  */
 #[NoReturn] function dd(...$variable): void
 {
-    echo '<pre>';
-    die(var_dump($variable));
+    // if it is cli lets just dump it out
+    if (php_sapi_name() === 'cli') {
+        foreach ($variable as $var){
+            var_dump($var);
+        }
+        die();
+    }
+    echo "<pre>";
+    foreach ($variable as $var){
+        var_dump($var);
+    }
+    echo "</pre>";
+    die();
 }
 
 /**

@@ -8,7 +8,7 @@ use Phalcon\Migrations\Mvc\Model\Migration;
  * Class QrLoginSessionsUpdateMigration_101
  * Updates the qr_login_sessions table to support reverse QR login
  */
-class QrLoginSessionsUpdateMigration_101 extends Migration
+class QrLoginSessionsUpdateMigration_100 extends Migration
 {
     /**
      * Define the table structure updates

@@ -2,6 +2,7 @@
 
 namespace IamLab\Model;
 
+use IamLab\Service\RolesService;
 use Phalcon\Mvc\Model;
 use Phalcon\Mvc\Model\ResultsetInterface;
 
@@ -342,10 +343,66 @@ class User extends Model
      */
     public function initialize()
     {
-
         $this->setSource('user');
+        
+        // Define many-to-many relationship with Role through user_roles
+        $this->hasManyToMany(
+            'id',
+            UserRole::class,
+            'user_id',
+            'role_id',
+            Role::class,
+            'id',
+            ['alias' => 'roles']
+        );
     }
 
+    /**
+     * Check if user has a specific role
+     *
+     * @param string $role
+     * @return bool
+     */
+    public function hasRole(string $role): bool
+    {
+        $rolesService = new RolesService();
+        return $rolesService->hasRole($this, $role);
+    }
+
+    /**
+     * Add a role to the user
+     *
+     * @param string $role
+     * @return bool
+     */
+    public function addRole(string $role): bool
+    {
+        $rolesService = new RolesService();
+        return $rolesService->addRole($this, $role);
+    }
+
+    /**
+     * Remove a role from the user
+     *
+     * @param string $role
+     * @return bool
+     */
+    public function removeRole(string $role): bool
+    {
+        $rolesService = new RolesService();
+        return $rolesService->removeRole($this, $role);
+    }
+
+    /**
+     * Get all roles for this user
+     *
+     * @return array
+     */
+    public function getRoles(): array
+    {
+        $rolesService = new RolesService();
+        return $rolesService->getUserRoles($this);
+    }
 
     /**
      * Allows to query a set of records that match the specified conditions
