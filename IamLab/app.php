@@ -11,6 +11,7 @@ use IamLab\Service\Filepond\FilepondApi;
 use IamLab\Service\OAuth;
 use IamLab\Service\PusherApi;
 use IamLab\Service\RolesApi;
+use IamLab\Service\UsersApi;
 use IamLab\Service\SettingsService;
 use Phalcon\Mvc\Micro;
 
@@ -79,6 +80,14 @@ RouteGroup::create($app, '/api')
         $group->put('/roles/{id}', [(new RolesApi()), "updateAction"]);
         $group->delete('/roles/{id}', [(new RolesApi()), "deleteAction"]);
         $group->get('/roles/search', [(new RolesApi()), "searchAction"]);
+        
+        // User management API
+        $group->get('/users', [(new UsersApi()), "indexAction"]);
+        $group->get('/users/{id}', [(new UsersApi()), "showAction"]);
+        $group->post('/users', [(new UsersApi()), "createAction"]);
+        $group->put('/users/{id}', [(new UsersApi()), "updateAction"]);
+        $group->delete('/users/{id}', [(new UsersApi()), "deleteAction"]);
+        $group->get('/users/search', [(new UsersApi()), "searchAction"]);
     });
 
 // =============================================================================

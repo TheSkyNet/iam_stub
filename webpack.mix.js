@@ -10,10 +10,8 @@ if (process.env.MIX_BROWSER_SYNC) {
 */
 
 
-mix.js('assets/js/app.js', 'public/js')
-    .js('assets/js/admin.js', 'public/js')
-    .sass('assets/scss/main.scss', 'public/css')
-    .sass('assets/scss/admin.scss', 'public/css')
+mix.js('assets/js/app.js', 'public/js') 
+    .sass('assets/scss/main.scss', 'public/css') 
     .options({
         postCss: [
             require('tailwindcss'),

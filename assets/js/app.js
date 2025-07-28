@@ -6,6 +6,9 @@ import {PusherTest} from "./components/PusherTest";
 import {Profile} from "./components/Profile";
 import {AdminPage} from "./components/AdminPage";
 import {Roles} from "./components/Roles";
+import {Users} from "./components/Users";
+import {AddUser} from "./components/AddUser";
+import {EditUser} from "./components/EditUser";
 const {AuthService} = require("./services/AuthserviceService");
 
 const root = document.getElementById('app');
@@ -26,6 +29,7 @@ function authGuard(component) {
             }
         },
         view: function(vnode) {
+
             // Only render if authenticated
             if (!AuthService.isLoggedIn()) {
                 return null; // Don't render anything while redirecting
@@ -40,6 +44,7 @@ function authGuard(component) {
 function adminGuard(component) {
     return {
         oninit: function(vnode) {
+
             // Check if user is authenticated
             if (!AuthService.isLoggedIn()) {
                 // Redirect to login page if not authenticated
@@ -115,6 +120,9 @@ m.route(root, "/", {
     // Admin-only routes
     "/admin": layout(adminGuard(AdminPage)), // Admin dashboard
     "/admin/roles": layout(adminGuard(Roles)), // Role management (admin only)
+    "/admin/users": layout(adminGuard(Users)), // User management (admin only)
+    "/admin/users/add": layout(adminGuard(AddUser)), // Add user (admin only)
+    "/admin/users/edit/:id": layout(adminGuard(EditUser)), // Edit user (admin only)
     // Role-based routes examples
     "/editor": layout(roleGuard(Welcome, 'editor')), // Editor only
     "/member": layout(roleGuard(Welcome, 'member')), // Member only

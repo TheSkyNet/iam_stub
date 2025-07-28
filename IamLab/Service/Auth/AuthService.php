@@ -62,6 +62,23 @@ class AuthService extends aAPI
             try {
                 $payload = $this->getJwtService()->validateToken($token);
                 if ($payload['type'] === 'access') {
+                    // Get the full user object to include roles
+                    $user = User::findFirstById($payload['user_id']);
+                    if ($user) {
+                        // Return identity with roles included
+                        return [
+                            'id' => $user->getId(),
+                            'user_id' => $user->getId(),
+                            'name' => $user->getName(),
+                            'email' => $user->getEmail(),
+                            'roles' => $user->getRoles(),
+                            'iss' => $payload['iss'] ?? null,
+                            'aud' => $payload['aud'] ?? null,
+                            'iat' => $payload['iat'] ?? null,
+                            'exp' => $payload['exp'] ?? null,
+                            'type' => $payload['type'] ?? 'access'
+                        ];
+                    }
                     return $payload;
                 }
             } catch (Exception $e) {
@@ -97,7 +114,14 @@ class AuthService extends aAPI
         if (!$identity) {
             return null;
         }
-        return User::findFirstById($identity['user_id']);
+        
+        // Handle both JWT-based identity (has 'user_id') and session-based identity (has 'id')
+        $userId = $identity['user_id'] ?? $identity['id'] ?? null;
+        if (!$userId) {
+            return null;
+        }
+        
+        return User::findFirstById($userId);
     }
 
     /**

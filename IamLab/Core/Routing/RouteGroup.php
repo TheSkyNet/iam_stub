@@ -235,15 +235,31 @@ class RouteGroup
                 $middleware();
             }
 
+            // Get all arguments passed to this function (including route parameters)
+            $args = func_get_args();
+
+            // If handler is an array with aAPI instance, set route parameters
+            if (is_array($originalHandler) && count($originalHandler) >= 2) {
+                $instance = $originalHandler[0];
+                if ($instance instanceof \IamLab\Core\API\aAPI) {
+                    // For routes like /users/{id}, the first argument is typically the ID
+                    $routeParams = [];
+                    if (count($args) > 0) {
+                        $routeParams['id'] = $args[0];
+                    }
+                    $instance->setRouteParams($routeParams);
+                }
+            }
+
             // Execute original handler
             if (is_array($originalHandler)) {
-                return call_user_func($originalHandler);
+                return call_user_func_array($originalHandler, $args);
             } elseif (is_callable($originalHandler)) {
                 // Pass $app to closure if it's a closure
                 if ($originalHandler instanceof Closure) {
-                    return $originalHandler($app);
+                    return call_user_func_array($originalHandler, array_merge([$app], $args));
                 }
-                return $originalHandler();
+                return call_user_func_array($originalHandler, $args);
             }
         };
     }

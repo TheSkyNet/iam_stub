@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Frontend Role Test</title>
+</head>
+<body>
+    <h1>Frontend Role Test</h1>
+    <div id="results"></div>
+    
+    <script>
+        // Simple test to check localStorage and user data
+        console.log('=== Frontend Role Debug Test ===');
+        
+        // Check localStorage
+        const accessToken = localStorage.getItem('access_token');
+        const userStr = localStorage.getItem('user');
+        
+        console.log('Access token present:', !!accessToken);
+        console.log('User data in localStorage:', userStr);
+        
+        if (userStr) {
+            try {
+                const user = JSON.parse(userStr);
+                console.log('Parsed user object:', user);
+                console.log('User roles:', user.roles);
+                console.log('Has admin role:', user.roles && user.roles.includes('admin'));
+            } catch (e) {
+                console.error('Failed to parse user data:', e);
+            }
+        }
+        
+        // Test API call
+        if (accessToken) {
+            console.log('Testing /auth/user API call...');
+            fetch('/auth/user', {
+                headers: {
+                    'Authorization': `Bearer ${accessToken}`
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('API response:', data);
+                console.log('API response roles:', data.roles);
+            })
+            .catch(error => {
+                console.error('API call failed:', error);
+            });
+        }
+        
+        // Display results
+        document.getElementById('results').innerHTML = `
+            <p>Access Token: ${!!accessToken ? 'Present' : 'Missing'}</p>
+            <p>User Data: ${userStr ? 'Present' : 'Missing'}</p>
+            <p>Check console for detailed logs</p>
+        `;
+    </script>
+</body>
+</html>

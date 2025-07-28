@@ -16,6 +16,20 @@ use function App\Core\Helpers\cast;
  */
 abstract class aAPI extends Injectable
 {
+    /**
+     * Store route parameters passed as function arguments
+     */
+    protected array $routeParams = [];
+
+    /**
+     * Set route parameters from function arguments
+     *
+     * @param array $params
+     */
+    public function setRouteParams(array $params): void
+    {
+        $this->routeParams = $params;
+    }
 
     /**
      * Placeholder method for index actions.
@@ -102,6 +116,44 @@ abstract class aAPI extends Injectable
         $data = $this->getData();
         $data = !isset($data[$name]) ? $default : $data[$name];
         return cast($data, $cast);
+    }
+
+    /**
+     * Gets a parameter from the route (URL path parameters).
+     *
+     * @param string $name The name of the route parameter.
+     * @param mixed|null $default The default value to return if the parameter is not set.
+     * @param string|null $cast The type to cast the parameter to.
+     * @return mixed The value of the route parameter.
+     */
+    protected function getRouteParam(string $name, mixed $default = null, string $cast = null): mixed
+    {
+        // Method 1: Check stored route parameters first
+        if (isset($this->routeParams[$name])) {
+            return cast($this->routeParams[$name], $cast);
+        }
+        
+        // Method 2: Try dispatcher
+        $value = null;
+        if ($this->dispatcher) {
+            $value = $this->dispatcher->getParam($name);
+        }
+        
+        // Method 3: Try request query parameters
+        if ($value === null && $this->request) {
+            $value = $this->request->get($name);
+        }
+        
+        // Method 4: Try router parameters (if available)
+        if ($value === null && $this->router) {
+            $matches = $this->router->getMatches();
+            if (is_array($matches) && isset($matches[$name])) {
+                $value = $matches[$name];
+            }
+        }
+        
+        $value = $value !== null ? $value : $default;
+        return cast($value, $cast);
     }
 
     /**

@@ -1,3 +1,4 @@
+
 const AuthService = {
     baseUrl: '/auth',
 
@@ -145,8 +146,15 @@ const AuthService = {
         return this.getCurrentUser()
             .then((response) => {
                 if (response.success !== false) {
+                    // Ensure consistent user data structure
+                    // Backend returns identity directly, so we use it as the user object
                     this.user = response;
                     this.isAuthenticated = true;
+                    
+                    // Update localStorage with the validated user data
+                    if (this.user) {
+                        localStorage.setItem('user', JSON.stringify(this.user));
+                    }
                 }
                 return response;
             })
@@ -156,8 +164,14 @@ const AuthService = {
                     return this.refreshAccessToken()
                         .then(() => this.getCurrentUser())
                         .then((response) => {
+                            // Ensure consistent user data structure
                             this.user = response;
                             this.isAuthenticated = true;
+                            
+                            // Update localStorage with the validated user data
+                            if (this.user) {
+                                localStorage.setItem('user', JSON.stringify(this.user));
+                            }
                             return response;
                         });
                 }
@@ -212,11 +226,17 @@ const AuthService = {
         if (userStr) {
             try {
                 this.user = JSON.parse(userStr);
+                // Only set authenticated state if we have both token and user data
+                // This prevents timing issues where guards check auth before user data is loaded
+                this.isAuthenticated = !!(this.accessToken && this.user);
             } catch (e) {
                 console.error('Failed to parse user data from localStorage');
+                this.isAuthenticated = false;
             }
+        } else {
+            // Don't set authenticated state without user data
+            this.isAuthenticated = false;
         }
-        this.isAuthenticated = !!this.accessToken;
     },
 
     /**
