@@ -458,6 +458,28 @@ const AuthService = {
 
         // Start polling
         poll();
+    },
+
+    /**
+     * Resend password reset email
+     */
+    resendPasswordReset: function(email) {
+        return m.request({
+            method: 'POST',
+            url: `${this.baseUrl}/forgot-password`,
+            body: { email: email }
+        });
+    },
+
+    /**
+     * Resend email verification
+     */
+    resendEmailVerification: function(email) {
+        return m.request({
+            method: 'POST',
+            url: `${this.baseUrl}/verify-email`,
+            body: { email: email }
+        });
     }
 };
 
