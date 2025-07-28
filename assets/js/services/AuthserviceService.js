@@ -7,6 +7,13 @@ const AuthService = {
     accessToken: null,
     refreshToken: null,
     isAuthenticated: false,
+    
+    // Auto-logout configuration
+    tokenCheckInterval: null,
+    activityTimeout: null,
+    lastActivity: Date.now(),
+    inactivityTimeoutMs: 30 * 60 * 1000, // 30 minutes of inactivity
+    tokenCheckIntervalMs: 5 * 60 * 1000, // Check token validity every 5 minutes
 
     /**
      * Initialize the auth service - check for existing tokens on page load
@@ -16,6 +23,8 @@ const AuthService = {
         if (this.accessToken) {
             this.validateCurrentUser();
         }
+        this.startAutoLogout();
+        this.setupActivityTracking();
     },
 
     /**
@@ -29,6 +38,7 @@ const AuthService = {
         }).then((response) => {
             if (response.success && response.data) {
                 this.setAuthData(response.data);
+                this.startAutoLogout(); // Start auto-logout after successful login
                 return response;
             }
             throw new Error(response.message || 'Login failed');
@@ -46,6 +56,7 @@ const AuthService = {
         }).then((response) => {
             if (response.success && response.data) {
                 this.setAuthData(response.data);
+                this.startAutoLogout(); // Start auto-logout after successful registration
                 return response;
             }
             throw new Error(response.message || 'Registration failed');
@@ -199,6 +210,11 @@ const AuthService = {
         if (this.user) {
             localStorage.setItem('user', JSON.stringify(this.user));
         }
+
+        // Restart auto-logout functionality with new tokens
+        if (this.isAuthenticated) {
+            this.startAutoLogout();
+        }
     },
 
     /**
@@ -209,6 +225,9 @@ const AuthService = {
         this.accessToken = null;
         this.refreshToken = null;
         this.isAuthenticated = false;
+
+        // Stop auto-logout functionality
+        this.stopAutoLogout();
 
         // Clear from localStorage
         localStorage.removeItem('access_token');
@@ -480,6 +499,161 @@ const AuthService = {
             url: `${this.baseUrl}/verify-email`,
             body: { email: email }
         });
+    },
+
+    /**
+     * Start auto-logout functionality
+     */
+    startAutoLogout: function() {
+        // Clear any existing intervals
+        this.stopAutoLogout();
+        
+        // Only start auto-logout if user is authenticated
+        if (this.isLoggedIn()) {
+            // Check token validity periodically
+            this.tokenCheckInterval = setInterval(() => {
+                this.checkTokenValidity();
+            }, this.tokenCheckIntervalMs);
+            
+            // Check for inactivity
+            this.activityTimeout = setInterval(() => {
+                this.checkInactivity();
+            }, 60000); // Check every minute
+        }
+    },
+
+    /**
+     * Stop auto-logout functionality
+     */
+    stopAutoLogout: function() {
+        if (this.tokenCheckInterval) {
+            clearInterval(this.tokenCheckInterval);
+            this.tokenCheckInterval = null;
+        }
+        if (this.activityTimeout) {
+            clearInterval(this.activityTimeout);
+            this.activityTimeout = null;
+        }
+    },
+
+    /**
+     * Setup activity tracking
+     */
+    setupActivityTracking: function() {
+        // Track user activity
+        const activityEvents = ['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart', 'click'];
+        
+        const updateActivity = () => {
+            this.lastActivity = Date.now();
+        };
+        
+        // Add event listeners for activity tracking
+        activityEvents.forEach(event => {
+            document.addEventListener(event, updateActivity, true);
+        });
+    },
+
+    /**
+     * Check token validity
+     */
+    checkTokenValidity: function() {
+        if (!this.isLoggedIn()) {
+            return;
+        }
+
+        // Try to get current user to validate token
+        this.getCurrentUser()
+            .then((response) => {
+                if (response.success !== false) {
+                    // Token is valid, update user data
+                    this.user = response;
+                    this.isAuthenticated = true;
+                } else {
+                    // Token is invalid, try to refresh
+                    this.handleTokenExpiration();
+                }
+            })
+            .catch((error) => {
+                // Token validation failed, try to refresh
+                this.handleTokenExpiration();
+            });
+    },
+
+    /**
+     * Handle token expiration
+     */
+    handleTokenExpiration: function() {
+        if (this.refreshToken) {
+            // Try to refresh the token
+            this.refreshAccessToken()
+                .then(() => {
+                    console.log('Token refreshed successfully');
+                })
+                .catch((error) => {
+                    console.log('Token refresh failed, logging out');
+                    this.handleAutoLogout('Token expired and refresh failed');
+                });
+        } else {
+            // No refresh token available, logout
+            this.handleAutoLogout('Token expired');
+        }
+    },
+
+    /**
+     * Check for user inactivity
+     */
+    checkInactivity: function() {
+        if (!this.isLoggedIn()) {
+            return;
+        }
+
+        const now = Date.now();
+        const timeSinceLastActivity = now - this.lastActivity;
+
+        if (timeSinceLastActivity > this.inactivityTimeoutMs) {
+            this.handleAutoLogout('User inactive for too long');
+        }
+    },
+
+    /**
+     * Handle automatic logout
+     */
+    handleAutoLogout: function(reason) {
+        console.log('Auto-logout triggered:', reason);
+        
+        // Clear auth data
+        this.clearAuthData();
+        
+        // Stop auto-logout intervals
+        this.stopAutoLogout();
+        
+        // Redirect to login page if not already there
+        if (m.route.get() !== '/login') {
+            m.route.set('/login');
+        }
+        
+        // Show notification to user
+        this.showLogoutNotification(reason);
+        
+        // Trigger redraw
+        m.redraw();
+    },
+
+    /**
+     * Show logout notification to user
+     */
+    showLogoutNotification: function(reason) {
+        // You can customize this to use your preferred notification system
+        // For now, we'll use a simple alert
+        setTimeout(() => {
+            if (reason.includes('inactive')) {
+                alert('You have been logged out due to inactivity.');
+            } else if (reason.includes('expired')) {
+                alert('Your session has expired. Please log in again.');
+            } else {
+                alert('You have been logged out.');
+            }
+        }, 100);
     }
 };
 

@@ -32,7 +32,7 @@ function authGuard(component) {
 
             // Only render if authenticated
             if (!AuthService.isLoggedIn()) {
-                return null; // Don't render anything while redirecting
+                m.route.set('/login');
             }
             // Render the protected component
             return m(component, vnode.attrs);
