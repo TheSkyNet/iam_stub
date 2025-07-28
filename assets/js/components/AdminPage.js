@@ -1,4 +1,6 @@
 const {AuthService} = require("../services/AuthserviceService");
+import {UsersService} from "../services/UsersService";
+import {RolesService} from "../services/RolesService";
 
 const AdminPage = {
     data: {
@@ -27,35 +29,41 @@ const AdminPage = {
     },
 
     loadUserStats: function () {
-
-        this.data.stats.totalUsers = 25;
-        this.data.stats.activeUsers = 18;
-        return new Promise(resolve => {
-            setTimeout(() => {
-                this.data.stats.totalUsers = 25;
-                this.data.stats.activeUsers = 18;
-                resolve();
-            }, 500);
-        });
+        return UsersService.getAll()
+            .then(response => {
+                if (response.success && response.data) {
+                    const users = response.data;
+                    this.data.stats.totalUsers = users.length;
+                    // Count active users (those with verified emails)
+                    this.data.stats.activeUsers = users.filter(user => user.email_verified).length;
+                } else {
+                    // Fallback to default values if API fails
+                    this.data.stats.totalUsers = 0;
+                    this.data.stats.activeUsers = 0;
+                }
+            })
+            .catch(error => {
+                console.error('Failed to load user stats:', error);
+                // Fallback to default values on error
+                this.data.stats.totalUsers = 0;
+                this.data.stats.activeUsers = 0;
+            });
     },
 
     loadRoleStats: function () {
-        this.data.stats.totalRoles;
-        return fetch('/api/roles', {
-            headers: {
-                'Authorization': `Bearer ${AuthService.accessToken}`, 'Content-Type': 'application/json'
-            }
-        })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success && data.data) {
-                    this.data.stats.totalRoles = data.data.length;
+        return RolesService.getAll()
+            .then(response => {
+                if (response.success && response.data) {
+                    this.data.stats.totalRoles = response.data.length;
                 } else {
-                    this.data.stats.totalRoles = 4; // Default roles count
+                    // Fallback to default value if API fails
+                    this.data.stats.totalRoles = 0;
                 }
             })
-            .catch(() => {
-                this.data.stats.totalRoles = 4; // Fallback
+            .catch(error => {
+                console.error('Failed to load role stats:', error);
+                // Fallback to default value on error
+                this.data.stats.totalRoles = 0;
             });
     },
 
