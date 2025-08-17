@@ -12,6 +12,7 @@ use IamLab\Service\OAuth;
 use IamLab\Service\PusherApi;
 use IamLab\Service\RolesApi;
 use IamLab\Service\UsersApi;
+use IamLab\Service\JobsApi;
 use IamLab\Service\SettingsService;
 use Phalcon\Mvc\Micro;
 
@@ -65,6 +66,17 @@ RouteGroup::create($app, '/api')
         
         // OAuth authenticated endpoints
         $group->post('/oauth/unlink', [(new OAuth()), "unlinkAction"]);
+        
+        // Jobs API endpoints
+        $group->get('/jobs', [(new JobsApi()), "indexAction"]);
+        $group->get('/jobs/stats', [(new JobsApi()), "statsAction"]);
+        $group->get('/jobs/types', [(new JobsApi()), "typesAction"]);
+        $group->get('/jobs/{id}', [(new JobsApi()), "showAction"]);
+        $group->post('/jobs', [(new JobsApi()), "createAction"]);
+        $group->post('/jobs/cleanup', [(new JobsApi()), "cleanupAction"]);
+        $group->post('/jobs/bulk', [(new JobsApi()), "bulkAction"]);
+        $group->post('/jobs/{id}/retry', [(new JobsApi()), "retryAction"]);
+        $group->delete('/jobs/{id}', [(new JobsApi()), "deleteAction"]);
     });
 
 // =============================================================================
