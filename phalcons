@@ -67,7 +67,10 @@ function display_help {
     echo
     echo
     echo "${YELLOW}Database Commands:${NC}"
-    echo "  ${GREEN}phalcons mysql${NC}             Start a MySQL CLI session within the 'mysql' container"
+    echo "  ${GREEN}phalcons mysql${NC}             Start a MySQL CLI session within the 'mysql' container (interactive)"
+    echo "  ${GREEN}phalcons mysql:query \"SQL\"${NC}    Execute a single MySQL query (non-interactive)"
+    echo "  ${GREEN}phalcons mysql:file path.sql${NC}    Execute MySQL commands from a file (non-interactive)"
+    echo "  ${GREEN}phalcons mysql:dump [file]${NC}      Create a MySQL database dump (non-interactive)"
     echo "  ${GREEN}phalcons migrate${NC}           Run database migrations"
     echo "  ${GREEN}phalcons migrate:generate${NC}  Generate database migrations"
     echo "  ${GREEN}phalcons migrate:list${NC}      List all migrations"
@@ -343,6 +346,56 @@ elif [ "$1" == "mysql" ]; then
         [ ! -t 0 ] && ARGS+=(-T)
         ARGS+=(mysql bash -c)
         ARGS+=("MYSQL_PWD=\${MYSQL_PASSWORD} mysql -u \${MYSQL_USER} \${MYSQL_DATABASE}")
+    else
+        phalcons_is_not_running
+    fi
+
+# Execute a single MySQL query (non-interactive)...
+elif [ "$1" == "mysql:query" ]; then
+    shift 1
+
+    if [ "$EXEC" == "yes" ]; then
+        if [ $# -eq 0 ]; then
+            echo "Usage: ./phalcons mysql:query \"SQL_QUERY\""
+            echo "Example: ./phalcons mysql:query \"SHOW TABLES;\""
+            exit 1
+        fi
+        ARGS+=(exec)
+        [ ! -t 0 ] && ARGS+=(-T)
+        ARGS+=(mysql bash -c)
+        ARGS+=("MYSQL_PWD=\${MYSQL_PASSWORD} mysql -u \${MYSQL_USER} \${MYSQL_DATABASE} -e \"$1\"")
+    else
+        phalcons_is_not_running
+    fi
+
+# Execute MySQL commands from a file (non-interactive)...
+elif [ "$1" == "mysql:file" ]; then
+    shift 1
+
+    if [ "$EXEC" == "yes" ]; then
+        if [ $# -eq 0 ]; then
+            echo "Usage: ./phalcons mysql:file /path/to/file.sql"
+            echo "Example: ./phalcons mysql:file database/seeds/users.sql"
+            exit 1
+        fi
+        ARGS+=(exec)
+        [ ! -t 0 ] && ARGS+=(-T)
+        ARGS+=(mysql bash -c)
+        ARGS+=("MYSQL_PWD=\${MYSQL_PASSWORD} mysql -u \${MYSQL_USER} \${MYSQL_DATABASE} < /var/www/html/$1")
+    else
+        phalcons_is_not_running
+    fi
+
+# Create a MySQL database dump (non-interactive)...
+elif [ "$1" == "mysql:dump" ]; then
+    shift 1
+
+    if [ "$EXEC" == "yes" ]; then
+        OUTPUT_FILE=${1:-"database_dump_$(date +%Y%m%d_%H%M%S).sql"}
+        ARGS+=(exec)
+        [ ! -t 0 ] && ARGS+=(-T)
+        ARGS+=(mysql bash -c)
+        ARGS+=("MYSQL_PWD=\${MYSQL_PASSWORD} mysqldump -u \${MYSQL_USER} \${MYSQL_DATABASE} > /var/www/html/$OUTPUT_FILE && echo 'Database dump saved to: $OUTPUT_FILE'")
     else
         phalcons_is_not_running
     fi

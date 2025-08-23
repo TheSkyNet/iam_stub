@@ -178,19 +178,87 @@ AuthService.generateApiKey()
 Add to your `.env` file:
 
 ```env
+# JWT Secret Key (REQUIRED)
 JWT_SECRET=your-super-secret-jwt-key-change-this-in-production
+
+# JWT Token Expiry Configuration (OPTIONAL)
+JWT_ACCESS_TOKEN_EXPIRY=3600      # Access token expiry in seconds (default: 1 hour)
+JWT_REFRESH_TOKEN_EXPIRY=604800   # Refresh token expiry in seconds (default: 7 days)
+
+# Additional JWT Configuration (OPTIONAL)
+JWT_ALGORITHM=HS256               # JWT signing algorithm (default: HS256)
+JWT_ISSUER=phalcon-stub          # Token issuer (default: phalcon-stub)
+JWT_AUDIENCE=phalcon-stub-users  # Token audience (default: phalcon-stub-users)
 ```
 
 **Important**: Change the JWT secret in production for security.
 
-### Token Expiration
+### Token Expiration Configuration
 
-Default token expiration times:
-- Access Token: 1 hour (3600 seconds)
-- Refresh Token: 7 days (604800 seconds)
-- API Keys: No expiration
+You can customize JWT token expiry times by setting environment variables:
 
-These can be modified in the `JwtService` constructor.
+#### Access Token Expiry (`JWT_ACCESS_TOKEN_EXPIRY`)
+- **Default**: 3600 seconds (1 hour)
+- **Purpose**: Short-lived tokens for API access
+- **Recommended Range**: 300-7200 seconds (5 minutes to 2 hours)
+
+**Examples:**
+```env
+JWT_ACCESS_TOKEN_EXPIRY=1800    # 30 minutes
+JWT_ACCESS_TOKEN_EXPIRY=7200    # 2 hours
+JWT_ACCESS_TOKEN_EXPIRY=300     # 5 minutes (high security)
+```
+
+#### Refresh Token Expiry (`JWT_REFRESH_TOKEN_EXPIRY`)
+- **Default**: 604800 seconds (7 days)
+- **Purpose**: Long-lived tokens for renewing access tokens
+- **Recommended Range**: 86400-2592000 seconds (1 day to 30 days)
+
+**Examples:**
+```env
+JWT_REFRESH_TOKEN_EXPIRY=86400     # 1 day
+JWT_REFRESH_TOKEN_EXPIRY=1209600   # 14 days
+JWT_REFRESH_TOKEN_EXPIRY=2592000   # 30 days
+```
+
+#### Security Considerations for Token Expiry
+
+**Shorter Access Tokens (More Secure):**
+- ✅ Reduced exposure window if token is compromised
+- ✅ Better for high-security applications
+- ❌ More frequent token refresh requests
+- ❌ Potential user experience interruptions
+
+**Longer Access Tokens (More Convenient):**
+- ✅ Fewer refresh requests
+- ✅ Better user experience
+- ❌ Longer exposure window if compromised
+- ❌ Less secure for sensitive applications
+
+**Recommended Configurations:**
+
+**High Security Applications:**
+```env
+JWT_ACCESS_TOKEN_EXPIRY=900     # 15 minutes
+JWT_REFRESH_TOKEN_EXPIRY=86400  # 1 day
+```
+
+**Standard Applications:**
+```env
+JWT_ACCESS_TOKEN_EXPIRY=3600    # 1 hour (default)
+JWT_REFRESH_TOKEN_EXPIRY=604800 # 7 days (default)
+```
+
+**Development/Testing:**
+```env
+JWT_ACCESS_TOKEN_EXPIRY=7200    # 2 hours
+JWT_REFRESH_TOKEN_EXPIRY=1209600 # 14 days
+```
+
+#### API Keys
+- **Expiration**: No expiration by default
+- **Purpose**: Long-term programmatic access
+- **Security**: Can be revoked manually through the API
 
 ## API Endpoints
 
