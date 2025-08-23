@@ -1,0 +1,75 @@
+#!/bin/bash
+#
+# phalcon-app        Phalcon Application Service
+#
+# chkconfig: 35 80 20
+# description: Phalcon Application Service using Docker Compose
+#
+
+. /etc/rc.d/init.d/functions
+
+USER="{{SERVICE_USER}}"
+DAEMON="phalcon-app"
+ROOT_DIR="{{WORKING_DIRECTORY}}"
+
+SERVER="$ROOT_DIR/phalcons"
+LOCK_FILE="/var/lock/subsys/phalcon-app"
+
+start() {
+    if [ -f "$LOCK_FILE" ] ; then
+        echo "$DAEMON is locked."
+        return 1
+    fi
+    
+    echo -n $"Starting $DAEMON: "
+    runuser -l "$USER" -c "$SERVER up -d" && echo_success || echo_failure
+    RETVAL=$?
+    echo
+    [ $RETVAL -eq 0 ] && touch $LOCK_FILE
+    return $RETVAL
+}
+
+stop() {
+    echo -n $"Shutting down $DAEMON: "
+    pid=`ps -aefw | grep "$DAEMON" | grep -v " grep " | awk '{print $2}'`
+    kill -9 $pid > /dev/null 2>&1
+    runuser -l "$USER" -c "$SERVER stop" && echo_success || echo_failure
+    RETVAL=$?
+    echo
+    [ $RETVAL -eq 0 ] && rm -f $LOCK_FILE
+    return $RETVAL
+}
+
+restart() {
+    stop
+    start
+}
+
+status() {
+    if [ -f "$LOCK_FILE" ]; then
+        echo "$DAEMON is running."
+    else
+        echo "$DAEMON is stopped."
+    fi
+}
+
+case "$1" in
+    start)
+        start
+        ;;
+    stop)
+        stop
+        ;;
+    status)
+        status
+        ;;
+    restart)
+        restart
+        ;;
+    *)
+        echo "Usage: {start|stop|status|restart}"
+        exit 1
+        ;;
+esac
+
+exit $?

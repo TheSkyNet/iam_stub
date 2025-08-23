@@ -92,6 +92,14 @@ function display_help {
     echo "${YELLOW}Binaries:${NC}"
     echo "  ${GREEN}phalcons bin ...${NC}   Run Composer binary scripts from the vendor/bin directory"
     echo
+    echo "${YELLOW}Service Management:${NC}"
+    echo "  ${GREEN}phalcons service:install${NC}    Install the application as a system service"
+    echo "  ${GREEN}phalcons service:start${NC}      Start the application service"
+    echo "  ${GREEN}phalcons service:stop${NC}       Stop the application service"
+    echo "  ${GREEN}phalcons service:restart${NC}    Restart the application service"
+    echo "  ${GREEN}phalcons service:status${NC}     Check the application service status"
+    echo "  ${GREEN}phalcons service:uninstall${NC}  Remove the application service"
+    echo
     exit 1
 }
 
@@ -432,6 +440,202 @@ elif [ "$1" == "migrate:seed" ]; then
         fi
     else
         phalcons_is_not_running
+    fi
+
+# Service management commands
+elif [ "$1" == "service:install" ]; then
+    shift 1
+    
+    # Get current directory and user
+    CURRENT_DIR=$(pwd)
+    CURRENT_USER=$(whoami)
+    CURRENT_GROUP=$(id -gn)
+    PROJECT_NAME=$(basename "$CURRENT_DIR")
+    
+    echo "${BOLD}Installing Phalcon Application Service...${NC}"
+    
+    # Detect the operating system and service manager
+    if [ "$MACHINE" == "linux" ]; then
+        if command -v systemctl >/dev/null 2>&1; then
+            # SystemD
+            echo "Detected SystemD service manager"
+            SERVICE_FILE="/etc/systemd/system/phalcon-app.service"
+            
+            # Create service file from template
+            sudo cp service-templates/phalcon-app.service "$SERVICE_FILE"
+            sudo sed -i "s|{{WORKING_DIRECTORY}}|$CURRENT_DIR|g" "$SERVICE_FILE"
+            sudo sed -i "s|{{SERVICE_USER}}|$CURRENT_USER|g" "$SERVICE_FILE"
+            sudo sed -i "s|{{SERVICE_GROUP}}|$CURRENT_GROUP|g" "$SERVICE_FILE"
+            sudo sed -i "s|{{PROJECT_NAME}}|$PROJECT_NAME|g" "$SERVICE_FILE"
+            
+            # Reload systemd and enable service
+            sudo systemctl daemon-reload
+            sudo systemctl enable phalcon-app.service
+            
+            echo "${GREEN}✓ SystemD service installed successfully${NC}"
+            echo "Use: ${YELLOW}./phalcons service:start${NC} to start the service"
+            
+        elif [ -d "/etc/init.d" ]; then
+            # Init.d
+            echo "Detected Init.d service manager"
+            SERVICE_FILE="/etc/init.d/phalcon-app"
+            
+            # Create service file from template
+            sudo cp service-templates/phalcon-app.init "$SERVICE_FILE"
+            sudo sed -i "s|{{WORKING_DIRECTORY}}|$CURRENT_DIR|g" "$SERVICE_FILE"
+            sudo sed -i "s|{{SERVICE_USER}}|$CURRENT_USER|g" "$SERVICE_FILE"
+            sudo chmod +x "$SERVICE_FILE"
+            
+            # Enable service
+            if command -v chkconfig >/dev/null 2>&1; then
+                sudo chkconfig --add phalcon-app
+                sudo chkconfig phalcon-app on
+            elif command -v update-rc.d >/dev/null 2>&1; then
+                sudo update-rc.d phalcon-app defaults
+            fi
+            
+            echo "${GREEN}✓ Init.d service installed successfully${NC}"
+            echo "Use: ${YELLOW}./phalcons service:start${NC} to start the service"
+        else
+            echo "${BOLD}No supported service manager found on this Linux system${NC}" >&2
+            exit 1
+        fi
+        
+    elif [ "$MACHINE" == "mac" ]; then
+        # macOS LaunchD
+        echo "Detected macOS LaunchD service manager"
+        SERVICE_FILE="$HOME/Library/LaunchAgents/com.phalcon.app.plist"
+        
+        # Create service file from template
+        cp service-templates/com.phalcon.app.plist "$SERVICE_FILE"
+        sed -i '' "s|{{WORKING_DIRECTORY}}|$CURRENT_DIR|g" "$SERVICE_FILE"
+        sed -i '' "s|{{SERVICE_USER}}|$CURRENT_USER|g" "$SERVICE_FILE"
+        sed -i '' "s|{{SERVICE_GROUP}}|$CURRENT_GROUP|g" "$SERVICE_FILE"
+        sed -i '' "s|{{PROJECT_NAME}}|$PROJECT_NAME|g" "$SERVICE_FILE"
+        
+        echo "${GREEN}✓ LaunchD service installed successfully${NC}"
+        echo "Use: ${YELLOW}./phalcons service:start${NC} to start the service"
+    else
+        echo "${BOLD}Unsupported operating system for service installation${NC}" >&2
+        exit 1
+    fi
+
+elif [ "$1" == "service:start" ]; then
+    shift 1
+    
+    echo "${BOLD}Starting Phalcon Application Service...${NC}"
+    
+    if [ "$MACHINE" == "linux" ]; then
+        if command -v systemctl >/dev/null 2>&1; then
+            sudo systemctl start phalcon-app.service
+            echo "${GREEN}✓ Service started successfully${NC}"
+        elif [ -f "/etc/init.d/phalcon-app" ]; then
+            sudo service phalcon-app start
+            echo "${GREEN}✓ Service started successfully${NC}"
+        else
+            echo "${BOLD}Service not installed. Run: ./phalcons service:install${NC}" >&2
+            exit 1
+        fi
+    elif [ "$MACHINE" == "mac" ]; then
+        launchctl load "$HOME/Library/LaunchAgents/com.phalcon.app.plist"
+        echo "${GREEN}✓ Service started successfully${NC}"
+    fi
+
+elif [ "$1" == "service:stop" ]; then
+    shift 1
+    
+    echo "${BOLD}Stopping Phalcon Application Service...${NC}"
+    
+    if [ "$MACHINE" == "linux" ]; then
+        if command -v systemctl >/dev/null 2>&1; then
+            sudo systemctl stop phalcon-app.service
+            echo "${GREEN}✓ Service stopped successfully${NC}"
+        elif [ -f "/etc/init.d/phalcon-app" ]; then
+            sudo service phalcon-app stop
+            echo "${GREEN}✓ Service stopped successfully${NC}"
+        else
+            echo "${BOLD}Service not installed. Run: ./phalcons service:install${NC}" >&2
+            exit 1
+        fi
+    elif [ "$MACHINE" == "mac" ]; then
+        launchctl unload "$HOME/Library/LaunchAgents/com.phalcon.app.plist"
+        echo "${GREEN}✓ Service stopped successfully${NC}"
+    fi
+
+elif [ "$1" == "service:restart" ]; then
+    shift 1
+    
+    echo "${BOLD}Restarting Phalcon Application Service...${NC}"
+    
+    if [ "$MACHINE" == "linux" ]; then
+        if command -v systemctl >/dev/null 2>&1; then
+            sudo systemctl restart phalcon-app.service
+            echo "${GREEN}✓ Service restarted successfully${NC}"
+        elif [ -f "/etc/init.d/phalcon-app" ]; then
+            sudo service phalcon-app restart
+            echo "${GREEN}✓ Service restarted successfully${NC}"
+        else
+            echo "${BOLD}Service not installed. Run: ./phalcons service:install${NC}" >&2
+            exit 1
+        fi
+    elif [ "$MACHINE" == "mac" ]; then
+        launchctl unload "$HOME/Library/LaunchAgents/com.phalcon.app.plist" 2>/dev/null || true
+        launchctl load "$HOME/Library/LaunchAgents/com.phalcon.app.plist"
+        echo "${GREEN}✓ Service restarted successfully${NC}"
+    fi
+
+elif [ "$1" == "service:status" ]; then
+    shift 1
+    
+    echo "${BOLD}Checking Phalcon Application Service Status...${NC}"
+    
+    if [ "$MACHINE" == "linux" ]; then
+        if command -v systemctl >/dev/null 2>&1; then
+            systemctl status phalcon-app.service --no-pager
+        elif [ -f "/etc/init.d/phalcon-app" ]; then
+            service phalcon-app status
+        else
+            echo "${BOLD}Service not installed. Run: ./phalcons service:install${NC}" >&2
+            exit 1
+        fi
+    elif [ "$MACHINE" == "mac" ]; then
+        if launchctl list | grep -q "com.phalcon.app"; then
+            echo "${GREEN}✓ Service is running${NC}"
+            launchctl list com.phalcon.app
+        else
+            echo "${YELLOW}Service is not running${NC}"
+        fi
+    fi
+
+elif [ "$1" == "service:uninstall" ]; then
+    shift 1
+    
+    echo "${BOLD}Uninstalling Phalcon Application Service...${NC}"
+    
+    if [ "$MACHINE" == "linux" ]; then
+        if command -v systemctl >/dev/null 2>&1; then
+            sudo systemctl stop phalcon-app.service 2>/dev/null || true
+            sudo systemctl disable phalcon-app.service 2>/dev/null || true
+            sudo rm -f /etc/systemd/system/phalcon-app.service
+            sudo systemctl daemon-reload
+            echo "${GREEN}✓ SystemD service uninstalled successfully${NC}"
+        elif [ -f "/etc/init.d/phalcon-app" ]; then
+            sudo service phalcon-app stop 2>/dev/null || true
+            if command -v chkconfig >/dev/null 2>&1; then
+                sudo chkconfig phalcon-app off
+                sudo chkconfig --del phalcon-app
+            elif command -v update-rc.d >/dev/null 2>&1; then
+                sudo update-rc.d -f phalcon-app remove
+            fi
+            sudo rm -f /etc/init.d/phalcon-app
+            echo "${GREEN}✓ Init.d service uninstalled successfully${NC}"
+        else
+            echo "${BOLD}No service installation found${NC}" >&2
+        fi
+    elif [ "$MACHINE" == "mac" ]; then
+        launchctl unload "$HOME/Library/LaunchAgents/com.phalcon.app.plist" 2>/dev/null || true
+        rm -f "$HOME/Library/LaunchAgents/com.phalcon.app.plist"
+        echo "${GREEN}✓ LaunchD service uninstalled successfully${NC}"
     fi
 
 # Pass unknown commands to the "docker-compose" binary...

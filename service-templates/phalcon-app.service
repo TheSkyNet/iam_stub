@@ -1,0 +1,33 @@
+[Unit]
+Description=Phalcon Application Service
+Documentation=https://github.com/iam-lab/phalcon-stub
+After=network.target docker.service
+Requires=docker.service
+PartOf=docker.service
+
+[Service]
+Type=forking
+RemainAfterExit=yes
+WorkingDirectory={{WORKING_DIRECTORY}}
+ExecStart={{WORKING_DIRECTORY}}/phalcons up -d
+ExecStop={{WORKING_DIRECTORY}}/phalcons stop
+ExecReload={{WORKING_DIRECTORY}}/phalcons restart
+TimeoutStartSec=300
+TimeoutStopSec=120
+Restart=on-failure
+RestartSec=10
+User={{SERVICE_USER}}
+Group={{SERVICE_GROUP}}
+
+# Environment variables
+Environment=PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+Environment=DOCKER_COMPOSE_PROJECT_NAME={{PROJECT_NAME}}
+
+# Security settings
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ReadWritePaths={{WORKING_DIRECTORY}}
+
+[Install]
+WantedBy=multi-user.target
