@@ -26,7 +26,8 @@
     "pusher/pusher-php-server": "^7.2",
     "phpunit/phpunit": "10.5.x-dev",
     "firebase/php-jwt": "dev-main",
-    "endroid/qr-code": "^4.0"
+    "endroid/qr-code": "^4.0",
+    "ext-pdo": "*"
   },
   "autoload": {
     "psr-4": {

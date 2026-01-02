@@ -9,9 +9,9 @@ Configuration Manager (Tests\Unit\Service\LMS\Configuration\ConfigurationManager
  [x] Is non existent integration enabled
 
 Error Log (Tests\Unit\Model\ErrorLog)
- [ ] Setters and getters work
- [ ] Set context json round trip
- [ ] Before validation on create sets created at
+ [x] Setters and getters work
+ [x] Set context json round trip
+ [x] Before validation on create sets created at
 
 Integration Factory (Tests\Unit\Service\LMS\Factory\IntegrationFactory)
  [x] Get supported integrations
@@ -50,8 +50,8 @@ LMSService (Tests\Unit\Service\LMS\LMSService)
  [x] Multiple initialization calls are safe
 
 Sse Api (Tests\Unit\Service\SseApi)
- [ ] Echo action outputs single event
- [ ] Clock action emits requested count
+ [x] Echo action outputs single event
+ [x] Clock action emits requested count
 
 Sse Emitter (Tests\Unit\Core\SSE\SseEmitter)
  [x] Start sets headers and optional retry

@@ -13,6 +13,7 @@ use IamLab\Seeding\Runner\SeedRunner;
 use IamLab\Seeding\Support\ConsolePrinter;
 use IamLab\Seeding\Support\SystemClock;
 use Phalcon\Di\FactoryDefault;
+use Phalcon\Di\Di;
 use function App\Core\Helpers\loadEnv;
 
 // Paths
@@ -32,18 +33,18 @@ if (\App\Core\Helpers\env('APP_DEBUG') === 'debug') {
     error_reporting(E_ALL);
 }
 
-// Bootstrap DI and services
-$di = new FactoryDefault();
-include APP_PATH . '/config/services.php';
-$di->getLoader();
-
-// Registered seeders: map short names to FQCNs
-$registeredSeeders = [
-    'RolesSeeder' => RolesSeeder::class,
-    'SiteSettingsSeeder' => SiteSettingsSeeder::class,
-    // Example seeder with CLI options; safe no-op by default
-    'ExampleUserSeeder' => \IamLab\Seeders\ExampleUserSeeder::class,
-];
+// Registered seeders: map short names to FQCNs (moved to config file)
+$seedersConfigPath = APP_PATH . '/config/seeders.php';
+if (!is_file($seedersConfigPath)) {
+    fwrite(STDERR, "[ERROR] Seeder registry config not found at {$seedersConfigPath}\n");
+    exit(1);
+}
+/** @var array<string,string> $registeredSeeders */
+$registeredSeeders = require $seedersConfigPath;
+if (!is_array($registeredSeeders)) {
+    fwrite(STDERR, "[ERROR] Seeder registry config must return an array.\n");
+    exit(1);
+}
 
 // Base CLI options
 $baseOptions = [
@@ -82,6 +83,43 @@ if (isset($options['list'])) {
     exit(0);
 }
 
+// Bootstrap DI and obtain PDO, or fallback to env-based PDO when Phalcon isn't available
+$pdo = null;
+if (class_exists('Phalcon\\Di\\FactoryDefault')) {
+    // Phalcon available: use project DB adapter
+    $di = new FactoryDefault();
+    include APP_PATH . '/config/services.php';
+    $di->getLoader();
+    Di::setDefault($di);
+
+    $db = $di->get('db');
+    if (!method_exists($db, 'getInternalHandler')) {
+        $printer->error('Database adapter does not expose an internal PDO handler.');
+        exit(1);
+    }
+    /** @var PDO $pdo */
+    $pdo = $db->getInternalHandler();
+} else {
+    // Fallback: create PDO using environment variables
+    $dsn = getenv('DB_DSN') ?: '';
+    $user = getenv('DB_USER') ?: '';
+    $pass = getenv('DB_PASSWORD') ?: '';
+    if ($dsn === '') {
+        $printer->error('Missing DB_DSN env var. Example: mysql:host=127.0.0.1;dbname=app;charset=utf8mb4');
+        $printer->info('Hint: Prefer running inside Docker with ./phalcons migrate:seed so Phalcon DI is available.');
+        exit(1);
+    }
+    try {
+        $pdo = new PDO($dsn, $user, $pass, [
+            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+        ]);
+    } catch (Throwable $e) {
+        $printer->error('Failed to connect to database: ' . $e->getMessage());
+        exit(1);
+    }
+}
+
 // Resolve selected seeders
 $selectedClasses = [];
 if (!empty($options['seed'])) {
@@ -112,15 +150,6 @@ if (!$selectedClasses) {
 
 $force = isset($options['force']);
 $dryRun = isset($options['dry-run']);
-
-// Obtain PDO from Phalcon DB adapter
-$db = $di->get('db');
-if (!method_exists($db, 'getInternalHandler')) {
-    $printer->error('Database adapter does not expose an internal PDO handler.');
-    exit(1);
-}
-/** @var PDO $pdo */
-$pdo = $db->getInternalHandler();
 
 $uow = new PdoUnitOfWork($pdo);
 $seedLog = new PdoSeedLogRepository($pdo);

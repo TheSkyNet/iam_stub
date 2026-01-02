@@ -2,9 +2,14 @@
 
 namespace IamLab\Model;
 
-use Phalcon\Mvc\Model;
+// Provide a conditional base so tests can run without Phalcon extension
+if (class_exists('Phalcon\\Mvc\\Model')) {
+    class ErrorLogBase extends \Phalcon\Mvc\Model {}
+} else {
+    class ErrorLogBase {}
+}
 
-class ErrorLog extends Model
+class ErrorLog extends ErrorLogBase
 {
     protected ?int $id = null;
     protected string $level = 'error';
@@ -18,7 +23,10 @@ class ErrorLog extends Model
 
     public function initialize()
     {
-        $this->setSource('error_logs');
+        // Only call setSource when running under Phalcon's Model
+        if (method_exists($this, 'setSource')) {
+            $this->setSource('error_logs');
+        }
     }
 
     public function beforeValidationOnCreate()
