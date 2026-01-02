@@ -1,7 +1,31 @@
 #!/usr/bin/env bash
 
-if [ ! -z "$WWWUSER" ]; then
-    usermod -u $WWWUSER phalcons
+set -e
+
+# If a target WWWUSER UID was provided, try to switch the phalcons user to it.
+# Be resilient when that UID already exists inside the container.
+if [ -n "$WWWUSER" ]; then
+    CURRENT_UID="$(id -u phalcons)" || CURRENT_UID="1337"
+    TARGET_UID="$WWWUSER"
+
+    # Default run user
+    RUN_AS_USER="phalcons"
+
+    if [ "$TARGET_UID" != "$CURRENT_UID" ]; then
+        # If the UID already exists (belongs to another user), don't try to usermod.
+        if getent passwd "$TARGET_UID" >/dev/null 2>&1; then
+            # Use that existing user when dropping privileges via gosu
+            RUN_AS_USER="$(getent passwd "$TARGET_UID" | cut -d: -f1)"
+            echo "[start-container] UID $TARGET_UID already exists (user: $RUN_AS_USER). Will run processes as that user."
+        else
+            # Safe to change phalcons UID
+            echo "[start-container] Updating phalcons UID: ${CURRENT_UID} -> ${TARGET_UID}"
+            usermod -u "$TARGET_UID" phalcons || true
+            RUN_AS_USER="phalcons"
+        fi
+    fi
+else
+    RUN_AS_USER="phalcons"
 fi
 
 if [ ! -d /.composer ]; then
@@ -11,7 +35,7 @@ fi
 chmod -R ugo+rw /.composer
 
 if [ $# -gt 0 ]; then
-    exec gosu $WWWUSER "$@"
+    exec gosu "$RUN_AS_USER" "$@"
 else
     exec /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf
 fi

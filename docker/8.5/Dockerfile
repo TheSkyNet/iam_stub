@@ -1,4 +1,4 @@
-ARG PHALCON_DOCKER_TAG=v5.9.2-php8.4
+ARG PHALCON_DOCKER_TAG=v5.9.2-php8.5
 FROM phalconphp/cphalcon:${PHALCON_DOCKER_TAG}
 
 LABEL maintainer=""
@@ -25,7 +25,7 @@ RUN apt-get update \
     && curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | gpg --dearmor | tee /usr/share/keyrings/yarn.gpg >/dev/null \
     && echo "deb [signed-by=/usr/share/keyrings/yarn.gpg] https://dl.yarnpkg.com/debian/ stable main" > /etc/apt/sources.list.d/yarn.list \
     && apt-get update \
-    && apt-get install -y --no-install-recommends yarn default-mysql-client postgresql-client \
+    && apt-get install -y --no-install-recommends yarn mysql-client postgresql-client-${POSTGRES_VERSION} \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin --filename=composer \
     && install-php-extensions psr igbinary msgpack memcached redis pcov xdebug imap ldap intl gd zip soap bcmath \
     && apt-get clean && rm -rf /var/lib/apt/lists/*

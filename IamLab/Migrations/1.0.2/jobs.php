@@ -140,7 +140,6 @@ class JobsMigration_102 extends Migration
                 ),
             ],
             'indexes' => [
-                new Index('jobs_id_primary', ['id'], 'PRIMARY'),
                 new Index('jobs_status_index', ['status'], ''),
                 new Index('jobs_type_index', ['type'], ''),
                 new Index('jobs_priority_index', ['priority'], ''),

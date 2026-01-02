@@ -100,7 +100,6 @@ class ErrorLogsMigration_103 extends Migration
                 ),
             ],
             'indexes' => [
-                new Index('error_logs_id_primary', ['id'], 'PRIMARY'),
                 new Index('error_logs_level_index', ['level']),
                 new Index('error_logs_created_at_index', ['created_at']),
             ],
