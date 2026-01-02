@@ -392,10 +392,20 @@ elif [ "$1" == "mysql:dump" ]; then
 
     if [ "$EXEC" == "yes" ]; then
         OUTPUT_FILE=${1:-"database_dump_$(date +%Y%m%d_%H%M%S).sql"}
+        echo "Creating database dump: ${OUTPUT_FILE}"
         ARGS+=(exec)
         [ ! -t 0 ] && ARGS+=(-T)
-        ARGS+=(mysql bash -c)
-        ARGS+=("MYSQL_PWD=\${MYSQL_PASSWORD} mysqldump -u \${MYSQL_USER} \${MYSQL_DATABASE} > /var/www/html/$OUTPUT_FILE && echo 'Database dump saved to: $OUTPUT_FILE'")
+        ARGS+=(mysql sh -c)
+        ARGS+=("MYSQL_PWD=\${MYSQL_PASSWORD} mysqldump -u \${MYSQL_USER} \${MYSQL_DATABASE}")
+        # Execute the command and redirect output to file
+        "${DOCKER_COMPOSE[@]}" "${ARGS[@]}" > "${OUTPUT_FILE}"
+        if [ $? -eq 0 ]; then
+            echo "Database dump saved to: ${OUTPUT_FILE}"
+        else
+            echo "Error: Failed to create database dump"
+            exit 1
+        fi
+        exit 0
     else
         phalcons_is_not_running
     fi
