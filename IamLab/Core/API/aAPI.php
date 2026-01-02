@@ -90,7 +90,77 @@ abstract class aAPI extends Injectable
      */
     #[NoReturn] protected function dispatchError(mixed $data, int $status = 400): void
     {
-        $this->dispatch($data, $status);
+        // Always return a predictable error envelope with a human-readable message
+        $payload = [
+            'success' => false,
+        ];
+
+        // Normalize various error shapes into a consistent message
+        $message = null;
+        if (is_string($data)) {
+            $message = $data;
+        } elseif ($data instanceof \Throwable) {
+            $message = $data->getMessage();
+            $payload['exception'] = get_class($data);
+        } elseif (is_array($data)) {
+            // Prefer explicit keys
+            foreach (['message', 'error', 'error_description', 'detail', 'title'] as $key) {
+                if (isset($data[$key]) && is_string($data[$key]) && trim($data[$key]) !== '') {
+                    $message = trim($data[$key]);
+                    break;
+                }
+            }
+            // Try common validation error arrays
+            if ($message === null && isset($data['errors'])) {
+                $errors = $data['errors'];
+                if (is_array($errors) && !empty($errors)) {
+                    $first = $errors[0] ?? null;
+                    if (is_string($first)) {
+                        $message = $first;
+                    } elseif (is_array($first) && isset($first['message']) && is_string($first['message'])) {
+                        $message = $first['message'];
+                    }
+                }
+            }
+            // Scan plain/numeric arrays for first meaningful message
+            if ($message === null) {
+                foreach ($data as $item) {
+                    if (is_string($item) && trim($item) !== '') {
+                        $message = trim($item);
+                        break;
+                    }
+                    if (is_object($item)) {
+                        if (method_exists($item, 'getMessage')) {
+                            $m = (string)$item->getMessage();
+                            if (trim($m) !== '') { $message = trim($m); break; }
+                        }
+                        if (method_exists($item, '__toString')) {
+                            $m = (string)$item;
+                            if (trim($m) !== '') { $message = trim($m); break; }
+                        }
+                    }
+                }
+            }
+            // Preserve original details for debugging/clients
+            $payload['errors'] = $data;
+        }
+
+        if ($message === null || $message === '') {
+            $message = 'An error occurred';
+        }
+
+        $payload['message'] = $message;
+
+        // Keep optional error code/status fields from the original data
+        if (is_array($data)) {
+            foreach (['error', 'code', 'status'] as $optKey) {
+                if (isset($data[$optKey]) && !isset($payload[$optKey])) {
+                    $payload[$optKey] = $data[$optKey];
+                }
+            }
+        }
+
+        $this->dispatch($payload, $status);
     }
 
     /**

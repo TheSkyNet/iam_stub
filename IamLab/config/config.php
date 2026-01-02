@@ -67,6 +67,10 @@ return new Config([
     ],
 
     'logger' => [
+        'enabled' => App\Core\Helpers\env('LOG_ENABLED', true),
+        'level' => App\Core\Helpers\env('LOG_LEVEL', 'debug'),
+        'path' => App\Core\Helpers\env('LOG_PATH', '/var/www/html/files/logs/app.log'),
+        'format' => App\Core\Helpers\env('LOG_FORMAT', '[%date%][%level%] %message%'),
     ],
     'filepond' => [
         'temp_folder' => App\Core\Helpers\env('FILEPOND_TEMP_FOLDER', '/tmp'),

@@ -279,6 +279,32 @@ The `./phalcons` script provides comprehensive Docker-based development tools:
 - Minimize frontend bundle size with proper tree-shaking
 - Use Docker multi-stage builds for production deployments
 
+### Error Messages & Toasts (Frontend + Backend)
+
+- Never display raw objects in the UI (avoid showing "[object Object]").
+- Always present human-readable error text to users.
+- Frontend must use the central formatter when showing errors:
+  - Use `window.showToast(value, type)` or the internal `toMessageStringSync(value)` from `assets/js/lib/errorHandler.js`.
+  - The formatter preserves any backend-provided `message` verbatim when present and falls back to common fields like `error`, `detail`, `title`, etc.
+  - For Promise rejections of `fetch`/Response-like objects, the handler attempts to read JSON/text to extract the message; otherwise it uses a status-line fallback like `Request failed: 500 Internal Server Error`.
+- DaisyUI Toast Placement: We show toasts top-center using the shared container created by `errorHandler.js`.
+- Length Limit: Messages are truncated in the UI at ~2000 chars to keep the page usable; the full details are still sent to the backend error log.
+
+Backend Error Envelope
+- When returning errors from APIs, prefer `aAPI::dispatchError(...)` which normalizes output to:
+  ```json
+  {
+    "success": false,
+    "message": "Human readable error message",
+    "errors": { "original": "shape as provided to dispatchError" },
+    "code": "optional",
+    "status": "optional",
+    "error": "optional"
+  }
+  ```
+- Important: Populate the top-level `message` with a succinct, user-facing string; keep extra details inside `errors`.
+- The frontend will favor this `message` and show it verbatim in the toast.
+
 ## Current Pre-Made Services
 
 The IamLab project includes several pre-built services that provide comprehensive functionality for authentication, content management, and integrations. Each service is well-documented and can be easily configured or extended.

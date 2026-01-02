@@ -5,6 +5,9 @@ use League\Flysystem\Local\LocalFilesystemAdapter;
 use Phalcon\Acl\Adapter\Memory;
 use Phalcon\Autoload\Loader;
 use IamLab\Service\Auth\AuthService;
+use Phalcon\Logger\Logger;
+use Phalcon\Logger\Adapter\Stream as FileLogger;
+use Phalcon\Logger\Formatter\Line as LineFormatter;
 use Phalcon\Http\Response;
 use Phalcon\Mvc\View\Simple;
 use Phalcon\Mvc\Url as UrlResolver;
@@ -71,6 +74,32 @@ $di->setShared(
         $url->setBaseUri($config->application->baseUri);
 
         return $url;
+    }
+);
+$di->setShared(
+    'logger',
+    function () {
+        $cfg = config('logger');
+        // If disabled, return a basic logger to /dev/null to avoid null checks
+        $path = $cfg['path'] ?? '/var/www/html/files/logs/app.log';
+        $enabled = (bool)($cfg['enabled'] ?? true);
+        $level = strtolower((string)($cfg['level'] ?? 'debug'));
+        $format = (string)($cfg['format'] ?? '[%date%][%level%] %message%');
+
+        // Ensure directory exists
+        $dir = dirname($path);
+        if (!is_dir($dir)) {
+            @mkdir($dir, 0775, true);
+        }
+
+        $adapter = new FileLogger($enabled ? $path : '/dev/null');
+        $formatter = new LineFormatter($format, 'Y-m-d H:i:s');
+        $adapter->setFormatter($formatter);
+
+        $logger = new Logger('app');
+        $logger->addAdapter('file', $adapter);
+
+        return $logger;
     }
 );
 $di->setShared(

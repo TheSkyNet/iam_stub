@@ -13,6 +13,8 @@ use IamLab\Service\PusherApi;
 use IamLab\Service\RolesApi;
 use IamLab\Service\UsersApi;
 use IamLab\Service\JobsApi;
+use IamLab\Service\ErrorsApi;
+use IamLab\Service\SseApi;
 use IamLab\Service\SettingsService;
 use Phalcon\Mvc\Micro;
 
@@ -46,10 +48,18 @@ RouteGroup::create($app, '/api')
         $group->get('/oauth/providers', [(new OAuth()), "providersAction"]);
         $group->get('/oauth/redirect', [(new OAuth()), "redirectAction"]);
         $group->get('/oauth/callback', [(new OAuth()), "callbackAction"]);
-        
+
         // Pusher public endpoints
         $group->get('/pusher/config', [(new PusherApi()), "configAction"]);
         $group->post('/pusher/webhook', [(new PusherApi()), "webhookAction"]);
+
+        // Errors public endpoint (frontend/client can report)
+        $group->post('/errors', [(new ErrorsApi()), "createAction"]);
+
+        // Server-Sent Events (SSE) public demo endpoints
+        $group->get('/sse/clock', [(new SseApi()), "clockAction"]);
+        $group->get('/sse/echo', [(new SseApi()), "echoAction"]);
+        $group->get('/sse/test', [(new SseApi()), "testAction"]);
     });
 
 // =============================================================================
@@ -100,6 +110,12 @@ RouteGroup::create($app, '/api')
         $group->put('/users/{id}', [(new UsersApi()), "updateAction"]);
         $group->delete('/users/{id}', [(new UsersApi()), "deleteAction"]);
         $group->get('/users/search', [(new UsersApi()), "searchAction"]);
+
+        // Errors management endpoints
+        $group->get('/errors', [(new ErrorsApi()), "indexAction"]);
+        $group->get('/errors/{id}', [(new ErrorsApi()), "showAction"]);
+        $group->delete('/errors/{id}', [(new ErrorsApi()), "deleteAction"]);
+        $group->post('/errors/cleanup', [(new ErrorsApi()), "cleanupAction"]);
     });
 
 // =============================================================================
