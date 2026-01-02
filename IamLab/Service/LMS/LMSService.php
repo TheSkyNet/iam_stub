@@ -55,8 +55,17 @@ class LMSService extends LMSServiceBase
     {
         // Get configuration service from DI container if available
         $configService = null;
-        if (method_exists($this, 'getDI') && $this->getDI() && $this->getDI()->has('config')) {
-            $configService = $this->getDI()->get('config');
+
+        // Avoid calling $this->getDI() directly because it throws when no DI is set
+        try {
+            if (class_exists('Phalcon\\Di\\Di')) {
+                $di = \Phalcon\Di\Di::getDefault();
+                if ($di && $di->has('config')) {
+                    $configService = $di->get('config');
+                }
+            }
+        } catch (\Throwable $e) {
+            // No available DI. That's fine for tests/CLI: ConfigurationManager will fall back to env.
         }
 
         // Initialize configuration manager

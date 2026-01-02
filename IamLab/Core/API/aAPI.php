@@ -4,7 +4,6 @@ namespace IamLab\Core\API;
 
 use IamLab\Service\Auth\AuthService;
 use JetBrains\PhpStorm\NoReturn;
-use Phalcon\Di\Injectable;
 use function App\Core\Helpers\cast;
 
 /**
@@ -13,8 +12,19 @@ use function App\Core\Helpers\cast;
  *
  * Abstract base class for API controllers.
  * Provides common helper methods for handling API requests and responses.
+ *
+ * Note: This class is designed to operate even when Phalcon is not installed,
+ * to support unit tests that do not boot the full framework. In such cases,
+ * it falls back to a plain base class without DI-provided properties.
  */
-abstract class aAPI extends Injectable
+// Create a conditional base to avoid fatal errors when Phalcon is not available
+if (class_exists('Phalcon\\Di\\Injectable')) {
+    abstract class aAPIBase extends \Phalcon\Di\Injectable {}
+} else {
+    abstract class aAPIBase {}
+}
+
+abstract class aAPI extends aAPIBase
 {
     /**
      * Store route parameters passed as function arguments

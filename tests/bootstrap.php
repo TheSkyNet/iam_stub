@@ -28,3 +28,37 @@ if (!defined('TMP_PATH')) {
 }
 
 echo "PHPUnit Bootstrap: Test environment initialized\n";
+
+// Provide a minimal Phalcon DI container for unit tests that touch Models
+// This prevents "A dependency injection container is required" exceptions
+try {
+    if (class_exists('Phalcon\\Di\\Di')) {
+        $di = new \Phalcon\Di\Di();
+        \Phalcon\Di\Di::setDefault($di);
+
+        // Minimal services required by Phalcon\Mvc\Model
+        if (class_exists('Phalcon\\Mvc\\Model\\Manager')) {
+            $di->setShared('modelsManager', function () {
+                return new \Phalcon\Mvc\Model\Manager();
+            });
+        }
+        if (class_exists('Phalcon\\Mvc\\Model\\Metadata\\Memory')) {
+            $di->setShared('modelsMetadata', function () {
+                return new \Phalcon\Mvc\Model\Metadata\Memory();
+            });
+        }
+
+        // Optional config service stub to satisfy code that looks it up
+        $di->set('config', function () {
+            return new class {
+                public function get(string $key, $default = null)
+                {
+                    // In tests we default to env-stubbed values
+                    return $default;
+                }
+            };
+        });
+    }
+} catch (\Throwable $e) {
+    // If Phalcon DI is not available, proceed; tests that need it will be skipped or use fallbacks
+}

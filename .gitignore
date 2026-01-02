@@ -11,3 +11,5 @@ composer.lock
 /junk
 .env
 *.ini
+/.phpunit.cache
+.junie

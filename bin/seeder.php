@@ -1,101 +1,132 @@
+#!/usr/bin/env php
 <?php
-// /bin/seeder.php
+declare(strict_types=1);
 
-use IamLab\Migrations\Seeders\PackageSeeder;
-use IamLab\Migrations\Seeders\PostSeeder;
-use IamLab\Migrations\Seeders\ProjectSeeder;
+// Unified Seeder CLI for IamLab project
+
 use IamLab\Migrations\Seeders\RolesSeeder;
-use IamLab\Model\User;
+use IamLab\Migrations\Seeders\SiteSettingsSeeder;
+use IamLab\Seeding\Infrastructure\PdoSeedLogRepository;
+use IamLab\Seeding\Infrastructure\PdoUnitOfWork;
+use IamLab\Seeding\Registry\SeederRegistry;
+use IamLab\Seeding\Runner\SeedRunner;
+use IamLab\Seeding\Support\ConsolePrinter;
+use IamLab\Seeding\Support\SystemClock;
 use Phalcon\Di\FactoryDefault;
-use Phalcon\Loader;
-use Phalcon\Mvc\Micro;
 use function App\Core\Helpers\loadEnv;
 
-// Set paths
+// Paths
 define('APP_PATH', realpath(__DIR__ . '/../IamLab'));
 define('ROOT_PATH', realpath(__DIR__ . '/..'));
 
-// Include composer autoloader
+// Autoload
 require_once ROOT_PATH . '/vendor/autoload.php';
 
-// Load environment variables
-loadEnv(ROOT_PATH.'/.env');
+// Load env
+loadEnv(ROOT_PATH . '/.env');
 
-// Set error reporting based on environment
-if (\App\Core\Helpers\env('APP_DEBUG') == 'debug') {
-    ini_set('display_errors', 1);
-    ini_set('display_startup_errors', 1);
+// Error reporting (optional)
+if (\App\Core\Helpers\env('APP_DEBUG') === 'debug') {
+    ini_set('display_errors', '1');
+    ini_set('display_startup_errors', '1');
     error_reporting(E_ALL);
 }
 
-// Create DI container
+// Bootstrap DI and services
 $di = new FactoryDefault();
-
-// Include Services
 include APP_PATH . '/config/services.php';
-
-// Get the loader from DI
 $di->getLoader();
 
-// Create application instance
-$app = new Micro($di);
+// Registered seeders: map short names to FQCNs
+$registeredSeeders = [
+    'RolesSeeder' => RolesSeeder::class,
+    'SiteSettingsSeeder' => SiteSettingsSeeder::class,
+    // Example seeder with CLI options; safe no-op by default
+    'ExampleUserSeeder' => \IamLab\Seeders\ExampleUserSeeder::class,
+];
 
-// Parse command line arguments
-$options = getopt('', ['email:', 'password:']);
-$email = $options['email'] ?? null;
-$password = $options['password'] ?? null;
+// Base CLI options
+$baseOptions = [
+    'all',
+    'seed:',      // comma-separated list
+    'force',
+    'list',
+    'dry-run',
+    'verbose',
+];
 
-// Validate required parameters
-if (!$email || !$password) {
-    echo "Error: Email and password are required.\n";
-    echo "Usage: php seeder.php --email=user@example.com --password=yourpassword\n";
-    exit(1);
-}
+// Collect dynamic options from seeders that provide them
+$registryForOptions = new SeederRegistry($registeredSeeders);
+$dynamicOptions = $registryForOptions->collectCliOptions();
+$optionDefs = array_values(array_unique(array_merge($baseOptions, $dynamicOptions)));
 
-try {
-    // Start transaction
-    $di->get('db')->begin();
+$options = getopt('', $optionDefs) ?: [];
+$verbose = isset($options['verbose']);
+$printer = new ConsolePrinter($verbose);
 
-    // Create user
-    $user = new User();
-    $user->setEmail($email);
-    $user->setPassword(password_hash($password, PASSWORD_DEFAULT));
-    $user->setName(explode('@', $email)[0]);
-    $user->setKey(bin2hex(random_bytes(32)));
-
-    if ($user->save()) {
-        echo "Successfully created user: {$email}\n";
-        
-        // Run roles seeder
-        echo "\nStarting to seed roles...\n";
-        $rolesSeeder = new RolesSeeder();
-        $rolesSeeder->run();
-        
-        // Assign admin role to the created user
-        echo "\nAssigning admin role to user...\n";
-        $rolesSeeder->assignAdminRole($email);
-        
-    } else {
-        echo "Failed to create user: {$email}\n";
-        foreach ($user->getMessages() as $message) {
-            echo $message->getMessage() . "\n";
-        }
-        $di->get('db')->rollback();
-        exit(1);
+if (isset($options['list'])) {
+    $printer->info('Available seeders and their CLI options:');
+    foreach ($registeredSeeders as $short => $fqcn) {
+        $opts = method_exists($fqcn, 'cliOptions') ? (array) $fqcn::cliOptions() : [];
+        $optsStr = $opts ? implode(', ', $opts) : '—';
+        $printer->info(" - {$short} ({$fqcn}) options: {$optsStr}");
     }
+    $printer->info('');
+    $printer->info('Global options:');
+    $printer->info(' - --all');
+    $printer->info(' - --seed=Class1,Class2');
+    $printer->info(' - --force');
+    $printer->info(' - --list');
+    $printer->info(' - --dry-run');
+    $printer->info(' - --verbose');
+    exit(0);
+}
 
-    echo "\nStarting to seed site settings...\n";
- /*   $siteSettingsSeeder = new \IamLab\Migrations\Seeders\SiteSettingsSeeder();
-    $siteSettingsSeeder->run();*/
+// Resolve selected seeders
+$selectedClasses = [];
+if (!empty($options['seed'])) {
+    $parts = array_filter(array_map('trim', explode(',', (string) $options['seed'])));
+    foreach ($parts as $name) {
+        $fqcn = $registeredSeeders[$name] ?? (class_exists($name) ? $name : null);
+        if ($fqcn) {
+            $selectedClasses[$fqcn] = $fqcn;
+        } else {
+            $printer->warn("Warning: Seeder '{$name}' not found, skipping.");
+        }
+    }
+} elseif (isset($options['all'])) {
+    foreach ($registeredSeeders as $fqcn) {
+        $selectedClasses[$fqcn] = $fqcn;
+    }
+} else {
+    // Default to all if no specific seeders requested
+    foreach ($registeredSeeders as $fqcn) {
+        $selectedClasses[$fqcn] = $fqcn;
+    }
+}
 
-    // Commit transaction
-    $di->get('db')->commit();
-    echo "\nSeeding completed successfully!\n";
+if (!$selectedClasses) {
+    $printer->warn('No seeders selected. Use --all or --seed=Class1,Class2 or --list to view options.');
+    exit(0);
+}
 
-} catch (Exception $e) {
-    // Rollback on error
-    $di->get('db')->rollback();
-    echo "Error: " . $e->getMessage() . "\n";
-    echo "Stack trace:\n" . $e->getTraceAsString() . "\n";
+$force = isset($options['force']);
+$dryRun = isset($options['dry-run']);
+
+// Obtain PDO from Phalcon DB adapter
+$db = $di->get('db');
+if (!method_exists($db, 'getInternalHandler')) {
+    $printer->error('Database adapter does not expose an internal PDO handler.');
     exit(1);
 }
+/** @var PDO $pdo */
+$pdo = $db->getInternalHandler();
+
+$uow = new PdoUnitOfWork($pdo);
+$seedLog = new PdoSeedLogRepository($pdo);
+$clock = new SystemClock();
+$registry = new SeederRegistry($registeredSeeders);
+$runner = new SeedRunner($registry, $seedLog, $uow, $clock, $printer, $options);
+
+$exitCode = $runner->run(array_values($selectedClasses), $force, $dryRun);
+exit($exitCode);

@@ -29,29 +29,29 @@ Integration Factory (Tests\Unit\Service\LMS\Factory\IntegrationFactory)
  [x] Register invalid class throws exception
 
 LMSService (Tests\Unit\Service\LMS\LMSService)
- [ ] Can be instantiated
- [ ] Initialize
- [ ] Get configuration manager
- [ ] Get integration registry
- [ ] Get available integrations
- [ ] Is integration available
- [ ] Get integration status
- [ ] Generate content with valid integration
- [ ] Generate content with invalid integration
- [ ] Create course with valid integration
- [ ] Create course with invalid integration
- [ ] Analyze text with valid integration
- [ ] Analyze text with invalid integration
- [ ] Generate content with fallback
- [ ] Get best integration for
- [ ] Get integration capabilities
- [ ] Get statistics
- [ ] Refresh health status
- [ ] Multiple initialization calls are safe
+ [x] Can be instantiated
+ [x] Initialize
+ [x] Get configuration manager
+ [x] Get integration registry
+ [x] Get available integrations
+ [x] Is integration available
+ [x] Get integration status
+ [x] Generate content with valid integration
+ [x] Generate content with invalid integration
+ [x] Create course with valid integration
+ [x] Create course with invalid integration
+ [x] Analyze text with valid integration
+ [x] Analyze text with invalid integration
+ [x] Generate content with fallback
+ [x] Get best integration for
+ [x] Get integration capabilities
+ [x] Get statistics
+ [x] Refresh health status
+ [x] Multiple initialization calls are safe
 
 Sse Api (Tests\Unit\Service\SseApi)
- [x] Echo action outputs single event
- [x] Clock action emits requested count
+ [ ] Echo action outputs single event
+ [ ] Clock action emits requested count
 
 Sse Emitter (Tests\Unit\Core\SSE\SseEmitter)
  [x] Start sets headers and optional retry
