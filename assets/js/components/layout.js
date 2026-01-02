@@ -29,6 +29,12 @@ function layout(view) {
                                     "href": "/pusher-test"
                                 }, "Pusher Test")
                             ]),
+                            m("li", [
+                                m(m.route.Link, {
+                                    "class": "btn btn-ghost btn-sm", 
+                                    "href": "/test"
+                                }, "Test Page")
+                            ]),
                             // Show user menu when logged in
                             isLoggedIn ? [
                                 m("li", [
@@ -54,6 +60,27 @@ function layout(view) {
                                         m("ul.dropdown-content.menu.p-2.shadow.bg-base-100.rounded-box.w-52", {
                                             tabindex: "0"
                                         }, [
+                                            AuthService.isAdmin() ? m("li", [
+                                                m("a", {
+                                                    onclick: () => {
+                                                        m.route.set('/admin/error-logs');
+                                                    }
+                                                }, [
+                                                    m("svg.w-4.h-4", {
+                                                        fill: "none",
+                                                        stroke: "currentColor",
+                                                        viewBox: "0 0 24 24"
+                                                    }, [
+                                                        m("path", {
+                                                            "stroke-linecap": "round",
+                                                            "stroke-linejoin": "round",
+                                                            "stroke-width": "2",
+                                                            d: "M9 17v-6a2 2 0 012-2h8"
+                                                        })
+                                                    ]),
+                                                    "Error Logs"
+                                                ])
+                                            ]) : null,
                                             m("li", [
                                                 m("a", {
                                                     onclick: () => {

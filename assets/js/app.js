@@ -3,6 +3,8 @@ import {LoginForm, RegisterForm, ForgotPasswordForm} from "./Login/LoginModule";
 import {layout} from "./components/layout";
 import {Welcome} from "./components/Welcome";
 import {PusherTest} from "./components/PusherTest";
+import { TestPage } from "./components/TestPage";
+import { AdminErrorLogs } from "./components/AdminErrorLogs";
 import {Profile} from "./components/Profile";
 import {AdminPage} from "./components/AdminPage";
 import {Roles} from "./components/Roles";
@@ -116,6 +118,7 @@ m.route(root, "/", {
     "/register": layout(RegisterForm),
     "/forgot-password": layout(ForgotPasswordForm),
     "/pusher-test": layout(authGuard(PusherTest)),
+    "/test": layout(TestPage),
     "/profile": layout(authGuard(Profile)),
     // Admin-only routes
     "/admin": layout(adminGuard(AdminPage)), // Admin dashboard
@@ -123,6 +126,7 @@ m.route(root, "/", {
     "/admin/users": layout(adminGuard(Users)), // User management (admin only)
     "/admin/users/add": layout(adminGuard(AddUser)), // Add user (admin only)
     "/admin/users/edit/:id": layout(adminGuard(EditUser)), // Edit user (admin only)
+    "/admin/error-logs": layout(adminGuard(AdminErrorLogs)), // Error log viewer (admin only)
     // Role-based routes examples
     "/editor": layout(roleGuard(Welcome, 'editor')), // Editor only
     "/member": layout(roleGuard(Welcome, 'member')), // Member only

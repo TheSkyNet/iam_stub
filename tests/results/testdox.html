@@ -51,11 +51,71 @@
         </style>
     </head>
     <body>
-        <h2>Simple Example (Tests\Unit\SimpleExample)</h2>
+        <h2>Configuration Manager (Tests\Unit\Service\LMS\Configuration\ConfigurationManager)</h2>
         <ul>
-            <li class="success">Basic arithmetic</li>
-            <li class="success">String operations</li>
-            <li class="success">Array operations</li>
+            <li class="success">Can be instantiated</li>
+            <li class="success">Get all configurations</li>
+            <li class="success">Get integration config</li>
+            <li class="success">Is integration enabled</li>
+            <li class="success">Get enabled integrations</li>
+            <li class="success">Validate configuration</li>
+            <li class="success">Get non existent integration config</li>
+            <li class="success">Is non existent integration enabled</li>
+        </ul>
+        <h2>Error Log (Tests\Unit\Model\ErrorLog)</h2>
+        <ul>
+            <li class="defect">Setters and getters work</li>
+            <li class="defect">Set context json round trip</li>
+            <li class="defect">Before validation on create sets created at</li>
+        </ul>
+        <h2>Integration Factory (Tests\Unit\Service\LMS\Factory\IntegrationFactory)</h2>
+        <ul>
+            <li class="success">Get supported integrations</li>
+            <li class="success">Is supported</li>
+            <li class="success">Create ollama integration</li>
+            <li class="success">Create gemini integration</li>
+            <li class="success">Create tencent edu integration</li>
+            <li class="success">Create unsupported integration throws exception</li>
+            <li class="success">Create with invalid configuration throws exception</li>
+            <li class="success">Get integration class</li>
+            <li class="success">Create from config</li>
+            <li class="success">Validate config</li>
+            <li class="success">Get integration capabilities</li>
+            <li class="success">Register and unregister integration</li>
+            <li class="success">Register invalid class throws exception</li>
+        </ul>
+        <h2>LMSService (Tests\Unit\Service\LMS\LMSService)</h2>
+        <ul>
+            <li class="defect">Can be instantiated</li>
+            <li class="defect">Initialize</li>
+            <li class="defect">Get configuration manager</li>
+            <li class="defect">Get integration registry</li>
+            <li class="defect">Get available integrations</li>
+            <li class="defect">Is integration available</li>
+            <li class="defect">Get integration status</li>
+            <li class="defect">Generate content with valid integration</li>
+            <li class="defect">Generate content with invalid integration</li>
+            <li class="defect">Create course with valid integration</li>
+            <li class="defect">Create course with invalid integration</li>
+            <li class="defect">Analyze text with valid integration</li>
+            <li class="defect">Analyze text with invalid integration</li>
+            <li class="defect">Generate content with fallback</li>
+            <li class="defect">Get best integration for</li>
+            <li class="defect">Get integration capabilities</li>
+            <li class="defect">Get statistics</li>
+            <li class="defect">Refresh health status</li>
+            <li class="defect">Multiple initialization calls are safe</li>
+        </ul>
+        <h2>Sse Api (Tests\Unit\Service\SseApi)</h2>
+        <ul>
+            <li class="success">Echo action outputs single event</li>
+            <li class="success">Clock action emits requested count</li>
+        </ul>
+        <h2>Sse Emitter (Tests\Unit\Core\SSE\SseEmitter)</h2>
+        <ul>
+            <li class="success">Start sets headers and optional retry</li>
+            <li class="success">Send formats event id and json data</li>
+            <li class="success">Comment and heartbeat</li>
         </ul>
     </body>
 </html>

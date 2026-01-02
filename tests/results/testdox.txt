@@ -1,5 +1,60 @@
-Simple Example (Tests\Unit\SimpleExample)
- [x] Basic arithmetic
- [x] String operations
- [x] Array operations
+Configuration Manager (Tests\Unit\Service\LMS\Configuration\ConfigurationManager)
+ [x] Can be instantiated
+ [x] Get all configurations
+ [x] Get integration config
+ [x] Is integration enabled
+ [x] Get enabled integrations
+ [x] Validate configuration
+ [x] Get non existent integration config
+ [x] Is non existent integration enabled
+
+Error Log (Tests\Unit\Model\ErrorLog)
+ [ ] Setters and getters work
+ [ ] Set context json round trip
+ [ ] Before validation on create sets created at
+
+Integration Factory (Tests\Unit\Service\LMS\Factory\IntegrationFactory)
+ [x] Get supported integrations
+ [x] Is supported
+ [x] Create ollama integration
+ [x] Create gemini integration
+ [x] Create tencent edu integration
+ [x] Create unsupported integration throws exception
+ [x] Create with invalid configuration throws exception
+ [x] Get integration class
+ [x] Create from config
+ [x] Validate config
+ [x] Get integration capabilities
+ [x] Register and unregister integration
+ [x] Register invalid class throws exception
+
+LMSService (Tests\Unit\Service\LMS\LMSService)
+ [ ] Can be instantiated
+ [ ] Initialize
+ [ ] Get configuration manager
+ [ ] Get integration registry
+ [ ] Get available integrations
+ [ ] Is integration available
+ [ ] Get integration status
+ [ ] Generate content with valid integration
+ [ ] Generate content with invalid integration
+ [ ] Create course with valid integration
+ [ ] Create course with invalid integration
+ [ ] Analyze text with valid integration
+ [ ] Analyze text with invalid integration
+ [ ] Generate content with fallback
+ [ ] Get best integration for
+ [ ] Get integration capabilities
+ [ ] Get statistics
+ [ ] Refresh health status
+ [ ] Multiple initialization calls are safe
+
+Sse Api (Tests\Unit\Service\SseApi)
+ [x] Echo action outputs single event
+ [x] Clock action emits requested count
+
+Sse Emitter (Tests\Unit\Core\SSE\SseEmitter)
+ [x] Start sets headers and optional retry
+ [x] Send formats event id and json data
+ [x] Comment and heartbeat
 

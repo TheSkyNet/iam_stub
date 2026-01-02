@@ -6,6 +6,7 @@ import { pusherClient } from './components/PusherClient';
 window.pusherClient = pusherClient;
 
 // Global error handler and toast notifications (DaisyUI)
-import { initErrorHandler, showToast } from './lib/errorHandler';
+import { initErrorHandler, showToast, showToastAsync } from './lib/errorHandler';
 initErrorHandler();
 window.showToast = showToast;
+window.showToastAsync = showToastAsync;

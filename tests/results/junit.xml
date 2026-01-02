@@ -1,8 +1,396 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <testsuites>
-  <testsuite name="Tests\Unit\SimpleExampleTest" file="/home/morton/apps/dev/ima_stub/tests/Unit/SimpleExampleTest.php" tests="3" assertions="9" errors="0" failures="0" skipped="0" time="0.004668">
-    <testcase name="testStringOperations" file="/home/morton/apps/dev/ima_stub/tests/Unit/SimpleExampleTest.php" line="25" class="Tests\Unit\SimpleExampleTest" classname="Tests.Unit.SimpleExampleTest" assertions="3" time="0.003746"/>
-    <testcase name="testArrayOperations" file="/home/morton/apps/dev/ima_stub/tests/Unit/SimpleExampleTest.php" line="35" class="Tests\Unit\SimpleExampleTest" classname="Tests.Unit.SimpleExampleTest" assertions="3" time="0.000611"/>
-    <testcase name="testBasicArithmetic" file="/home/morton/apps/dev/ima_stub/tests/Unit/SimpleExampleTest.php" line="15" class="Tests\Unit\SimpleExampleTest" classname="Tests.Unit.SimpleExampleTest" assertions="3" time="0.000311"/>
+  <testsuite name="/var/www/html/phpunit.xml" tests="88" assertions="190" errors="41" failures="0" skipped="0" time="0.032389">
+    <testsuite name="LMS" tests="40" assertions="85" errors="19" failures="0" skipped="0" time="0.023019">
+      <testsuite name="Tests\Unit\Service\LMS\Configuration\ConfigurationManagerTest" file="/var/www/html/tests/Unit/Service/LMS/Configuration/ConfigurationManagerTest.php" tests="8" assertions="17" errors="0" failures="0" skipped="0" time="0.011267">
+        <testcase name="testValidateConfiguration" file="/var/www/html/tests/Unit/Service/LMS/Configuration/ConfigurationManagerTest.php" line="60" class="Tests\Unit\Service\LMS\Configuration\ConfigurationManagerTest" classname="Tests.Unit.Service.LMS.Configuration.ConfigurationManagerTest" assertions="1" time="0.007109"/>
+        <testcase name="testGetEnabledIntegrations" file="/var/www/html/tests/Unit/Service/LMS/Configuration/ConfigurationManagerTest.php" line="52" class="Tests\Unit\Service\LMS\Configuration\ConfigurationManagerTest" classname="Tests.Unit.Service.LMS.Configuration.ConfigurationManagerTest" assertions="2" time="0.001099"/>
+        <testcase name="testIsIntegrationEnabled" file="/var/www/html/tests/Unit/Service/LMS/Configuration/ConfigurationManagerTest.php" line="43" class="Tests\Unit\Service\LMS\Configuration\ConfigurationManagerTest" classname="Tests.Unit.Service.LMS.Configuration.ConfigurationManagerTest" assertions="2" time="0.000838"/>
+        <testcase name="testCanBeInstantiated" file="/var/www/html/tests/Unit/Service/LMS/Configuration/ConfigurationManagerTest.php" line="18" class="Tests\Unit\Service\LMS\Configuration\ConfigurationManagerTest" classname="Tests.Unit.Service.LMS.Configuration.ConfigurationManagerTest" assertions="1" time="0.000435"/>
+        <testcase name="testGetIntegrationConfig" file="/var/www/html/tests/Unit/Service/LMS/Configuration/ConfigurationManagerTest.php" line="33" class="Tests\Unit\Service\LMS\Configuration\ConfigurationManagerTest" classname="Tests.Unit.Service.LMS.Configuration.ConfigurationManagerTest" assertions="4" time="0.000567"/>
+        <testcase name="testGetNonExistentIntegrationConfig" file="/var/www/html/tests/Unit/Service/LMS/Configuration/ConfigurationManagerTest.php" line="69" class="Tests\Unit\Service\LMS\Configuration\ConfigurationManagerTest" classname="Tests.Unit.Service.LMS.Configuration.ConfigurationManagerTest" assertions="2" time="0.000615"/>
+        <testcase name="testIsNonExistentIntegrationEnabled" file="/var/www/html/tests/Unit/Service/LMS/Configuration/ConfigurationManagerTest.php" line="77" class="Tests\Unit\Service\LMS\Configuration\ConfigurationManagerTest" classname="Tests.Unit.Service.LMS.Configuration.ConfigurationManagerTest" assertions="1" time="0.000135"/>
+        <testcase name="testGetAllConfigurations" file="/var/www/html/tests/Unit/Service/LMS/Configuration/ConfigurationManagerTest.php" line="23" class="Tests\Unit\Service\LMS\Configuration\ConfigurationManagerTest" classname="Tests.Unit.Service.LMS.Configuration.ConfigurationManagerTest" assertions="4" time="0.000468"/>
+      </testsuite>
+      <testsuite name="Tests\Unit\Service\LMS\Factory\IntegrationFactoryTest" file="/var/www/html/tests/Unit/Service/LMS/Factory/IntegrationFactoryTest.php" tests="13" assertions="68" errors="0" failures="0" skipped="0" time="0.011752">
+        <testcase name="testIsSupported" file="/var/www/html/tests/Unit/Service/LMS/Factory/IntegrationFactoryTest.php" line="28" class="Tests\Unit\Service\LMS\Factory\IntegrationFactoryTest" classname="Tests.Unit.Service.LMS.Factory.IntegrationFactoryTest" assertions="4" time="0.000899"/>
+        <testcase name="testCreateGeminiIntegration" file="/var/www/html/tests/Unit/Service/LMS/Factory/IntegrationFactoryTest.php" line="49" class="Tests\Unit\Service\LMS\Factory\IntegrationFactoryTest" classname="Tests.Unit.Service.LMS.Factory.IntegrationFactoryTest" assertions="2" time="0.001195"/>
+        <testcase name="testCreateWithInvalidConfigurationThrowsException" file="/var/www/html/tests/Unit/Service/LMS/Factory/IntegrationFactoryTest.php" line="84" class="Tests\Unit\Service\LMS\Factory\IntegrationFactoryTest" classname="Tests.Unit.Service.LMS.Factory.IntegrationFactoryTest" assertions="1" time="0.003123"/>
+        <testcase name="testGetIntegrationClass" file="/var/www/html/tests/Unit/Service/LMS/Factory/IntegrationFactoryTest.php" line="92" class="Tests\Unit\Service\LMS\Factory\IntegrationFactoryTest" classname="Tests.Unit.Service.LMS.Factory.IntegrationFactoryTest" assertions="4" time="0.000919"/>
+        <testcase name="testCreateFromConfig" file="/var/www/html/tests/Unit/Service/LMS/Factory/IntegrationFactoryTest.php" line="100" class="Tests\Unit\Service\LMS\Factory\IntegrationFactoryTest" classname="Tests.Unit.Service.LMS.Factory.IntegrationFactoryTest" assertions="8" time="0.001988"/>
+        <testcase name="testRegisterAndUnregisterIntegration" file="/var/www/html/tests/Unit/Service/LMS/Factory/IntegrationFactoryTest.php" line="220" class="Tests\Unit\Service\LMS\Factory\IntegrationFactoryTest" classname="Tests.Unit.Service.LMS.Factory.IntegrationFactoryTest" assertions="4" time="0.000148"/>
+        <testcase name="testRegisterInvalidClassThrowsException" file="/var/www/html/tests/Unit/Service/LMS/Factory/IntegrationFactoryTest.php" line="247" class="Tests\Unit\Service\LMS\Factory\IntegrationFactoryTest" classname="Tests.Unit.Service.LMS.Factory.IntegrationFactoryTest" assertions="2" time="0.000664"/>
+        <testcase name="testGetSupportedIntegrations" file="/var/www/html/tests/Unit/Service/LMS/Factory/IntegrationFactoryTest.php" line="18" class="Tests\Unit\Service\LMS\Factory\IntegrationFactoryTest" classname="Tests.Unit.Service.LMS.Factory.IntegrationFactoryTest" assertions="4" time="0.000223"/>
+        <testcase name="testCreateOllamaIntegration" file="/var/www/html/tests/Unit/Service/LMS/Factory/IntegrationFactoryTest.php" line="36" class="Tests\Unit\Service\LMS\Factory\IntegrationFactoryTest" classname="Tests.Unit.Service.LMS.Factory.IntegrationFactoryTest" assertions="2" time="0.000128"/>
+        <testcase name="testCreateTencentEduIntegration" file="/var/www/html/tests/Unit/Service/LMS/Factory/IntegrationFactoryTest.php" line="62" class="Tests\Unit\Service\LMS\Factory\IntegrationFactoryTest" classname="Tests.Unit.Service.LMS.Factory.IntegrationFactoryTest" assertions="2" time="0.000922"/>
+        <testcase name="testCreateUnsupportedIntegrationThrowsException" file="/var/www/html/tests/Unit/Service/LMS/Factory/IntegrationFactoryTest.php" line="76" class="Tests\Unit\Service\LMS\Factory\IntegrationFactoryTest" classname="Tests.Unit.Service.LMS.Factory.IntegrationFactoryTest" assertions="2" time="0.000208"/>
+        <testcase name="testValidateConfig" file="/var/www/html/tests/Unit/Service/LMS/Factory/IntegrationFactoryTest.php" line="141" class="Tests\Unit\Service\LMS\Factory\IntegrationFactoryTest" classname="Tests.Unit.Service.LMS.Factory.IntegrationFactoryTest" assertions="12" time="0.000426"/>
+        <testcase name="testGetIntegrationCapabilities" file="/var/www/html/tests/Unit/Service/LMS/Factory/IntegrationFactoryTest.php" line="184" class="Tests\Unit\Service\LMS\Factory\IntegrationFactoryTest" classname="Tests.Unit.Service.LMS.Factory.IntegrationFactoryTest" assertions="21" time="0.000909"/>
+      </testsuite>
+      <testsuite name="Tests\Unit\Service\LMS\LMSServiceTest" file="/var/www/html/tests/Unit/Service/LMS/LMSServiceTest.php" tests="19" assertions="0" errors="19" failures="0" skipped="0" time="0.000000">
+        <testcase name="testCanBeInstantiated" file="/var/www/html/tests/Unit/Service/LMS/LMSServiceTest.php" line="21" class="Tests\Unit\Service\LMS\LMSServiceTest" classname="Tests.Unit.Service.LMS.LMSServiceTest" assertions="0" time="0.000000">
+          <error type="Phalcon\Di\Exception">Tests\Unit\Service\LMS\LMSServiceTest::testCanBeInstantiated
+Phalcon\Di\Exception: A dependency injection container is required to access internal services
+
+/var/www/html/IamLab/Service/LMS/LMSService.php:58
+/var/www/html/IamLab/Service/LMS/LMSService.php:47
+/var/www/html/tests/Unit/Service/LMS/LMSServiceTest.php:18</error>
+        </testcase>
+        <testcase name="testGetConfigurationManager" file="/var/www/html/tests/Unit/Service/LMS/LMSServiceTest.php" line="35" class="Tests\Unit\Service\LMS\LMSServiceTest" classname="Tests.Unit.Service.LMS.LMSServiceTest" assertions="0" time="0.000000">
+          <error type="Phalcon\Di\Exception">Tests\Unit\Service\LMS\LMSServiceTest::testGetConfigurationManager
+Phalcon\Di\Exception: A dependency injection container is required to access internal services
+
+/var/www/html/IamLab/Service/LMS/LMSService.php:58
+/var/www/html/IamLab/Service/LMS/LMSService.php:47
+/var/www/html/tests/Unit/Service/LMS/LMSServiceTest.php:18</error>
+        </testcase>
+        <testcase name="testGetIntegrationRegistry" file="/var/www/html/tests/Unit/Service/LMS/LMSServiceTest.php" line="42" class="Tests\Unit\Service\LMS\LMSServiceTest" classname="Tests.Unit.Service.LMS.LMSServiceTest" assertions="0" time="0.000000">
+          <error type="Phalcon\Di\Exception">Tests\Unit\Service\LMS\LMSServiceTest::testGetIntegrationRegistry
+Phalcon\Di\Exception: A dependency injection container is required to access internal services
+
+/var/www/html/IamLab/Service/LMS/LMSService.php:58
+/var/www/html/IamLab/Service/LMS/LMSService.php:47
+/var/www/html/tests/Unit/Service/LMS/LMSServiceTest.php:18</error>
+        </testcase>
+        <testcase name="testGetAvailableIntegrations" file="/var/www/html/tests/Unit/Service/LMS/LMSServiceTest.php" line="49" class="Tests\Unit\Service\LMS\LMSServiceTest" classname="Tests.Unit.Service.LMS.LMSServiceTest" assertions="0" time="0.000000">
+          <error type="Phalcon\Di\Exception">Tests\Unit\Service\LMS\LMSServiceTest::testGetAvailableIntegrations
+Phalcon\Di\Exception: A dependency injection container is required to access internal services
+
+/var/www/html/IamLab/Service/LMS/LMSService.php:58
+/var/www/html/IamLab/Service/LMS/LMSService.php:47
+/var/www/html/tests/Unit/Service/LMS/LMSServiceTest.php:18</error>
+        </testcase>
+        <testcase name="testIsIntegrationAvailable" file="/var/www/html/tests/Unit/Service/LMS/LMSServiceTest.php" line="58" class="Tests\Unit\Service\LMS\LMSServiceTest" classname="Tests.Unit.Service.LMS.LMSServiceTest" assertions="0" time="0.000000">
+          <error type="Phalcon\Di\Exception">Tests\Unit\Service\LMS\LMSServiceTest::testIsIntegrationAvailable
+Phalcon\Di\Exception: A dependency injection container is required to access internal services
+
+/var/www/html/IamLab/Service/LMS/LMSService.php:58
+/var/www/html/IamLab/Service/LMS/LMSService.php:47
+/var/www/html/tests/Unit/Service/LMS/LMSServiceTest.php:18</error>
+        </testcase>
+        <testcase name="testGenerateContentWithInvalidIntegration" file="/var/www/html/tests/Unit/Service/LMS/LMSServiceTest.php" line="99" class="Tests\Unit\Service\LMS\LMSServiceTest" classname="Tests.Unit.Service.LMS.LMSServiceTest" assertions="0" time="0.000000">
+          <error type="Phalcon\Di\Exception">Tests\Unit\Service\LMS\LMSServiceTest::testGenerateContentWithInvalidIntegration
+Phalcon\Di\Exception: A dependency injection container is required to access internal services
+
+/var/www/html/IamLab/Service/LMS/LMSService.php:58
+/var/www/html/IamLab/Service/LMS/LMSService.php:47
+/var/www/html/tests/Unit/Service/LMS/LMSServiceTest.php:18</error>
+        </testcase>
+        <testcase name="testAnalyzeTextWithInvalidIntegration" file="/var/www/html/tests/Unit/Service/LMS/LMSServiceTest.php" line="165" class="Tests\Unit\Service\LMS\LMSServiceTest" classname="Tests.Unit.Service.LMS.LMSServiceTest" assertions="0" time="0.000000">
+          <error type="Phalcon\Di\Exception">Tests\Unit\Service\LMS\LMSServiceTest::testAnalyzeTextWithInvalidIntegration
+Phalcon\Di\Exception: A dependency injection container is required to access internal services
+
+/var/www/html/IamLab/Service/LMS/LMSService.php:58
+/var/www/html/IamLab/Service/LMS/LMSService.php:47
+/var/www/html/tests/Unit/Service/LMS/LMSServiceTest.php:18</error>
+        </testcase>
+        <testcase name="testGetBestIntegrationFor" file="/var/www/html/tests/Unit/Service/LMS/LMSServiceTest.php" line="199" class="Tests\Unit\Service\LMS\LMSServiceTest" classname="Tests.Unit.Service.LMS.LMSServiceTest" assertions="0" time="0.000000">
+          <error type="Phalcon\Di\Exception">Tests\Unit\Service\LMS\LMSServiceTest::testGetBestIntegrationFor
+Phalcon\Di\Exception: A dependency injection container is required to access internal services
+
+/var/www/html/IamLab/Service/LMS/LMSService.php:58
+/var/www/html/IamLab/Service/LMS/LMSService.php:47
+/var/www/html/tests/Unit/Service/LMS/LMSServiceTest.php:18</error>
+        </testcase>
+        <testcase name="testGetStatistics" file="/var/www/html/tests/Unit/Service/LMS/LMSServiceTest.php" line="219" class="Tests\Unit\Service\LMS\LMSServiceTest" classname="Tests.Unit.Service.LMS.LMSServiceTest" assertions="0" time="0.000000">
+          <error type="Phalcon\Di\Exception">Tests\Unit\Service\LMS\LMSServiceTest::testGetStatistics
+Phalcon\Di\Exception: A dependency injection container is required to access internal services
+
+/var/www/html/IamLab/Service/LMS/LMSService.php:58
+/var/www/html/IamLab/Service/LMS/LMSService.php:47
+/var/www/html/tests/Unit/Service/LMS/LMSServiceTest.php:18</error>
+        </testcase>
+        <testcase name="testGetIntegrationStatus" file="/var/www/html/tests/Unit/Service/LMS/LMSServiceTest.php" line="67" class="Tests\Unit\Service\LMS\LMSServiceTest" classname="Tests.Unit.Service.LMS.LMSServiceTest" assertions="0" time="0.000000">
+          <error type="Phalcon\Di\Exception">Tests\Unit\Service\LMS\LMSServiceTest::testGetIntegrationStatus
+Phalcon\Di\Exception: A dependency injection container is required to access internal services
+
+/var/www/html/IamLab/Service/LMS/LMSService.php:58
+/var/www/html/IamLab/Service/LMS/LMSService.php:47
+/var/www/html/tests/Unit/Service/LMS/LMSServiceTest.php:18</error>
+        </testcase>
+        <testcase name="testCreateCourseWithInvalidIntegration" file="/var/www/html/tests/Unit/Service/LMS/LMSServiceTest.php" line="133" class="Tests\Unit\Service\LMS\LMSServiceTest" classname="Tests.Unit.Service.LMS.LMSServiceTest" assertions="0" time="0.000000">
+          <error type="Phalcon\Di\Exception">Tests\Unit\Service\LMS\LMSServiceTest::testCreateCourseWithInvalidIntegration
+Phalcon\Di\Exception: A dependency injection container is required to access internal services
+
+/var/www/html/IamLab/Service/LMS/LMSService.php:58
+/var/www/html/IamLab/Service/LMS/LMSService.php:47
+/var/www/html/tests/Unit/Service/LMS/LMSServiceTest.php:18</error>
+        </testcase>
+        <testcase name="testGetIntegrationCapabilities" file="/var/www/html/tests/Unit/Service/LMS/LMSServiceTest.php" line="209" class="Tests\Unit\Service\LMS\LMSServiceTest" classname="Tests.Unit.Service.LMS.LMSServiceTest" assertions="0" time="0.000000">
+          <error type="Phalcon\Di\Exception">Tests\Unit\Service\LMS\LMSServiceTest::testGetIntegrationCapabilities
+Phalcon\Di\Exception: A dependency injection container is required to access internal services
+
+/var/www/html/IamLab/Service/LMS/LMSService.php:58
+/var/www/html/IamLab/Service/LMS/LMSService.php:47
+/var/www/html/tests/Unit/Service/LMS/LMSServiceTest.php:18</error>
+        </testcase>
+        <testcase name="testRefreshHealthStatus" file="/var/www/html/tests/Unit/Service/LMS/LMSServiceTest.php" line="235" class="Tests\Unit\Service\LMS\LMSServiceTest" classname="Tests.Unit.Service.LMS.LMSServiceTest" assertions="0" time="0.000000">
+          <error type="Phalcon\Di\Exception">Tests\Unit\Service\LMS\LMSServiceTest::testRefreshHealthStatus
+Phalcon\Di\Exception: A dependency injection container is required to access internal services
+
+/var/www/html/IamLab/Service/LMS/LMSService.php:58
+/var/www/html/IamLab/Service/LMS/LMSService.php:47
+/var/www/html/tests/Unit/Service/LMS/LMSServiceTest.php:18</error>
+        </testcase>
+        <testcase name="testInitialize" file="/var/www/html/tests/Unit/Service/LMS/LMSServiceTest.php" line="26" class="Tests\Unit\Service\LMS\LMSServiceTest" classname="Tests.Unit.Service.LMS.LMSServiceTest" assertions="0" time="0.000000">
+          <error type="Phalcon\Di\Exception">Tests\Unit\Service\LMS\LMSServiceTest::testInitialize
+Phalcon\Di\Exception: A dependency injection container is required to access internal services
+
+/var/www/html/IamLab/Service/LMS/LMSService.php:58
+/var/www/html/IamLab/Service/LMS/LMSService.php:47
+/var/www/html/tests/Unit/Service/LMS/LMSServiceTest.php:18</error>
+        </testcase>
+        <testcase name="testGenerateContentWithValidIntegration" file="/var/www/html/tests/Unit/Service/LMS/LMSServiceTest.php" line="81" class="Tests\Unit\Service\LMS\LMSServiceTest" classname="Tests.Unit.Service.LMS.LMSServiceTest" assertions="0" time="0.000000">
+          <error type="Phalcon\Di\Exception">Tests\Unit\Service\LMS\LMSServiceTest::testGenerateContentWithValidIntegration
+Phalcon\Di\Exception: A dependency injection container is required to access internal services
+
+/var/www/html/IamLab/Service/LMS/LMSService.php:58
+/var/www/html/IamLab/Service/LMS/LMSService.php:47
+/var/www/html/tests/Unit/Service/LMS/LMSServiceTest.php:18</error>
+        </testcase>
+        <testcase name="testCreateCourseWithValidIntegration" file="/var/www/html/tests/Unit/Service/LMS/LMSServiceTest.php" line="116" class="Tests\Unit\Service\LMS\LMSServiceTest" classname="Tests.Unit.Service.LMS.LMSServiceTest" assertions="0" time="0.000000">
+          <error type="Phalcon\Di\Exception">Tests\Unit\Service\LMS\LMSServiceTest::testCreateCourseWithValidIntegration
+Phalcon\Di\Exception: A dependency injection container is required to access internal services
+
+/var/www/html/IamLab/Service/LMS/LMSService.php:58
+/var/www/html/IamLab/Service/LMS/LMSService.php:47
+/var/www/html/tests/Unit/Service/LMS/LMSServiceTest.php:18</error>
+        </testcase>
+        <testcase name="testAnalyzeTextWithValidIntegration" file="/var/www/html/tests/Unit/Service/LMS/LMSServiceTest.php" line="150" class="Tests\Unit\Service\LMS\LMSServiceTest" classname="Tests.Unit.Service.LMS.LMSServiceTest" assertions="0" time="0.000000">
+          <error type="Phalcon\Di\Exception">Tests\Unit\Service\LMS\LMSServiceTest::testAnalyzeTextWithValidIntegration
+Phalcon\Di\Exception: A dependency injection container is required to access internal services
+
+/var/www/html/IamLab/Service/LMS/LMSService.php:58
+/var/www/html/IamLab/Service/LMS/LMSService.php:47
+/var/www/html/tests/Unit/Service/LMS/LMSServiceTest.php:18</error>
+        </testcase>
+        <testcase name="testGenerateContentWithFallback" file="/var/www/html/tests/Unit/Service/LMS/LMSServiceTest.php" line="181" class="Tests\Unit\Service\LMS\LMSServiceTest" classname="Tests.Unit.Service.LMS.LMSServiceTest" assertions="0" time="0.000000">
+          <error type="Phalcon\Di\Exception">Tests\Unit\Service\LMS\LMSServiceTest::testGenerateContentWithFallback
+Phalcon\Di\Exception: A dependency injection container is required to access internal services
+
+/var/www/html/IamLab/Service/LMS/LMSService.php:58
+/var/www/html/IamLab/Service/LMS/LMSService.php:47
+/var/www/html/tests/Unit/Service/LMS/LMSServiceTest.php:18</error>
+        </testcase>
+        <testcase name="testMultipleInitializationCallsAreSafe" file="/var/www/html/tests/Unit/Service/LMS/LMSServiceTest.php" line="245" class="Tests\Unit\Service\LMS\LMSServiceTest" classname="Tests.Unit.Service.LMS.LMSServiceTest" assertions="0" time="0.000000">
+          <error type="Phalcon\Di\Exception">Tests\Unit\Service\LMS\LMSServiceTest::testMultipleInitializationCallsAreSafe
+Phalcon\Di\Exception: A dependency injection container is required to access internal services
+
+/var/www/html/IamLab/Service/LMS/LMSService.php:58
+/var/www/html/IamLab/Service/LMS/LMSService.php:47
+/var/www/html/tests/Unit/Service/LMS/LMSServiceTest.php:18</error>
+        </testcase>
+      </testsuite>
+    </testsuite>
+    <testsuite name="Unit" tests="48" assertions="105" errors="22" failures="0" skipped="0" time="0.009370">
+      <testsuite name="Tests\Unit\Core\SSE\SseEmitterTest" file="/var/www/html/tests/Unit/Core/SSE/SseEmitterTest.php" tests="3" assertions="10" errors="0" failures="0" skipped="0" time="0.002082">
+        <testcase name="testStartSetsHeadersAndOptionalRetry" file="/var/www/html/tests/Unit/Core/SSE/SseEmitterTest.php" line="11" class="Tests\Unit\Core\SSE\SseEmitterTest" classname="Tests.Unit.Core.SSE.SseEmitterTest" assertions="5" time="0.001795"/>
+        <testcase name="testSendFormatsEventIdAndJsonData" file="/var/www/html/tests/Unit/Core/SSE/SseEmitterTest.php" line="27" class="Tests\Unit\Core\SSE\SseEmitterTest" classname="Tests.Unit.Core.SSE.SseEmitterTest" assertions="3" time="0.000169"/>
+        <testcase name="testCommentAndHeartbeat" file="/var/www/html/tests/Unit/Core/SSE/SseEmitterTest.php" line="41" class="Tests\Unit\Core\SSE\SseEmitterTest" classname="Tests.Unit.Core.SSE.SseEmitterTest" assertions="2" time="0.000118"/>
+      </testsuite>
+      <testsuite name="Tests\Unit\Model\ErrorLogTest" file="/var/www/html/tests/Unit/Model/ErrorLogTest.php" tests="3" assertions="0" errors="3" failures="0" skipped="0" time="0.001418">
+        <testcase name="testSettersAndGettersWork" file="/var/www/html/tests/Unit/Model/ErrorLogTest.php" line="10" class="Tests\Unit\Model\ErrorLogTest" classname="Tests.Unit.Model.ErrorLogTest" assertions="0" time="0.000894">
+          <error type="Phalcon\Mvc\Model\Exception">Tests\Unit\Model\ErrorLogTest::testSettersAndGettersWork
+Phalcon\Mvc\Model\Exception: A dependency injection container is required to access the services related to the ODM
+
+/var/www/html/tests/Unit/Model/ErrorLogTest.php:12</error>
+        </testcase>
+        <testcase name="testSetContextJsonRoundTrip" file="/var/www/html/tests/Unit/Model/ErrorLogTest.php" line="31" class="Tests\Unit\Model\ErrorLogTest" classname="Tests.Unit.Model.ErrorLogTest" assertions="0" time="0.000262">
+          <error type="Phalcon\Mvc\Model\Exception">Tests\Unit\Model\ErrorLogTest::testSetContextJsonRoundTrip
+Phalcon\Mvc\Model\Exception: A dependency injection container is required to access the services related to the ODM
+
+/var/www/html/tests/Unit/Model/ErrorLogTest.php:34</error>
+        </testcase>
+        <testcase name="testBeforeValidationOnCreateSetsCreatedAt" file="/var/www/html/tests/Unit/Model/ErrorLogTest.php" line="40" class="Tests\Unit\Model\ErrorLogTest" classname="Tests.Unit.Model.ErrorLogTest" assertions="0" time="0.000262">
+          <error type="Phalcon\Mvc\Model\Exception">Tests\Unit\Model\ErrorLogTest::testBeforeValidationOnCreateSetsCreatedAt
+Phalcon\Mvc\Model\Exception: A dependency injection container is required to access the services related to the ODM
+
+/var/www/html/tests/Unit/Model/ErrorLogTest.php:42</error>
+        </testcase>
+      </testsuite>
+      <testsuite name="Tests\Unit\Service\LMS\Configuration\ConfigurationManagerTest" file="/var/www/html/tests/Unit/Service/LMS/Configuration/ConfigurationManagerTest.php" tests="8" assertions="17" errors="0" failures="0" skipped="0" time="0.001692">
+        <testcase name="testValidateConfiguration" file="/var/www/html/tests/Unit/Service/LMS/Configuration/ConfigurationManagerTest.php" line="60" class="Tests\Unit\Service\LMS\Configuration\ConfigurationManagerTest" classname="Tests.Unit.Service.LMS.Configuration.ConfigurationManagerTest" assertions="1" time="0.000176"/>
+        <testcase name="testGetEnabledIntegrations" file="/var/www/html/tests/Unit/Service/LMS/Configuration/ConfigurationManagerTest.php" line="52" class="Tests\Unit\Service\LMS\Configuration\ConfigurationManagerTest" classname="Tests.Unit.Service.LMS.Configuration.ConfigurationManagerTest" assertions="2" time="0.000237"/>
+        <testcase name="testIsIntegrationEnabled" file="/var/www/html/tests/Unit/Service/LMS/Configuration/ConfigurationManagerTest.php" line="43" class="Tests\Unit\Service\LMS\Configuration\ConfigurationManagerTest" classname="Tests.Unit.Service.LMS.Configuration.ConfigurationManagerTest" assertions="2" time="0.000194"/>
+        <testcase name="testCanBeInstantiated" file="/var/www/html/tests/Unit/Service/LMS/Configuration/ConfigurationManagerTest.php" line="18" class="Tests\Unit\Service\LMS\Configuration\ConfigurationManagerTest" classname="Tests.Unit.Service.LMS.Configuration.ConfigurationManagerTest" assertions="1" time="0.000154"/>
+        <testcase name="testGetIntegrationConfig" file="/var/www/html/tests/Unit/Service/LMS/Configuration/ConfigurationManagerTest.php" line="33" class="Tests\Unit\Service\LMS\Configuration\ConfigurationManagerTest" classname="Tests.Unit.Service.LMS.Configuration.ConfigurationManagerTest" assertions="4" time="0.000223"/>
+        <testcase name="testGetNonExistentIntegrationConfig" file="/var/www/html/tests/Unit/Service/LMS/Configuration/ConfigurationManagerTest.php" line="69" class="Tests\Unit\Service\LMS\Configuration\ConfigurationManagerTest" classname="Tests.Unit.Service.LMS.Configuration.ConfigurationManagerTest" assertions="2" time="0.000215"/>
+        <testcase name="testIsNonExistentIntegrationEnabled" file="/var/www/html/tests/Unit/Service/LMS/Configuration/ConfigurationManagerTest.php" line="77" class="Tests\Unit\Service\LMS\Configuration\ConfigurationManagerTest" classname="Tests.Unit.Service.LMS.Configuration.ConfigurationManagerTest" assertions="1" time="0.000157"/>
+        <testcase name="testGetAllConfigurations" file="/var/www/html/tests/Unit/Service/LMS/Configuration/ConfigurationManagerTest.php" line="23" class="Tests\Unit\Service\LMS\Configuration\ConfigurationManagerTest" classname="Tests.Unit.Service.LMS.Configuration.ConfigurationManagerTest" assertions="4" time="0.000335"/>
+      </testsuite>
+      <testsuite name="Tests\Unit\Service\LMS\Factory\IntegrationFactoryTest" file="/var/www/html/tests/Unit/Service/LMS/Factory/IntegrationFactoryTest.php" tests="13" assertions="68" errors="0" failures="0" skipped="0" time="0.002800">
+        <testcase name="testIsSupported" file="/var/www/html/tests/Unit/Service/LMS/Factory/IntegrationFactoryTest.php" line="28" class="Tests\Unit\Service\LMS\Factory\IntegrationFactoryTest" classname="Tests.Unit.Service.LMS.Factory.IntegrationFactoryTest" assertions="4" time="0.000130"/>
+        <testcase name="testCreateGeminiIntegration" file="/var/www/html/tests/Unit/Service/LMS/Factory/IntegrationFactoryTest.php" line="49" class="Tests\Unit\Service\LMS\Factory\IntegrationFactoryTest" classname="Tests.Unit.Service.LMS.Factory.IntegrationFactoryTest" assertions="2" time="0.000113"/>
+        <testcase name="testCreateWithInvalidConfigurationThrowsException" file="/var/www/html/tests/Unit/Service/LMS/Factory/IntegrationFactoryTest.php" line="84" class="Tests\Unit\Service\LMS\Factory\IntegrationFactoryTest" classname="Tests.Unit.Service.LMS.Factory.IntegrationFactoryTest" assertions="1" time="0.000123"/>
+        <testcase name="testGetIntegrationClass" file="/var/www/html/tests/Unit/Service/LMS/Factory/IntegrationFactoryTest.php" line="92" class="Tests\Unit\Service\LMS\Factory\IntegrationFactoryTest" classname="Tests.Unit.Service.LMS.Factory.IntegrationFactoryTest" assertions="4" time="0.000139"/>
+        <testcase name="testCreateFromConfig" file="/var/www/html/tests/Unit/Service/LMS/Factory/IntegrationFactoryTest.php" line="100" class="Tests\Unit\Service\LMS\Factory\IntegrationFactoryTest" classname="Tests.Unit.Service.LMS.Factory.IntegrationFactoryTest" assertions="8" time="0.000229"/>
+        <testcase name="testRegisterAndUnregisterIntegration" file="/var/www/html/tests/Unit/Service/LMS/Factory/IntegrationFactoryTest.php" line="220" class="Tests\Unit\Service\LMS\Factory\IntegrationFactoryTest" classname="Tests.Unit.Service.LMS.Factory.IntegrationFactoryTest" assertions="4" time="0.000132"/>
+        <testcase name="testRegisterInvalidClassThrowsException" file="/var/www/html/tests/Unit/Service/LMS/Factory/IntegrationFactoryTest.php" line="247" class="Tests\Unit\Service\LMS\Factory\IntegrationFactoryTest" classname="Tests.Unit.Service.LMS.Factory.IntegrationFactoryTest" assertions="2" time="0.000136"/>
+        <testcase name="testGetSupportedIntegrations" file="/var/www/html/tests/Unit/Service/LMS/Factory/IntegrationFactoryTest.php" line="18" class="Tests\Unit\Service\LMS\Factory\IntegrationFactoryTest" classname="Tests.Unit.Service.LMS.Factory.IntegrationFactoryTest" assertions="4" time="0.000171"/>
+        <testcase name="testCreateOllamaIntegration" file="/var/www/html/tests/Unit/Service/LMS/Factory/IntegrationFactoryTest.php" line="36" class="Tests\Unit\Service\LMS\Factory\IntegrationFactoryTest" classname="Tests.Unit.Service.LMS.Factory.IntegrationFactoryTest" assertions="2" time="0.000120"/>
+        <testcase name="testCreateTencentEduIntegration" file="/var/www/html/tests/Unit/Service/LMS/Factory/IntegrationFactoryTest.php" line="62" class="Tests\Unit\Service\LMS\Factory\IntegrationFactoryTest" classname="Tests.Unit.Service.LMS.Factory.IntegrationFactoryTest" assertions="2" time="0.000109"/>
+        <testcase name="testCreateUnsupportedIntegrationThrowsException" file="/var/www/html/tests/Unit/Service/LMS/Factory/IntegrationFactoryTest.php" line="76" class="Tests\Unit\Service\LMS\Factory\IntegrationFactoryTest" classname="Tests.Unit.Service.LMS.Factory.IntegrationFactoryTest" assertions="2" time="0.000161"/>
+        <testcase name="testValidateConfig" file="/var/www/html/tests/Unit/Service/LMS/Factory/IntegrationFactoryTest.php" line="141" class="Tests\Unit\Service\LMS\Factory\IntegrationFactoryTest" classname="Tests.Unit.Service.LMS.Factory.IntegrationFactoryTest" assertions="12" time="0.000372"/>
+        <testcase name="testGetIntegrationCapabilities" file="/var/www/html/tests/Unit/Service/LMS/Factory/IntegrationFactoryTest.php" line="184" class="Tests\Unit\Service\LMS\Factory\IntegrationFactoryTest" classname="Tests.Unit.Service.LMS.Factory.IntegrationFactoryTest" assertions="21" time="0.000865"/>
+      </testsuite>
+      <testsuite name="Tests\Unit\Service\LMS\LMSServiceTest" file="/var/www/html/tests/Unit/Service/LMS/LMSServiceTest.php" tests="19" assertions="0" errors="19" failures="0" skipped="0" time="0.000000">
+        <testcase name="testCanBeInstantiated" file="/var/www/html/tests/Unit/Service/LMS/LMSServiceTest.php" line="21" class="Tests\Unit\Service\LMS\LMSServiceTest" classname="Tests.Unit.Service.LMS.LMSServiceTest" assertions="0" time="0.000000">
+          <error type="Phalcon\Di\Exception">Tests\Unit\Service\LMS\LMSServiceTest::testCanBeInstantiated
+Phalcon\Di\Exception: A dependency injection container is required to access internal services
+
+/var/www/html/IamLab/Service/LMS/LMSService.php:58
+/var/www/html/IamLab/Service/LMS/LMSService.php:47
+/var/www/html/tests/Unit/Service/LMS/LMSServiceTest.php:18</error>
+        </testcase>
+        <testcase name="testGetConfigurationManager" file="/var/www/html/tests/Unit/Service/LMS/LMSServiceTest.php" line="35" class="Tests\Unit\Service\LMS\LMSServiceTest" classname="Tests.Unit.Service.LMS.LMSServiceTest" assertions="0" time="0.000000">
+          <error type="Phalcon\Di\Exception">Tests\Unit\Service\LMS\LMSServiceTest::testGetConfigurationManager
+Phalcon\Di\Exception: A dependency injection container is required to access internal services
+
+/var/www/html/IamLab/Service/LMS/LMSService.php:58
+/var/www/html/IamLab/Service/LMS/LMSService.php:47
+/var/www/html/tests/Unit/Service/LMS/LMSServiceTest.php:18</error>
+        </testcase>
+        <testcase name="testGetIntegrationRegistry" file="/var/www/html/tests/Unit/Service/LMS/LMSServiceTest.php" line="42" class="Tests\Unit\Service\LMS\LMSServiceTest" classname="Tests.Unit.Service.LMS.LMSServiceTest" assertions="0" time="0.000000">
+          <error type="Phalcon\Di\Exception">Tests\Unit\Service\LMS\LMSServiceTest::testGetIntegrationRegistry
+Phalcon\Di\Exception: A dependency injection container is required to access internal services
+
+/var/www/html/IamLab/Service/LMS/LMSService.php:58
+/var/www/html/IamLab/Service/LMS/LMSService.php:47
+/var/www/html/tests/Unit/Service/LMS/LMSServiceTest.php:18</error>
+        </testcase>
+        <testcase name="testGetAvailableIntegrations" file="/var/www/html/tests/Unit/Service/LMS/LMSServiceTest.php" line="49" class="Tests\Unit\Service\LMS\LMSServiceTest" classname="Tests.Unit.Service.LMS.LMSServiceTest" assertions="0" time="0.000000">
+          <error type="Phalcon\Di\Exception">Tests\Unit\Service\LMS\LMSServiceTest::testGetAvailableIntegrations
+Phalcon\Di\Exception: A dependency injection container is required to access internal services
+
+/var/www/html/IamLab/Service/LMS/LMSService.php:58
+/var/www/html/IamLab/Service/LMS/LMSService.php:47
+/var/www/html/tests/Unit/Service/LMS/LMSServiceTest.php:18</error>
+        </testcase>
+        <testcase name="testIsIntegrationAvailable" file="/var/www/html/tests/Unit/Service/LMS/LMSServiceTest.php" line="58" class="Tests\Unit\Service\LMS\LMSServiceTest" classname="Tests.Unit.Service.LMS.LMSServiceTest" assertions="0" time="0.000000">
+          <error type="Phalcon\Di\Exception">Tests\Unit\Service\LMS\LMSServiceTest::testIsIntegrationAvailable
+Phalcon\Di\Exception: A dependency injection container is required to access internal services
+
+/var/www/html/IamLab/Service/LMS/LMSService.php:58
+/var/www/html/IamLab/Service/LMS/LMSService.php:47
+/var/www/html/tests/Unit/Service/LMS/LMSServiceTest.php:18</error>
+        </testcase>
+        <testcase name="testGenerateContentWithInvalidIntegration" file="/var/www/html/tests/Unit/Service/LMS/LMSServiceTest.php" line="99" class="Tests\Unit\Service\LMS\LMSServiceTest" classname="Tests.Unit.Service.LMS.LMSServiceTest" assertions="0" time="0.000000">
+          <error type="Phalcon\Di\Exception">Tests\Unit\Service\LMS\LMSServiceTest::testGenerateContentWithInvalidIntegration
+Phalcon\Di\Exception: A dependency injection container is required to access internal services
+
+/var/www/html/IamLab/Service/LMS/LMSService.php:58
+/var/www/html/IamLab/Service/LMS/LMSService.php:47
+/var/www/html/tests/Unit/Service/LMS/LMSServiceTest.php:18</error>
+        </testcase>
+        <testcase name="testAnalyzeTextWithInvalidIntegration" file="/var/www/html/tests/Unit/Service/LMS/LMSServiceTest.php" line="165" class="Tests\Unit\Service\LMS\LMSServiceTest" classname="Tests.Unit.Service.LMS.LMSServiceTest" assertions="0" time="0.000000">
+          <error type="Phalcon\Di\Exception">Tests\Unit\Service\LMS\LMSServiceTest::testAnalyzeTextWithInvalidIntegration
+Phalcon\Di\Exception: A dependency injection container is required to access internal services
+
+/var/www/html/IamLab/Service/LMS/LMSService.php:58
+/var/www/html/IamLab/Service/LMS/LMSService.php:47
+/var/www/html/tests/Unit/Service/LMS/LMSServiceTest.php:18</error>
+        </testcase>
+        <testcase name="testGetBestIntegrationFor" file="/var/www/html/tests/Unit/Service/LMS/LMSServiceTest.php" line="199" class="Tests\Unit\Service\LMS\LMSServiceTest" classname="Tests.Unit.Service.LMS.LMSServiceTest" assertions="0" time="0.000000">
+          <error type="Phalcon\Di\Exception">Tests\Unit\Service\LMS\LMSServiceTest::testGetBestIntegrationFor
+Phalcon\Di\Exception: A dependency injection container is required to access internal services
+
+/var/www/html/IamLab/Service/LMS/LMSService.php:58
+/var/www/html/IamLab/Service/LMS/LMSService.php:47
+/var/www/html/tests/Unit/Service/LMS/LMSServiceTest.php:18</error>
+        </testcase>
+        <testcase name="testGetStatistics" file="/var/www/html/tests/Unit/Service/LMS/LMSServiceTest.php" line="219" class="Tests\Unit\Service\LMS\LMSServiceTest" classname="Tests.Unit.Service.LMS.LMSServiceTest" assertions="0" time="0.000000">
+          <error type="Phalcon\Di\Exception">Tests\Unit\Service\LMS\LMSServiceTest::testGetStatistics
+Phalcon\Di\Exception: A dependency injection container is required to access internal services
+
+/var/www/html/IamLab/Service/LMS/LMSService.php:58
+/var/www/html/IamLab/Service/LMS/LMSService.php:47
+/var/www/html/tests/Unit/Service/LMS/LMSServiceTest.php:18</error>
+        </testcase>
+        <testcase name="testGetIntegrationStatus" file="/var/www/html/tests/Unit/Service/LMS/LMSServiceTest.php" line="67" class="Tests\Unit\Service\LMS\LMSServiceTest" classname="Tests.Unit.Service.LMS.LMSServiceTest" assertions="0" time="0.000000">
+          <error type="Phalcon\Di\Exception">Tests\Unit\Service\LMS\LMSServiceTest::testGetIntegrationStatus
+Phalcon\Di\Exception: A dependency injection container is required to access internal services
+
+/var/www/html/IamLab/Service/LMS/LMSService.php:58
+/var/www/html/IamLab/Service/LMS/LMSService.php:47
+/var/www/html/tests/Unit/Service/LMS/LMSServiceTest.php:18</error>
+        </testcase>
+        <testcase name="testCreateCourseWithInvalidIntegration" file="/var/www/html/tests/Unit/Service/LMS/LMSServiceTest.php" line="133" class="Tests\Unit\Service\LMS\LMSServiceTest" classname="Tests.Unit.Service.LMS.LMSServiceTest" assertions="0" time="0.000000">
+          <error type="Phalcon\Di\Exception">Tests\Unit\Service\LMS\LMSServiceTest::testCreateCourseWithInvalidIntegration
+Phalcon\Di\Exception: A dependency injection container is required to access internal services
+
+/var/www/html/IamLab/Service/LMS/LMSService.php:58
+/var/www/html/IamLab/Service/LMS/LMSService.php:47
+/var/www/html/tests/Unit/Service/LMS/LMSServiceTest.php:18</error>
+        </testcase>
+        <testcase name="testGetIntegrationCapabilities" file="/var/www/html/tests/Unit/Service/LMS/LMSServiceTest.php" line="209" class="Tests\Unit\Service\LMS\LMSServiceTest" classname="Tests.Unit.Service.LMS.LMSServiceTest" assertions="0" time="0.000000">
+          <error type="Phalcon\Di\Exception">Tests\Unit\Service\LMS\LMSServiceTest::testGetIntegrationCapabilities
+Phalcon\Di\Exception: A dependency injection container is required to access internal services
+
+/var/www/html/IamLab/Service/LMS/LMSService.php:58
+/var/www/html/IamLab/Service/LMS/LMSService.php:47
+/var/www/html/tests/Unit/Service/LMS/LMSServiceTest.php:18</error>
+        </testcase>
+        <testcase name="testRefreshHealthStatus" file="/var/www/html/tests/Unit/Service/LMS/LMSServiceTest.php" line="235" class="Tests\Unit\Service\LMS\LMSServiceTest" classname="Tests.Unit.Service.LMS.LMSServiceTest" assertions="0" time="0.000000">
+          <error type="Phalcon\Di\Exception">Tests\Unit\Service\LMS\LMSServiceTest::testRefreshHealthStatus
+Phalcon\Di\Exception: A dependency injection container is required to access internal services
+
+/var/www/html/IamLab/Service/LMS/LMSService.php:58
+/var/www/html/IamLab/Service/LMS/LMSService.php:47
+/var/www/html/tests/Unit/Service/LMS/LMSServiceTest.php:18</error>
+        </testcase>
+        <testcase name="testInitialize" file="/var/www/html/tests/Unit/Service/LMS/LMSServiceTest.php" line="26" class="Tests\Unit\Service\LMS\LMSServiceTest" classname="Tests.Unit.Service.LMS.LMSServiceTest" assertions="0" time="0.000000">
+          <error type="Phalcon\Di\Exception">Tests\Unit\Service\LMS\LMSServiceTest::testInitialize
+Phalcon\Di\Exception: A dependency injection container is required to access internal services
+
+/var/www/html/IamLab/Service/LMS/LMSService.php:58
+/var/www/html/IamLab/Service/LMS/LMSService.php:47
+/var/www/html/tests/Unit/Service/LMS/LMSServiceTest.php:18</error>
+        </testcase>
+        <testcase name="testGenerateContentWithValidIntegration" file="/var/www/html/tests/Unit/Service/LMS/LMSServiceTest.php" line="81" class="Tests\Unit\Service\LMS\LMSServiceTest" classname="Tests.Unit.Service.LMS.LMSServiceTest" assertions="0" time="0.000000">
+          <error type="Phalcon\Di\Exception">Tests\Unit\Service\LMS\LMSServiceTest::testGenerateContentWithValidIntegration
+Phalcon\Di\Exception: A dependency injection container is required to access internal services
+
+/var/www/html/IamLab/Service/LMS/LMSService.php:58
+/var/www/html/IamLab/Service/LMS/LMSService.php:47
+/var/www/html/tests/Unit/Service/LMS/LMSServiceTest.php:18</error>
+        </testcase>
+        <testcase name="testCreateCourseWithValidIntegration" file="/var/www/html/tests/Unit/Service/LMS/LMSServiceTest.php" line="116" class="Tests\Unit\Service\LMS\LMSServiceTest" classname="Tests.Unit.Service.LMS.LMSServiceTest" assertions="0" time="0.000000">
+          <error type="Phalcon\Di\Exception">Tests\Unit\Service\LMS\LMSServiceTest::testCreateCourseWithValidIntegration
+Phalcon\Di\Exception: A dependency injection container is required to access internal services
+
+/var/www/html/IamLab/Service/LMS/LMSService.php:58
+/var/www/html/IamLab/Service/LMS/LMSService.php:47
+/var/www/html/tests/Unit/Service/LMS/LMSServiceTest.php:18</error>
+        </testcase>
+        <testcase name="testAnalyzeTextWithValidIntegration" file="/var/www/html/tests/Unit/Service/LMS/LMSServiceTest.php" line="150" class="Tests\Unit\Service\LMS\LMSServiceTest" classname="Tests.Unit.Service.LMS.LMSServiceTest" assertions="0" time="0.000000">
+          <error type="Phalcon\Di\Exception">Tests\Unit\Service\LMS\LMSServiceTest::testAnalyzeTextWithValidIntegration
+Phalcon\Di\Exception: A dependency injection container is required to access internal services
+
+/var/www/html/IamLab/Service/LMS/LMSService.php:58
+/var/www/html/IamLab/Service/LMS/LMSService.php:47
+/var/www/html/tests/Unit/Service/LMS/LMSServiceTest.php:18</error>
+        </testcase>
+        <testcase name="testGenerateContentWithFallback" file="/var/www/html/tests/Unit/Service/LMS/LMSServiceTest.php" line="181" class="Tests\Unit\Service\LMS\LMSServiceTest" classname="Tests.Unit.Service.LMS.LMSServiceTest" assertions="0" time="0.000000">
+          <error type="Phalcon\Di\Exception">Tests\Unit\Service\LMS\LMSServiceTest::testGenerateContentWithFallback
+Phalcon\Di\Exception: A dependency injection container is required to access internal services
+
+/var/www/html/IamLab/Service/LMS/LMSService.php:58
+/var/www/html/IamLab/Service/LMS/LMSService.php:47
+/var/www/html/tests/Unit/Service/LMS/LMSServiceTest.php:18</error>
+        </testcase>
+        <testcase name="testMultipleInitializationCallsAreSafe" file="/var/www/html/tests/Unit/Service/LMS/LMSServiceTest.php" line="245" class="Tests\Unit\Service\LMS\LMSServiceTest" classname="Tests.Unit.Service.LMS.LMSServiceTest" assertions="0" time="0.000000">
+          <error type="Phalcon\Di\Exception">Tests\Unit\Service\LMS\LMSServiceTest::testMultipleInitializationCallsAreSafe
+Phalcon\Di\Exception: A dependency injection container is required to access internal services
+
+/var/www/html/IamLab/Service/LMS/LMSService.php:58
+/var/www/html/IamLab/Service/LMS/LMSService.php:47
+/var/www/html/tests/Unit/Service/LMS/LMSServiceTest.php:18</error>
+        </testcase>
+      </testsuite>
+      <testsuite name="Tests\Unit\Service\SseApiTest" file="/var/www/html/tests/Unit/Service/SseApiTest.php" tests="2" assertions="10" errors="0" failures="0" skipped="0" time="0.001378">
+        <testcase name="testEchoActionOutputsSingleEvent" file="/var/www/html/tests/Unit/Service/SseApiTest.php" line="12" class="Tests\Unit\Service\SseApiTest" classname="Tests.Unit.Service.SseApiTest" assertions="6" time="0.001197"/>
+        <testcase name="testClockActionEmitsRequestedCount" file="/var/www/html/tests/Unit/Service/SseApiTest.php" line="38" class="Tests\Unit\Service\SseApiTest" classname="Tests.Unit.Service.SseApiTest" assertions="4" time="0.000181"/>
+      </testsuite>
+    </testsuite>
   </testsuite>
 </testsuites>

@@ -56,6 +56,36 @@ window.showToast('Something happened', 'warning');
 
 Tip: You can pass any value to `window.showToast(value)`, not only strings. The formatter will extract a human-readable message from `Error` objects, API responses, or generic objects.
 
+## Admin Error Logs Viewer (UI)
+
+An admin-only page is provided to browse and manage error logs recorded by the backend.
+
+- Route: `/admin/error-logs` (requires admin role; guarded by frontend `adminGuard` and backend API guards)
+- Features:
+  - Filters: `level`, free-text search `q` (message/URL), `since` date
+  - Pagination with total count
+  - View details modal (shows message, URL, user agent, and JSON context)
+  - Delete individual logs
+  - Cleanup old logs by days (POST `/api/errors/cleanup`)
+
+How it works
+- Frontend component: `assets/js/components/AdminErrorLogs.js`
+- Calls existing endpoints: `GET /api/errors`, `GET /api/errors/{id}`, `DELETE /api/errors/{id}`, `POST /api/errors/cleanup`
+- Uses DaisyUI table, modal, inputs; all errors surfaced via `window.showToast`
+
+## Test Page
+
+A public Test Page demonstrates the error toasts and error reporting flow.
+
+- Route: `/test`
+- Frontend component: `assets/js/components/TestPage.js`
+- Actions available:
+  - Trigger success/info/warning/error toasts
+  - Throw a synchronous error (captured by global handler)
+  - Trigger an unhandled promise rejection (captured by global handler)
+  - Call a failing endpoint and show a Response-derived toast message
+  - Send a sample error payload to `POST /api/errors`
+
 ## Setup & Build
 
 1. Run migrations

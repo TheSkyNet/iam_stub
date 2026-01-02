@@ -206,3 +206,12 @@ $di->setShared(
     }
 );
 
+
+// Server-Sent Events: shared emitter factory
+$di->set(
+    'sseEmitter',
+    function () {
+        return new \IamLab\Core\SSE\SseEmitter(new \IamLab\Core\SSE\PhpOutputWriter());
+    }
+);
+
