@@ -1,4 +1,6 @@
 // MessageDisplay.js - Updated for Tailwind/DaisyUI
+const { Icon } = require('./Icon');
+
 const MessageDisplay = {
     message: null,
     type: 'info', // can be 'success', 'error', 'info', 'warning'
@@ -54,14 +56,14 @@ const MessageDisplay = {
     getIcon: function() {
         switch (MessageDisplay.type) {
             case 'success':
-                return 'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z';
+                return 'fa-solid fa-circle-check';
             case 'error':
-                return 'M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z';
+                return 'fa-solid fa-circle-exclamation';
             case 'warning':
-                return 'M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16c-.77.833.192 2.5 1.732 2.5z';
+                return 'fa-solid fa-triangle-exclamation';
             case 'info':
             default:
-                return 'M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z';
+                return 'fa-solid fa-circle-info';
         }
     },
 
@@ -70,21 +72,14 @@ const MessageDisplay = {
 
         return m(".message-display.fixed.top-4.right-4.z-50.max-w-md", [
             m(`.${MessageDisplay.getAlertClass()}`, [
-                m("svg.stroke-current.shrink-0.w-6.h-6", {
-                    fill: "none",
-                    viewBox: "0 0 24 24"
-                }, [
-                    m("path", {
-                        "stroke-linecap": "round",
-                        "stroke-linejoin": "round",
-                        "stroke-width": "2",
-                        d: MessageDisplay.getIcon()
-                    })
-                ]),
+                m(Icon, { name: MessageDisplay.getIcon(), class: 'shrink-0 text-lg' }),
                 m("span", MessageDisplay.message),
-                m("button.btn.btn-sm.btn-ghost.ml-auto", {
-                    onclick: MessageDisplay.clear
-                }, "×")
+                m("button.btn.btn-sm.btn-ghost.ml-auto.flex.items-center", {
+                    onclick: MessageDisplay.clear,
+                    "aria-label": "Close notification"
+                }, [
+                    m(Icon, { name: 'fa-solid fa-xmark', class: 'text-base' })
+                ])
             ])
         ]);
     }

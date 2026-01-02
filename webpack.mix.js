@@ -1,3 +1,4 @@
+require('dotenv').config();
 let mix = require('laravel-mix');
 /*
 if (process.env.MIX_SOURCE_MAPS && ! mix.inProduction()) {
