@@ -122,6 +122,13 @@ return new Config([
         'audience' => App\Core\Helpers\env('JWT_AUDIENCE', 'phalcon-stub-users'),
     ],
 
+    // Client-side auth behavior knobs, controlled by backend envs
+    // Set AUTH_CLIENT_INACTIVITY_TIMEOUT_MINUTES to 0 or -1 to disable inactivity auto-logout
+    'auth_client' => [
+        'inactivity_timeout_minutes' => App\Core\Helpers\env('AUTH_CLIENT_INACTIVITY_TIMEOUT_MINUTES', 30),
+        'token_check_interval_minutes' => App\Core\Helpers\env('AUTH_CLIENT_TOKEN_CHECK_INTERVAL_MINUTES', 5),
+    ],
+
     'oauth' => [
         'enabled' => App\Core\Helpers\env('OAUTH_ENABLED', false),
         'redirect_uri' => App\Core\Helpers\env('OAUTH_REDIRECT_URI', '/auth/oauth/callback'),

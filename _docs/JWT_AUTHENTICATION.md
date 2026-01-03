@@ -189,6 +189,12 @@ JWT_REFRESH_TOKEN_EXPIRY=604800   # Refresh token expiry in seconds (default: 7 
 JWT_ALGORITHM=HS256               # JWT signing algorithm (default: HS256)
 JWT_ISSUER=phalcon-stub          # Token issuer (default: phalcon-stub)
 JWT_AUDIENCE=phalcon-stub-users  # Token audience (default: phalcon-stub-users)
+
+# Frontend auth behavior (backend-controlled)
+# If set to 0 or -1, the frontend will NOT auto-logout on inactivity
+AUTH_CLIENT_INACTIVITY_TIMEOUT_MINUTES=30
+# How often the client checks/refreshes token, in minutes (default 5)
+AUTH_CLIENT_TOKEN_CHECK_INTERVAL_MINUTES=5
 ```
 
 **Important**: Change the JWT secret in production for security.
@@ -254,6 +260,26 @@ JWT_REFRESH_TOKEN_EXPIRY=604800 # 7 days (default)
 JWT_ACCESS_TOKEN_EXPIRY=7200    # 2 hours
 JWT_REFRESH_TOKEN_EXPIRY=1209600 # 14 days
 ```
+
+### Long‑Lived Sessions ("Stay logged in")
+
+To minimize logouts while keeping security reasonable:
+
+- Disable inactivity auto-logout on the client via backend env:
+  ```env
+  AUTH_CLIENT_INACTIVITY_TIMEOUT_MINUTES=0
+  ```
+  A value of `0` or `-1` disables inactivity‑based logout in the browser.
+
+- Increase refresh token lifetime and keep a moderate access token lifetime:
+  ```env
+  JWT_ACCESS_TOKEN_EXPIRY=86400        # 24 hours access token
+  JWT_REFRESH_TOKEN_EXPIRY=31536000    # ~1 year refresh token
+  ```
+
+The frontend polls `/auth/config` at startup to read these values. It will keep the user signed in by refreshing the access token periodically as long as the refresh token is valid.
+
+Note: Extremely long refresh token lifetimes increase risk if the token is exfiltrated. Consider device revocation and rotate secrets periodically in production.
 
 #### API Keys
 - **Expiration**: No expiration by default

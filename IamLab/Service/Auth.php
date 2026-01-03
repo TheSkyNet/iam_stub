@@ -104,6 +104,40 @@ class Auth extends aAPI
         }
     }
 
+    /**
+     * Return frontend auth settings controlled by backend env/config
+     * - inactivity_timeout_minutes: set <= 0 to disable inactivity auto-logout on client
+     * - token_check_interval_minutes: how often client verifies/refreshes token
+     */
+    public function configAction(): void
+    {
+        try {
+            $config = $this->di->getShared('config');
+            $client = $config->auth_client ?? null;
+
+            $inactivity = 30;
+            $tokenCheck = 5;
+            if ($client) {
+                $inactivity = (int)($client->inactivity_timeout_minutes ?? 30);
+                $tokenCheck = (int)($client->token_check_interval_minutes ?? 5);
+            }
+
+            $this->dispatch([
+                'success' => true,
+                'data' => [
+                    'inactivity_timeout_minutes' => $inactivity,
+                    'token_check_interval_minutes' => $tokenCheck,
+                ],
+            ]);
+        } catch (\Throwable $e) {
+            $this->dispatch([
+                'success' => false,
+                'message' => 'Unable to load auth client configuration',
+                'errors' => ['original' => ['exception' => $e->getMessage()]],
+            ]);
+        }
+    }
+
     public function forgotPasswordAction(): void
     {
         $email = $this->getParam('email');

@@ -12,19 +12,51 @@ const AuthService = {
     tokenCheckInterval: null,
     activityTimeout: null,
     lastActivity: Date.now(),
-    inactivityTimeoutMs: 30 * 60 * 1000, // 30 minutes of inactivity
-    tokenCheckIntervalMs: 5 * 60 * 1000, // Check token validity every 5 minutes
+    inactivityTimeoutMs: 30 * 60 * 1000, // default: 30 minutes (overridden by backend config)
+    tokenCheckIntervalMs: 5 * 60 * 1000, // default: Check token validity every 5 minutes (overridden by backend config)
+    _configLoaded: false,
 
     /**
      * Initialize the auth service - check for existing tokens on page load
      */
     init: function() {
         this.loadTokensFromStorage();
-        if (this.accessToken) {
-            this.validateCurrentUser();
-        }
-        this.startAutoLogout();
-        this.setupActivityTracking();
+
+        // Load backend-controlled auth client config, then proceed
+        this.loadClientAuthConfig()
+            .catch(() => { /* ignore, will use defaults */ })
+            .finally(() => {
+                if (this.accessToken) {
+                    this.validateCurrentUser();
+                }
+                this.startAutoLogout();
+                this.setupActivityTracking();
+            });
+    },
+
+    /**
+     * Fetch client auth config from backend
+     * Backend envs: AUTH_CLIENT_INACTIVITY_TIMEOUT_MINUTES, AUTH_CLIENT_TOKEN_CHECK_INTERVAL_MINUTES
+     */
+    loadClientAuthConfig: function() {
+        return m.request({
+            method: 'GET',
+            url: `${this.baseUrl}/config`,
+        }).then((response) => {
+            if (response && response.success && response.data) {
+                const minutes = parseInt(response.data.inactivity_timeout_minutes, 10);
+                const checkMinutes = parseInt(response.data.token_check_interval_minutes, 10);
+
+                if (!isNaN(minutes)) {
+                    this.inactivityTimeoutMs = (minutes <= 0) ? Infinity : minutes * 60 * 1000;
+                }
+                if (!isNaN(checkMinutes) && checkMinutes > 0) {
+                    this.tokenCheckIntervalMs = checkMinutes * 60 * 1000;
+                }
+                this._configLoaded = true;
+            }
+            return response;
+        });
     },
 
     /**
@@ -516,9 +548,11 @@ const AuthService = {
             }, this.tokenCheckIntervalMs);
             
             // Check for inactivity
-            this.activityTimeout = setInterval(() => {
-                this.checkInactivity();
-            }, 60000); // Check every minute
+            if (this.inactivityTimeoutMs !== Infinity) {
+                this.activityTimeout = setInterval(() => {
+                    this.checkInactivity();
+                }, 60000); // Check every minute
+            }
         }
     },
 
@@ -607,6 +641,11 @@ const AuthService = {
             return;
         }
 
+        // Disabled via backend config
+        if (this.inactivityTimeoutMs === Infinity) {
+            return;
+        }
+
         const now = Date.now();
         const timeSinceLastActivity = now - this.lastActivity;
 
@@ -643,17 +682,19 @@ const AuthService = {
      * Show logout notification to user
      */
     showLogoutNotification: function(reason) {
-        // You can customize this to use your preferred notification system
-        // For now, we'll use a simple alert
-        setTimeout(() => {
-            if (reason.includes('inactive')) {
-                alert('You have been logged out due to inactivity.');
-            } else if (reason.includes('expired')) {
-                alert('Your session has expired. Please log in again.');
-            } else {
-                alert('You have been logged out.');
-            }
-        }, 100);
+        const toast = (window && typeof window.showToast === 'function') ? window.showToast : null;
+        const isInactive = typeof reason === 'string' && reason.includes('inactive');
+        const isExpired = typeof reason === 'string' && reason.includes('expired');
+        const message = isInactive
+            ? 'You have been logged out due to inactivity.'
+            : isExpired
+                ? 'Your session has expired. Please log in again.'
+                : 'You have been logged out.';
+        if (toast) {
+            toast(message, isInactive ? 'warning' : 'info');
+        } else {
+            setTimeout(() => alert(message), 100);
+        }
     }
 };
 

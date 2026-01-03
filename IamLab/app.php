@@ -130,6 +130,8 @@ RouteGroup::create($app, '/auth')
         $group->post('/reset-password', [(new Auth()), "resetPasswordAction"]);
         $group->post('/verify-email', [(new Auth()), "verifyEmailAction"]);
         $group->post('/refresh-token', [(new Auth()), "refreshTokenAction"]);
+        // Frontend auth behavior config (backend-controlled)
+        $group->get('/config', [(new Auth()), "configAction"]);
         
         // QR Code public endpoints
         $group->post('/generate-qr-code', [(new Auth()), "generateQRCodeAction"]);
