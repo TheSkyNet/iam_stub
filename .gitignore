@@ -6,6 +6,7 @@ composer.lock
 /public/css
 /public/files
 /public/js
+/public/fonts
 /public/temp
 /.phalcon/*
 /junk
@@ -13,3 +14,6 @@ composer.lock
 *.ini
 /.phpunit.cache
 .junie
+
+# Avoid accidentally tracking stray emitted assets in wrong location
+/fonts
