@@ -1,5 +1,101 @@
 # Phalcon Stub Project - Changelog
 
+## 2026-01-03 — Adjustments: Keep PHP 8.4, update DB/cache, fix NPM audit
+
+Summary
+- Keep runtime on PHP 8.4 (8.5 caused compatibility concerns for this project)
+- Upgrade database/cache containers to newest stable images
+- Resolve NPM audit Bootstrap 3 vulnerability; fix pusher-js version resolution
+
+Backend (Docker)
+- .env: ensure `PHP_VERSION=8.4`
+- docker-compose:
+  - MySQL image switched to `mysql:8.4` (official) with `mysqladmin ping` healthcheck
+  - Redis image pinned to `redis:7.4-alpine`
+
+Frontend (NPM)
+- Removed `bootstrap-sweetalert` (pulled vulnerable `bootstrap@~3`); project uses Tailwind + DaisyUI and central toast handler instead
+- Set `pusher-js` to `^8.4.0` (8.5.0 not published at this time)
+
+Security note (webpack-dev-server advisory)
+- `laravel-mix` depends on `webpack-dev-server`, which currently has a moderate advisory without a patch. Mitigations:
+  - Prefer `npm run watch` over `npm run hot` during local dev
+  - Do not expose dev server publicly; keep it on localhost
+  - Use Chromium-based browsers when testing HMR
+  - Consider migrating to Vite in the future
+
+How to apply
+1) Rebuild containers and start:
+   - `./phalcons build --no-cache`
+   - `./phalcons up -d`
+2) Reinstall JS deps and rebuild assets:
+   - `./phalcons npm install`
+   - `./phalcons npm run dev`
+3) Run tests:
+   - `./phalcons test`
+
+---
+
+## 2026-01-03 — Platform Upgrades (PHP, Docker, Composer, NPM)
+
+### Summary
+- Upgraded default PHP runtime to 8.5 and refreshed Docker images and tooling
+- Modernized Composer dependencies to stable versions (no more dev-main/dev-master where avoidable)
+- Bumped Node toolchain to Node.js 22 LTS inside Docker
+- Updated front-end packages (Tailwind 3.4, DaisyUI 5.x, Autoprefixer, Sass, etc.) to current stable
+
+### Backend (Docker / PHP)
+- .env: set `PHP_VERSION=8.5`
+- docker-compose: default `PHALCON_VERSION` updated to `5.9.2`
+- docker/8.5/Dockerfile:
+  - Node LTS `NODE_VERSION=22`
+  - Install Composer latest
+  - Ensure PHP extensions include both `memcache` and `memcached` (compat with existing services)
+  - Hardened `start-container` script (UID remap safe fallback)
+- docker/8.4/Dockerfile: aligned to Node 22 and ensured `memcache` is present
+
+### PHP Dependencies (composer.json)
+- Added `"prefer-stable": true`
+- Upgrades (selected):
+  - `symfony/var-dumper` `^6.4`
+  - `symfony/finder` `^6.4`
+  - `defuse/php-encryption` `^2.4`
+  - `nesbot/carbon` `^3.7`
+  - `league/flysystem` `^3.0`
+  - `pusher/pusher-php-server` `^7.4`
+  - `firebase/php-jwt` `^6.10`
+  - `phpunit/phpunit` `^10.5` (kept in require to preserve current layout)
+- Kept `ext-memcache` due to usage in `IamLab/config/services.php`
+
+### Frontend (package.json)
+- Tailwind CSS `^3.4.15`
+- DaisyUI `^5.1.6`
+- Autoprefixer `^10.4.20`
+- Sass `^1.79.4`
+- jQuery `^3.7.1`
+- Filepond `^4.31.1`
+- Pusher JS `^8.5.0`
+- Font Awesome Free `^6.6.0`
+
+### How to Rebuild Locally
+1. Rebuild containers:
+   - `./phalcons build --no-cache`
+   - `./phalcons up -d`
+2. Update PHP deps (inside Docker via helper):
+   - `./phalcons composer update --no-interaction --with-all-dependencies`
+3. Update JS deps and rebuild assets:
+   - `./phalcons npm install`
+   - `./phalcons npm run dev` (or `prod`)
+4. Run tests:
+   - `./phalcons test`
+
+### Notes
+- DaisyUI 5 works with Tailwind 3.4, Laravel Mix 6 remains supported
+- If you rely on the `Memcache` class, it remains supported; both `memcache` and `memcached` extensions are installed in images
+- If you encounter dependency conflicts, clear caches and rebuild with no cache, then run Composer with `--with-all-dependencies`
+
+---
+
 ## Latest Updates - Documentation & Features Enhancement
 
 ### 🎯 What Was Accomplished

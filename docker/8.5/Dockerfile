@@ -4,7 +4,7 @@ FROM phalconphp/cphalcon:${PHALCON_DOCKER_TAG}
 LABEL maintainer=""
 
 ARG WWWGROUP
-ARG NODE_VERSION=20
+ARG NODE_VERSION=22
 ARG POSTGRES_VERSION=16
 
 WORKDIR /var/www/html
@@ -27,7 +27,7 @@ RUN apt-get update \
     && apt-get update \
     && apt-get install -y --no-install-recommends yarn mysql-client postgresql-client-${POSTGRES_VERSION} \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin --filename=composer \
-    && install-php-extensions psr igbinary msgpack memcached redis pcov xdebug imap ldap intl gd zip soap bcmath \
+    && install-php-extensions psr igbinary msgpack memcache memcached redis pcov xdebug imap ldap intl gd zip soap bcmath \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Allow php (non-root) to bind to privileged port 80

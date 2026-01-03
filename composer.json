@@ -5,6 +5,7 @@
   "keywords": ["phalcon", "php", "framework", "stub", "template", "skeleton", "starter"],
   "homepage": "https://github.com/iam-lab/phalcon-stub",
   "minimum-stability": "dev",
+  "prefer-stable": true,
   "license": "MIT",
   "authors": [
     {
@@ -14,19 +15,19 @@
   ],
   "require": {
     "marc-mabe/php-enum": "v4.7.1",
-    "symfony/var-dumper": "^3.1",
-    "symfony/finder": "^3.1",
-    "filp/whoops": "^2.1",
+    "symfony/var-dumper": "^6.4",
+    "symfony/finder": "^6.4",
+    "filp/whoops": "^2.15",
     "ext-memcache": "*",
     "ext-sodium": "*",
-    "defuse/php-encryption": "dev-master",
-    "nesbot/carbon": "3.x-dev",
-    "league/flysystem": "3.6.0",
+    "defuse/php-encryption": "^2.4",
+    "nesbot/carbon": "^3.7",
+    "league/flysystem": "^3.0",
     "ext-curl": "*",
-    "pusher/pusher-php-server": "^7.2",
-    "phpunit/phpunit": "10.5.x-dev",
-    "firebase/php-jwt": "dev-main",
-    "endroid/qr-code": "^4.0",
+    "pusher/pusher-php-server": "^7.4",
+    "phpunit/phpunit": "^10.5",
+    "firebase/php-jwt": "^6.10",
+    "endroid/qr-code": "^4.8",
     "ext-pdo": "*"
   },
   "autoload": {
@@ -41,8 +42,8 @@
   },
   "require-dev": {
     "roave/security-advisories": "dev-latest",
-    "phalcon/devtools": "5.0.x",
-    "phalcon/migrations": "3.0.x",
+    "phalcon/devtools": "^5.0",
+    "phalcon/migrations": "^3.0",
     "mpyw/php-hyper-builtin-server": "^3.0",
     "phalcon/ide-stubs": "dev-master"
   },
