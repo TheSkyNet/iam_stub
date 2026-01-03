@@ -11,6 +11,8 @@ import {Roles} from "./components/Roles";
 import {Users} from "./components/Users";
 import {AddUser} from "./components/AddUser";
 import {EditUser} from "./components/EditUser";
+import { SSOErrorPage } from "./pages/SSOErrorPage";
+import { ErrorServicesTestPage } from "./pages/ErrorServicesTestPage";
 const {AuthService} = require("./services/AuthserviceService");
 
 const root = document.getElementById('app');
@@ -119,6 +121,8 @@ m.route(root, "/", {
     "/forgot-password": layout(ForgotPasswordForm),
     "/pusher-test": layout(authGuard(PusherTest)),
     "/test": layout(TestPage),
+    "/errors-test": layout(ErrorServicesTestPage),
+    "/sso/error": layout(SSOErrorPage),
     "/profile": layout(authGuard(Profile)),
     // Admin-only routes
     "/admin": layout(adminGuard(AdminPage)), // Admin dashboard
