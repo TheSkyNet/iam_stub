@@ -100,8 +100,8 @@ const AdminErrorLogs = {
             m('.flex.items-center.justify-between', [
                 m('h1.text-3xl.font-bold', 'Admin: Error Logs'),
                 m('div.form-control', [
-                    m('div.input-group', [
-                        m('select.select.select-bordered', {
+                    m('div.join', [
+                        m('select.select.select-bordered.join-item', {
                             value: s.level,
                             onchange: e => { s.level = e.target.value; }
                         }, [
@@ -110,17 +110,17 @@ const AdminErrorLogs = {
                             m('option', { value: 'warning' }, 'warning'),
                             m('option', { value: 'info' }, 'info'),
                         ]),
-                        m('input.input.input-bordered', {
+                        m('input.input.input-bordered.join-item', {
                             placeholder: 'Search message or URL',
                             value: s.q,
                             oninput: e => s.q = e.target.value
                         }),
-                        m('input.input.input-bordered', {
+                        m('input.input.input-bordered.join-item', {
                             type: 'date',
                             value: s.since,
                             oninput: e => s.since = e.target.value
                         }),
-                        m('button.btn.btn-primary', { onclick: () => { s.offset = 0; this.fetchLogs(); } }, 'Search')
+                        m('button.btn.btn-primary.join-item', { onclick: () => { s.offset = 0; this.fetchLogs(); } }, 'Search')
                     ])
                 ])
             ]),
@@ -173,9 +173,9 @@ const AdminErrorLogs = {
 
                     m('div.flex.justify-between.items-center.mt-4', [
                         m('div', `Page ${currentPage} of ${totalPages}`),
-                        m('div.btn-group', [
-                            m('button.btn', { disabled: s.offset <= 0, onclick: () => this.changePage(-1) }, 'Prev'),
-                            m('button.btn', { disabled: (s.offset + s.limit) >= s.total, onclick: () => this.changePage(1) }, 'Next'),
+                        m('div.join', [
+                            m('button.btn.join-item', { disabled: s.offset <= 0, onclick: () => this.changePage(-1) }, 'Prev'),
+                            m('button.btn.join-item', { disabled: (s.offset + s.limit) >= s.total, onclick: () => this.changePage(1) }, 'Next'),
                         ])
                     ])
                 ])

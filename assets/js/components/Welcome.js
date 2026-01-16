@@ -1,3 +1,5 @@
+import { Icon } from "./Icon";
+
 const Welcome = {
     view: function() {
         return m(".min-h-screen.flex.items-center.justify-center.p-8", [
@@ -8,7 +10,10 @@ const Welcome = {
                     m(".grid.grid-cols-1.md:grid-cols-2.lg:grid-cols-3.gap-6.mt-12", [
                         m(".card.bg-base-100.shadow-xl.h-full", [
                             m(".card-body", [
-                                m("h2.card-title.text-2xl.mb-4", "🔐 Authentication"),
+                                m("h2.card-title.text-2xl.mb-4", [
+                                    m(Icon, { name: 'fa-solid fa-lock', class: 'mr-2' }),
+                                    "Authentication"
+                                ]),
                                 m("p.text-base-content.opacity-70.mb-6", "Complete user authentication system with login, register, forgot password, and session management."),
                                 m(".card-actions.justify-center", [
                                     m(m.route.Link, {
@@ -20,14 +25,20 @@ const Welcome = {
                         ]),
                         m(".card.bg-base-100.shadow-xl.h-full", [
                             m(".card-body", [
-                                m("h2.card-title.text-2xl.mb-4", "📧 Email Service"),
+                                m("h2.card-title.text-2xl.mb-4", [
+                                    m(Icon, { name: 'fa-solid fa-envelope', class: 'mr-2' }),
+                                    "Email Service"
+                                ]),
                                 m("p.text-base-content.opacity-70.mb-4", "Configurable email service with MailHog and Resend providers for development and production."),
                                 m("p.text-base-content.opacity-50.text-sm", "Ready for password resets & notifications")
                             ])
                         ]),
                         m(".card.bg-base-100.shadow-xl.h-full", [
                             m(".card-body", [
-                                m("h2.card-title.text-2xl.mb-4", "⚡ Real-time"),
+                                m("h2.card-title.text-2xl.mb-4", [
+                                    m(Icon, { name: 'fa-solid fa-bolt', class: 'mr-2' }),
+                                    "Real-time"
+                                ]),
                                 m("p.text-base-content.opacity-70.mb-4", "Pusher.js integration for real-time WebSocket communication and live updates."),
                                 m(".card-actions.justify-center", [
                                     m(m.route.Link, {
@@ -39,21 +50,30 @@ const Welcome = {
                         ]),
                         m(".card.bg-base-100.shadow-xl.h-full", [
                             m(".card-body", [
-                                m("h2.card-title.text-2xl.mb-4", "📁 File Upload"),
+                                m("h2.card-title.text-2xl.mb-4", [
+                                    m(Icon, { name: 'fa-solid fa-folder-open', class: 'mr-2' }),
+                                    "File Upload"
+                                ]),
                                 m("p.text-base-content.opacity-70.mb-4", "FilePond integration for modern file uploads with drag & drop support."),
                                 m("p.text-base-content.opacity-50.text-sm", "Ready for images, documents & more")
                             ])
                         ]),
                         m(".card.bg-base-100.shadow-xl.h-full", [
                             m(".card-body", [
-                                m("h2.card-title.text-2xl.mb-4", "⚙️ Settings"),
+                                m("h2.card-title.text-2xl.mb-4", [
+                                    m(Icon, { name: 'fa-solid fa-gears', class: 'mr-2' }),
+                                    "Settings"
+                                ]),
                                 m("p.text-base-content.opacity-70.mb-4", "Flexible site settings management system for configuration and customization."),
                                 m("p.text-base-content.opacity-50.text-sm", "Available after login")
                             ])
                         ]),
                         m(".card.bg-base-100.shadow-xl.h-full", [
                             m(".card-body", [
-                                m("h2.card-title.text-2xl.mb-4", "🛠️ Developer Tools"),
+                                m("h2.card-title.text-2xl.mb-4", [
+                                    m(Icon, { name: 'fa-solid fa-screwdriver-wrench', class: 'mr-2' }),
+                                    "Developer Tools"
+                                ]),
                                 m("p.text-base-content.opacity-70.mb-4", "Docker setup, Tailwind CSS, DaisyUI, and modern build tools included."),
                                 m("p.text-base-content.opacity-50.text-sm", "Ready for development")
                             ])

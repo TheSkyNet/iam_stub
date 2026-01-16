@@ -1,4 +1,5 @@
 import {UsersService} from "../services/UsersService";
+import { Icon } from "./Icon";
 
 const Users = {
     data: {
@@ -37,35 +38,13 @@ const Users = {
                         m("a.flex.items-center.gap-2.hover:text-primary.transition-colors", {
                             onclick: () => m.route.set('/admin')
                         }, [
-                            m("svg.w-4.h-4", {
-                                fill: "none",
-                                stroke: "currentColor",
-                                viewBox: "0 0 24 24"
-                            }, [
-                                m("path", {
-                                    "stroke-linecap": "round",
-                                    "stroke-linejoin": "round",
-                                    "stroke-width": "2",
-                                    d: "M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2 2z"
-                                })
-                            ]),
+                            m(Icon, { name: 'fa-solid fa-gauge-high', class: 'w-4 h-4' }),
                             "Admin Dashboard"
                         ])
                     ]),
                     m("li.text-base-content.font-medium", [
                         m("span.flex.items-center.gap-2", [
-                            m("svg.w-4.h-4", {
-                                fill: "none",
-                                stroke: "currentColor",
-                                viewBox: "0 0 24 24"
-                            }, [
-                                m("path", {
-                                    "stroke-linecap": "round",
-                                    "stroke-linejoin": "round",
-                                    "stroke-width": "2",
-                                    d: "M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"
-                                })
-                            ]),
+                            m(Icon, { name: 'fa-solid fa-users', class: 'w-4 h-4' }),
                             "Users Management"
                         ])
                     ])
@@ -76,18 +55,7 @@ const Users = {
             m(".flex.items-center.gap-4.mb-8", [
                 m(".avatar.placeholder", [
                     m(".bg-primary.text-primary-content.rounded-full.w-16.h-16", [
-                        m("svg.w-8.h-8", {
-                            fill: "none",
-                            stroke: "currentColor",
-                            viewBox: "0 0 24 24"
-                        }, [
-                            m("path", {
-                                "stroke-linecap": "round",
-                                "stroke-linejoin": "round",
-                                "stroke-width": "2",
-                                d: "M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"
-                            })
-                        ])
+                        m(Icon, { name: 'fa-solid fa-users', class: 'w-8 h-8' })
                     ])
                 ]),
                 m("div.flex-1", [
@@ -97,36 +65,14 @@ const Users = {
                 m("button.btn.btn-primary.btn-lg.gap-2", {
                     onclick: () => this.createUser()
                 }, [
-                    m("svg.w-5.h-5", {
-                        fill: "none",
-                        stroke: "currentColor",
-                        viewBox: "0 0 24 24"
-                    }, [
-                        m("path", {
-                            "stroke-linecap": "round",
-                            "stroke-linejoin": "round",
-                            "stroke-width": "2",
-                            d: "M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"
-                        })
-                    ]),
+                    m(Icon, { name: 'fa-solid fa-user-plus', class: 'w-5 h-5' }),
                     "Add New User"
                 ])
             ]),
 
             // Enhanced error display
             this.data.error ? m(".alert.alert-error.mb-6.shadow-lg", [
-                m("svg.w-6.h-6", {
-                    fill: "none",
-                    stroke: "currentColor",
-                    viewBox: "0 0 24 24"
-                }, [
-                    m("path", {
-                        "stroke-linecap": "round",
-                        "stroke-linejoin": "round",
-                        "stroke-width": "2",
-                        d: "M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                    })
-                ]),
+                m(Icon, { name: 'fa-solid fa-circle-exclamation', class: 'w-6 h-6' }),
                 m("span.font-medium", this.data.error)
             ]) : null,
 
@@ -142,18 +88,7 @@ const Users = {
                     m(".flex.items-center.justify-between.mb-6", [
                         m(".flex.items-center.gap-3", [
                             m("div.bg-secondary.text-secondary-content.rounded-full.p-2", [
-                                m("svg.w-5.h-5", {
-                                    fill: "none",
-                                    stroke: "currentColor",
-                                    viewBox: "0 0 24 24"
-                                }, [
-                                    m("path", {
-                                        "stroke-linecap": "round",
-                                        "stroke-linejoin": "round",
-                                        "stroke-width": "2",
-                                        d: "M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
-                                    })
-                                ])
+                                m(Icon, { name: 'fa-solid fa-address-book', class: 'w-5 h-5' })
                             ]),
                             m("div", [
                                 m("h2.text-2xl.font-semibold.text-base-content", "User Directory"),
@@ -170,103 +105,37 @@ const Users = {
                                     m("tr", [
                                         m("th.font-semibold.text-base-content", [
                                             m("div.flex.items-center.gap-2", [
-                                                m("svg.w-4.h-4", {
-                                                    fill: "none",
-                                                    stroke: "currentColor",
-                                                    viewBox: "0 0 24 24"
-                                                }, [
-                                                    m("path", {
-                                                        "stroke-linecap": "round",
-                                                        "stroke-linejoin": "round",
-                                                        "stroke-width": "2",
-                                                        d: "M7 20l4-16m2 16l4-16M6 9h14M4 15h14"
-                                                    })
-                                                ]),
+                                                m(Icon, { name: 'fa-solid fa-hashtag', class: 'w-4 h-4' }),
                                                 "ID"
                                             ])
                                         ]),
                                         m("th.font-semibold.text-base-content", [
                                             m("div.flex.items-center.gap-2", [
-                                                m("svg.w-4.h-4", {
-                                                    fill: "none",
-                                                    stroke: "currentColor",
-                                                    viewBox: "0 0 24 24"
-                                                }, [
-                                                    m("path", {
-                                                        "stroke-linecap": "round",
-                                                        "stroke-linejoin": "round",
-                                                        "stroke-width": "2",
-                                                        d: "M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                                                    })
-                                                ]),
+                                                m(Icon, { name: 'fa-solid fa-user', class: 'w-4 h-4' }),
                                                 "Name"
                                             ])
                                         ]),
                                         m("th.font-semibold.text-base-content", [
                                             m("div.flex.items-center.gap-2", [
-                                                m("svg.w-4.h-4", {
-                                                    fill: "none",
-                                                    stroke: "currentColor",
-                                                    viewBox: "0 0 24 24"
-                                                }, [
-                                                    m("path", {
-                                                        "stroke-linecap": "round",
-                                                        "stroke-linejoin": "round",
-                                                        "stroke-width": "2",
-                                                        d: "M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-                                                    })
-                                                ]),
+                                                m(Icon, { name: 'fa-solid fa-envelope', class: 'w-4 h-4' }),
                                                 "Email"
                                             ])
                                         ]),
                                         m("th.font-semibold.text-base-content", [
                                             m("div.flex.items-center.gap-2", [
-                                                m("svg.w-4.h-4", {
-                                                    fill: "none",
-                                                    stroke: "currentColor",
-                                                    viewBox: "0 0 24 24"
-                                                }, [
-                                                    m("path", {
-                                                        "stroke-linecap": "round",
-                                                        "stroke-linejoin": "round",
-                                                        "stroke-width": "2",
-                                                        d: "M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.031 9-11.622 0-1.042-.133-2.052-.382-3.016z"
-                                                    })
-                                                ]),
+                                                m(Icon, { name: 'fa-solid fa-user-shield', class: 'w-4 h-4' }),
                                                 "Roles"
                                             ])
                                         ]),
                                         m("th.font-semibold.text-base-content", [
                                             m("div.flex.items-center.gap-2", [
-                                                m("svg.w-4.h-4", {
-                                                    fill: "none",
-                                                    stroke: "currentColor",
-                                                    viewBox: "0 0 24 24"
-                                                }, [
-                                                    m("path", {
-                                                        "stroke-linecap": "round",
-                                                        "stroke-linejoin": "round",
-                                                        "stroke-width": "2",
-                                                        d: "M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                                                    })
-                                                ]),
+                                                m(Icon, { name: 'fa-solid fa-circle-check', class: 'w-4 h-4' }),
                                                 "Status"
                                             ])
                                         ]),
                                         m("th.font-semibold.text-base-content", [
                                             m("div.flex.items-center.gap-2", [
-                                                m("svg.w-4.h-4", {
-                                                    fill: "none",
-                                                    stroke: "currentColor",
-                                                    viewBox: "0 0 24 24"
-                                                }, [
-                                                    m("path", {
-                                                        "stroke-linecap": "round",
-                                                        "stroke-linejoin": "round",
-                                                        "stroke-width": "2",
-                                                        d: "M8 7V3a2 2 0 012-2h4a2 2 0 012 2v4m-6 4v10a2 2 0 002 2h4a2 2 0 002-2V11m-6 0h6m-6 0a2 2 0 00-2 2v8a2 2 0 002 2h4a2 2 0 002-2v-8a2 2 0 00-2-2"
-                                                    })
-                                                ]),
+                                                m(Icon, { name: 'fa-solid fa-calendar-days', class: 'w-4 h-4' }),
                                                 "Created"
                                             ])
                                         ]),
@@ -314,35 +183,13 @@ const Users = {
                                                     m("button.btn.btn-sm.btn-outline.btn-primary.gap-1", {
                                                         onclick: () => this.editUser(item)
                                                     }, [
-                                                        m("svg.w-3.h-3", {
-                                                            fill: "none",
-                                                            stroke: "currentColor",
-                                                            viewBox: "0 0 24 24"
-                                                        }, [
-                                                            m("path", {
-                                                                "stroke-linecap": "round",
-                                                                "stroke-linejoin": "round",
-                                                                "stroke-width": "2",
-                                                                d: "M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
-                                                            })
-                                                        ]),
+                                                        m(Icon, { name: 'fa-solid fa-pen-to-square', class: 'w-3 h-3' }),
                                                         "Edit"
                                                     ]),
                                                     m("button.btn.btn-sm.btn-outline.btn-error.gap-1", {
                                                         onclick: () => this.deleteUser(item)
                                                     }, [
-                                                        m("svg.w-3.h-3", {
-                                                            fill: "none",
-                                                            stroke: "currentColor",
-                                                            viewBox: "0 0 24 24"
-                                                        }, [
-                                                            m("path", {
-                                                                "stroke-linecap": "round",
-                                                                "stroke-linejoin": "round",
-                                                                "stroke-width": "2",
-                                                                d: "M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                                                            })
-                                                        ]),
+                                                        m(Icon, { name: 'fa-solid fa-trash-can', class: 'w-3 h-3' }),
                                                         "Delete"
                                                     ])
                                                 ])
@@ -355,18 +202,7 @@ const Users = {
                         m(".text-center.py-16", [
                             m(".avatar.placeholder.mb-4", [
                                 m(".bg-base-300.text-base-content.rounded-full.w-20.h-20", [
-                                    m("svg.w-10.h-10", {
-                                        fill: "none",
-                                        stroke: "currentColor",
-                                        viewBox: "0 0 24 24"
-                                    }, [
-                                        m("path", {
-                                            "stroke-linecap": "round",
-                                            "stroke-linejoin": "round",
-                                            "stroke-width": "2",
-                                            d: "M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"
-                                        })
-                                    ])
+                                    m(Icon, { name: 'fa-solid fa-users', class: 'w-10 h-10' })
                                 ])
                             ]),
                             m("h3.text-xl.font-semibold.text-base-content.mb-2", "No Users Found"),
@@ -374,18 +210,7 @@ const Users = {
                             m("button.btn.btn-primary.btn-lg.gap-2", {
                                 onclick: () => this.createUser()
                             }, [
-                                m("svg.w-5.h-5", {
-                                    fill: "none",
-                                    stroke: "currentColor",
-                                    viewBox: "0 0 24 24"
-                                }, [
-                                    m("path", {
-                                        "stroke-linecap": "round",
-                                        "stroke-linejoin": "round",
-                                        "stroke-width": "2",
-                                        d: "M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"
-                                    })
-                                ]),
+                                m(Icon, { name: 'fa-solid fa-user-plus', class: 'w-5 h-5' }),
                                 "Create First User"
                             ])
                         ])

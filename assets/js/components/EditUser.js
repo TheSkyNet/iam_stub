@@ -1,5 +1,6 @@
 import {UsersService} from "../services/UsersService";
 import {RolesService} from "../services/RolesService";
+import { Icon } from "./Icon";
 const {AuthService} = require("../services/AuthserviceService");
 
 const EditUser = {
@@ -209,35 +210,13 @@ const EditUser = {
                         m("a.flex.items-center.gap-2.hover:text-primary.transition-colors", {
                             onclick: () => m.route.set('/admin/users')
                         }, [
-                            m("svg.w-4.h-4", {
-                                fill: "none",
-                                stroke: "currentColor",
-                                viewBox: "0 0 24 24"
-                            }, [
-                                m("path", {
-                                    "stroke-linecap": "round",
-                                    "stroke-linejoin": "round",
-                                    "stroke-width": "2",
-                                    d: "M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"
-                                })
-                            ]),
+                            m(Icon, { name: 'fa-solid fa-users', class: 'w-4 h-4' }),
                             "Users"
                         ])
                     ]),
                     m("li.text-base-content.font-medium", [
                         m("span.flex.items-center.gap-2", [
-                            m("svg.w-4.h-4", {
-                                fill: "none",
-                                stroke: "currentColor",
-                                viewBox: "0 0 24 24"
-                            }, [
-                                m("path", {
-                                    "stroke-linecap": "round",
-                                    "stroke-linejoin": "round",
-                                    "stroke-width": "2",
-                                    d: "M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
-                                })
-                            ]),
+                            m(Icon, { name: 'fa-solid fa-user-pen', class: 'w-4 h-4' }),
                             "Edit User"
                         ])
                     ])
@@ -248,18 +227,7 @@ const EditUser = {
             m(".flex.items-center.gap-4.mb-8", [
                 m(".avatar.placeholder", [
                     m(".bg-secondary.text-secondary-content.rounded-full.w-16.h-16", [
-                        m("svg.w-8.h-8", {
-                            fill: "none",
-                            stroke: "currentColor",
-                            viewBox: "0 0 24 24"
-                        }, [
-                            m("path", {
-                                "stroke-linecap": "round",
-                                "stroke-linejoin": "round",
-                                "stroke-width": "2",
-                                d: "M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
-                            })
-                        ])
+                        m(Icon, { name: 'fa-solid fa-user-pen', class: 'w-8 h-8' })
                     ])
                 ]),
                 m("div", [
@@ -270,35 +238,13 @@ const EditUser = {
 
             // Enhanced success message
             this.data.success ? m(".alert.alert-success.mb-6.shadow-lg", [
-                m("svg.w-6.h-6", {
-                    fill: "none",
-                    stroke: "currentColor",
-                    viewBox: "0 0 24 24"
-                }, [
-                    m("path", {
-                        "stroke-linecap": "round",
-                        "stroke-linejoin": "round",
-                        "stroke-width": "2",
-                        d: "M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                    })
-                ]),
+                m(Icon, { name: 'fa-solid fa-circle-check', class: 'w-6 h-6' }),
                 m("span.font-medium", "User updated successfully! Redirecting...")
             ]) : null,
 
             // Enhanced error message
             this.data.error ? m(".alert.alert-error.mb-6.shadow-lg", [
-                m("svg.w-6.h-6", {
-                    fill: "none",
-                    stroke: "currentColor",
-                    viewBox: "0 0 24 24"
-                }, [
-                    m("path", {
-                        "stroke-linecap": "round",
-                        "stroke-linejoin": "round",
-                        "stroke-width": "2",
-                        d: "M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                    })
-                ]),
+                m(Icon, { name: 'fa-solid fa-circle-exclamation', class: 'w-6 h-6' }),
                 m("span.font-medium", this.data.error)
             ]) : null,
 
@@ -310,18 +256,7 @@ const EditUser = {
                         m(".mb-8", [
                             m(".flex.items-center.gap-3.mb-6", [
                                 m("div.bg-primary.text-primary-content.rounded-full.p-2", [
-                                    m("svg.w-5.h-5", {
-                                        fill: "none",
-                                        stroke: "currentColor",
-                                        viewBox: "0 0 24 24"
-                                    }, [
-                                        m("path", {
-                                            "stroke-linecap": "round",
-                                            "stroke-linejoin": "round",
-                                            "stroke-width": "2",
-                                            d: "M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                                        })
-                                    ])
+                                    m(Icon, { name: 'fa-solid fa-user', class: 'w-5 h-5' })
                                 ]),
                                 m("h2.text-2xl.font-semibold.text-base-content", "Basic Information"),
                                 m(".flex-1.h-px.bg-base-300")
@@ -332,18 +267,7 @@ const EditUser = {
                                 m(".form-control", [
                                     m("label.label", [
                                         m("span.label-text.font-medium.flex.items-center.gap-2", [
-                                            m("svg.w-4.h-4.text-primary", {
-                                                fill: "none",
-                                                stroke: "currentColor",
-                                                viewBox: "0 0 24 24"
-                                            }, [
-                                                m("path", {
-                                                    "stroke-linecap": "round",
-                                                    "stroke-linejoin": "round",
-                                                    "stroke-width": "2",
-                                                    d: "M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                                                })
-                                            ]),
+                                            m(Icon, { name: 'fa-solid fa-user', class: 'w-4 h-4 text-primary' }),
                                             "Full Name *"
                                         ])
                                     ]),
@@ -360,18 +284,7 @@ const EditUser = {
                                 m(".form-control", [
                                     m("label.label", [
                                         m("span.label-text.font-medium.flex.items-center.gap-2", [
-                                            m("svg.w-4.h-4.text-primary", {
-                                                fill: "none",
-                                                stroke: "currentColor",
-                                                viewBox: "0 0 24 24"
-                                            }, [
-                                                m("path", {
-                                                    "stroke-linecap": "round",
-                                                    "stroke-linejoin": "round",
-                                                    "stroke-width": "2",
-                                                    d: "M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-                                                })
-                                            ]),
+                                            m(Icon, { name: 'fa-solid fa-envelope', class: 'w-4 h-4 text-primary' }),
                                             "Email Address *"
                                         ])
                                     ]),
@@ -389,18 +302,7 @@ const EditUser = {
                             m(".form-control.mt-6", [
                                 m("label.label", [
                                     m("span.label-text.font-medium.flex.items-center.gap-2", [
-                                        m("svg.w-4.h-4.text-primary", {
-                                            fill: "none",
-                                            stroke: "currentColor",
-                                            viewBox: "0 0 24 24"
-                                        }, [
-                                            m("path", {
-                                                "stroke-linecap": "round",
-                                                "stroke-linejoin": "round",
-                                                "stroke-width": "2",
-                                                d: "M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
-                                            })
-                                        ]),
+                                        m(Icon, { name: 'fa-solid fa-lock', class: 'w-4 h-4 text-primary' }),
                                         "Password (Optional)"
                                     ])
                                 ]),
@@ -420,18 +322,7 @@ const EditUser = {
                         m(".mb-8", [
                             m(".flex.items-center.gap-3.mb-6", [
                                 m("div.bg-secondary.text-secondary-content.rounded-full.p-2", [
-                                    m("svg.w-5.h-5", {
-                                        fill: "none",
-                                        stroke: "currentColor",
-                                        viewBox: "0 0 24 24"
-                                    }, [
-                                        m("path", {
-                                            "stroke-linecap": "round",
-                                            "stroke-linejoin": "round",
-                                            "stroke-width": "2",
-                                            d: "M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.031 9-11.622 0-1.042-.133-2.052-.382-3.016z"
-                                        })
-                                    ])
+                                    m(Icon, { name: 'fa-solid fa-user-shield', class: 'w-5 h-5' })
                                 ]),
                                 m("h2.text-2xl.font-semibold.text-base-content", "Roles & Permissions"),
                                 m(".flex-1.h-px.bg-base-300")
@@ -441,18 +332,7 @@ const EditUser = {
                             m(".form-control", [
                                 m("label.label", [
                                     m("span.label-text.font-medium.flex.items-center.gap-2", [
-                                        m("svg.w-4.h-4.text-secondary", {
-                                            fill: "none",
-                                            stroke: "currentColor",
-                                            viewBox: "0 0 24 24"
-                                        }, [
-                                            m("path", {
-                                                "stroke-linecap": "round",
-                                                "stroke-linejoin": "round",
-                                                "stroke-width": "2",
-                                                d: "M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
-                                            })
-                                        ]),
+                                        m(Icon, { name: 'fa-solid fa-users', class: 'w-4 h-4 text-secondary' }),
                                         "User Roles"
                                     ])
                                 ]),
@@ -484,18 +364,7 @@ const EditUser = {
                         m(".mb-8", [
                             m(".flex.items-center.gap-3.mb-6", [
                                 m("div.bg-accent.text-accent-content.rounded-full.p-2", [
-                                    m("svg.w-5.h-5", {
-                                        fill: "none",
-                                        stroke: "currentColor",
-                                        viewBox: "0 0 24 24"
-                                    }, [
-                                        m("path", {
-                                            "stroke-linecap": "round",
-                                            "stroke-linejoin": "round",
-                                            "stroke-width": "2",
-                                            d: "M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
-                                        })
-                                    ])
+                                    m(Icon, { name: 'fa-solid fa-gears', class: 'w-5 h-5' })
                                 ]),
                                 m("h2.text-2xl.font-semibold.text-base-content", "Account Settings"),
                                 m(".flex-1.h-px.bg-base-300")
@@ -505,18 +374,7 @@ const EditUser = {
                             m(".form-control.mb-6", [
                                 m("label.label.cursor-pointer.bg-base-200.rounded-lg.p-4.hover:bg-base-300.transition-colors", [
                                     m("span.label-text.font-medium.flex.items-center.gap-2", [
-                                        m("svg.w-5.h-5.text-accent", {
-                                            fill: "none",
-                                            stroke: "currentColor",
-                                            viewBox: "0 0 24 24"
-                                        }, [
-                                            m("path", {
-                                                "stroke-linecap": "round",
-                                                "stroke-linejoin": "round",
-                                                "stroke-width": "2",
-                                                d: "M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                                            })
-                                        ]),
+                                        m(Icon, { name: 'fa-solid fa-circle-check', class: 'w-5 h-5 text-accent' }),
                                         m("div", [
                                             m("div", "Email Verified"),
                                             m("div.text-sm.opacity-70", "Mark this account as email verified")
@@ -535,18 +393,7 @@ const EditUser = {
                         m(".mb-8", [
                             m(".flex.items-center.gap-3.mb-6", [
                                 m("div.bg-info.text-info-content.rounded-full.p-2", [
-                                    m("svg.w-5.h-5", {
-                                        fill: "none",
-                                        stroke: "currentColor",
-                                        viewBox: "0 0 24 24"
-                                    }, [
-                                        m("path", {
-                                            "stroke-linecap": "round",
-                                            "stroke-linejoin": "round",
-                                            "stroke-width": "2",
-                                            d: "M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-                                        })
-                                    ])
+                                    m(Icon, { name: 'fa-solid fa-paper-plane', class: 'w-5 h-5' })
                                 ]),
                                 m("h2.text-2xl.font-semibold.text-base-content", "Email Actions"),
                                 m(".flex-1.h-px.bg-base-300")
@@ -555,18 +402,7 @@ const EditUser = {
                             m(".form-control", [
                                 m("label.label", [
                                     m("span.label-text.font-medium.flex.items-center.gap-2", [
-                                        m("svg.w-4.h-4.text-info", {
-                                            fill: "none",
-                                            stroke: "currentColor",
-                                            viewBox: "0 0 24 24"
-                                        }, [
-                                            m("path", {
-                                                "stroke-linecap": "round",
-                                                "stroke-linejoin": "round",
-                                                "stroke-width": "2",
-                                                d: "M12 19l9 2-9-18-9 18 9-2zm0 0v-8"
-                                            })
-                                        ]),
+                                        m(Icon, { name: 'fa-solid fa-paper-plane', class: 'w-4 h-4 text-info' }),
                                         "Send Email Notifications"
                                     ])
                                 ]),
@@ -576,18 +412,7 @@ const EditUser = {
                                         m(".card-body.p-4", [
                                             m("div.flex.items-center.gap-3.mb-3", [
                                                 m("div.bg-warning.text-warning-content.rounded-full.p-2", [
-                                                    m("svg.w-4.h-4", {
-                                                        fill: "none",
-                                                        stroke: "currentColor",
-                                                        viewBox: "0 0 24 24"
-                                                    }, [
-                                                        m("path", {
-                                                            "stroke-linecap": "round",
-                                                            "stroke-linejoin": "round",
-                                                            "stroke-width": "2",
-                                                            d: "M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"
-                                                        })
-                                                    ])
+                                                    m(Icon, { name: 'fa-solid fa-key', class: 'w-4 h-4' })
                                                 ]),
                                                 m("div.flex-1", [
                                                     m("div.font-semibold.text-base-content", "Password Reset"),
@@ -607,18 +432,7 @@ const EditUser = {
                                         m(".card-body.p-4", [
                                             m("div.flex.items-center.gap-3.mb-3", [
                                                 m("div.bg-success.text-success-content.rounded-full.p-2", [
-                                                    m("svg.w-4.h-4", {
-                                                        fill: "none",
-                                                        stroke: "currentColor",
-                                                        viewBox: "0 0 24 24"
-                                                    }, [
-                                                        m("path", {
-                                                            "stroke-linecap": "round",
-                                                            "stroke-linejoin": "round",
-                                                            "stroke-width": "2",
-                                                            d: "M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-                                                        })
-                                                    ])
+                                                    m(Icon, { name: 'fa-solid fa-envelope-circle-check', class: 'w-4 h-4' })
                                                 ]),
                                                 m("div.flex-1", [
                                                     m("div.font-semibold.text-base-content", "Email Verification"),
@@ -635,18 +449,7 @@ const EditUser = {
                                 ]),
                                 m(".text-sm.text-base-content.opacity-60.mt-4.p-4.bg-base-200.rounded-lg", [
                                     m("div.flex.items-start.gap-2", [
-                                        m("svg.w-4.h-4.mt-0.5.text-info", {
-                                            fill: "none",
-                                            stroke: "currentColor",
-                                            viewBox: "0 0 24 24"
-                                        }, [
-                                            m("path", {
-                                                "stroke-linecap": "round",
-                                                "stroke-linejoin": "round",
-                                                "stroke-width": "2",
-                                                d: "M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                                            })
-                                        ]),
+                                        m(Icon, { name: 'fa-solid fa-circle-info', class: 'w-4 h-4 mt-0.5 text-info' }),
                                         m("div", [
                                             m("strong", "Email Actions:"),
                                             m("br"),
@@ -667,18 +470,7 @@ const EditUser = {
                                 type: "button",
                                 onclick: () => m.route.set('/admin/users')
                             }, [
-                                m("svg.w-5.h-5", {
-                                    fill: "none",
-                                    stroke: "currentColor",
-                                    viewBox: "0 0 24 24"
-                                }, [
-                                    m("path", {
-                                        "stroke-linecap": "round",
-                                        "stroke-linejoin": "round",
-                                        "stroke-width": "2",
-                                        d: "M6 18L18 6M6 6l12 12"
-                                    })
-                                ]),
+                                m(Icon, { name: 'fa-solid fa-xmark', class: 'w-5 h-5' }),
                                 "Cancel"
                             ]),
                             m("button.btn.btn-primary.btn-lg.gap-2", {
@@ -687,18 +479,7 @@ const EditUser = {
                             }, [
                                 this.data.loading ? 
                                     m("span.loading.loading-spinner.loading-sm") :
-                                    m("svg.w-5.h-5", {
-                                        fill: "none",
-                                        stroke: "currentColor",
-                                        viewBox: "0 0 24 24"
-                                    }, [
-                                        m("path", {
-                                            "stroke-linecap": "round",
-                                            "stroke-linejoin": "round",
-                                            "stroke-width": "2",
-                                            d: "M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
-                                        })
-                                    ]),
+                                    m(Icon, { name: 'fa-solid fa-floppy-disk', class: 'w-5 h-5' }),
                                 this.data.loading ? "Updating User..." : "Update User"
                             ])
                         ])

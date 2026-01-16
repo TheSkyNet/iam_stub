@@ -15,13 +15,10 @@ mix.webpackConfig({
 });
 
 mix.js('assets/js/app.js', 'public/js')
-    .sass('assets/scss/main.scss', 'public/css', {
-        api: "modern",
-    })
+    .postCss('assets/css/main.css', 'public/css')
     .options({
         postCss: [
-            require('tailwindcss'),
-            require('autoprefixer'),
+            require('@tailwindcss/postcss'),
         ],
         // Place emitted assets in clean public subfolders (absolute within project)
         fileLoaderDirs: {

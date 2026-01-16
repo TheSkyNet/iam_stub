@@ -1,3 +1,5 @@
+const { Icon } = require("../components/Icon");
+
 var AdminUser = {
     list: [],
     user: {
@@ -192,7 +194,7 @@ var AdminUserList = {
                                                                         class: "btn btn-primary",
                                                                         options: {replace: true},
                                                                     },
-                                                                    m("i", {"class": "octicon octicon-pencil "})
+                                                                    m(Icon, { name: 'fa-solid fa-pencil' })
                                                                 ),
                                                                 m("button", {
                                                                         "class": "btn btn-danger",
@@ -206,7 +208,7 @@ var AdminUserList = {
 
                                                                         }
                                                                     },
-                                                                    m.trust('&#128465;')
+                                                                    m(Icon, { name: 'fa-solid fa-trash-can' })
                                                                 )
                                                             ]
                                                         )

@@ -1,5 +1,6 @@
 const {AuthService} = require("../services/AuthserviceService");
 const {MessageDisplay} = require("./MessageDisplay");
+const { Icon } = require("./Icon");
 
 const Profile = {
     // Mobile QR scanner state
@@ -127,7 +128,7 @@ const Profile = {
                                 // Scanner Active State
                                 m(".text-center.mb-4", [
                                     m("div.bg-white.border-2.border-dashed.border-blue-300.rounded-lg.p-8.mb-4", [
-                                        m("div.text-6xl.text-blue-400.mb-4", "📱"),
+                                        m("div.text-6xl.text-blue-400.mb-4", m(Icon, { name: 'fa-solid fa-mobile-screen-button' })),
                                         m("h3.text-lg.font-semibold.text-gray-700.mb-2", "QR Scanner Active"),
                                         m("p.text-sm.text-gray-600.mb-4", "Point your camera at a QR code on a desktop login page"),
 
