@@ -11,8 +11,13 @@ if (process.env.MIX_BROWSER_SYNC) {
 */
 
 
+mix.webpackConfig({
+});
+
 mix.js('assets/js/app.js', 'public/js')
-    .sass('assets/scss/main.scss', 'public/css')
+    .sass('assets/scss/main.scss', 'public/css', {
+        api: "modern",
+    })
     .options({
         postCss: [
             require('tailwindcss'),

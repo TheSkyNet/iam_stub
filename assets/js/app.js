@@ -16,7 +16,6 @@ import { ErrorServicesTestPage } from "./pages/ErrorServicesTestPage";
 const {AuthService} = require("./services/AuthserviceService");
 
 const root = document.getElementById('app');
-
 // Authentication guard function
 function authGuard(component) {
     return {
