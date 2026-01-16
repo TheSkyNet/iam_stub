@@ -191,7 +191,7 @@ abstract class aAPI extends aAPIBase
      * @param string|null $cast The type to cast the parameter to.
      * @return mixed The value of the parameter.
      */
-    protected function getParam(string $name, mixed $default = null, string $cast = null): mixed
+    protected function getParam(string $name, mixed $default = null, ?string $cast = null): mixed
     {
         $data = $this->getData();
         $data = !isset($data[$name]) ? $default : $data[$name];
@@ -206,7 +206,7 @@ abstract class aAPI extends aAPIBase
      * @param string|null $cast The type to cast the parameter to.
      * @return mixed The value of the route parameter.
      */
-    protected function getRouteParam(string $name, mixed $default = null, string $cast = null): mixed
+    protected function getRouteParam(string $name, mixed $default = null, ?string $cast = null): mixed
     {
         // Method 1: Check stored route parameters first
         if (isset($this->routeParams[$name])) {
