@@ -1,7 +1,7 @@
 import m from "mithril";
 import "./bootstrap";
 import {layout} from "./components/layout";
-const {AuthService} = require("./services/AuthserviceService");
+import { AuthService } from "./services/AuthserviceService";
 
 // Import Page Components
 import WelcomePage from "./pages/WelcomePage";
@@ -9,6 +9,7 @@ import ProfilePage from "./pages/ProfilePage";
 import LoginFormPage from "./pages/Auth/LoginFormPage";
 import RegisterFormPage from "./pages/Auth/RegisterFormPage";
 import ForgotPasswordFormPage from "./pages/Auth/ForgotPasswordFormPage";
+import ResetPasswordFormPage from "./pages/Auth/ResetPasswordFormPage";
 import AdminPage from "./pages/Admin/AdminPage";
 import RolesPage from "./pages/Admin/RolesPage";
 import UsersPage from "./pages/Admin/UsersPage";
@@ -104,6 +105,7 @@ m.route(root, "/", {
     "/login": layout(LoginFormPage),
     "/register": layout(RegisterFormPage),
     "/forgot-password": layout(ForgotPasswordFormPage),
+    "/reset-password": layout(ResetPasswordFormPage),
     "/components": layout(ComponentsPage),
     "/pusher-test": layout(authGuard(PusherTestPage)),
     "/sse-test": layout(authGuard(SseTestPage)),

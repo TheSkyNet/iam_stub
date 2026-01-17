@@ -293,6 +293,8 @@ class Auth extends aAPI
                 'id' => $user->getId(),
                 'name' => $user->getName(),
                 'email' => $user->getEmail(),
+                'avatar' => $user->getAvatar(),
+                'oauth_provider' => $user->getOauthProvider(),
                 'api_key' => $user->getKey() ? '***' . substr($user->getKey(), -8) : null // Show only last 8 characters for security
             ];
 
@@ -342,6 +344,56 @@ class Auth extends aAPI
 
         } catch (Exception $e) {
             $this->dispatch(['success' => false, 'message' => 'An error occurred while updating profile', 'debug' => $e->getMessage()]);
+        }
+    }
+
+    /**
+     * Change user password
+     */
+    public function changePasswordAction(): void
+    {
+        try {
+            $authService = new AuthService();
+
+            if (!$authService->isAuthenticated()) {
+                $this->dispatch(['success' => false, 'message' => 'Authentication required']);
+            }
+
+            $user = $authService->getUser();
+            if (!$user) {
+                $this->dispatch(['success' => false, 'message' => 'User not found']);
+            }
+
+            $oldPassword = $this->getParam('old_password');
+            $newPassword = $this->getParam('new_password');
+            $confirmPassword = $this->getParam('confirm_password');
+
+            if (empty($oldPassword) || empty($newPassword) || empty($confirmPassword)) {
+                $this->dispatch(['success' => false, 'message' => 'All password fields are required']);
+            }
+
+            if ($newPassword !== $confirmPassword) {
+                $this->dispatch(['success' => false, 'message' => 'New passwords do not match']);
+            }
+
+            if (strlen($newPassword) < 6) {
+                $this->dispatch(['success' => false, 'message' => 'New password must be at least 6 characters long']);
+            }
+
+            if (!password_verify($oldPassword, $user->getPassword())) {
+                $this->dispatch(['success' => false, 'message' => 'Invalid old password']);
+            }
+
+            $user->setPassword(password_hash($newPassword, PASSWORD_DEFAULT));
+
+            if ($user->save()) {
+                $this->dispatch(['success' => true, 'message' => 'Password changed successfully']);
+            } else {
+                $this->dispatch(['success' => false, 'message' => 'Failed to change password']);
+            }
+
+        } catch (Exception $e) {
+            $this->dispatch(['success' => false, 'message' => 'An error occurred while changing password', 'debug' => $e->getMessage()]);
         }
     }
 

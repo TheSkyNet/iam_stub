@@ -161,12 +161,50 @@ const AuthService = {
     },
 
     /**
+     * Change user password
+     */
+    changePassword: function(oldPassword, newPassword, confirmPassword) {
+        return m.request({
+            method: 'POST',
+            url: `${this.baseUrl}/change-password`,
+            body: { 
+                old_password: oldPassword, 
+                new_password: newPassword, 
+                confirm_password: confirmPassword 
+            },
+            headers: this.getAuthHeaders()
+        });
+    },
+
+    /**
      * Generate API key
      */
     generateApiKey: function() {
         return m.request({
             method: 'POST',
             url: `${this.baseUrl}/generate-api-key`,
+            headers: this.getAuthHeaders()
+        });
+    },
+
+    /**
+     * Get available OAuth providers
+     */
+    getOAuthProviders: function() {
+        return m.request({
+            method: 'GET',
+            url: `/api/oauth/providers`,
+            headers: this.getAuthHeaders()
+        });
+    },
+
+    /**
+     * Unlink OAuth provider
+     */
+    unlinkOAuth: function(provider) {
+        return m.request({
+            method: 'POST',
+            url: `/api/oauth/unlink?provider=${provider}`,
             headers: this.getAuthHeaders()
         });
     },
@@ -519,6 +557,17 @@ const AuthService = {
             method: 'POST',
             url: `${this.baseUrl}/forgot-password`,
             body: { email: email }
+        });
+    },
+
+    /**
+     * Reset password with token
+     */
+    resetPassword: function(token, password) {
+        return m.request({
+            method: 'POST',
+            url: `${this.baseUrl}/reset-password`,
+            body: { token: token, password: password }
         });
     },
 
