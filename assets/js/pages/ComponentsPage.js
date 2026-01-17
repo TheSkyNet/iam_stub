@@ -97,6 +97,22 @@ const ComponentsPage = {
                 ])
             ]),
 
+            // Navbar Theme Variations
+            m("section.space-y-4", [
+                m("h2.text-2xl.font-semibold", "Navbar Theme Variations"),
+                m(".flex.flex-col.gap-4", [
+                    m(".navbar.bg-neutral.text-neutral-content.rounded-box", [
+                        m("button.btn.btn-ghost.text-xl", "daisyUI")
+                    ]),
+                    m(".navbar.bg-base-300.rounded-box", [
+                        m("button.btn.btn-ghost.text-xl", "daisyUI")
+                    ]),
+                    m(".navbar.bg-primary.text-primary-content.rounded-box", [
+                        m("button.btn.btn-ghost.text-xl", "daisyUI")
+                    ])
+                ])
+            ]),
+
             // Data Input Section
             m("header.pt-12.mb-8.border-t.border-base-300", [
                 m("h1.text-4xl.font-bold", "Data Input Components"),
