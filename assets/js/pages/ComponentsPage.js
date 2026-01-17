@@ -433,6 +433,41 @@ const ComponentsPage = {
                 ])
             ]),
 
+            // Toast & Alert Section
+            m("header.pt-12.mb-8.border-t.border-base-300", [
+                m("h1.text-4xl.font-bold", "Toast & Alert Components"),
+                m("p", { class: "text-base-content/70" }, "DaisyUI alerts and toast notifications.")
+            ]),
+
+            m("section.space-y-8", [
+                m("div", {"class": "toast toast-end relative bottom-auto right-auto"}, [
+                    m("div", {"class": "alert alert-info shadow-sm"}, [
+                        m("span", "New mail arrived.")
+                    ]),
+                    m("div", {"class": "alert alert-success shadow-sm"}, [
+                        m("span", "Message sent successfully.")
+                    ])
+                ]),
+                m("div", {"class": "flex flex-col gap-4"}, [
+                    m("div", {"class": "alert alert-info shadow-sm"}, [
+                        m(Icon, { name: "fa-solid fa-circle-info" }),
+                        m("span", "New software update available.")
+                    ]),
+                    m("div", {"class": "alert alert-success shadow-sm"}, [
+                        m(Icon, { name: "fa-solid fa-circle-check" }),
+                        m("span", "Your purchase has been confirmed!")
+                    ]),
+                    m("div", {"class": "alert alert-warning shadow-sm"}, [
+                        m(Icon, { name: "fa-solid fa-triangle-exclamation" }),
+                        m("span", "Warning: Invalid email address!")
+                    ]),
+                    m("div", {"class": "alert alert-error shadow-sm"}, [
+                        m(Icon, { name: "fa-solid fa-circle-xmark" }),
+                        m("span", "Error! Task failed successfully.")
+                    ])
+                ])
+            ]),
+
             // Footer Section
             m("header.pt-12.mb-8.border-t.border-base-300", [
                 m("h1.text-4xl.font-bold", "Footer Components"),

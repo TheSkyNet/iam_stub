@@ -7,7 +7,7 @@ import { Icon } from './Icon';
  */
 const Toasts = {
     view: () => {
-        return m('.toast.toast-top.toast-center', { class: 'z-[100]' }, 
+        return m("div", {"class": "toast toast-end z-[100]"}, 
             ToastService.toasts.map(toast => {
                 const alertClass = {
                     info: 'alert-info',
@@ -23,16 +23,12 @@ const Toasts = {
                     error: 'fa-solid fa-circle-xmark'
                 }[toast.type] || 'fa-solid fa-circle-info';
 
-                return m('.alert.shadow-lg.mb-2.flex.justify-between.items-start', { 
-                    class: `${alertClass} min-w-[300px] max-w-[90vw]`, 
-                    key: toast.id 
-                }, [
-                    m('.flex.items-start.gap-2', [
-                        m(Icon, { name: iconName, class: 'mt-1' }),
-                        m('span.text-sm.whitespace-pre-wrap.text-left', toast.message)
-                    ]),
-                    m('button.btn.btn-ghost.btn-xs.btn-circle', {
-                        onclick: () => ToastService.remove(toast.id)
+                return m("div", {"class": `alert ${alertClass} shadow-sm`, "key": toast.id}, [
+                    m(Icon, { name: iconName }),
+                    m("span", toast.message),
+                    m("button", {
+                        "class": "btn btn-ghost btn-xs btn-circle",
+                        "onclick": () => ToastService.remove(toast.id)
                     }, m(Icon, { name: 'fa-solid fa-xmark' }))
                 ]);
             })
