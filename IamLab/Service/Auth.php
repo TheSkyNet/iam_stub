@@ -8,7 +8,9 @@ use IamLab\Core\API\aAPI;
 use IamLab\Model\User;
 use IamLab\Model\PasswordResetToken;
 use IamLab\Model\QRLoginSession;
+use IamLab\Model\Filepond;
 use IamLab\Service\Auth\AuthService;
+use IamLab\Service\Filepond\FilepondService;
 use Endroid\QrCode\Builder\Builder;
 use Endroid\QrCode\Encoding\Encoding;
 use Endroid\QrCode\ErrorCorrectionLevel\ErrorCorrectionLevelLow;
@@ -336,6 +338,71 @@ class Auth extends aAPI
                 $this->dispatch(['success' => true, 'message' => 'Profile updated successfully']);
             } else {
                 $this->dispatchError('Failed to update profile');
+            }
+
+        } catch (Exception $e) {
+            $this->dispatchError($e);
+        }
+    }
+
+    /**
+     * Update user avatar using Filepond token
+     */
+    public function updateAvatarAction(): void
+    {
+        try {
+            $authService = new AuthService();
+
+            if (!$authService->isAuthenticated()) {
+                $this->dispatchError('Authentication required', 401);
+            }
+
+            $user = $authService->getUser();
+            if (!$user) {
+                $this->dispatchError('User not found', 404);
+            }
+
+            $avatarToken = $this->getParam('avatar');
+            if (empty($avatarToken)) {
+                $this->dispatchError('Avatar token is required');
+            }
+
+            $filepondService = new FilepondService();
+            $filepond = $filepondService->retrieve($avatarToken);
+
+            if (!$filepond) {
+                $this->dispatchError('Invalid or expired avatar token');
+            }
+
+            // Define destination path
+            $extension = pathinfo($filepond->filename, PATHINFO_EXTENSION);
+            $newFilename = 'avatar_' . $user->getId() . '_' . time() . '.' . $extension;
+            $avatarDir = FILE_PATH . '/avatars';
+            if (!is_dir($avatarDir)) {
+                mkdir($avatarDir, 0755, true);
+            }
+            $destination = $avatarDir . '/' . $newFilename;
+            $publicPath = '/files/avatars/' . $newFilename;
+
+            // Move file from temp to final destination
+            // Note: FilepondService::store moves files to TMP_DISK
+            $source = TMP_DISK . '/' . $filepond->filename;
+
+            if (rename($source, $destination)) {
+                $user->setAvatar($publicPath);
+                if ($user->save()) {
+                    // Cleanup filepond record
+                    $filepond->delete();
+                    $this->dispatch([
+                        'success' => true,
+                        'message' => 'Avatar updated successfully',
+                        'data' => ['avatar' => $publicPath]
+                    ]);
+                } else {
+                    $this->dispatchError('Failed to update user avatar in database');
+                }
+            } else {
+                $this->dispatchError('Failed to move uploaded avatar to final destination');
             }
 
         } catch (Exception $e) {

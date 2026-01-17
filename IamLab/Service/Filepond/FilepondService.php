@@ -97,10 +97,14 @@ class FilepondService
      */
     public function retrieve(string $content)
     {
-        $input = decrypt($content);
+        $decrypted = decrypt($content);
+        $input = json_decode($decrypted, true);
 
-        return Filepond::where('id', $input['id'])
-            ->firstOrFail();
+        if (!$input || !isset($input['id'])) {
+            return null;
+        }
+
+        return Filepond::findFirstById($input['id']);
     }
 
     /**

@@ -161,6 +161,18 @@ const AuthService = {
     },
 
     /**
+     * Update user avatar
+     */
+    updateAvatar: function(filepondServerId) {
+        return m.request({
+            method: 'POST',
+            url: `${this.baseUrl}/update-avatar`,
+            body: { avatar: filepondServerId },
+            headers: this.getAuthHeaders()
+        });
+    },
+
+    /**
      * Change user password
      */
     changePassword: function(oldPassword, newPassword, confirmPassword) {

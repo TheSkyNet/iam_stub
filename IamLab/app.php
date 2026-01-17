@@ -153,6 +153,7 @@ RouteGroup::create($app, '/auth')
         $group->post('/generate-api-key', [(new Auth()), "generateApiKeyAction"]);
         $group->get('/profile', [(new Auth()), "profileAction"]);
         $group->post('/update-profile', [(new Auth()), "updateProfileAction"]);
+        $group->post('/update-avatar', [(new Auth()), "updateAvatarAction"]);
         
         // QR Code authenticated endpoints
         $group->post('/authenticate-qr', [(new Auth()), "authenticateQRAction"]);

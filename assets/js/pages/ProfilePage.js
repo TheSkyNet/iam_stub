@@ -1,8 +1,12 @@
 import m from "mithril";
+import * as FilePond from 'filepond';
 import { Icon } from "../components/Icon";
 import { AuthService } from "../services/AuthserviceService";
 
 const ProfilePage = {
+    // FilePond instance
+    pond: null,
+
     // Profile Data from Server
     profileData: {
         name: '',
@@ -33,6 +37,13 @@ const ProfilePage = {
 
     oninit: () => {
         ProfilePage.loadProfile();
+    },
+
+    onremove: () => {
+        if (ProfilePage.pond) {
+            ProfilePage.pond.destroy();
+            ProfilePage.pond = null;
+        }
     },
 
     loadProfile: () => {
@@ -303,8 +314,52 @@ const ProfilePage = {
         return m(".container.mx-auto.p-4.max-w-4xl", [
             // Profile Header
             m(".flex.flex-col.sm:flex-row.items-center.gap-6.mb-10.p-6.bg-base-100.rounded-2xl.shadow-sm", [
-                m(".avatar.placeholder", [
-                    m(".bg-neutral.text-neutral-content.rounded-full.w-24.flex.items-center.justify-center", avatarContent)
+                m(".avatar.placeholder.cursor-pointer.relative.group", {
+                    onclick: () => ProfilePage.pond && ProfilePage.pond.browse(),
+                    title: "Click to change avatar"
+                }, [
+                    m(".bg-neutral.text-neutral-content.rounded-full.w-24.flex.items-center.justify-center.overflow-hidden.relative", [
+                        avatarContent,
+                        m(".absolute.inset-0.bg-black.bg-opacity-40.flex.items-center.justify-center.opacity-0.group-hover:opacity-100.transition-opacity", [
+                            m(Icon, { icon: "fa-solid fa-camera", class: "text-white text-xl" })
+                        ])
+                    ]),
+                    // Hidden FilePond input
+                    m("input.hidden", {
+                        type: "file",
+                        oncreate: (vnode) => {
+                            ProfilePage.pond = FilePond.create(vnode.dom, {
+                                server: {
+                                    process: '/api/v1/file',
+                                    headers: AuthService.getAuthHeaders()
+                                },
+                                allowMultiple: false,
+                                labelIdle: '',
+                                acceptedFileTypes: ['image/*'],
+                                onprocessfile: (error, file) => {
+                                    if (error) {
+                                        window.showToast("Upload failed", 'error');
+                                        return;
+                                    }
+                                    AuthService.updateAvatar(file.serverId).then(response => {
+                                        if (response.success) {
+                                            window.showToast(response.message, 'success');
+                                            ProfilePage.profileData.avatar = response.data.avatar;
+                                            const user = AuthService.getUser();
+                                            if (user) {
+                                                user.avatar = response.data.avatar;
+                                                localStorage.setItem('user', JSON.stringify(user));
+                                                AuthService.user = user;
+                                            }
+                                            m.redraw();
+                                        }
+                                    }).catch(err => {
+                                        window.showToast(err, 'error');
+                                    });
+                                }
+                            });
+                        }
+                    })
                 ]),
                 m(".text-center.sm:text-left", [
                     m("h1.text-4xl.font-extrabold.mb-1", profileName),
