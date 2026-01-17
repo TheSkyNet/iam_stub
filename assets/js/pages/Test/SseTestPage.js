@@ -22,11 +22,11 @@ const SseTestPage = {
         SseTestPage.events.push({ time: new Date().toLocaleTimeString(), message: "Starting clock SSE..." });
         
         SseTestPage.connection = SseService.clock({ count: 5, interval: 1000 });
-        SseTestPage.connection.listen('message', (e) => {
+        SseTestPage.connection.listen('tick', (e) => {
             const data = JSON.parse(e.data);
             SseTestPage.events.push({ 
                 time: new Date().toLocaleTimeString(), 
-                message: `Clock tick: ${data.time} (count: ${data.count})` 
+                message: `Clock tick: ${data.time} (index: ${data.index})` 
             });
             m.redraw();
         });
@@ -39,7 +39,7 @@ const SseTestPage = {
         SseTestPage.events.push({ time: new Date().toLocaleTimeString(), message: `Starting echo SSE with message: "${msg}"` });
         
         SseTestPage.connection = SseService.echo(msg);
-        SseTestPage.connection.listen('message', (e) => {
+        SseTestPage.connection.listen('echo', (e) => {
             const data = JSON.parse(e.data);
             SseTestPage.events.push({ 
                 time: new Date().toLocaleTimeString(), 
@@ -78,7 +78,7 @@ const SseTestPage = {
 
                     m(".mt-6", [
                         m("h3.font-bold.mb-2", "Event Log:"),
-                        m(".bg-base-300.p-4.rounded-lg.min-h-[200px].max-h-[400px].overflow-y-auto", [
+                        m(".bg-base-300.p-4.rounded-lg.overflow-y-auto", [
                             SseTestPage.events.length === 0 
                                 ? m("p.italic.text-base-content/50", "No events yet. Click a button above to start.")
                                 : SseTestPage.events.map((e, i) => m(".mb-1.font-mono.text-sm", [

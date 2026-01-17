@@ -60,4 +60,20 @@ class SseApiTest extends TestCase
         $this->assertStringContainsString("id: 1\n", $buf);
         $this->assertStringContainsString("id: 2\n", $buf);
     }
+
+    public function testTestActionOutputsOkStatus(): void
+    {
+        $api = new class extends SseApi {
+            public BufferWriter $writer;
+            protected function createWriter(): OutputWriterInterface { return $this->writer = new BufferWriter(); }
+            protected function terminate(): void { /* no-op for tests */ }
+        };
+
+        $api->testAction();
+
+        $buf = $api->writer->getBuffer();
+        $this->assertStringContainsString("event: test\n", $buf);
+        $this->assertStringContainsString('"message":"test-1"', $buf);
+        $this->assertStringContainsString('"message":"test-2"', $buf);
+    }
 }

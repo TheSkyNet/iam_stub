@@ -52,6 +52,7 @@ LMSService (Tests\Unit\Service\LMS\LMSService)
 Sse Api (Tests\Unit\Service\SseApi)
  [x] Echo action outputs single event
  [x] Clock action emits requested count
+ [x] Test action outputs ok status
 
 Sse Emitter (Tests\Unit\Core\SSE\SseEmitter)
  [x] Start sets headers and optional retry
