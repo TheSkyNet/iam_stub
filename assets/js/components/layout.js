@@ -1,7 +1,6 @@
 import m from "mithril";
 const {AuthService} = require("../services/AuthserviceService");
 const { Icon } = require("./Icon");
-const { Toasts } = require("./Toasts");
 
 function layout(view) {
     return {
@@ -14,7 +13,6 @@ function layout(view) {
             // const user = AuthService.getUser();
 
             return [
-                m(Toasts),
                 m("nav.navbar.bg-base-100.shadow-lg", {
                     "id": "menu", 
                     "role": "navigation"

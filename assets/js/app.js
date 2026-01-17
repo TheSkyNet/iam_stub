@@ -1,138 +1,118 @@
 import m from "mithril";
 import "./bootstrap";
-import {LoginForm, RegisterForm, ForgotPasswordForm} from "./Login/LoginModule";
 import {layout} from "./components/layout";
-import {Welcome} from "./components/Welcome";
-import {PusherTest} from "./components/PusherTest";
-import { TestPage } from "./components/TestPage";
-import { AdminErrorLogs } from "./components/AdminErrorLogs";
-import {Profile} from "./components/Profile";
-import {AdminPage} from "./components/AdminPage";
-import {Roles} from "./components/Roles";
-import {Users} from "./components/Users";
-import {AddUser} from "./components/AddUser";
-import {EditUser} from "./components/EditUser";
-import { SSOErrorPage } from "./pages/SSOErrorPage";
-import { ErrorServicesTestPage } from "./pages/ErrorServicesTestPage";
 const {AuthService} = require("./services/AuthserviceService");
 
+// Import Page Components
+import WelcomePage from "./pages/WelcomePage";
+import ProfilePage from "./pages/ProfilePage";
+import LoginFormPage from "./pages/Auth/LoginFormPage";
+import RegisterFormPage from "./pages/Auth/RegisterFormPage";
+import ForgotPasswordFormPage from "./pages/Auth/ForgotPasswordFormPage";
+import AdminPage from "./pages/Admin/AdminPage";
+import RolesPage from "./pages/Admin/RolesPage";
+import UsersPage from "./pages/Admin/UsersPage";
+import AddUserPage from "./pages/Admin/AddUserPage";
+import EditUserPage from "./pages/Admin/EditUserPage";
+import EditorWelcomePage from "./pages/Role/EditorWelcomePage";
+import MemberWelcomePage from "./pages/Role/MemberWelcomePage";
+import StaffWelcomePage from "./pages/Role/StaffWelcomePage";
+import PusherTestPage from "./pages/Test/PusherTestPage";
+import TestPage from "./pages/Test/TestPage";
+
 const root = document.getElementById('app');
+
 // Authentication guard function
 function authGuard(component) {
     return {
         oninit: function(vnode) {
-          // Check if user is authenticated
-           if (!AuthService.isLoggedIn()) {
-               // Redirect to login page if not authenticated
-               m.route.set('/login');
-               return;
-           }
-           //Call component's oninit if it exists
+            if (!AuthService.isLoggedIn()) {
+                m.route.set('/login');
+                return;
+            }
             if (component.oninit) {
                 component.oninit.call(component, vnode);
             }
         },
         view: function(vnode) {
-
-            // Only render if authenticated
             if (!AuthService.isLoggedIn()) {
                 m.route.set('/login');
             }
-            // Render the protected component
             return m(component, vnode.attrs);
         }
     };
 }
 
-// Admin guard function - checks authentication and admin role
+// Admin guard function
 function adminGuard(component) {
     return {
         oninit: function(vnode) {
-
-            // Check if user is authenticated
             if (!AuthService.isLoggedIn()) {
-                // Redirect to login page if not authenticated
                 m.route.set('/login');
                 return;
             }
-            // Check if user has admin role
             if (!AuthService.isAdmin()) {
-                // Redirect to home page if not admin
                 m.route.set('/');
                 return;
             }
-            // Call component's oninit if it exists
             if (component.oninit) {
                 component.oninit.call(component, vnode);
             }
         },
         view: function(vnode) {
-            // Only render if authenticated and admin
             if (!AuthService.isLoggedIn() || !AuthService.isAdmin()) {
-                return null; // Don't render anything while redirecting
+                return null;
             }
-            // Render the protected component
             return m(component, vnode.attrs);
         }
     };
 }
 
-// Role-based guard function - checks authentication and specific roles
+// Role-based guard function
 function roleGuard(component, requiredRoles) {
-    // Ensure requiredRoles is an array
     if (typeof requiredRoles === 'string') {
         requiredRoles = [requiredRoles];
     }
     
     return {
         oninit: function(vnode) {
-            // Check if user is authenticated
             if (!AuthService.isLoggedIn()) {
-                // Redirect to login page if not authenticated
                 m.route.set('/login');
                 return;
             }
-            // Check if user has any of the required roles
             if (!AuthService.hasAnyRole(requiredRoles)) {
-                // Redirect to home page if user doesn't have required roles
                 m.route.set('/');
                 return;
             }
-            // Call component's oninit if it exists
             if (component.oninit) {
                 component.oninit.call(component, vnode);
             }
         },
         view: function(vnode) {
-            // Only render if authenticated and has required roles
             if (!AuthService.isLoggedIn() || !AuthService.hasAnyRole(requiredRoles)) {
-                return null; // Don't render anything while redirecting
+                return null;
             }
-            // Render the protected component
             return m(component, vnode.attrs);
         }
     };
 }
 
 m.route(root, "/", {
-    "/": layout(Welcome),
-    "/login": layout(LoginForm),
-    "/register": layout(RegisterForm),
-    "/forgot-password": layout(ForgotPasswordForm),
-     "/pusher-test": layout(authGuard(PusherTest)),
-     "/test": layout(TestPage),
-     "/errors-test": layout(ErrorServicesTestPage),
-     "/sso/error": layout(SSOErrorPage),
-     "/profile": layout(authGuard(Profile)),
-     // Admin-only routes
-     "/admin": layout(adminGuard(AdminPage)), // Admin dashboard
-     "/admin/roles": layout(adminGuard(Roles)), // Role management (admin only)
-     "/admin/users": layout(adminGuard(Users)), // User management (admin only)
-     "/admin/users/add": layout(adminGuard(AddUser)), // Add user (admin only)
-     "/admin/users/edit/:id": layout(adminGuard(EditUser)), // Edit user (admin only)
-     "/admin/error-logs": layout(adminGuard(AdminErrorLogs)), // Error log viewer (admin only)
-     // Role-based routes examples
-     "/editor": layout(roleGuard(EditorWelcome, 'editor')), // Editor only
-     "/member": layout(roleGuard(MeberWelcome, 'member')), // Member only
-     "/staff": layout(roleGuard(StaffWelcome, ['admin', 'editor'])), // Admin or Editor
+    "/": layout(WelcomePage),
+    "/login": layout(LoginFormPage),
+    "/register": layout(RegisterFormPage),
+    "/forgot-password": layout(ForgotPasswordFormPage),
+    "/pusher-test": layout(authGuard(PusherTestPage)),
+    "/test": layout(TestPage),
+    "/profile": layout(authGuard(ProfilePage)),
+    // Admin
+    "/admin": layout(adminGuard(AdminPage)),
+    "/admin/roles": layout(adminGuard(RolesPage)),
+    "/admin/users": layout(adminGuard(UsersPage)),
+    "/admin/users/add": layout(adminGuard(AddUserPage)),
+    "/admin/users/edit/:id": layout(adminGuard(EditUserPage)),
+    // Role-based
+    "/editor": layout(roleGuard(EditorWelcomePage, 'editor')),
+    "/member": layout(roleGuard(MemberWelcomePage, 'member')),
+    "/staff": layout(roleGuard(StaffWelcomePage, ['admin', 'editor'])),
 });
