@@ -1,3 +1,5 @@
+import m from "mithril";
+
 const AdminSettings = {
     settings: [],
     loading: false,
@@ -287,4 +289,4 @@ const AdminSettings = {
     }
 };
 
-module.exports = { AdminSettings };
+export { AdminSettings };

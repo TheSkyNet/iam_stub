@@ -1,4 +1,6 @@
 
+import m from "mithril";
+
 const AdminDashboard = {
     view: function() {
         return m("div", {

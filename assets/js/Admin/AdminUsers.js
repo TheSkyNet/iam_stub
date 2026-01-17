@@ -1,4 +1,4 @@
-const m = require("mithril");
+import m from "mithril";
 const { Icon } = require("../components/Icon");
 
 var AdminUser = {
@@ -190,10 +190,9 @@ var AdminUserList = {
                                                         m("td",
                                                             [
 
-                                                                m("a", {
+                                                                m(m.route.Link, {
                                                                         href: `/user/${user.id}`,
-                                                                        class: "btn btn-primary",
-                                                                        oncreate: m.route.link
+                                                                        class: "btn btn-primary"
                                                                     },
                                                                     m(Icon, { name: 'fa-solid fa-pencil' })
                                                                 ),
@@ -242,4 +241,4 @@ var AdminUserList = {
 };
 
 
-module.exports = {AdminUserList, AdminUser}
+export {AdminUserList, AdminUser}

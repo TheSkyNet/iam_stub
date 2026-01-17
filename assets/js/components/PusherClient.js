@@ -1,5 +1,5 @@
 // PusherClient.js - Pusher WebSocket client for real-time functionality
-
+import m from "mithril";
 import Pusher from 'pusher-js';
 
 class PusherClient {

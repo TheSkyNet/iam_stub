@@ -1,3 +1,4 @@
+import m from "mithril";
 const {AuthService} = require("../services/AuthserviceService");
 import {UsersService} from "../services/UsersService";
 import {RolesService} from "../services/RolesService";

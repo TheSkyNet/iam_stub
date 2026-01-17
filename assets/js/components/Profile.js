@@ -1,3 +1,4 @@
+import m from "mithril";
 const {AuthService} = require("../services/AuthserviceService");
 const {MessageDisplay} = require("./MessageDisplay");
 const { Icon } = require("./Icon");
@@ -367,4 +368,4 @@ const Profile = {
     }
 };
 
-module.exports = {Profile};
+export {Profile};

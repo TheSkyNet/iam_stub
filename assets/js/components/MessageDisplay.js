@@ -1,4 +1,5 @@
 // MessageDisplay.js - Updated for Tailwind/DaisyUI
+import m from "mithril";
 const { Icon } = require('./Icon');
 
 const MessageDisplay = {
@@ -85,4 +86,4 @@ const MessageDisplay = {
     }
 };
 
-module.exports = {MessageDisplay};
+export {MessageDisplay};

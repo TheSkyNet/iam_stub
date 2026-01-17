@@ -1,3 +1,4 @@
+import m from "mithril";
 const {AuthService} = require("../services/AuthserviceService");
 const {MessageDisplay} = require("./MessageDisplay");
 const { Icon } = require("./Icon");
@@ -169,4 +170,4 @@ const DesktopQRScanner = {
     }
 };
 
-module.exports = {DesktopQRScanner};
+export {DesktopQRScanner};

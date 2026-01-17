@@ -1,4 +1,5 @@
 // Icon helper component for Font Awesome icons in Mithril
+import m from "mithril";
 // Usage: m(Icon, { name: 'fa-solid fa-user', class: 'w-4 h-4', title: 'User' })
 function Icon(vnode) {
     const { name = '', class: extra = '', title = '', ariaLabel } = vnode.attrs || {};
@@ -13,4 +14,4 @@ function Icon(vnode) {
     return m('i', attrs);
 }
 
-module.exports = { Icon };
+export { Icon };

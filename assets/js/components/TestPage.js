@@ -1,6 +1,6 @@
 // Test Page component demonstrating toasts and error reporting
+import m from "mithril";
 // Uses DaisyUI components per project guidelines
-
 const { AuthService } = require("../services/AuthserviceService");
 
 const TestPage = {

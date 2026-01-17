@@ -1,4 +1,5 @@
 // Admin Error Logs viewer using DaisyUI
+import m from "mithril";
 const { AuthService } = require("../services/AuthserviceService");
 
 const AdminErrorLogs = {

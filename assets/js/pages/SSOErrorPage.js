@@ -1,4 +1,5 @@
 // SSO/OAuth error page (DaisyUI + Mithril)
+import m from "mithril";
 // Notes:
 // - Place under pages folder per request (not under components)
 // - Uses global mithril `m` and global `window.showToast`

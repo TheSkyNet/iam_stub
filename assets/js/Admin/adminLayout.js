@@ -1,4 +1,4 @@
-const m = require("mithril");
+import m from "mithril";
 const {Logout} = require("../Login/LoginModule");
 
 function adminLayout(view) {
@@ -8,10 +8,9 @@ function adminLayout(view) {
                 // Top navigation using DaisyUI navbar
                 m("nav.navbar.bg-primary.text-primary-content", [
                     m(".navbar-start", [
-                        m("a", {
+                        m(m.route.Link, {
                             class: "btn btn-ghost text-xl",
-                            href: "/",
-                            oncreate: m.route.link
+                            href: "/"
                         }, "Admin Panel")
                     ]),
                     m(".navbar-end", [
@@ -52,12 +51,11 @@ function adminLayout(view) {
 // Helper function for nav items using DaisyUI menu
 function navItem(href, text) {
     return m("li", [
-        m("a", {
+        m(m.route.Link, {
             class: "btn btn-ghost justify-start",
-            href: href,
-            oncreate: m.route.link
+            href: href
         }, text)
     ])
 }
 
-module.exports = { adminLayout }
+export { adminLayout }

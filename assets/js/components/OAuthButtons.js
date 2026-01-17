@@ -1,5 +1,5 @@
 // OAuthButtons.js
-
+import m from "mithril";
 const {OAuthService} = require("../services/OAuthService");
 const {MessageDisplay} = require("./MessageDisplay");
 
@@ -281,15 +281,8 @@ const OAuthAccountManager = {
     }
 };
 
-// Export components
-if (typeof module !== 'undefined' && module.exports) {
-    module.exports = { 
-        OAuthButtons,
-        OAuthCallback,
-        OAuthAccountManager
-    };
-} else if (typeof window !== 'undefined') {
-    window.OAuthButtons = OAuthButtons;
-    window.OAuthCallback = OAuthCallback;
-    window.OAuthAccountManager = OAuthAccountManager;
-}
+export { 
+    OAuthButtons,
+    OAuthCallback,
+    OAuthAccountManager
+};

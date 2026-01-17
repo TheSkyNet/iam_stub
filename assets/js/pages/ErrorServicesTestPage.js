@@ -1,4 +1,5 @@
 // Error Services Test Page (DaisyUI + Mithril)
+import m from "mithril";
 // - Lives in pages/ (not in components/) per request
 // - Exercises central error handler and /api/errors endpoint
 

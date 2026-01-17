@@ -1,3 +1,4 @@
+import m from "mithril";
 import {UsersService} from "../services/UsersService";
 import { Icon } from "./Icon";
 

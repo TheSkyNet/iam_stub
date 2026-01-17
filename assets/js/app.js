@@ -1,3 +1,4 @@
+import m from "mithril";
 import "./bootstrap";
 import {LoginForm, RegisterForm, ForgotPasswordForm} from "./Login/LoginModule";
 import {layout} from "./components/layout";

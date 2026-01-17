@@ -1,3 +1,4 @@
+import m from "mithril";
 const { Icon } = require('./Icon');
 
 function loading() {
@@ -6,4 +7,4 @@ function loading() {
     ]);
 }
 
-module.exports = { loading }
+export { loading }
