@@ -43,7 +43,7 @@ const ForgotPasswordFormPage = {
             ];
         } else {
             content = [
-                m("p.text-sm.mb-4", { class: "text-base-content/70" }, "Enter your email address and we'll send you a link to reset your password."),
+                m("p.text-sm.mb-4.text-base-content.opacity-70", "Enter your email address and we'll send you a link to reset your password."),
 
                 m("form", { onsubmit: ForgotPasswordFormPage.handleForgotPassword }, [
                     m("fieldset.fieldset", [

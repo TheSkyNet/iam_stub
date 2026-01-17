@@ -60,7 +60,7 @@ const ResetPasswordFormPage = {
             ];
         } else {
             content = [
-                m("p.text-sm.mb-4", { class: "text-base-content/70" }, "Please enter your new password below."),
+                m("p.text-sm.mb-4.text-base-content.opacity-70", "Please enter and confirm your new password."),
 
                 m("form", { onsubmit: ResetPasswordFormPage.handleResetPassword }, [
                     m("fieldset.fieldset", [

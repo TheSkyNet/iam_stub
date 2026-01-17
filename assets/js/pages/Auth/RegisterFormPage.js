@@ -40,7 +40,7 @@ const RegisterFormPage = {
                     m(".card.bg-base-100.w-full.max-w-sm.shrink-0.shadow-2xl", [
                         m(".card-body", [
                             m("h2.card-title.justify-center.text-2xl.font-bold", "Register"),
-                            m("p.mb-4", { class: "text-base-content/70" }, "Join us today! Create your account."),
+                            m("p.mb-4.text-base-content.opacity-70", "Join us today! Create your account."),
 
                             m("form", { onsubmit: RegisterFormPage.handleRegister }, [
                                 m("fieldset.fieldset", [

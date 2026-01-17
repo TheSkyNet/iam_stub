@@ -1,7 +1,6 @@
 import m from "mithril";
 import { Icon } from "../components/Icon";
 import { AuthService } from "../services/AuthserviceService";
-import { themeHandler } from "../lib/themeHandler";
 
 const ProfilePage = {
     activeTab: 'general',
@@ -134,15 +133,17 @@ const ProfilePage = {
 
     view: () => {
         if (ProfilePage.profileData.isLoading) {
-            return m(".container.mx-auto.p-4.flex.justify-center.items-center.min-h-[50vh]", [
+            return m(".container.mx-auto.p-4.flex.justify-center.items-center.min-h-screen", [
                 m("span.loading.loading-spinner.loading-lg")
             ]);
         }
 
-        const currentTheme = themeHandler.getTheme();
-
         // Helper for active tab class
-        const tabClass = (tab) => ProfilePage.activeTab === tab ? "tab tab-active" : "tab";
+        const getTabClass = (tab) => {
+            let base = "tab";
+            if (ProfilePage.activeTab === tab) base += " tab-active";
+            return base;
+        };
 
         // Tab Content: General
         let oauthSection = null;
@@ -263,25 +264,6 @@ const ProfilePage = {
             ])
         ]);
 
-        // Tab Content: Appearance
-        let appearanceContent = m(".p-6", [
-            m(".form-control.mb-6", [
-                m("label.label", m("span.label-text", "Select Theme")),
-                m("select.select.select-bordered.w-full.max-w-xs", {
-                    value: currentTheme,
-                    onchange: (e) => themeHandler.setTheme(e.target.value)
-                }, themeHandler.themes.map(theme => 
-                    m("option", { value: theme }, theme.charAt(0).toUpperCase() + theme.slice(1))
-                ))
-            ]),
-            m(".grid.grid-cols-2.md:grid-cols-4.gap-4", [
-                m(".card.bg-primary.text-primary-content.p-4.rounded-lg.text-center.text-sm.font-bold", "Primary"),
-                m(".card.bg-secondary.text-secondary-content.p-4.rounded-lg.text-center.text-sm.font-bold", "Secondary"),
-                m(".card.bg-accent.text-accent-content.p-4.rounded-lg.text-center.text-sm.font-bold", "Accent"),
-                m(".card.bg-neutral.text-neutral-content.p-4.rounded-lg.text-center.text-sm.font-bold", "Neutral")
-            ])
-        ]);
-
         // Active tab content helper
         let activeContent;
         if (ProfilePage.activeTab === 'general') {
@@ -290,61 +272,56 @@ const ProfilePage = {
             activeContent = securityContent;
         } else if (ProfilePage.activeTab === 'developer') {
             activeContent = developerContent;
-        } else if (ProfilePage.activeTab === 'appearance') {
-            activeContent = appearanceContent;
         }
 
         let avatarContent;
+        const profileName = ProfilePage.profileData.name || "User";
         if (ProfilePage.profileData.avatar) {
-            avatarContent = m("img", { src: ProfilePage.profileData.avatar, alt: ProfilePage.profileData.name });
+            avatarContent = m("img", { key: "avatar-img", src: ProfilePage.profileData.avatar, alt: profileName });
         } else {
-            avatarContent = m("span.text-2xl", ProfilePage.profileData.name.charAt(0).toUpperCase() || "U");
+            avatarContent = m("span.text-2xl", { key: "avatar-initials" }, profileName.charAt(0).toUpperCase());
         }
 
-        return m(".container.mx-auto.p-4.max-w-4xl", [
+        return m(".container.mx-auto.p-4.max-w-4xl", { key: "profile-container" }, [
             m(".flex.items-center.gap-4.mb-8", [
                 m(".avatar.placeholder", [
-                    m(".bg-neutral.text-neutral-content.rounded-full.w-20", avatarContent)
+                    m(".bg-neutral.text-neutral-content.rounded-full.w-20", { key: "avatar-wrapper" }, avatarContent)
                 ]),
                 m("div", [
-                    m("h1.text-3xl.font-bold", ProfilePage.profileData.name),
-                    m("p.text-base-content/70", ProfilePage.profileData.email)
+                    m("h1.text-3xl.font-bold", profileName),
+                    m("p.text-base-content.opacity-70", ProfilePage.profileData.email)
                 ])
             ]),
 
-            m(".card.bg-base-100.shadow-xl.overflow-hidden", [
+            m(".card.bg-base-100.shadow-xl.overflow-hidden", { key: "profile-card" }, [
                 m(".card-body.p-0", [
                     m(".tabs.tabs-lifted.w-full", [
-                        m("a", { 
-                            class: tabClass('general'), 
+                        m("button", { 
+                            key: "tab-gen",
+                            class: getTabClass('general'), 
                             onclick: () => ProfilePage.activeTab = 'general' 
                         }, [
                             m(Icon, { icon: "fa-solid fa-id-card", class: "mr-2" }),
                             "General"
                         ]),
-                        m("a", { 
-                            class: tabClass('security'), 
+                        m("button", { 
+                            key: "tab-sec",
+                            class: getTabClass('security'), 
                             onclick: () => ProfilePage.activeTab = 'security' 
                         }, [
                             m(Icon, { icon: "fa-solid fa-shield-halved", class: "mr-2" }),
                             "Security"
                         ]),
-                        m("a", { 
-                            class: tabClass('developer'), 
+                        m("button", { 
+                            key: "tab-dev",
+                            class: getTabClass('developer'), 
                             onclick: () => ProfilePage.activeTab = 'developer' 
                         }, [
                             m(Icon, { icon: "fa-solid fa-code", class: "mr-2" }),
                             "Developer"
-                        ]),
-                        m("a", { 
-                            class: tabClass('appearance'), 
-                            onclick: () => ProfilePage.activeTab = 'appearance' 
-                        }, [
-                            m(Icon, { icon: "fa-solid fa-palette", class: "mr-2" }),
-                            "Appearance"
                         ])
                     ]),
-                    activeContent
+                    m("div", { key: `tab-content-${ProfilePage.activeTab}` }, activeContent)
                 ])
             ])
         ]);

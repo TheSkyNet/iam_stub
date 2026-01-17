@@ -6,7 +6,7 @@ const WelcomePage = {
         return m(".container.mx-auto.p-4.min-h-screen.flex.flex-col.items-center.justify-center", [
             m(".text-center.mb-12", [
                 m("h1.text-5xl.font-bold.mb-4", "Welcome to IamLab"),
-                m("p.text-xl.text-base-content/70", "Your Phalcon-based Laboratory for Identity and Access Management."),
+                m("p.text-xl.text-base-content.opacity-70", "Your Phalcon-based Laboratory for Identity and Access Management."),
             ]),
             
             m(".flex.flex-wrap.justify-center.gap-6.w-full", [

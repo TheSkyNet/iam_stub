@@ -80,7 +80,7 @@ const SseTestPage = {
                         m("h3.font-bold.mb-2", "Event Log:"),
                         m(".bg-base-300.p-4.rounded-lg.overflow-y-auto", [
                             SseTestPage.events.length === 0 
-                                ? m("p.italic.text-base-content/50", "No events yet. Click a button above to start.")
+                                ? m("p.italic.text-base-content.opacity-50", "No events yet. Click a button above to start.")
                                 : SseTestPage.events.map((e, i) => m(".mb-1.font-mono.text-sm", [
                                     m("span.text-primary", `[${e.time}] `),
                                     m("span", e.message)

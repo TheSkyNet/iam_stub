@@ -39,7 +39,7 @@ const LoginFormPage = {
                     m(".card.bg-base-100.w-full.max-w-sm.shrink-0.shadow-2xl", [
                         m(".card-body", [
                             m("h2.card-title.justify-center.text-2xl.font-bold", "Login"),
-                            m("p.mb-4", { class: "text-base-content/70" }, "Welcome back! Please enter your details."),
+                            m("p.mb-4.text-base-content.opacity-70", "Welcome back! Please enter your details."),
                             
                             m("form", { onsubmit: LoginFormPage.handleLogin }, [
                                 m("fieldset.fieldset", [
