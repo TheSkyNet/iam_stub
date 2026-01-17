@@ -43,6 +43,10 @@ const ResetPasswordFormPage = {
     },
 
     view: () => {
+        const resetIcon = ResetPasswordFormPage.isLoading 
+            ? m("span.loading.loading-spinner")
+            : m(Icon, { icon: "fa-solid fa-key" });
+
         let content;
         if (ResetPasswordFormPage.isSuccess) {
             content = [
@@ -90,9 +94,7 @@ const ResetPasswordFormPage = {
                             type: "submit",
                             disabled: ResetPasswordFormPage.isLoading
                         }, [
-                            ResetPasswordFormPage.isLoading 
-                                ? m("span.loading.loading-spinner")
-                                : m(Icon, { icon: "fa-solid fa-key" }),
+                            resetIcon,
                             " Reset Password"
                         ])
                     ]),

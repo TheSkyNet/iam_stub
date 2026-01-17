@@ -26,6 +26,10 @@ const LoginFormPage = {
     },
 
     view: () => {
+        const loginIcon = LoginFormPage.isLoading 
+            ? m("span.loading.loading-spinner")
+            : m(Icon, { icon: "fa-solid fa-right-to-bracket" });
+
         return m(".hero.min-h-screen", {
             style: { backgroundImage: "url(https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80)" }
         }, [
@@ -73,9 +77,7 @@ const LoginFormPage = {
                                         type: "submit",
                                         disabled: LoginFormPage.isLoading
                                     }, [
-                                        LoginFormPage.isLoading 
-                                            ? m("span.loading.loading-spinner")
-                                            : m(Icon, { icon: "fa-solid fa-right-to-bracket" }),
+                                        loginIcon,
                                         " Login"
                                     ])
                                 ]),

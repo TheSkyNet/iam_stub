@@ -27,6 +27,10 @@ const RegisterFormPage = {
     },
 
     view: () => {
+        const registerIcon = RegisterFormPage.isLoading 
+            ? m("span.loading.loading-spinner")
+            : m(Icon, { icon: "fa-solid fa-user-plus" });
+
         return m(".hero.min-h-screen", {
             style: { backgroundImage: "url(https://images.unsplash.com/photo-1550745165-9bc0b252726f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80)" }
         }, [
@@ -83,9 +87,7 @@ const RegisterFormPage = {
                                         type: "submit",
                                         disabled: RegisterFormPage.isLoading
                                     }, [
-                                        RegisterFormPage.isLoading 
-                                            ? m("span.loading.loading-spinner")
-                                            : m(Icon, { icon: "fa-solid fa-user-plus" }),
+                                        registerIcon,
                                         " Register"
                                     ])
                                 ]),
