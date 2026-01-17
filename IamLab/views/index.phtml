@@ -46,7 +46,7 @@
 <!-- Scripts -->
 <script src="/js/app.js" defer></script>
 
-<?php if ($settings['config']['analytics']['enabled']): ?>
+<?php if ($settings['config']['analytics']['enabled'] && !empty($settings['config']['analytics']['script'])): ?>
     <script async src="<?= htmlspecialchars($settings['config']['analytics']['script']) ?>"></script>
 <?php endif; ?>
 </body>

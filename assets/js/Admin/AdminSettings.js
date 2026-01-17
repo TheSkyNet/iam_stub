@@ -30,7 +30,6 @@ const AdminSettings = {
             })
             .finally(() => {
                 this.loading = false;
-                m.redraw();
             });
     },
 
@@ -130,7 +129,8 @@ const AdminSettings = {
                     // Form fields
                     m("div.form-group", [
                         m("label", { style: { color: '#6B7399' } }, "Key"),
-                        m("input.form-control[type=text]", {
+                        m("input.form-control", {
+                            type: "text",
                             value: this.editingId === 'new' ? this.newSetting.key :
                                 this.settings.find(s => s.id === this.editingId)?.key,
                             onchange: (e) => {
@@ -147,7 +147,8 @@ const AdminSettings = {
                     ]),
                     m("div.form-group", [
                         m("label", { style: { color: '#6B7399' } }, "Value"),
-                        m("input.form-control[type=text]", {
+                        m("input.form-control", {
+                            type: "text",
                             value: this.editingId === 'new' ? this.newSetting.value :
                                 this.settings.find(s => s.id === this.editingId)?.value,
                             onchange: (e) => {

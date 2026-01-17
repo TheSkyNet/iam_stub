@@ -22,7 +22,7 @@ function adminLayout(view) {
 
                 // Main container using DaisyUI drawer
                 m(".drawer.lg:drawer-open", [
-                    m("input#drawer-toggle.drawer-toggle[type=checkbox]"),
+                    m("input#drawer-toggle.drawer-toggle", { type: "checkbox" }),
 
                     // Main content
                     m(".drawer-content.flex.flex-col", [

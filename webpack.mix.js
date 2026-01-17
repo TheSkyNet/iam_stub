@@ -22,8 +22,8 @@ mix.js('assets/js/app.js', 'public/js')
         ],
         // Place emitted assets in clean public subfolders (absolute within project)
         fileLoaderDirs: {
-            images: 'public/images',
-            fonts: 'public/fonts',
+            images: 'images',
+            fonts: 'fonts',
         },
     })
     .sourceMaps()

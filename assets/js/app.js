@@ -21,13 +21,13 @@ const root = document.getElementById('app');
 function authGuard(component) {
     return {
         oninit: function(vnode) {
-            // Check if user is authenticated
-            if (!AuthService.isLoggedIn()) {
-                // Redirect to login page if not authenticated
-                m.route.set('/login');
-                return;
-            }
-            // Call component's oninit if it exists
+          // Check if user is authenticated
+           if (!AuthService.isLoggedIn()) {
+               // Redirect to login page if not authenticated
+               m.route.set('/login');
+               return;
+           }
+           //Call component's oninit if it exists
             if (component.oninit) {
                 component.oninit.call(component, vnode);
             }
@@ -119,20 +119,20 @@ m.route(root, "/", {
     "/login": layout(LoginForm),
     "/register": layout(RegisterForm),
     "/forgot-password": layout(ForgotPasswordForm),
-    "/pusher-test": layout(authGuard(PusherTest)),
-    "/test": layout(TestPage),
-    "/errors-test": layout(ErrorServicesTestPage),
-    "/sso/error": layout(SSOErrorPage),
-    "/profile": layout(authGuard(Profile)),
-    // Admin-only routes
-    "/admin": layout(adminGuard(AdminPage)), // Admin dashboard
-    "/admin/roles": layout(adminGuard(Roles)), // Role management (admin only)
-    "/admin/users": layout(adminGuard(Users)), // User management (admin only)
-    "/admin/users/add": layout(adminGuard(AddUser)), // Add user (admin only)
-    "/admin/users/edit/:id": layout(adminGuard(EditUser)), // Edit user (admin only)
-    "/admin/error-logs": layout(adminGuard(AdminErrorLogs)), // Error log viewer (admin only)
-    // Role-based routes examples
-    "/editor": layout(roleGuard(Welcome, 'editor')), // Editor only
-    "/member": layout(roleGuard(Welcome, 'member')), // Member only
-    "/staff": layout(roleGuard(Welcome, ['admin', 'editor'])), // Admin or Editor
+     "/pusher-test": layout(authGuard(PusherTest)),
+     "/test": layout(TestPage),
+     "/errors-test": layout(ErrorServicesTestPage),
+     "/sso/error": layout(SSOErrorPage),
+     "/profile": layout(authGuard(Profile)),
+     // Admin-only routes
+     "/admin": layout(adminGuard(AdminPage)), // Admin dashboard
+     "/admin/roles": layout(adminGuard(Roles)), // Role management (admin only)
+     "/admin/users": layout(adminGuard(Users)), // User management (admin only)
+     "/admin/users/add": layout(adminGuard(AddUser)), // Add user (admin only)
+     "/admin/users/edit/:id": layout(adminGuard(EditUser)), // Edit user (admin only)
+     "/admin/error-logs": layout(adminGuard(AdminErrorLogs)), // Error log viewer (admin only)
+     // Role-based routes examples
+     "/editor": layout(roleGuard(EditorWelcome, 'editor')), // Editor only
+     "/member": layout(roleGuard(MeberWelcome, 'member')), // Member only
+     "/staff": layout(roleGuard(StaffWelcome, ['admin', 'editor'])), // Admin or Editor
 });
