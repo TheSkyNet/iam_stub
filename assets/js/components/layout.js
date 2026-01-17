@@ -1,3 +1,4 @@
+const m = require("mithril");
 const {AuthService} = require("../services/AuthserviceService");
 const { Icon } = require("./Icon");
 
@@ -17,23 +18,26 @@ function layout(view) {
                     "role": "navigation"
                 }, [
                     m(".navbar-start", [
-                        m(m.route.Link, {
+                        m("a", {
                             "class": "btn btn-ghost text-xl", 
-                            "href": "/"
+                            "href": "/",
+                            "oncreate": m.route.link
                         }, "Phalcon Stub")
                     ]),
                     m(".navbar-end", [
                         m("ul.menu.menu-horizontal.px-1", [
                             m("li", [
-                                m(m.route.Link, {
+                                m("a", {
                                     "class": "btn btn-ghost btn-sm", 
-                                    "href": "/pusher-test"
+                                    "href": "/pusher-test",
+                                    "oncreate": m.route.link
                                 }, "Pusher Test")
                             ]),
                             m("li", [
-                                m(m.route.Link, {
+                                m("a", {
                                     "class": "btn btn-ghost btn-sm", 
-                                    "href": "/test"
+                                    "href": "/test",
+                                    "oncreate": m.route.link
                                 }, "Test Page")
                             ]),
                             // Show user menu when logged in
@@ -89,15 +93,17 @@ function layout(view) {
                             ] : [
                                 // Show login/register buttons when not logged in
                                 m("li", [
-                                    m(m.route.Link, {
+                                    m("a", {
                                         "class": "btn btn-ghost btn-sm", 
-                                        "href": "/register"
+                                        "href": "/register",
+                                        "oncreate": m.route.link
                                     }, "Register")
                                 ]),
                                 m("li", [
-                                    m(m.route.Link, {
+                                    m("a", {
                                         "class": "btn btn-primary btn-sm", 
-                                        "href": "/login"
+                                        "href": "/login",
+                                        "oncreate": m.route.link
                                     }, "Login")
                                 ])
                             ]

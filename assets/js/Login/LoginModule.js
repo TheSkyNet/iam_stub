@@ -1,6 +1,7 @@
 // LoginModule.js
 
 // Import MessageDisplay and AuthService
+const m = require("mithril");
 const {MessageDisplay} = require("../components/MessageDisplay");
 const {AuthService} = require("../services/AuthserviceService");
 const {OAuthButtons, OAuthCallback} = require("../components/OAuthButtons");
@@ -336,15 +337,17 @@ const LoginForm = {
                             // Links (only show when not in QR mode)
                             !QRLogin.showQR ? m(".text-center.space-y-2", [
                                 m("div", [
-                                    m(m.route.Link, {
+                                    m("a", {
                                         class: "link link-primary text-sm",
-                                        href: "/register"
+                                        href: "/register",
+                                        oncreate: m.route.link
                                     }, "Don't have an account? Sign up")
                                 ]),
                                 m("div", [
-                                    m(m.route.Link, {
+                                    m("a", {
                                         class: "link link-primary text-sm",
-                                        href: "/forgot-password"
+                                        href: "/forgot-password",
+                                        oncreate: m.route.link
                                     }, "Forgot your password?")
                                 ])
                             ]) : null
@@ -429,9 +432,10 @@ const RegisterForm = {
                                 m(OAuthButtons),
 
                                 m(".text-center.space-y-2", [
-                                    m(m.route.Link, {
+                                    m("a", {
                                         class: "link link-primary text-sm",
-                                        href: "/login"
+                                        href: "/login",
+                                        oncreate: m.route.link
                                     }, "Already have an account? Sign in")
                                 ])
                             ])
@@ -476,9 +480,10 @@ const ForgotPasswordForm = {
                                 ]),
                                 m("button.btn.btn-primary.w-full.mb-4[type=submit]", "Send Reset Link"),
                                 m(".text-center.space-y-2", [
-                                    m(m.route.Link, {
+                                    m("a", {
                                         class: "link link-primary text-sm",
-                                        href: "/login"
+                                        href: "/login",
+                                        oncreate: m.route.link
                                     }, "Back to login")
                                 ])
                             ])

@@ -1,4 +1,4 @@
-require("./bootstrap")
+import "./bootstrap";
 import {LoginForm, RegisterForm, ForgotPasswordForm} from "./Login/LoginModule";
 import {layout} from "./components/layout";
 import {Welcome} from "./components/Welcome";

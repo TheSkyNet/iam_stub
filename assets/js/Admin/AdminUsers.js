@@ -1,3 +1,4 @@
+const m = require("mithril");
 const { Icon } = require("../components/Icon");
 
 var AdminUser = {
@@ -189,10 +190,10 @@ var AdminUserList = {
                                                         m("td",
                                                             [
 
-                                                                m(m.route.Link, {
+                                                                m("a", {
                                                                         href: `/user/${user.id}`,
                                                                         class: "btn btn-primary",
-                                                                        options: {replace: true},
+                                                                        oncreate: m.route.link
                                                                     },
                                                                     m(Icon, { name: 'fa-solid fa-pencil' })
                                                                 ),

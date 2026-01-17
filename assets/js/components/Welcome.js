@@ -1,5 +1,5 @@
 import { Icon } from "./Icon";
-
+const m = require("mithril");
 const Welcome = {
     view: function() {
         return m(".min-h-screen.flex.items-center.justify-center.p-8", [

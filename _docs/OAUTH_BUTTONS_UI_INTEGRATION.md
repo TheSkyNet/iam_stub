@@ -24,9 +24,10 @@ Added OAuth buttons to the registration form with the same positioning and styli
 ```javascript
 m("button.btn.btn-primary.w-full.mb-4[type=submit]", "Create Account"),
 m(".text-center.space-y-2", [
-    m(m.route.Link, {
+    m("a", {
         class: "link link-primary text-sm",
-        href: "/login"
+        href: "/login",
+        oncreate: m.route.link
     }, "Already have an account? Sign in")
 ])
 ```
@@ -39,9 +40,10 @@ m("button.btn.btn-primary.w-full.mb-4[type=submit]", "Create Account"),
 m(OAuthButtons),
 
 m(".text-center.space-y-2", [
-    m(m.route.Link, {
+    m("a", {
         class: "link link-primary text-sm",
-        href: "/login"
+        href: "/login",
+        oncreate: m.route.link
     }, "Already have an account? Sign in")
 ])
 ```
