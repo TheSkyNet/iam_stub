@@ -20,7 +20,7 @@ const LoginFormPage = {
                     ]),
                     m(".form-control.mt-6", [
                         m("button.btn.btn-primary", [
-                            m(Icon, { name: "fa-solid fa-right-to-bracket" }),
+                            m(Icon, { icon: "fa-solid fa-right-to-bracket" }),
                             " Login"
                         ])
                     ]),

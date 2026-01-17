@@ -7,7 +7,7 @@ const RolesPage = {
             m(".flex.justify-between.items-center.mb-6", [
                 m("h1.text-3xl.font-bold", "Roles Management"),
                 m("button.btn.btn-primary", [
-                    m(Icon, { name: "fa-solid fa-plus" }),
+                    m(Icon, { icon: "fa-solid fa-plus" }),
                     " Add Role"
                 ])
             ]),
@@ -27,8 +27,8 @@ const RolesPage = {
                             m("td", "Admin"),
                             m("td", "Full system access"),
                             m("td.text-right", [
-                                m("button.btn.btn-sm.btn-ghost", m(Icon, { name: "fa-solid fa-pen" })),
-                                m("button.btn.btn-sm.btn-ghost.text-error", m(Icon, { name: "fa-solid fa-trash" }))
+                                m("button.btn.btn-sm.btn-ghost", m(Icon, { icon: "fa-solid fa-pen" })),
+                                m("button.btn.btn-sm.btn-ghost.text-error", m(Icon, { icon: "fa-solid fa-trash" }))
                             ])
                         ]),
                         m("tr", [
@@ -36,8 +36,8 @@ const RolesPage = {
                             m("td", "Editor"),
                             m("td", "Can edit content"),
                             m("td.text-right", [
-                                m("button.btn.btn-sm.btn-ghost", m(Icon, { name: "fa-solid fa-pen" })),
-                                m("button.btn.btn-sm.btn-ghost.text-error", m(Icon, { name: "fa-solid fa-trash" }))
+                                m("button.btn.btn-sm.btn-ghost", m(Icon, { icon: "fa-solid fa-pen" })),
+                                m("button.btn.btn-sm.btn-ghost.text-error", m(Icon, { icon: "fa-solid fa-trash" }))
                             ])
                         ])
                     ])

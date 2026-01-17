@@ -9,7 +9,7 @@ const AdminPage = {
                 m(".card.bg-primary.text-primary-content.shadow-xl", [
                     m(".card-body", [
                         m("h2.card-title", [
-                            m(Icon, { name: "fa-solid fa-users" }),
+                            m(Icon, { icon: "fa-solid fa-users" }),
                             " Users"
                         ]),
                         m("p", "Manage application users and their access."),
@@ -21,7 +21,7 @@ const AdminPage = {
                 m(".card.bg-secondary.text-secondary-content.shadow-xl", [
                     m(".card-body", [
                         m("h2.card-title", [
-                            m(Icon, { name: "fa-solid fa-user-shield" }),
+                            m(Icon, { icon: "fa-solid fa-user-shield" }),
                             " Roles"
                         ]),
                         m("p", "Configure system roles and permissions."),

@@ -1,17 +1,11 @@
 // Icon helper component for Font Awesome icons in Mithril
 import m from "mithril";
-// Usage: m(Icon, { name: 'fa-solid fa-user', class: 'w-4 h-4', title: 'User' })
+// Usage: m(Icon, { icon: 'fa-solid fa-user', class: 'w-4 h-4', title: 'User' })
 function Icon(vnode) {
-    const { name = '', class: extra = '', title = '', ariaLabel } = vnode.attrs || {};
+
     // Default to decorative icons unless ariaLabel provided
-    const attrs = {
-        class: `${name} ${extra}`.trim(),
-        'aria-hidden': ariaLabel ? null : 'true',
-        title: title || null,
-        'aria-label': ariaLabel || null,
-        role: ariaLabel ? 'img' : null,
-    };
-    return m('i', attrs);
+
+    return m('span');
 }
 
 export { Icon };

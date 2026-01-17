@@ -7,7 +7,7 @@ const EditUserPage = {
         return m(".container.mx-auto.p-4", [
             m(".max-w-2xl.mx-auto", [
                 m(".flex.items-center.gap-4.mb-6", [
-                    m(m.route.Link, { href: "/admin/users", class: "btn btn-circle btn-ghost" }, m(Icon, { name: "fa-solid fa-arrow-left" })),
+                    m(m.route.Link, { href: "/admin/users", class: "btn btn-circle btn-ghost" }, m(Icon, { icon: "fa-solid fa-arrow-left" })),
                     m("h1.text-3xl.font-bold", `Edit User #${userId}`)
                 ]),
                 m(".card.bg-base-100.shadow-xl", [
@@ -40,7 +40,7 @@ const EditUserPage = {
                         m(".card-actions.justify-end.mt-6", [
                             m(m.route.Link, { href: "/admin/users", class: "btn btn-ghost" }, "Cancel"),
                             m("button.btn.btn-primary", [
-                                m(Icon, { name: "fa-solid fa-save" }),
+                                m(Icon, { icon: "fa-solid fa-save" }),
                                 " Save Changes"
                             ])
                         ])

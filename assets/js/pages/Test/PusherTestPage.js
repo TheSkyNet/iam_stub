@@ -7,7 +7,7 @@ const PusherTestPage = {
             m(".card.bg-base-100.shadow-xl", [
                 m(".card-body", [
                     m("h2.card-title", [
-                        m(Icon, { name: "fa-solid fa-broadcast-tower" }),
+                        m(Icon, { icon: "fa-solid fa-broadcast-tower" }),
                         " Pusher Real-time Test"
                     ]),
                     m("p", "Test real-time notifications and websocket connectivity."),

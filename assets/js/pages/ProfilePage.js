@@ -7,7 +7,7 @@ const ProfilePage = {
             m(".card.bg-base-100.shadow-xl", [
                 m(".card-body", [
                     m("h2.card-title", [
-                        m(Icon, { name: "fa-solid fa-user" }),
+                        m(Icon, { icon: "fa-solid fa-user" }),
                         " User Profile"
                     ]),
                     m("p", "Manage your account settings and preferences."),

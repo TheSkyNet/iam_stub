@@ -194,7 +194,7 @@ var AdminUserList = {
                                                                         href: `/user/${user.id}`,
                                                                         class: "btn btn-primary"
                                                                     },
-                                                                    m(Icon, { name: 'fa-solid fa-pencil' })
+                                                                    m(Icon, { icon: 'fa-solid fa-pencil' })
                                                                 ),
                                                                 m("button", {
                                                                         "class": "btn btn-danger",
@@ -208,7 +208,7 @@ var AdminUserList = {
 
                                                                         }
                                                                     },
-                                                                    m(Icon, { name: 'fa-solid fa-trash-can' })
+                                                                    m(Icon, { icon: 'fa-solid fa-trash-can' })
                                                                 )
                                                             ]
                                                         )

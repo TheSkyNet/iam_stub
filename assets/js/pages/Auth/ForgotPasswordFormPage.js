@@ -14,7 +14,7 @@ const ForgotPasswordFormPage = {
                     ]),
                     m(".form-control.mt-6", [
                         m("button.btn.btn-primary", [
-                            m(Icon, { name: "fa-solid fa-paper-plane" }),
+                            m(Icon, { icon: "fa-solid fa-paper-plane" }),
                             " Send Reset Link"
                         ])
                     ]),

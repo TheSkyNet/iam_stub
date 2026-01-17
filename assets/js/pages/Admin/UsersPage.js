@@ -7,7 +7,7 @@ const UsersPage = {
             m(".flex.justify-between.items-center.mb-6", [
                 m("h1.text-3xl.font-bold", "Users Management"),
                 m(m.route.Link, { href: "/admin/users/add", class: "btn btn-primary" }, [
-                    m(Icon, { name: "fa-solid fa-user-plus" }),
+                    m(Icon, { icon: "fa-solid fa-user-plus" }),
                     " Add User"
                 ])
             ]),
@@ -29,8 +29,8 @@ const UsersPage = {
                             m("td", "john@example.com"),
                             m("td", m(".badge.badge-ghost", "Admin")),
                             m("td.text-right", [
-                                m(m.route.Link, { href: "/admin/users/edit/1", class: "btn btn-sm btn-ghost" }, m(Icon, { name: "fa-solid fa-user-pen" })),
-                                m("button.btn.btn-sm.btn-ghost.text-error", m(Icon, { name: "fa-solid fa-trash" }))
+                                m(m.route.Link, { href: "/admin/users/edit/1", class: "btn btn-sm btn-ghost" }, m(Icon, { icon: "fa-solid fa-user-pen" })),
+                                m("button.btn.btn-sm.btn-ghost.text-error", m(Icon, { icon: "fa-solid fa-trash" }))
                             ])
                         ]),
                         m("tr", [
@@ -39,8 +39,8 @@ const UsersPage = {
                             m("td", "jane@example.com"),
                             m("td", m(".badge.badge-ghost", "Member")),
                             m("td.text-right", [
-                                m(m.route.Link, { href: "/admin/users/edit/2", class: "btn btn-sm btn-ghost" }, m(Icon, { name: "fa-solid fa-user-pen" })),
-                                m("button.btn.btn-sm.btn-ghost.text-error", m(Icon, { name: "fa-solid fa-trash" }))
+                                m(m.route.Link, { href: "/admin/users/edit/2", class: "btn btn-sm btn-ghost" }, m(Icon, { icon: "fa-solid fa-user-pen" })),
+                                m("button.btn.btn-sm.btn-ghost.text-error", m(Icon, { icon: "fa-solid fa-trash" }))
                             ])
                         ])
                     ])

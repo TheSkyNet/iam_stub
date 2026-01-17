@@ -102,17 +102,17 @@ m.route(root, "/", {
     "/login": layout(LoginFormPage),
     "/register": layout(RegisterFormPage),
     "/forgot-password": layout(ForgotPasswordFormPage),
-    "/pusher-test": layout(authGuard(PusherTestPage)),
-    "/test": layout(TestPage),
-    "/profile": layout(authGuard(ProfilePage)),
-    // Admin
-    "/admin": layout(adminGuard(AdminPage)),
-    "/admin/roles": layout(adminGuard(RolesPage)),
-    "/admin/users": layout(adminGuard(UsersPage)),
-    "/admin/users/add": layout(adminGuard(AddUserPage)),
-    "/admin/users/edit/:id": layout(adminGuard(EditUserPage)),
-    // Role-based
-    "/editor": layout(roleGuard(EditorWelcomePage, 'editor')),
-    "/member": layout(roleGuard(MemberWelcomePage, 'member')),
-    "/staff": layout(roleGuard(StaffWelcomePage, ['admin', 'editor'])),
+    // "/pusher-test": layout(authGuard(PusherTestPage)),
+    // "/test": layout(TestPage),
+    // "/profile": layout(authGuard(ProfilePage)),
+    // // Admin
+    // "/admin": layout(adminGuard(AdminPage)),
+    // "/admin/roles": layout(adminGuard(RolesPage)),
+    // "/admin/users": layout(adminGuard(UsersPage)),
+    // "/admin/users/add": layout(adminGuard(AddUserPage)),
+    // "/admin/users/edit/:id": layout(adminGuard(EditUserPage)),
+    // // Role-based
+    // "/editor": layout(roleGuard(EditorWelcomePage, 'editor')),
+    // "/member": layout(roleGuard(MemberWelcomePage, 'member')),
+    // "/staff": layout(roleGuard(StaffWelcomePage, ['admin', 'editor'])),
 });

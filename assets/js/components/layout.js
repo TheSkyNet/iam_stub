@@ -3,14 +3,17 @@ const {AuthService} = require("../services/AuthserviceService");
 const { Icon } = require("./Icon");
 
 function layout(view) {
+
     return {
         oninit: function() {
             // Initialize AuthService on app load
-            AuthService.init();
+            //AuthService.init();
         },
         view: function(vnode) {
             // const isLoggedIn = AuthService.isLoggedIn();
             // const user = AuthService.getUser();
+
+          //  return         m(view, vnode.attrs)
 
             return [
                 m("nav.navbar.bg-base-100.shadow-lg", {
