@@ -3,8 +3,6 @@ import { Icon } from "../components/Icon";
 import { AuthService } from "../services/AuthserviceService";
 
 const ProfilePage = {
-    activeTab: 'general',
-    
     // Profile Data from Server
     profileData: {
         name: '',
@@ -119,7 +117,9 @@ const ProfilePage = {
 
     handleUnlinkOAuth: () => {
         const provider = ProfilePage.profileData.oauth_provider;
-        if (!provider) return;
+        if (!provider) {
+            return;
+        }
 
         if (confirm(`Are you sure you want to unlink your ${provider} account?`)) {
             AuthService.unlinkOAuth(provider).then(response => {
@@ -138,24 +138,27 @@ const ProfilePage = {
             ]);
         }
 
-        // Helper for active tab class
-        const getTabClass = (tab) => {
-            let base = "tab";
-            if (ProfilePage.activeTab === tab) base += " tab-active";
-            return base;
-        };
+        const profileName = ProfilePage.profileData.name || "User";
+        
+        let avatarContent;
+        if (ProfilePage.profileData.avatar) {
+            avatarContent = m("img", { src: ProfilePage.profileData.avatar, alt: profileName });
+        } else {
+            avatarContent = m("span.text-2xl", profileName.charAt(0).toUpperCase());
+        }
 
-        // Tab Content: General
+        // Section: Personal Information
         let oauthSection = null;
         if (ProfilePage.profileData.oauth_provider) {
-            oauthSection = m(".mt-8.pt-8.border-t", [
+            const providerName = ProfilePage.profileData.oauth_provider.charAt(0).toUpperCase() + ProfilePage.profileData.oauth_provider.slice(1);
+            oauthSection = m(".mt-8.pt-8.border-t.border-base-300", [
                 m("h3.text-lg.font-semibold.mb-4", "Connected Accounts"),
                 m(".flex.items-center.justify-between.bg-base-200.p-4.rounded-lg", [
                     m(".flex.items-center.gap-3", [
                         m(Icon, { icon: `fa-brands fa-${ProfilePage.profileData.oauth_provider}` }),
                         m("span", [
                             "Connected via ",
-                            m("span.font-bold", ProfilePage.profileData.oauth_provider.charAt(0).toUpperCase() + ProfilePage.profileData.oauth_provider.slice(1))
+                            m("span.font-bold", providerName)
                         ])
                     ]),
                     m("button.btn.btn-outline.btn-error.btn-sm", {
@@ -165,94 +168,127 @@ const ProfilePage = {
             ]);
         }
 
-        let generalContent = m(".p-6", [
-            m("form", { onsubmit: ProfilePage.handleUpdateProfile }, [
-                m(".form-control.mb-4", [
-                    m("label.label", m("span.label-text", "Full Name")),
-                    m("input.input.input-bordered", {
-                        type: "text",
-                        value: ProfilePage.general.name,
-                        oninput: (e) => ProfilePage.general.name = e.target.value,
-                        required: true
-                    })
+        const personalCard = m(".card.bg-base-100.shadow-xl.mb-8", [
+            m(".card-body", [
+                m("h2.card-title.mb-4", [
+                    m(Icon, { icon: "fa-solid fa-id-card" }),
+                    "Personal Information"
                 ]),
-                m(".form-control.mb-6", [
-                    m("label.label", m("span.label-text", "Email Address")),
-                    m("input.input.input-bordered", {
-                        type: "email",
-                        value: ProfilePage.general.email,
-                        oninput: (e) => ProfilePage.general.email = e.target.value,
-                        required: true
-                    })
+                m("form", { onsubmit: ProfilePage.handleUpdateProfile }, [
+                    m("fieldset.fieldset", [
+                        m("legend.fieldset-legend", "Full Name"),
+                        m("label.input.w-full", [
+                            m(Icon, { icon: "fa-solid fa-user", class: "opacity-50" }),
+                            m("input.grow", {
+                                type: "text",
+                                value: ProfilePage.general.name,
+                                oninput: (e) => ProfilePage.general.name = e.target.value,
+                                required: true
+                            })
+                        ]),
+
+                        m("legend.fieldset-legend", "Email Address"),
+                        m("label.input.w-full", [
+                            m(Icon, { icon: "fa-solid fa-envelope", class: "opacity-50" }),
+                            m("input.grow", {
+                                type: "email",
+                                value: ProfilePage.general.email,
+                                oninput: (e) => ProfilePage.general.email = e.target.value,
+                                required: true
+                            })
+                        ]),
+
+                        m("button.btn.btn-primary.mt-6", {
+                            type: "submit",
+                            disabled: ProfilePage.general.isLoading
+                        }, [
+                            ProfilePage.general.isLoading && m("span.loading.loading-spinner"),
+                            m(Icon, { icon: "fa-solid fa-save" }),
+                            " Save Changes"
+                        ])
+                    ])
                 ]),
-                m("button.btn.btn-primary", {
-                    type: "submit",
-                    disabled: ProfilePage.general.isLoading
-                }, [
-                    ProfilePage.general.isLoading && m("span.loading.loading-spinner"),
-                    m(Icon, { icon: "fa-solid fa-save" }),
-                    " Save Changes"
-                ])
-            ]),
-            oauthSection
+                oauthSection
+            ])
         ]);
 
-        // Tab Content: Security
-        let securityContent = m(".p-6", [
-            m("form", { onsubmit: ProfilePage.handleChangePassword }, [
-                m(".form-control.mb-4", [
-                    m("label.label", m("span.label-text", "Current Password")),
-                    m("input.input.input-bordered", {
-                        type: "password",
-                        value: ProfilePage.security.oldPassword,
-                        oninput: (e) => ProfilePage.security.oldPassword = e.target.value,
-                        required: true
-                    })
+        // Section: Security
+        const securityCard = m(".card.bg-base-100.shadow-xl.mb-8", [
+            m(".card-body", [
+                m("h2.card-title.mb-4", [
+                    m(Icon, { icon: "fa-solid fa-shield-halved" }),
+                    "Security"
                 ]),
-                m(".form-control.mb-4", [
-                    m("label.label", m("span.label-text", "New Password")),
-                    m("input.input.input-bordered", {
-                        type: "password",
-                        value: ProfilePage.security.newPassword,
-                        oninput: (e) => ProfilePage.security.newPassword = e.target.value,
-                        required: true
-                    })
-                ]),
-                m(".form-control.mb-6", [
-                    m("label.label", m("span.label-text", "Confirm New Password")),
-                    m("input.input.input-bordered", {
-                        type: "password",
-                        value: ProfilePage.security.confirmPassword,
-                        oninput: (e) => ProfilePage.security.confirmPassword = e.target.value,
-                        required: true
-                    })
-                ]),
-                m("button.btn.btn-warning", {
-                    type: "submit",
-                    disabled: ProfilePage.security.isLoading
-                }, [
-                    ProfilePage.security.isLoading && m("span.loading.loading-spinner"),
-                    m(Icon, { icon: "fa-solid fa-key" }),
-                    " Update Password"
+                m("form", { onsubmit: ProfilePage.handleChangePassword }, [
+                    m("fieldset.fieldset", [
+                        m("legend.fieldset-legend", "Current Password"),
+                        m("label.input.w-full", [
+                            m(Icon, { icon: "fa-solid fa-lock", class: "opacity-50" }),
+                            m("input.grow", {
+                                type: "password",
+                                value: ProfilePage.security.oldPassword,
+                                oninput: (e) => ProfilePage.security.oldPassword = e.target.value,
+                                required: true
+                            })
+                        ]),
+
+                        m("legend.fieldset-legend", "New Password"),
+                        m("label.input.w-full", [
+                            m(Icon, { icon: "fa-solid fa-key", class: "opacity-50" }),
+                            m("input.grow", {
+                                type: "password",
+                                value: ProfilePage.security.newPassword,
+                                oninput: (e) => ProfilePage.security.newPassword = e.target.value,
+                                required: true
+                            })
+                        ]),
+
+                        m("legend.fieldset-legend", "Confirm New Password"),
+                        m("label.input.w-full", [
+                            m(Icon, { icon: "fa-solid fa-key", class: "opacity-50" }),
+                            m("input.grow", {
+                                type: "password",
+                                value: ProfilePage.security.confirmPassword,
+                                oninput: (e) => ProfilePage.security.confirmPassword = e.target.value,
+                                required: true
+                            })
+                        ]),
+
+                        m("button.btn.btn-warning.mt-6", {
+                            type: "submit",
+                            disabled: ProfilePage.security.isLoading
+                        }, [
+                            ProfilePage.security.isLoading && m("span.loading.loading-spinner"),
+                            m(Icon, { icon: "fa-solid fa-shield-halved" }),
+                            " Update Password"
+                        ])
+                    ])
                 ])
             ])
         ]);
 
-        // Tab Content: Developer
-        let developerContent = m(".p-6", [
-            m(".alert.alert-info.mb-6", [
-                m(Icon, { icon: "fa-solid fa-circle-info" }),
-                m("span", "Your API key allows you to access our services programmatically. Keep it secret!")
-            ]),
-            m(".form-control.mb-6", [
-                m("label.label", m("span.label-text", "API Key")),
-                m(".flex.gap-2", [
-                    m("input.input.input-bordered.flex-grow", {
-                        type: "text",
-                        value: ProfilePage.profileData.apiKey || "No API key generated",
-                        readonly: true
-                    }),
-                    m("button.btn.btn-secondary", {
+        // Section: Developer
+        const developerCard = m(".card.bg-base-100.shadow-xl.mb-8", [
+            m(".card-body", [
+                m("h2.card-title.mb-4", [
+                    m(Icon, { icon: "fa-solid fa-code" }),
+                    "Developer Settings"
+                ]),
+                m(".alert.alert-info.mb-6", [
+                    m(Icon, { icon: "fa-solid fa-circle-info" }),
+                    m("span", "Your API key allows you to access our services programmatically. Keep it secret!")
+                ]),
+                m("fieldset.fieldset", [
+                    m("legend.fieldset-legend", "API Key"),
+                    m("label.input.w-full", [
+                        m(Icon, { icon: "fa-solid fa-key", class: "opacity-50" }),
+                        m("input.grow", {
+                            type: "text",
+                            value: ProfilePage.profileData.apiKey || "No API key generated",
+                            readonly: true
+                        })
+                    ]),
+                    m("button.btn.btn-secondary.mt-4", {
                         onclick: ProfilePage.handleGenerateApiKey,
                         disabled: ProfilePage.developer.isLoading
                     }, [
@@ -264,66 +300,22 @@ const ProfilePage = {
             ])
         ]);
 
-        // Active tab content helper
-        let activeContent;
-        if (ProfilePage.activeTab === 'general') {
-            activeContent = generalContent;
-        } else if (ProfilePage.activeTab === 'security') {
-            activeContent = securityContent;
-        } else if (ProfilePage.activeTab === 'developer') {
-            activeContent = developerContent;
-        }
-
-        let avatarContent;
-        const profileName = ProfilePage.profileData.name || "User";
-        if (ProfilePage.profileData.avatar) {
-            avatarContent = m("img", { key: "avatar-img", src: ProfilePage.profileData.avatar, alt: profileName });
-        } else {
-            avatarContent = m("span.text-2xl", { key: "avatar-initials" }, profileName.charAt(0).toUpperCase());
-        }
-
-        return m(".container.mx-auto.p-4.max-w-4xl", { key: "profile-container" }, [
-            m(".flex.items-center.gap-4.mb-8", [
+        return m(".container.mx-auto.p-4.max-w-4xl", [
+            // Profile Header
+            m(".flex.flex-col.sm:flex-row.items-center.gap-6.mb-10.p-6.bg-base-100.rounded-2xl.shadow-sm", [
                 m(".avatar.placeholder", [
-                    m(".bg-neutral.text-neutral-content.rounded-full.w-20", { key: "avatar-wrapper" }, avatarContent)
+                    m(".bg-neutral.text-neutral-content.rounded-full.w-24.flex.items-center.justify-center", avatarContent)
                 ]),
-                m("div", [
-                    m("h1.text-3xl.font-bold", profileName),
-                    m("p.text-base-content.opacity-70", ProfilePage.profileData.email)
+                m(".text-center.sm:text-left", [
+                    m("h1.text-4xl.font-extrabold.mb-1", profileName),
+                    m("p.text-lg.text-base-content.opacity-60", ProfilePage.profileData.email)
                 ])
             ]),
 
-            m(".card.bg-base-100.shadow-xl.overflow-hidden", { key: "profile-card" }, [
-                m(".card-body.p-0", [
-                    m(".tabs.tabs-lifted.w-full", [
-                        m("button", { 
-                            key: "tab-gen",
-                            class: getTabClass('general'), 
-                            onclick: () => ProfilePage.activeTab = 'general' 
-                        }, [
-                            m(Icon, { icon: "fa-solid fa-id-card", class: "mr-2" }),
-                            "General"
-                        ]),
-                        m("button", { 
-                            key: "tab-sec",
-                            class: getTabClass('security'), 
-                            onclick: () => ProfilePage.activeTab = 'security' 
-                        }, [
-                            m(Icon, { icon: "fa-solid fa-shield-halved", class: "mr-2" }),
-                            "Security"
-                        ]),
-                        m("button", { 
-                            key: "tab-dev",
-                            class: getTabClass('developer'), 
-                            onclick: () => ProfilePage.activeTab = 'developer' 
-                        }, [
-                            m(Icon, { icon: "fa-solid fa-code", class: "mr-2" }),
-                            "Developer"
-                        ])
-                    ]),
-                    m("div", { key: `tab-content-${ProfilePage.activeTab}` }, activeContent)
-                ])
-            ])
+            // Sections
+            personalCard,
+            securityCard,
+            developerCard
         ]);
     }
 };
