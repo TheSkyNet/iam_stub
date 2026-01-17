@@ -1,0 +1,324 @@
+import m from "mithril";
+import { Icon } from "../components/Icon";
+import NavBrand from "../components/Nav/NavBrand";
+import NavSearchInput from "../components/Nav/NavSearchInput";
+import NavUserMenu from "../components/Nav/NavUserMenu";
+import NavMenu from "../components/Nav/NavMenu";
+import NavHorizontalMenu from "../components/Nav/NavHorizontalMenu";
+import NavIndicator from "../components/Nav/NavIndicator";
+
+const ComponentsPage = {
+    view: () => {
+        return m(".container.mx-auto.p-4.space-y-12", [
+            m("header.mb-8", [
+                m("h1.text-4xl.font-bold", "Navigation Components"),
+                m("p.text-base-content/70", "Modular DaisyUI navbar components built with Mithril.")
+            ]),
+
+            // Example 1
+            m("section.space-y-4", [
+                m("h2.text-2xl.font-semibold", "Example 1: Search and Avatar"),
+                m(".navbar.bg-base-100.shadow-sm.rounded-box", [
+                    m(".flex-1", [
+                        m(NavBrand, { name: "daisyUI" })
+                    ]),
+                    m(".flex.gap-2", [
+                        m(NavSearchInput),
+                        m(NavUserMenu)
+                    ])
+                ])
+            ]),
+
+            // Example 2
+            m("section.space-y-4", [
+                m("h2.text-2xl.font-semibold", "Example 2: Center Logo and Icons"),
+                m(".navbar.bg-base-100.shadow-sm.rounded-box", [
+                    m(".navbar-start", [
+                        m(NavMenu, {
+                            items: [
+                                { label: "Homepage", href: "/" },
+                                { label: "Portfolio", href: "/portfolio" },
+                                { label: "About", href: "/about" }
+                            ]
+                        })
+                    ]),
+                    m(".navbar-center", [
+                        m(NavBrand, { name: "daisyUI" })
+                    ]),
+                    m(".navbar-end", [
+                        m("button.btn.btn-ghost.btn-circle", [
+                            m(Icon, { icon: "fa-solid fa-magnifying-glass" })
+                        ]),
+                        m(NavIndicator, { icon: "fa-solid fa-bell" })
+                    ])
+                ])
+            ]),
+
+            // Example 3
+            m("section.space-y-4", [
+                m("h2.text-2xl.font-semibold", "Example 3: Responsive with Submenus"),
+                m(".navbar.bg-base-100.shadow-sm.rounded-box", [
+                    m(".navbar-start", [
+                        m(NavMenu, {
+                            dropdownClass: "lg:hidden",
+                            items: [
+                                { label: "Item 1", href: "/item1" },
+                                { 
+                                    label: "Parent", 
+                                    submenu: [
+                                        { label: "Submenu 1", href: "/sub1" },
+                                        { label: "Submenu 2", href: "/sub2" }
+                                    ] 
+                                },
+                                { label: "Item 3", href: "/item3" }
+                            ]
+                        }),
+                        m(NavBrand, { name: "daisyUI" })
+                    ]),
+                    m(".navbar-center.hidden.lg:flex", [
+                        m(NavHorizontalMenu, {
+                            items: [
+                                { label: "Item 1", href: "/item1" },
+                                { 
+                                    label: "Parent", 
+                                    submenu: [
+                                        { label: "Submenu 1", href: "/sub1" },
+                                        { label: "Submenu 2", href: "/sub2" }
+                                    ] 
+                                },
+                                { label: "Item 3", href: "/item3" }
+                            ]
+                        })
+                    ]),
+                    m(".navbar-end", [
+                        m("a.btn", "Button")
+                    ])
+                ])
+            ]),
+
+            // Data Input Section
+            m("header.pt-12.mb-8.border-t.border-base-300", [
+                m("h1.text-4xl.font-bold", "Data Input Components"),
+                m("p.text-base-content/70", "DaisyUI input components for forms and data entry.")
+            ]),
+
+            // Checkboxes
+            m("section.space-y-8", [
+                m("h2.text-2xl.font-semibold", "Checkboxes"),
+
+                m(".grid.grid-cols-1.md:grid-cols-2.gap-8", [
+                    // Basic & Fieldset
+                    m(".space-y-4", [
+                        m("h3.text-lg.font-medium", "Basic & Fieldset"),
+                        m(".flex.items-center.gap-4", [
+                            m("input[type=checkbox].checkbox", { checked: true })
+                        ]),
+                        m("fieldset.fieldset.bg-base-100.border-base-300.rounded-box.w-64.border.p-4", [
+                            m("legend.fieldset-legend", "Login options"),
+                            m("label.label.cursor-pointer", [
+                                m("input[type=checkbox].checkbox", { checked: true }),
+                                m("span.label-text.ml-2", "Remember me")
+                            ])
+                        ])
+                    ]),
+
+                    // Sizes
+                    m(".space-y-4", [
+                        m("h3.text-lg.font-medium", "Sizes"),
+                        m(".flex.flex-wrap.items-center.gap-4", [
+                            m("input[type=checkbox].checkbox.checkbox-xs", { checked: true }),
+                            m("input[type=checkbox].checkbox.checkbox-sm", { checked: true }),
+                            m("input[type=checkbox].checkbox.checkbox-md", { checked: true }),
+                            m("input[type=checkbox].checkbox.checkbox-lg", { checked: true }),
+                            m("input[type=checkbox].checkbox.checkbox-xl", { checked: true })
+                        ])
+                    ]),
+
+                    // Colors
+                    m(".space-y-4", [
+                        m("h3.text-lg.font-medium", "Colors"),
+                        m(".flex.flex-wrap.items-center.gap-4", [
+                            m("input[type=checkbox].checkbox.checkbox-primary", { checked: true }),
+                            m("input[type=checkbox].checkbox.checkbox-secondary", { checked: true }),
+                            m("input[type=checkbox].checkbox.checkbox-accent", { checked: true }),
+                            m("input[type=checkbox].checkbox.checkbox-neutral", { checked: true }),
+                            m("input[type=checkbox].checkbox.checkbox-info", { checked: true }),
+                            m("input[type=checkbox].checkbox.checkbox-success", { checked: true }),
+                            m("input[type=checkbox].checkbox.checkbox-warning", { checked: true }),
+                            m("input[type=checkbox].checkbox.checkbox-error", { checked: true })
+                        ])
+                    ]),
+
+                    // States & Indeterminate
+                    m(".space-y-4", [
+                        m("h3.text-lg.font-medium", "States"),
+                        m(".flex.flex-wrap.items-center.gap-4", [
+                            m("input[type=checkbox].checkbox", { disabled: true }),
+                            m("input[type=checkbox].checkbox", { disabled: true, checked: true }),
+                            m("input[type=checkbox].checkbox", {
+                                oncreate: (vnode) => {
+                                    vnode.dom.indeterminate = true;
+                                }
+                            })
+                        ])
+                    ])
+                ])
+            ]),
+
+            // Hero Section
+            m("header.pt-12.mb-8.border-t.border-base-300", [
+                m("h1.text-4xl.font-bold", "Hero Components"),
+                m("p.text-base-content/70", "DaisyUI hero components for high-impact landing areas.")
+            ]),
+
+            m("section.space-y-12", [
+                // Hero with Background
+                m(".space-y-4", [
+                    m("h2.text-2xl.font-semibold", "Hero with Background Image"),
+                    m(".hero.min-h-[400px].rounded-box.overflow-hidden", {
+                        style: { backgroundImage: "url(https://img.daisyui.com/images/stock/photo-1507358522600-9f71e620c44e.webp)" }
+                    }, [
+                        m(".hero-overlay"),
+                        m(".hero-content.text-neutral-content.text-center", [
+                            m(".max-w-md", [
+                                m("h1.mb-5.text-5xl.font-bold", "Hello there"),
+                                m("p.mb-5", "Provident cupiditate voluptatem et in. Quaerat fugiat ut assumenda excepturi exercitationem quasi. In deleniti eaque aut repudiandae et a id nisi."),
+                                m("button.btn.btn-primary", "Get Started")
+                            ])
+                        ])
+                    ])
+                ]),
+
+                // Hero with Form
+                m(".space-y-4", [
+                    m("h2.text-2xl.font-semibold", "Hero with Login Form"),
+                    m(".hero.bg-base-200.min-h-[400px].rounded-box", [
+                        m(".hero-content.flex-col.lg:flex-row-reverse", [
+                            m(".text-center.lg:text-left", [
+                                m("h1.text-5xl.font-bold", "Login now!"),
+                                m("p.py-6", "Provident cupiditate voluptatem et in. Quaerat fugiat ut assumenda excepturi exercitationem quasi. In deleniti eaque aut repudiandae et a id nisi.")
+                            ]),
+                            m(".card.bg-base-100.w-full.max-w-sm.shrink-0.shadow-2xl", [
+                                m(".card-body", [
+                                    m("fieldset.fieldset", [
+                                        m("label.label", "Email"),
+                                        m("input.input", { type: "email", placeholder: "Email" }),
+                                        m("label.label", "Password"),
+                                        m("input.input", { type: "password", placeholder: "Password" }),
+                                        m("div", [
+                                            m(m.route.Link, { href: "/forgot-password", class: "link link-hover" }, "Forgot password?")
+                                        ]),
+                                        m("button.btn.btn-neutral.mt-4", "Login")
+                                    ])
+                                ])
+                            ])
+                        ])
+                    ])
+                ])
+            ]),
+
+            // Text Input Section
+            m("header.pt-12.mb-8.border-t.border-base-300", [
+                m("h1.text-4xl.font-bold", "Text Input Components"),
+                m("p.text-base-content/70", "DaisyUI text input components for various data entry needs.")
+            ]),
+
+            m("section.space-y-12", [
+                // Basic & Decorators
+                m(".space-y-4", [
+                    m("h2.text-2xl.font-semibold", "Basic & Decorators"),
+                    m(".grid.grid-cols-1.md:grid-cols-2.gap-8", [
+                        m(".space-y-4", [
+                            m("h3.text-lg.font-medium", "Basic Input"),
+                            m("input.input.w-full", { type: "text", placeholder: "Type here" })
+                        ]),
+                        m(".space-y-4", [
+                            m("h3.text-lg.font-medium", "Search with Kbd"),
+                            m("label.input.w-full", [
+                                m(Icon, { icon: "fa-solid fa-magnifying-glass", class: "opacity-50" }),
+                                m("input.grow", { type: "search", placeholder: "Search" }),
+                                m("kbd.kbd.kbd-sm", "⌘"),
+                                m("kbd.kbd.kbd-sm", "K")
+                            ])
+                        ]),
+                        m(".space-y-4", [
+                            m("h3.text-lg.font-medium", "Input with Icon (File)"),
+                            m("label.input.w-full", [
+                                m(Icon, { icon: "fa-solid fa-file-code", class: "opacity-50" }),
+                                m("input.grow", { type: "text", placeholder: "index.php" })
+                            ])
+                        ]),
+                        m(".space-y-4", [
+                            m("h3.text-lg.font-medium", "Input with Label & Badge"),
+                            m("label.input.w-full", [
+                                "Path",
+                                m("input.grow", { type: "text", placeholder: "src/app/" }),
+                                m("span.badge.badge-neutral.badge-xs", "Optional")
+                            ])
+                        ])
+                    ])
+                ]),
+
+                // Fieldset & States
+                m(".space-y-4", [
+                    m("h2.text-2xl.font-semibold", "Fieldset & States"),
+                    m(".grid.grid-cols-1.md:grid-cols-2.gap-8", [
+                        m(".space-y-4", [
+                            m("fieldset.fieldset", [
+                                m("legend.fieldset-legend", "What is your name?"),
+                                m("input.input.w-full", { type: "text", placeholder: "Type here" }),
+                                m("p.label", "Optional")
+                            ])
+                        ]),
+                        m(".space-y-4", [
+                            m("h3.text-lg.font-medium", "Validator"),
+                            m("label.input.validator.w-full", [
+                                m(Icon, { icon: "fa-solid fa-phone", class: "opacity-50" }),
+                                m("input", {
+                                    type: "tel",
+                                    class: "tabular-nums",
+                                    required: true,
+                                    placeholder: "Phone",
+                                    pattern: "[0-9]*",
+                                    minlength: "10",
+                                    maxlength: "10",
+                                    title: "Must be 10 digits"
+                                })
+                            ]),
+                            m("p.validator-hint", "Must be 10 digits")
+                        ])
+                    ])
+                ]),
+
+                // Colors
+                m(".space-y-4", [
+                    m("h2.text-2xl.font-semibold", "Colors"),
+                    m(".flex.flex-wrap.gap-4", [
+                        m("input.input.input-neutral", { type: "text", placeholder: "Neutral" }),
+                        m("input.input.input-primary", { type: "text", placeholder: "Primary" }),
+                        m("input.input.input-secondary", { type: "text", placeholder: "Secondary" }),
+                        m("input.input.input-accent", { type: "text", placeholder: "Accent" }),
+                        m("input.input.input-info", { type: "text", placeholder: "Info" }),
+                        m("input.input.input-success", { type: "text", placeholder: "Success" }),
+                        m("input.input.input-warning", { type: "text", placeholder: "Warning" }),
+                        m("input.input.input-error", { type: "text", placeholder: "Error" })
+                    ])
+                ]),
+
+                // Sizes
+                m(".space-y-4", [
+                    m("h2.text-2xl.font-semibold", "Sizes"),
+                    m(".flex.flex-wrap.items-end.gap-4", [
+                        m("input.input.input-xs", { type: "text", placeholder: "Xsmall" }),
+                        m("input.input.input-sm", { type: "text", placeholder: "Small" }),
+                        m("input.input.input-md", { type: "text", placeholder: "Medium" }),
+                        m("input.input.input-lg", { type: "text", placeholder: "Large" }),
+                        m("input.input.input-xl", { type: "text", placeholder: "Xlarge" })
+                    ])
+                ])
+            ])
+        ]);
+    },
+};
+
+export default ComponentsPage;

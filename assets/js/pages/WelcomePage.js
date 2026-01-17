@@ -11,6 +11,10 @@ const WelcomePage = {
                    m(m.route.Link, { href: "/login", class: "btn btn-primary" }, [
                     m(Icon, { icon: "fa-solid fa-right-to-bracket" }),
                        " Get Started"
+                   ]),
+                   m(m.route.Link, { href: "/components", class: "btn btn-outline ml-2" }, [
+                    m(Icon, { icon: "fa-solid fa-cubes" }),
+                       " Components"
                    ])
                ])
            ])

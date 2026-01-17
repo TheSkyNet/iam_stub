@@ -19,6 +19,7 @@ import MemberWelcomePage from "./pages/Role/MemberWelcomePage";
 import StaffWelcomePage from "./pages/Role/StaffWelcomePage";
 import PusherTestPage from "./pages/Test/PusherTestPage";
 import TestPage from "./pages/Test/TestPage";
+import ComponentsPage from "./pages/ComponentsPage";
 
 const root = document.getElementById('app');
 
@@ -102,6 +103,7 @@ m.route(root, "/", {
     "/login": layout(LoginFormPage),
     "/register": layout(RegisterFormPage),
     "/forgot-password": layout(ForgotPasswordFormPage),
+    "/components": layout(ComponentsPage),
     // "/pusher-test": layout(authGuard(PusherTestPage)),
     // "/test": layout(TestPage),
     // "/profile": layout(authGuard(ProfilePage)),
