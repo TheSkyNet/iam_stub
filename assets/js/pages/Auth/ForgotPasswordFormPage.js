@@ -17,6 +17,7 @@ const ForgotPasswordFormPage = {
             })
             .catch((err) => {
                 console.error('Forgot password error:', err);
+                window.showToast(err, 'error');
             })
             .finally(() => {
                 ForgotPasswordFormPage.isLoading = false;

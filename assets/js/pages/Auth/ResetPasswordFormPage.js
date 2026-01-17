@@ -34,6 +34,7 @@ const ResetPasswordFormPage = {
             })
             .catch((err) => {
                 console.error('Reset password error:', err);
+                window.showToast(err, 'error');
             })
             .finally(() => {
                 ResetPasswordFormPage.isLoading = false;

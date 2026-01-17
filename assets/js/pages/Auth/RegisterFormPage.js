@@ -18,6 +18,7 @@ const RegisterFormPage = {
             })
             .catch((err) => {
                 console.error('Registration error:', err);
+                window.showToast(err, 'error');
             })
             .finally(() => {
                 RegisterFormPage.isLoading = false;

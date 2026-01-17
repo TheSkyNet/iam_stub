@@ -17,7 +17,7 @@ const LoginFormPage = {
             })
             .catch((err) => {
                 console.error('Login error:', err);
-                // Errors are automatically handled by errorHandler.js via window.showToast
+                window.showToast(err, 'error');
             })
             .finally(() => {
                 LoginFormPage.isLoading = false;
