@@ -237,6 +237,101 @@ const ComponentsPage = {
                 ])
             ]),
 
+            // Card Section
+            m("header.pt-12.mb-8.border-t.border-base-300", [
+                m("h1.text-4xl.font-bold", "Card Components"),
+                m("p", { class: "text-base-content/70" }, "DaisyUI cards with various layout and background options.")
+            ]),
+
+            m("section.space-y-12", [
+                // Cards with Image Background
+                m(".space-y-4", [
+                    m("h2.text-2xl.font-semibold", "Cards with Image Background (Image Full)"),
+                    m(".grid.grid-cols-1.md:grid-cols-2.lg:grid-cols-3.gap-6", [
+                        // Exact Shoes snippet from user
+                        m("div", {"class":"card bg-base-100 image-full w-96 shadow-sm"}, [
+                            m("figure", 
+                                m("img", {"src":"https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.webp","alt":"Shoes"})
+                            ),
+                            m("div", {"class":"card-body"}, [
+                                m("h2", {"class":"card-title"}, "Card Title"),
+                                m("p", "A card component has a figure, a body part, and inside body there are title and actions parts"),
+                                m("div", {"class":"card-actions justify-end"}, 
+                                    m("button", {"class":"btn btn-primary"}, "Buy Now")
+                                )
+                            ])
+                        ]),
+                        m("div", {"class":"card bg-base-100 image-full shadow-sm"}, [
+                            m("figure", 
+                                m("img", {"src":"https://images.unsplash.com/photo-1493606278519-11aa9f86e40a?auto=format&fit=crop&w=800&q=80","alt":"Abstract"})
+                            ),
+                            m("div", {"class":"card-body"}, [
+                                m("h2", {"class":"card-title"}, "Geometric Shapes"),
+                                m("p", "Colorful abstract geometry for modern interfaces."),
+                                m("div", {"class":"card-actions justify-end"}, 
+                                    m("button", {"class":"btn btn-primary"}, "Order")
+                                )
+                            ])
+                        ]),
+                        m("div", {"class":"card bg-base-100 image-full shadow-sm"}, [
+                            m("figure", 
+                                m("img", {"src":"https://images.unsplash.com/photo-1550684848-fac1c5b4e853?auto=format&fit=crop&w=800&q=80","alt":"Abstract"})
+                            ),
+                            m("div", {"class":"card-body"}, [
+                                m("h2", {"class":"card-title"}, "Vibrant Gradients"),
+                                m("p", "Dynamic flow and color transitions."),
+                                m("div", {"class":"card-actions justify-end"}, 
+                                    m("button", {"class":"btn btn-primary"}, "Watch")
+                                )
+                            ])
+                        ])
+                    ])
+                ]),
+
+                // Additional Card Variations
+                m(".space-y-4", [
+                    m("h2.text-2xl.font-semibold", "More Card Variations"),
+                    m(".grid.grid-cols-1.md:grid-cols-2.gap-8", [
+                        // Colored Card
+                        m(".card.bg-primary.text-primary-content.shadow-xl", [
+                            m(".card-body", [
+                                m("h2.card-title", "Card title!"),
+                                m("p", "A card component has a figure, a body part, and inside body there are title and actions parts"),
+                                m(".card-actions.justify-end", [
+                                    m("button.btn", "Buy Now")
+                                ])
+                            ])
+                        ]),
+                        // Standard Card with Image
+                        m(".card.bg-base-100.shadow-xl", [
+                            m("figure", [
+                                m("img", { src: "https://images.unsplash.com/photo-1541701494587-cb58502866ab?auto=format&fit=crop&w=800&q=80", alt: "Abstract" })
+                            ]),
+                            m(".card-body", [
+                                m("h2.card-title", "Abstract Art"),
+                                m("p", "A card component has a figure, a body part, and inside body there are title and actions parts"),
+                                m(".card-actions.justify-end", [
+                                    m("button.btn.btn-primary", "Buy Now")
+                                ])
+                            ])
+                        ])
+                    ]),
+                    // Side Image Card
+                    m(".card.lg:card-side.bg-base-100.shadow-xl.mt-8", [
+                        m("figure", [
+                            m("img", { src: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=800&q=80", alt: "Abstract", class: "object-cover h-full" })
+                        ]),
+                        m(".card-body", [
+                            m("h2.card-title", "Fluid Design"),
+                            m("p", "Experience smooth transitions and organic shapes."),
+                            m(".card-actions.justify-end", [
+                                m("button.btn.btn-primary", "Explore")
+                            ])
+                        ])
+                    ])
+                ])
+            ]),
+
             // Text Input Section
             m("header.pt-12.mb-8.border-t.border-base-300", [
                 m("h1.text-4xl.font-bold", "Text Input Components"),

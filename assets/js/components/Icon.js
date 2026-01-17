@@ -3,13 +3,14 @@ import m from "mithril";
 // Usage: m(Icon, { icon: 'fa-solid fa-user', class: 'w-4 h-4', title: 'User' })
 const Icon = {
     view: (vnode) => {
-        const { icon, ...attrs } = vnode.attrs;
+        const { icon, name, ...attrs } = vnode.attrs;
+        const iconClass = name || icon;
         // Default to decorative icons unless ariaLabel provided
         const ariaHidden = !attrs.ariaLabel;
 
         return m('i', {
             ...attrs,
-            class: `${icon} ${attrs.class || ""}`.trim(),
+            class: `${iconClass} ${attrs.class || ""}`.trim(),
             "aria-hidden": ariaHidden ? "true" : undefined
         });
     }

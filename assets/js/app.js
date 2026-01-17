@@ -18,6 +18,7 @@ import EditorWelcomePage from "./pages/Role/EditorWelcomePage";
 import MemberWelcomePage from "./pages/Role/MemberWelcomePage";
 import StaffWelcomePage from "./pages/Role/StaffWelcomePage";
 import PusherTestPage from "./pages/Test/PusherTestPage";
+import SseTestPage from "./pages/Test/SseTestPage";
 import TestPage from "./pages/Test/TestPage";
 import ComponentsPage from "./pages/ComponentsPage";
 
@@ -104,17 +105,18 @@ m.route(root, "/", {
     "/register": layout(RegisterFormPage),
     "/forgot-password": layout(ForgotPasswordFormPage),
     "/components": layout(ComponentsPage),
-    // "/pusher-test": layout(authGuard(PusherTestPage)),
-    // "/test": layout(TestPage),
-    // "/profile": layout(authGuard(ProfilePage)),
-    // // Admin
-    // "/admin": layout(adminGuard(AdminPage)),
-    // "/admin/roles": layout(adminGuard(RolesPage)),
-    // "/admin/users": layout(adminGuard(UsersPage)),
-    // "/admin/users/add": layout(adminGuard(AddUserPage)),
-    // "/admin/users/edit/:id": layout(adminGuard(EditUserPage)),
-    // // Role-based
-    // "/editor": layout(roleGuard(EditorWelcomePage, 'editor')),
-    // "/member": layout(roleGuard(MemberWelcomePage, 'member')),
-    // "/staff": layout(roleGuard(StaffWelcomePage, ['admin', 'editor'])),
+    "/pusher-test": layout(authGuard(PusherTestPage)),
+    "/sse-test": layout(authGuard(SseTestPage)),
+    "/test": layout(TestPage),
+    "/profile": layout(authGuard(ProfilePage)),
+    // Admin
+    "/admin": layout(adminGuard(AdminPage)),
+    "/admin/roles": layout(adminGuard(RolesPage)),
+    "/admin/users": layout(adminGuard(UsersPage)),
+    "/admin/users/add": layout(adminGuard(AddUserPage)),
+    "/admin/users/edit/:id": layout(adminGuard(EditUserPage)),
+    // Role-based
+    "/editor": layout(roleGuard(EditorWelcomePage, 'editor')),
+    "/member": layout(roleGuard(MemberWelcomePage, 'member')),
+    "/staff": layout(roleGuard(StaffWelcomePage, ['admin', 'editor'])),
 });

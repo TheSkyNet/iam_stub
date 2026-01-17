@@ -16,3 +16,8 @@
 [2026-01-17 00:33:34][ERROR] [FE] TypeError: can't access property "apply", this is undefined | url=http://localhost:8080/#!/
 [2026-01-17 00:34:04][ERROR] [FE] TypeError: can't access property "apply", this is undefined | url=http://localhost:8080/#!/
 [2026-01-17 00:34:19][ERROR] [FE] TypeError: can't access property "apply", this is undefined | url=http://localhost:8080/#!/
+[2026-01-17 04:45:32][ERROR] [FE] InvalidCharacterError: String contains an invalid character | url=http://localhost:8080/
+[2026-01-17 04:45:34][ERROR] [FE] InvalidCharacterError: String contains an invalid character | url=http://localhost:8080/
+[2026-01-17 04:45:39][ERROR] [FE] InvalidCharacterError: String contains an invalid character | url=http://localhost:8080/
+[2026-01-17 20:24:47][ERROR] [FE] Error: Sync Error Test | url=http://localhost:8080/#!/test
+[2026-01-17 20:24:51][ERROR] [FE] Async Rejection Test | url=http://localhost:8080/#!/test
