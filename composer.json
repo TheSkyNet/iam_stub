@@ -1,72 +1,86 @@
 {
-  "name": "iam-lab/phalcon-stub",
-  "description": "A clean, minimal Phalcon PHP framework stub project for generating new PHfalcon and Miral projects",
-  "type": "project",
-  "keywords": ["phalcon", "php", "framework", "stub", "template", "skeleton", "starter"],
-  "homepage": "https://github.com/iam-lab/phalcon-stub",
-  "minimum-stability": "dev",
-  "prefer-stable": true,
-  "license": "MIT",
-  "authors": [
-    {
-      "name": "Kev Morton",
-      "email": "kev@kevs.biz"
-    }
-  ],
-  "config": {
-    "secure-http": true,
-    "github-protocols": ["https"],
-    "preferred-install": "dist"
-  },
-  "require": {
-    "marc-mabe/php-enum": "v4.7.1",
-    "symfony/var-dumper": "^6.4",
-    "symfony/finder": "^6.4",
-    "filp/whoops": "^2.15",
-    "ext-memcache": "*",
-    "ext-sodium": "*",
-    "defuse/php-encryption": "^2.4",
-    "nesbot/carbon": "^3.7",
-    "league/flysystem": "^3.0",
-    "ext-curl": "*",
-    "pusher/pusher-php-server": "^7.2.7",
-    "phpunit/phpunit": "^10.5",
-    "firebase/php-jwt": "^6.10",
-    "endroid/qr-code": "^4.8",
-    "ext-pdo": "*"
-  },
-  "autoload": {
-    "psr-4": {
-      "IamLab\\": "IamLab/"
+    "name": "iam-lab/phalcon-stub",
+    "description": "A clean, minimal Phalcon PHP framework stub project for generating new PHfalcon and Miral projects",
+    "type": "project",
+    "keywords": [
+        "phalcon",
+        "php",
+        "framework",
+        "stub",
+        "template",
+        "skeleton",
+        "starter"
+    ],
+    "homepage": "https://github.com/iam-lab/phalcon-stub",
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Kev Morton",
+            "email": "kev@kevs.biz"
+        }
+    ],
+    "config": {
+        "secure-http": true,
+        "github-protocols": [
+            "https"
+        ],
+        "preferred-install": "dist",
+        "allow-plugins": {
+            "vildanbina/composer-upgrader": true
+        }
     },
-    "files": [
-      "IamLab/Core/Helpers/include.php"
-    ],
-
-    "include-path": ["IamLab/Core/Helpers/"]
-  },
-  "require-dev": {
-    "roave/security-advisories": "dev-latest",
-    "phalcon/devtools": "^5.0",
-    "phalcon/migrations": "^3.0",
-    "mpyw/php-hyper-builtin-server": "^3.0",
-    "phalcon/ide-stubs": "dev-master",
-    "rector/rector": "^1.1"
-  },
-  
-  "scripts": {
-    "post-create-project-cmd": [
-      "@php -r \"copy('.env.example', '.env');\"",
-      "@php -r \"echo '\\n🚀 Phalcon Stub Project Created Successfully!\\n';\"",
-      "@php -r \"echo '\\nNext steps:\\n';\"",
-      "@php -r \"echo '1. Update .env file with your configuration\\n';\"",
-      "@php -r \"echo '2. Run: ./phalcons up -d\\n';\"",
-      "@php -r \"echo '3. Run: ./phalcons migrate\\n';\"",
-      "@php -r \"echo '4. Visit: http://localhost:8080\\n';\"",
-      "@php -r \"echo '\\nFor more information, see README.md\\n\\n';\""
-    ],
-    "rector": "vendor/bin/rector",
-    "rector:dry": "vendor/bin/rector process --dry-run --ansi",
-    "rector:apply": "vendor/bin/rector process --ansi"
-  }
+    "require": {
+        "marc-mabe/php-enum": "^4.7.2",
+        "symfony/var-dumper": "^6.4",
+        "symfony/finder": "^6.4",
+        "filp/whoops": "^2.15",
+        "ext-memcache": "*",
+        "ext-sodium": "*",
+        "defuse/php-encryption": "^2.4",
+        "nesbot/carbon": "^3.7",
+        "league/flysystem": "^3.0",
+        "ext-curl": "*",
+        "pusher/pusher-php-server": "^7.2.7",
+        "phpunit/phpunit": "^10.5",
+        "firebase/php-jwt": "^6.10",
+        "endroid/qr-code": "^4.8",
+        "ext-pdo": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "IamLab\\": "IamLab/"
+        },
+        "files": [
+            "IamLab/Core/Helpers/include.php"
+        ],
+        "include-path": [
+            "IamLab/Core/Helpers/"
+        ]
+    },
+    "require-dev": {
+        "roave/security-advisories": "dev-latest",
+        "phalcon/devtools": "^5.0",
+        "phalcon/migrations": "^3.0",
+        "mpyw/php-hyper-builtin-server": "^3.0",
+        "phalcon/ide-stubs": "dev-master",
+        "rector/rector": "^1.1",
+        "vildanbina/composer-upgrader": "^1.2"
+    },
+    "scripts": {
+        "post-create-project-cmd": [
+            "@php -r \"copy('.env.example', '.env');\"",
+            "@php -r \"echo '\\n\ud83d\ude80 Phalcon Stub Project Created Successfully!\\n';\"",
+            "@php -r \"echo '\\nNext steps:\\n';\"",
+            "@php -r \"echo '1. Update .env file with your configuration\\n';\"",
+            "@php -r \"echo '2. Run: ./phalcons up -d\\n';\"",
+            "@php -r \"echo '3. Run: ./phalcons migrate\\n';\"",
+            "@php -r \"echo '4. Visit: http://localhost:8080\\n';\"",
+            "@php -r \"echo '\\nFor more information, see README.md\\n\\n';\""
+        ],
+        "rector": "vendor/bin/rector",
+        "rector:dry": "vendor/bin/rector process --dry-run --ansi",
+        "rector:apply": "vendor/bin/rector process --ansi"
+    }
 }
