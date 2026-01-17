@@ -1,42 +1,36 @@
 import m from "mithril";
-const {AuthService} = require("../services/AuthserviceService");
+const { AuthService } = require("../services/AuthserviceService");
 const { Icon } = require("./Icon");
+import Footer from "./Footer";
 
 function layout(view) {
-
     return {
-        oninit: function() {
-            // Initialize AuthService on app load
-            //AuthService.init();
+        oninit: function () {
+            // AuthService.init();
         },
-        view: function(vnode) {
-            // const isLoggedIn = AuthService.isLoggedIn();
-            // const user = AuthService.getUser();
-
-          //  return         m(view, vnode.attrs)
-
-            return [
+        view: function (vnode) {
+            return m(".flex.flex-col.min-h-screen", [
                 m("nav.navbar.bg-base-100.shadow-lg", {
-                    "id": "menu", 
+                    "id": "menu",
                     "role": "navigation"
                 }, [
                     m(".navbar-start", [
                         m(m.route.Link, {
-                            "class": "btn btn-ghost text-xl", 
+                            "class": "btn btn-ghost text-xl",
                             "href": "/"
                         }, "Phalcon Stub")
                     ]),
-                    m(".navbar-end", [
-                    ])
+                    m(".navbar-end")
                 ]),
-                m(".min-h-screen.bg-base-200", {
+                m("main.flex-grow.bg-base-200", {
                     "id": "main"
                 }, [
                     m(view, vnode.attrs)
-                ])
-            ]
+                ]),
+                m(Footer)
+            ]);
         }
-    }
+    };
 }
 
 export {layout}

@@ -3,23 +3,37 @@ import { Icon } from "../../components/Icon";
 
 const ForgotPasswordFormPage = {
     view: () => {
-        return m(".flex.justify-center.items-center.min-h-screen.bg-base-200", [
-            m(".card.w-96.bg-base-100.shadow-xl", [
-                m(".card-body", [
-                    m("h2.card-title.justify-center", "Forgot Password"),
-                    m("p.text-sm.text-center", "Enter your email address and we'll send you a link to reset your password."),
-                    m(".form-control.mt-4", [
-                        m("label.label", m("span.label-text", "Email")),
-                        m("input.input.input-bordered", { type: "email", placeholder: "email@example.com" })
-                    ]),
-                    m(".form-control.mt-6", [
-                        m("button.btn.btn-primary", [
-                            m(Icon, { icon: "fa-solid fa-paper-plane" }),
-                            " Send Reset Link"
+        return m(".hero.min-h-screen", {
+            style: { backgroundImage: "url(https://images.unsplash.com/photo-1454165833767-1290b4046bcd?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80)" }
+        }, [
+            m(".hero-overlay.bg-opacity-40"),
+            m(".hero-content.text-center", [
+                m(".max-w-md", [
+                    m(".card.bg-base-100.w-full.max-w-sm.shrink-0.shadow-2xl", [
+                        m(".card-body", [
+                            m("h2.card-title.justify-center.text-2xl.font-bold", "Forgot Password"),
+                            m("p.text-sm.mb-4", { class: "text-base-content/70" }, "Enter your email address and we'll send you a link to reset your password."),
+
+                            m("fieldset.fieldset", [
+                                m("legend.fieldset-legend", "Email"),
+                                m("label.input.w-full", [
+                                    m(Icon, { icon: "fa-solid fa-envelope", class: "opacity-50" }),
+                                    m("input", { type: "email", placeholder: "email@example.com", class: "grow" })
+                                ]),
+
+                                m("button.btn.btn-primary.w-full.mt-6", [
+                                    m(Icon, { icon: "fa-solid fa-paper-plane" }),
+                                    " Send Reset Link"
+                                ])
+                            ]),
+
+                            m(".text-center.mt-6", [
+                                m(m.route.Link, { href: "/login", class: "link link-hover text-sm flex items-center justify-center gap-2" }, [
+                                    m(Icon, { icon: "fa-solid fa-arrow-left", class: "text-xs" }),
+                                    "Back to Login"
+                                ])
+                            ])
                         ])
-                    ]),
-                    m(".text-center.mt-4", [
-                        m(m.route.Link, { href: "/login", class: "link link-hover text-sm" }, "Back to Login")
                     ])
                 ])
             ])

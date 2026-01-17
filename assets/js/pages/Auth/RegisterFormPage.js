@@ -3,32 +3,48 @@ import { Icon } from "../../components/Icon";
 
 const RegisterFormPage = {
     view: () => {
-        return m(".flex.justify-center.items-center.min-h-screen.bg-base-200", [
-            m(".card.w-96.bg-base-100.shadow-xl", [
-                m(".card-body", [
-                    m("h2.card-title.justify-center", "Register"),
-                    m(".form-control", [
-                        m("label.label", m("span.label-text", "Name")),
-                        m("input.input.input-bordered", { type: "text", placeholder: "John Doe" })
-                    ]),
-                    m(".form-control", [
-                        m("label.label", m("span.label-text", "Email")),
-                        m("input.input.input-bordered", { type: "email", placeholder: "email@example.com" })
-                    ]),
-                    m(".form-control", [
-                        m("label.label", m("span.label-text", "Password")),
-                        m("input.input.input-bordered", { type: "password", placeholder: "password" })
-                    ]),
-                    m(".form-control.mt-6", [
-                        m("button.btn.btn-primary", [
-                            m(Icon, { icon: "fa-solid fa-user-plus" }),
-                            " Register"
+        return m(".hero.min-h-screen", {
+            style: { backgroundImage: "url(https://images.unsplash.com/photo-1550745165-9bc0b252726f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80)" }
+        }, [
+            m(".hero-overlay.bg-opacity-40"),
+            m(".hero-content.text-center", [
+                m(".max-w-md", [
+                    m(".card.bg-base-100.w-full.max-w-sm.shrink-0.shadow-2xl", [
+                        m(".card-body", [
+                            m("h2.card-title.justify-center.text-2xl.font-bold", "Register"),
+                            m("p.mb-4", { class: "text-base-content/70" }, "Join us today! Create your account."),
+
+                            m("fieldset.fieldset", [
+                                m("legend.fieldset-legend", "Name"),
+                                m("label.input.w-full", [
+                                    m(Icon, { icon: "fa-solid fa-user", class: "opacity-50" }),
+                                    m("input", { type: "text", placeholder: "John Doe", class: "grow" })
+                                ]),
+
+                                m("legend.fieldset-legend", "Email"),
+                                m("label.input.w-full", [
+                                    m(Icon, { icon: "fa-solid fa-envelope", class: "opacity-50" }),
+                                    m("input", { type: "email", placeholder: "email@example.com", class: "grow" })
+                                ]),
+
+                                m("legend.fieldset-legend", "Password"),
+                                m("label.input.w-full", [
+                                    m(Icon, { icon: "fa-solid fa-lock", class: "opacity-50" }),
+                                    m("input", { type: "password", placeholder: "••••••••", class: "grow" })
+                                ]),
+
+                                m("button.btn.btn-primary.w-full.mt-6", [
+                                    m(Icon, { icon: "fa-solid fa-user-plus" }),
+                                    " Register"
+                                ])
+                            ]),
+
+                            m(".divider", "OR"),
+                            m(".text-center", [
+                                m("p.text-sm", "Already have an account?"),
+                                m(m.route.Link, { href: "/login", class: "link link-primary font-semibold" }, "Login here")
+                            ])
                         ])
-                    ]),
-                    m(".divider", "OR"),
-                    m(".text-center", [
-                        m("p", "Already have an account?"),
-                        m(m.route.Link, { href: "/login", class: "link link-primary" }, "Login here")
                     ])
                 ])
             ])

@@ -1,5 +1,6 @@
 import m from "mithril";
 const {Logout} = require("../Login/LoginModule");
+import Footer from "../components/Footer";
 
 function adminLayout(view) {
     return {
@@ -28,7 +29,8 @@ function adminLayout(view) {
                     m(".drawer-content.flex.flex-col", [
                         m("main.flex-1.p-6.bg-base-200.min-h-screen", {
                             role: "main"
-                        }, m(view, vnode.attrs))
+                        }, m(view, vnode.attrs)),
+                        m(Footer)
                     ]),
 
                     // Sidebar

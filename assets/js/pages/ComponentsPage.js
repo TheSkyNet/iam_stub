@@ -6,13 +6,14 @@ import NavUserMenu from "../components/Nav/NavUserMenu";
 import NavMenu from "../components/Nav/NavMenu";
 import NavHorizontalMenu from "../components/Nav/NavHorizontalMenu";
 import NavIndicator from "../components/Nav/NavIndicator";
+import Footer from "../components/Footer";
 
 const ComponentsPage = {
     view: () => {
         return m(".container.mx-auto.p-4.space-y-12", [
             m("header.mb-8", [
                 m("h1.text-4xl.font-bold", "Navigation Components"),
-                m("p.text-base-content/70", "Modular DaisyUI navbar components built with Mithril.")
+                m("p", { class: "text-base-content/70" }, "Modular DaisyUI navbar components built with Mithril.")
             ]),
 
             // Example 1
@@ -99,7 +100,7 @@ const ComponentsPage = {
             // Data Input Section
             m("header.pt-12.mb-8.border-t.border-base-300", [
                 m("h1.text-4xl.font-bold", "Data Input Components"),
-                m("p.text-base-content/70", "DaisyUI input components for forms and data entry.")
+                m("p", { class: "text-base-content/70" }, "DaisyUI input components for forms and data entry.")
             ]),
 
             // Checkboxes
@@ -168,14 +169,15 @@ const ComponentsPage = {
             // Hero Section
             m("header.pt-12.mb-8.border-t.border-base-300", [
                 m("h1.text-4xl.font-bold", "Hero Components"),
-                m("p.text-base-content/70", "DaisyUI hero components for high-impact landing areas.")
+                m("p", { class: "text-base-content/70" }, "DaisyUI hero components for high-impact landing areas.")
             ]),
 
             m("section.space-y-12", [
                 // Hero with Background
                 m(".space-y-4", [
                     m("h2.text-2xl.font-semibold", "Hero with Background Image"),
-                    m(".hero.min-h-[400px].rounded-box.overflow-hidden", {
+                    m(".hero.rounded-box.overflow-hidden", {
+                        class: "min-h-[400px]",
                         style: { backgroundImage: "url(https://img.daisyui.com/images/stock/photo-1507358522600-9f71e620c44e.webp)" }
                     }, [
                         m(".hero-overlay"),
@@ -192,7 +194,9 @@ const ComponentsPage = {
                 // Hero with Form
                 m(".space-y-4", [
                     m("h2.text-2xl.font-semibold", "Hero with Login Form"),
-                    m(".hero.bg-base-200.min-h-[400px].rounded-box", [
+                    m(".hero.bg-base-200.rounded-box", {
+                        class: "min-h-[400px]"
+                    }, [
                         m(".hero-content.flex-col.lg:flex-row-reverse", [
                             m(".text-center.lg:text-left", [
                                 m("h1.text-5xl.font-bold", "Login now!"),
@@ -220,7 +224,7 @@ const ComponentsPage = {
             // Text Input Section
             m("header.pt-12.mb-8.border-t.border-base-300", [
                 m("h1.text-4xl.font-bold", "Text Input Components"),
-                m("p.text-base-content/70", "DaisyUI text input components for various data entry needs.")
+                m("p", { class: "text-base-content/70" }, "DaisyUI text input components for various data entry needs.")
             ]),
 
             m("section.space-y-12", [
@@ -316,6 +320,16 @@ const ComponentsPage = {
                         m("input.input.input-xl", { type: "text", placeholder: "Xlarge" })
                     ])
                 ])
+            ]),
+
+            // Footer Section
+            m("header.pt-12.mb-8.border-t.border-base-300", [
+                m("h1.text-4xl.font-bold", "Footer Components"),
+                m("p", { class: "text-base-content/70" }, "DaisyUI footer components for page bottom navigation.")
+            ]),
+
+            m("section.pb-12", [
+                m(Footer)
             ])
         ]);
     },
