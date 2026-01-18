@@ -17,7 +17,9 @@ const SseTestPage = {
     },
 
     startClock: () => {
-        if (SseTestPage.connection) SseTestPage.connection.close();
+        if (SseTestPage.connection) {
+            SseTestPage.connection.close();
+        }
         SseTestPage.events = [];
         SseTestPage.events.push({ time: new Date().toLocaleTimeString(), message: "Starting clock SSE..." });
         
@@ -33,7 +35,9 @@ const SseTestPage = {
     },
 
     startEcho: () => {
-        if (SseTestPage.connection) SseTestPage.connection.close();
+        if (SseTestPage.connection) {
+            SseTestPage.connection.close();
+        }
         SseTestPage.events = [];
         const msg = "Hello from IamLab!";
         SseTestPage.events.push({ time: new Date().toLocaleTimeString(), message: `Starting echo SSE with message: "${msg}"` });
@@ -50,6 +54,14 @@ const SseTestPage = {
     },
 
     view: () => {
+        let eventLog = m("p.italic.text-base-content.opacity-50", "No events yet. Click a button above to start.");
+        if (SseTestPage.events.length > 0) {
+            eventLog = SseTestPage.events.map((e, i) => m(".mb-1.font-mono.text-sm", [
+                m("span.text-primary", `[${e.time}] `),
+                m("span", e.message)
+            ]));
+        }
+
         return m(".container.mx-auto.p-4", [
             m(".card.bg-base-100.shadow-xl", [
                 m(".card-body", [
@@ -70,7 +82,9 @@ const SseTestPage = {
                         ]),
                         m("button.btn.btn-ghost", { 
                             onclick: () => {
-                                if (SseTestPage.connection) SseTestPage.connection.close();
+                                if (SseTestPage.connection) {
+                                    SseTestPage.connection.close();
+                                }
                                 SseTestPage.events.push({ time: new Date().toLocaleTimeString(), message: "Connection closed." });
                             } 
                         }, "Close Connection")
@@ -79,12 +93,7 @@ const SseTestPage = {
                     m(".mt-6", [
                         m("h3.font-bold.mb-2", "Event Log:"),
                         m(".bg-base-300.p-4.rounded-lg.overflow-y-auto", [
-                            SseTestPage.events.length === 0 
-                                ? m("p.italic.text-base-content.opacity-50", "No events yet. Click a button above to start.")
-                                : SseTestPage.events.map((e, i) => m(".mb-1.font-mono.text-sm", [
-                                    m("span.text-primary", `[${e.time}] `),
-                                    m("span", e.message)
-                                ]))
+                            eventLog
                         ])
                     ])
                 ])

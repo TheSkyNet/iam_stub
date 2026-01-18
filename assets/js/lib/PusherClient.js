@@ -62,7 +62,9 @@ class PusherClient {
      * Set up connection event listeners
      */
     setupConnectionEvents() {
-        if (!this.pusher) return;
+        if (!this.pusher) {
+            return;
+        }
 
         this.pusher.connection.bind('connected', () => {
             this.isConnected = true;
@@ -118,7 +120,9 @@ class PusherClient {
      * Unsubscribe from a channel
      */
     unsubscribe(channelName) {
-        if (!this.pusher) return;
+        if (!this.pusher) {
+            return;
+        }
 
         try {
             this.pusher.unsubscribe(channelName);

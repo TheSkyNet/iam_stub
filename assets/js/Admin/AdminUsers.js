@@ -1,5 +1,5 @@
 import m from "mithril";
-const { Icon } = require("../components/Icon");
+import { Icon } from "../components/Icon";
 
 var AdminUser = {
     list: [],
@@ -76,157 +76,114 @@ var AdminUser = {
 var AdminUserList = {
     oninit: (vnode) => {
         if (vnode.attrs.id) {
-            AdminUser.load(vnode.attrs.id)
+            AdminUser.load(vnode.attrs.id);
         }
-        AdminUser.loadList()
-
+        AdminUser.loadList();
     },
     view: function (vnode) {
-        return m("div", {"class": "row"},
-            [
-                m('div', {class: 'col-12'}, m("h1",
-                    "Users"
-                )),
-                m("div", {class: 'col-6'},
-                    m("div", {"class": "form"},
+        return m(".p-4.space-y-6", [
+            m("h1.text-3xl.font-bold", "Users"),
+            
+            m(".grid.grid-cols-1.lg:grid-cols-2.gap-8", [
+                // Form Section
+                m(".card.bg-base-100.shadow-xl", [
+                    m(".card-body", [
+                        m("h2.card-title", vnode.attrs.id ? "Edit User" : "Add New User"),
                         m("form", {
-                                onsubmit: (e) => {
-                                    event.preventDefault();
-                                    if (vnode.attrs.id) {
-                                        AdminUser.updateUser()
-                                    } else {
-                                        AdminUser.addUser()
-                                    }
-
+                            onsubmit: (e) => {
+                                e.preventDefault();
+                                if (vnode.attrs.id) {
+                                    AdminUser.updateUser();
+                                } else {
+                                    AdminUser.addUser();
                                 }
-                            },
-                            m("div", {"class": "input-group mb-3"},
-                                [
-                                    m("input", {
-                                        "class": "form-control form-control-lg",
-                                        "type": "text",
+                            }
+                        }, [
+                            m(".space-y-4", [
+                                m(".form-control", [
+                                    m("label.label", m("span.label-text", "Name")),
+                                    m("input.input.input-bordered", {
+                                        type: "text",
                                         value: AdminUser.user.name,
-                                        onchange: (e) => {
+                                        oninput: (e) => {
                                             AdminUser.user.name = e.target.value;
                                         },
-                                        "placeholder": "name"
-                                    }), m("div", {"class": "input-group-append"},
-                                    m("span", {"class": "input-group-text", "id": "basic-addon2"},
-                                        "Name"
-                                    )
-                                )
-                                ]
-                            ),
-
-                            m("div", {"class": "input-group mb-3"},
-                                [
-                                    m("input", {
-                                        "class": "form-control form-control-lg",
-                                        "type": "text",
-                                        "placeholder": "email",
+                                        placeholder: "Enter name"
+                                    })
+                                ]),
+                                
+                                m(".form-control", [
+                                    m("label.label", m("span.label-text", "Email")),
+                                    m("input.input.input-bordered", {
+                                        type: "email",
                                         value: AdminUser.user.email,
-                                        onchange: (e) => {
+                                        oninput: (e) => {
                                             AdminUser.user.email = e.target.value;
                                         },
-                                    }), m("div", {"class": "input-group-append"},
-                                    m("span", {"class": "input-group-text", "id": "basic-addon2"},
-                                        "email"
-                                    )
-                                )
-                                ]
-                            ),
-                           m("div", {"class": "input-group mb-3"},
-                                [
-                                    m("input", {
-                                        "class": "form-control form-control-lg",
-                                        "type": "password",
-                                        "placeholder": "password",
+                                        placeholder: "Enter email"
+                                    })
+                                ]),
+                                
+                                m(".form-control", [
+                                    m("label.label", m("span.label-text", "Password")),
+                                    m("input.input.input-bordered", {
+                                        type: "password",
                                         value: AdminUser.user.password,
-                                        onchange: (e) => {
+                                        oninput: (e) => {
                                             AdminUser.user.password = e.target.value;
                                         },
-                                    }), m("div", {"class": "input-group-append"},
-                                    m("span", {"class": "input-group-text", "id": "basic-addon2"},
-                                        "password"
-                                    )
-                                )
-                                ]
-                            ),
-
-                            m("button", {"class": "btn btn-primary btn-lg btn-block", "type": "submit"},
-                                "save"
-                            )
-                        )
-                    ),
-                ),
-                m("div", {class: 'col-6'},
-
-                    m("div", {"class": "container"},
-                        m("div", {"class": "row"},
-                            m("div", {"class": "col-12"},
-                                m("table", {"class": "table table-bordered"},
-                                    [
-                                        m("thead",
-                                            m("tr",
-                                                [
-
-                                                    m("th", {"scope": "col"},
-                                                        "Article Name"
-                                                    ),
-                                                    m("th", {"scope": "col"},
-                                                        "Actions"
-                                                    )
-                                                ]
-                                            )
-                                        ),
-                                        m("tbody",
-                                            AdminUser.list.map((user) => {
-                                                return m("tr",
-                                                    [
-
-                                                        m("td",
-                                                            user.title
-                                                        ),
-                                                        m("td",
-                                                            [
-
-                                                                m(m.route.Link, {
-                                                                        href: `/user/${user.id}`,
-                                                                        class: "btn btn-primary"
-                                                                    },
-                                                                    m(Icon, { icon: 'fa-solid fa-pencil' })
-                                                                ),
-                                                                m("button", {
-                                                                        "class": "btn btn-danger",
-                                                                        "type": "button",
-                                                                        onclick: () => {
-
-                                                                            if (confirm("Are You Sure") === true) {
-                                                                                AdminUser.delete(user.id)
-                                                                            }
-
-
-                                                                        }
-                                                                    },
-                                                                    m(Icon, { icon: 'fa-solid fa-trash-can' })
-                                                                )
-                                                            ]
-                                                        )
-                                                    ]
-                                                )
-                                            })
-                                        )
-                                    ]
-                                )
-                            )
-                        )
-                    )
-                ),
-
-            ]
-        );
-
-
+                                        placeholder: "Enter password"
+                                    })
+                                ]),
+                                
+                                m(".card-actions.justify-end.mt-4", [
+                                    m("button.btn.btn-primary.btn-block", { type: "submit" }, "Save User")
+                                ])
+                            ])
+                        ])
+                    ])
+                ]),
+                
+                // List Section
+                m(".card.bg-base-100.shadow-xl", [
+                    m(".card-body", [
+                        m("h2.card-title", "User List"),
+                        m(".overflow-x-auto", [
+                            m("table.table.table-zebra", [
+                                m("thead", [
+                                    m("tr", [
+                                        m("th", "User Info"),
+                                        m("th.text-right", "Actions")
+                                    ])
+                                ]),
+                                m("tbody", AdminUser.list.map((user) => {
+                                    return m("tr", [
+                                        m("td", [
+                                            m(".font-bold", user.name || user.title),
+                                            m(".text-sm.opacity-50", user.email)
+                                        ]),
+                                        m("td.text-right.space-x-2", [
+                                            m(m.route.Link, {
+                                                href: `/user/${user.id}`,
+                                                class: "btn btn-sm btn-ghost"
+                                            }, m(Icon, { icon: 'fa-solid fa-pencil' })),
+                                            m("button.btn.btn-sm.btn-error.btn-ghost", {
+                                                type: "button",
+                                                onclick: () => {
+                                                    if (confirm("Are you sure you want to delete this user?")) {
+                                                        AdminUser.delete(user.id);
+                                                    }
+                                                }
+                                            }, m(Icon, { icon: 'fa-solid fa-trash-can' }))
+                                        ])
+                                    ]);
+                                }))
+                            ])
+                        ])
+                    ])
+                ])
+            ])
+        ]);
     },
     oncreate: function (vnode) {
 

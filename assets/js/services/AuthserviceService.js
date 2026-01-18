@@ -7,6 +7,8 @@ const AuthService = {
     accessToken: null,
     refreshToken: null,
     isAuthenticated: false,
+    isInitializing: true,
+    _initPromise: null,
     
     // Auto-logout configuration
     tokenCheckInterval: null,
@@ -23,15 +25,22 @@ const AuthService = {
         this.loadTokensFromStorage();
 
         // Load backend-controlled auth client config, then proceed
-        this.loadClientAuthConfig()
+        this._initPromise = this.loadClientAuthConfig()
             .catch(() => { /* ignore, will use defaults */ })
-            .finally(() => {
+            .then(() => {
                 if (this.accessToken) {
-                    this.validateCurrentUser();
+                    return this.validateCurrentUser();
                 }
+            })
+            .catch(() => { /* ignore validation errors here, they are handled in validateCurrentUser */ })
+            .finally(() => {
+                this.isInitializing = false;
                 this.startAutoLogout();
                 this.setupActivityTracking();
+                m.redraw();
             });
+            
+        return this._initPromise;
     },
 
     /**
@@ -238,10 +247,11 @@ const AuthService = {
     validateCurrentUser: function() {
         return this.getCurrentUser()
             .then((response) => {
-                if (response.success !== false) {
+                if (response && response.success !== false) {
                     // Ensure consistent user data structure
                     // Backend returns identity directly, so we use it as the user object
-                    this.user = response;
+                    // We check if it's wrapped in a data property for consistency with other APIs
+                    this.user = response.data || response;
                     this.isAuthenticated = true;
                     
                     // Update localStorage with the validated user data
@@ -257,13 +267,15 @@ const AuthService = {
                     return this.refreshAccessToken()
                         .then(() => this.getCurrentUser())
                         .then((response) => {
-                            // Ensure consistent user data structure
-                            this.user = response;
-                            this.isAuthenticated = true;
-                            
-                            // Update localStorage with the validated user data
-                            if (this.user) {
-                                localStorage.setItem('user', JSON.stringify(this.user));
+                            if (response && response.success !== false) {
+                                // Ensure consistent user data structure
+                                this.user = response.data || response;
+                                this.isAuthenticated = true;
+                                
+                                // Update localStorage with the validated user data
+                                if (this.user) {
+                                    localStorage.setItem('user', JSON.stringify(this.user));
+                                }
                             }
                             return response;
                         });

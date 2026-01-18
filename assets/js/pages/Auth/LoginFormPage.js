@@ -26,9 +26,10 @@ const LoginFormPage = {
     },
 
     view: () => {
-        const loginIcon = LoginFormPage.isLoading 
-            ? m("span.loading.loading-spinner")
-            : m(Icon, { icon: "fa-solid fa-right-to-bracket" });
+        let loginIcon = m(Icon, { icon: "fa-solid fa-right-to-bracket" });
+        if (LoginFormPage.isLoading) {
+            loginIcon = m("span.loading.loading-spinner");
+        }
 
         return m(".hero.min-h-screen", {
             style: { backgroundImage: "url(https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80)" }

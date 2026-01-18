@@ -6,11 +6,17 @@ import ToastService from '../services/ToastService';
  * @returns {string}
  */
 export const toMessageStringSync = (value) => {
-    if (!value) return 'An unknown error occurred';
-    if (typeof value === 'string') return value;
+    if (!value) {
+        return 'An unknown error occurred';
+    }
+    if (typeof value === 'string') {
+        return value;
+    }
     
     // Handle Error objects
-    if (value instanceof Error) return value.message;
+    if (value instanceof Error) {
+        return value.message;
+    }
 
     // Handle API responses
     if (typeof value === 'object') {
@@ -36,11 +42,15 @@ export const toMessageStringSync = (value) => {
             }
         }
         
-        if (msg) return msg;
+        if (msg) {
+            return msg;
+        }
     }
 
     // Fallback for Promise rejections that might be Response-like
-    if (value.statusText) return `Request failed: ${value.status} ${value.statusText}`;
+    if (value.statusText) {
+        return `Request failed: ${value.status} ${value.statusText}`;
+    }
 
     try {
         return JSON.stringify(value);
@@ -68,7 +78,9 @@ let isProcessingError = false;
  */
 export const initGlobalErrorHandling = () => {
     window.addEventListener('error', (event) => {
-        if (isProcessingError) return;
+        if (isProcessingError) {
+            return;
+        }
         isProcessingError = true;
         
         try {
@@ -93,7 +105,9 @@ export const initGlobalErrorHandling = () => {
     });
 
     window.addEventListener('unhandledrejection', (event) => {
-        if (isProcessingError) return;
+        if (isProcessingError) {
+            return;
+        }
         isProcessingError = true;
 
         try {

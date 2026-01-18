@@ -28,18 +28,15 @@ const root = document.getElementById('app');
 // Authentication guard function
 function authGuard(component) {
     return {
-        oninit: function(vnode) {
-            if (!AuthService.isLoggedIn()) {
-                m.route.set('/login');
-                return;
-            }
-            if (component.oninit) {
-                component.oninit.call(component, vnode);
-            }
-        },
         view: function(vnode) {
+            if (AuthService.isInitializing) {
+                return m(".flex.justify-center.items-center.min-h-screen", [
+                    m("span.loading.loading-spinner.loading-lg")
+                ]);
+            }
             if (!AuthService.isLoggedIn()) {
                 m.route.set('/login');
+                return null;
             }
             return m(component, vnode.attrs);
         }
@@ -49,21 +46,18 @@ function authGuard(component) {
 // Admin guard function
 function adminGuard(component) {
     return {
-        oninit: function(vnode) {
+        view: function(vnode) {
+            if (AuthService.isInitializing) {
+                return m(".flex.justify-center.items-center.min-h-screen", [
+                    m("span.loading.loading-spinner.loading-lg")
+                ]);
+            }
             if (!AuthService.isLoggedIn()) {
                 m.route.set('/login');
-                return;
+                return null;
             }
             if (!AuthService.isAdmin()) {
                 m.route.set('/');
-                return;
-            }
-            if (component.oninit) {
-                component.oninit.call(component, vnode);
-            }
-        },
-        view: function(vnode) {
-            if (!AuthService.isLoggedIn() || !AuthService.isAdmin()) {
                 return null;
             }
             return m(component, vnode.attrs);
@@ -78,21 +72,18 @@ function roleGuard(component, requiredRoles) {
     }
     
     return {
-        oninit: function(vnode) {
+        view: function(vnode) {
+            if (AuthService.isInitializing) {
+                return m(".flex.justify-center.items-center.min-h-screen", [
+                    m("span.loading.loading-spinner.loading-lg")
+                ]);
+            }
             if (!AuthService.isLoggedIn()) {
                 m.route.set('/login');
-                return;
+                return null;
             }
             if (!AuthService.hasAnyRole(requiredRoles)) {
                 m.route.set('/');
-                return;
-            }
-            if (component.oninit) {
-                component.oninit.call(component, vnode);
-            }
-        },
-        view: function(vnode) {
-            if (!AuthService.isLoggedIn() || !AuthService.hasAnyRole(requiredRoles)) {
                 return null;
             }
             return m(component, vnode.attrs);

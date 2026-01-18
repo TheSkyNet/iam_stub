@@ -43,9 +43,10 @@ const ResetPasswordFormPage = {
     },
 
     view: () => {
-        const resetIcon = ResetPasswordFormPage.isLoading 
-            ? m("span.loading.loading-spinner")
-            : m(Icon, { icon: "fa-solid fa-key" });
+        let resetIcon = m(Icon, { icon: "fa-solid fa-key" });
+        if (ResetPasswordFormPage.isLoading) {
+            resetIcon = m("span.loading.loading-spinner");
+        }
 
         let content;
         if (ResetPasswordFormPage.isSuccess) {

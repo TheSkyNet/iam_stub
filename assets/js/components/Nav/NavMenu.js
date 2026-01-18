@@ -22,7 +22,7 @@ const NavMenu = {
                 tabindex: -1
             }, items.map(item => m("li", [
                 item.submenu ? [
-                    m("a", item.label),
+                    m(m.route.Link, { href: "#" }, item.label),
                     m("ul.p-2", item.submenu.map(sub => m("li", m(m.route.Link, { href: sub.href }, sub.label))))
                 ] : m(m.route.Link, { href: item.href }, item.label)
             ])))

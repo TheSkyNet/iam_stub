@@ -26,9 +26,10 @@ const ForgotPasswordFormPage = {
     },
 
     view: () => {
-        const resetIcon = ForgotPasswordFormPage.isLoading 
-            ? m("span.loading.loading-spinner")
-            : m(Icon, { icon: "fa-solid fa-paper-plane" });
+        let resetIcon = m(Icon, { icon: "fa-solid fa-paper-plane" });
+        if (ForgotPasswordFormPage.isLoading) {
+            resetIcon = m("span.loading.loading-spinner");
+        }
 
         let content;
         if (ForgotPasswordFormPage.isSent) {

@@ -63,228 +63,119 @@ const AdminSettings = {
     },
 
     view: function() {
-        return m("div.settings-page", {
-            style: {
-                background: '#fff',
-                borderRadius: '8px',
-                padding: '1.5rem',
-                boxShadow: '0 2px 4px rgba(0,0,0,0.05)'
-            }
-        }, [
-            // Header
-            m("div.header", {
-                style: {
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    marginBottom: '2rem'
-                }
-            }, [
-                m("h1", {
-                    style: {
-                        color: '#9BA5D0',
-                        fontSize: '2rem',
-                        margin: 0
-                    }
-                }, [
-                    m("i.octicon.octicon-gear", {
-                        style: { marginRight: '0.75rem' }
-                    }),
-                    "Site Settings"
-                ]),
-                m("button.btn", {
-                    style: {
-                        background: '#8E96C8',
-                        color: '#fff',
-                        border: 'none',
-                        padding: '0.5rem 1rem',
-                        borderRadius: '4px'
-                    },
-                    onclick: () => {
-                        this.editingId = 'new';
-                    }
-                }, "Add Setting")
-            ]),
-
-            // New/Edit Setting Form
-            this.editingId && m("div.card", {
-                style: {
-                    background: '#F8F9FE',
-                    border: '1px solid #E6E9F4',
-                    borderRadius: '6px',
-                    marginBottom: '1.5rem',
-                    padding: '1.5rem'
-                }
-            }, [
-                m("h3", { style: { color: '#6B7399', marginBottom: '1rem' } },
-                    this.editingId === 'new' ? "Add New Setting" : "Edit Setting"
-                ),
-                m("form", {
-                    onsubmit: (e) => {
-                        e.preventDefault();
-                        this.saveSetting(this.editingId === 'new' ? this.newSetting :
-                            this.settings.find(s => s.id === this.editingId));
-                    }
-                }, [
-                    // Form fields
-                    m("div.form-group", [
-                        m("label", { style: { color: '#6B7399' } }, "Key"),
-                        m("input.form-control", {
-                            type: "text",
-                            value: this.editingId === 'new' ? this.newSetting.key :
-                                this.settings.find(s => s.id === this.editingId)?.key,
-                            onchange: (e) => {
-                                if (this.editingId === 'new') {
-                                    this.newSetting.key = e.target.value;
-                                }
-                            },
-                            style: {
-                                border: '1px solid #E6E9F4',
-                                borderRadius: '4px',
-                                padding: '0.5rem'
-                            }
-                        })
-                    ]),
-                    m("div.form-group", [
-                        m("label", { style: { color: '#6B7399' } }, "Value"),
-                        m("input.form-control", {
-                            type: "text",
-                            value: this.editingId === 'new' ? this.newSetting.value :
-                                this.settings.find(s => s.id === this.editingId)?.value,
-                            onchange: (e) => {
-                                if (this.editingId === 'new') {
-                                    this.newSetting.value = e.target.value;
-                                } else {
-                                    const setting = this.settings.find(s => s.id === this.editingId);
-                                    if (setting) setting.value = e.target.value;
-                                }
-                            },
-                            style: {
-                                border: '1px solid #E6E9F4',
-                                borderRadius: '4px',
-                                padding: '0.5rem'
-                            }
-                        })
-                    ]),
-                    m("div.form-group", [
-                        m("label", { style: { color: '#6B7399' } }, "Type"),
-                        m("select.form-control", {
-                            value: this.editingId === 'new' ? this.newSetting.type :
-                                this.settings.find(s => s.id === this.editingId)?.type,
-                            onchange: (e) => {
-                                if (this.editingId === 'new') {
-                                    this.newSetting.type = e.target.value;
-                                } else {
-                                    const setting = this.settings.find(s => s.id === this.editingId);
-                                    if (setting) setting.type = e.target.value;
-                                }
-                            },
-                            style: {
-                                border: '1px solid #E6E9F4',
-                                borderRadius: '4px',
-                                padding: '0.5rem'
-                            }
-                        }, [
-                            ['string', 'integer', 'float', 'boolean', 'array', 'json'].map(type =>
-                                m("option", { value: type }, type)
-                            )
+        let formContent = null;
+        if (this.editingId) {
+            const currentSetting = this.editingId === 'new' ? this.newSetting : this.settings.find(s => s.id === this.editingId);
+            formContent = m(".card.bg-base-200.mb-6", [
+                m(".card-body", [
+                    m("h2.card-title", this.editingId === 'new' ? "Add New Setting" : "Edit Setting"),
+                    m("form", {
+                        onsubmit: (e) => {
+                            e.preventDefault();
+                            this.saveSetting(currentSetting);
+                        }
+                    }, [
+                        m(".grid.grid-cols-1.md:grid-cols-2.gap-4", [
+                            m(".form-control", [
+                                m("label.label", m("span.label-text", "Key")),
+                                m("input.input.input-bordered", {
+                                    type: "text",
+                                    value: currentSetting?.key,
+                                    disabled: this.editingId !== 'new',
+                                    oninput: (e) => { if (this.editingId === 'new') this.newSetting.key = e.target.value; }
+                                })
+                            ]),
+                            m(".form-control", [
+                                m("label.label", m("span.label-text", "Value")),
+                                m("input.input.input-bordered", {
+                                    type: "text",
+                                    value: currentSetting?.value,
+                                    oninput: (e) => {
+                                        if (this.editingId === 'new') {
+                                            this.newSetting.value = e.target.value;
+                                        } else {
+                                            currentSetting.value = e.target.value;
+                                        }
+                                    }
+                                })
+                            ]),
+                            m(".form-control", [
+                                m("label.label", m("span.label-text", "Type")),
+                                m("select.select.select-bordered", {
+                                    value: currentSetting?.type,
+                                    onchange: (e) => {
+                                        if (this.editingId === 'new') {
+                                            this.newSetting.type = e.target.value;
+                                        } else {
+                                            currentSetting.type = e.target.value;
+                                        }
+                                    }
+                                }, ['string', 'integer', 'float', 'boolean', 'array', 'json'].map(type => 
+                                    m("option", { value: type }, type)
+                                ))
+                            ]),
+                            m(".form-control", [
+                                m("label.label", m("span.label-text", "Description")),
+                                m("textarea.textarea.textarea-bordered", {
+                                    value: currentSetting?.description,
+                                    oninput: (e) => {
+                                        if (this.editingId === 'new') {
+                                            this.newSetting.description = e.target.value;
+                                        } else {
+                                            currentSetting.description = e.target.value;
+                                        }
+                                    }
+                                })
+                            ])
+                        ]),
+                        m(".card-actions.justify-end.mt-4", [
+                            m("button.btn.btn-ghost", { onclick: () => { this.editingId = null; } }, "Cancel"),
+                            m("button.btn.btn-primary", { type: "submit" }, "Save Setting")
                         ])
-                    ]),
-                    m("div.form-group", [
-                        m("label", { style: { color: '#6B7399' } }, "Description"),
-                        m("textarea.form-control", {
-                            value: this.editingId === 'new' ? this.newSetting.description :
-                                this.settings.find(s => s.id === this.editingId)?.description,
-                            onchange: (e) => {
-                                if (this.editingId === 'new') {
-                                    this.newSetting.description = e.target.value;
-                                } else {
-                                    const setting = this.settings.find(s => s.id === this.editingId);
-                                    if (setting) setting.description = e.target.value;
-                                }
-                            },
-                            style: {
-                                border: '1px solid #E6E9F4',
-                                borderRadius: '4px',
-                                padding: '0.5rem'
-                            }
-                        })
-                    ]),
-                    m("div.form-group", { style: { marginTop: '1rem' } }, [
-                        m("button.btn", {
-                            type: "submit",
-                            style: {
-                                background: '#8E96C8',
-                                color: '#fff',
-                                border: 'none',
-                                padding: '0.5rem 1rem',
-                                borderRadius: '4px',
-                                marginRight: '0.5rem'
-                            }
-                        }, "Save"),
-                        m("button.btn", {
-                            onclick: () => { this.editingId = null; },
-                            style: {
-                                background: '#9BA5D0',
-                                color: '#fff',
-                                border: 'none',
-                                padding: '0.5rem 1rem',
-                                borderRadius: '4px'
-                            }
-                        }, "Cancel")
                     ])
                 ])
+            ]);
+        }
+
+        return m(".p-4.space-y-6", [
+            m(".flex.justify-between.items-center", [
+                m("h1.text-3xl.font-bold", "Site Settings"),
+                m("button.btn.btn-primary", { onclick: () => { this.editingId = 'new'; } }, "Add Setting")
             ]),
 
-            // Settings List
-            m("div.settings-list", {
-                style: {
-                    background: '#F8F9FE',
-                    borderRadius: '6px',
-                    border: '1px solid #E6E9F4'
-                }
-            }, [
-                this.loading ? m("div.loading", "Loading...") :
-                    this.settings.map(setting =>
-                        m("div.setting-item", {
-                            style: {
-                                padding: '1rem',
-                                borderBottom: '1px solid #E6E9F4',
-                                display: 'flex',
-                                justifyContent: 'space-between',
-                                alignItems: 'center'
-                            }
-                        }, [
-                            m("div.setting-info", [
-                                m("h4", { style: { color: '#6B7399', margin: '0' } }, setting.key),
-                                m("p", { style: { color: '#9BA5D0', margin: '0.25rem 0' } }, setting.description),
-                                m("small", { style: { color: '#8E96C8' } }, `Type: ${setting.type}, Value: ${setting.value}`)
-                            ]),
-                            m("div.setting-actions", [
-                                m("button.btn", {
-                                    onclick: () => { this.editingId = setting.id; },
-                                    style: {
-                                        background: '#9BA5D0',
-                                        color: '#fff',
-                                        border: 'none',
-                                        padding: '0.25rem 0.5rem',
-                                        borderRadius: '4px',
-                                        marginRight: '0.5rem'
-                                    }
-                                }, "Edit"),
-                                m("button.btn", {
-                                    onclick: () => this.deleteSetting(setting.key),
-                                    style: {
-                                        background: '#FF9999',
-                                        color: '#fff',
-                                        border: 'none',
-                                        padding: '0.25rem 0.5rem',
-                                        borderRadius: '4px'
-                                    }
-                                }, "Delete")
+            formContent,
+
+            m(".card.bg-base-100.shadow-xl", [
+                m(".overflow-x-auto", [
+                    m("table.table.table-zebra", [
+                        m("thead", [
+                            m("tr", [
+                                m("th", "Key / Description"),
+                                m("th", "Value / Type"),
+                                m("th.text-right", "Actions")
                             ])
+                        ]),
+                        m("tbody", [
+                            this.loading ? m("tr", m("td.text-center", { colspan: 3 }, m("span.loading.loading-spinner.loading-lg"))) :
+                            this.settings.length === 0 ? m("tr", m("td.text-center", { colspan: 3 }, "No settings found.")) :
+                            this.settings.map(setting => m("tr", [
+                                m("td", [
+                                    m(".font-bold", setting.key),
+                                    m(".text-sm.opacity-50", setting.description)
+                                ]),
+                                m("td", [
+                                    m("code.text-xs", setting.value),
+                                    m("br"),
+                                    m("span.badge.badge-ghost.badge-sm", setting.type)
+                                ]),
+                                m("td.text-right.space-x-2", [
+                                    m("button.btn.btn-sm.btn-ghost", { onclick: () => { this.editingId = setting.id; } }, "Edit"),
+                                    m("button.btn.btn-sm.btn-error.btn-ghost", { onclick: () => this.deleteSetting(setting.key) }, "Delete")
+                                ])
+                            ]))
                         ])
-                    )
+                    ])
+                ])
             ])
         ]);
     }
