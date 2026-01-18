@@ -36,19 +36,13 @@ class RolesApi extends aAPI
      * Get role by ID
      * GET /api/roles/:id
      */
-    public function showAction(): void
+    public function showAction($id): void
     {
         $this->requireAdmin();
         
         try {
-            $id = $this->getParam('id');
-            if (!$id) {
-                $this->dispatchError([
-                    'success' => false,
-                    'message' => 'ID parameter is required'
-                ]);
-                return;
-            }
+
+
 
             $role = Role::findFirst($id);
             if (!$role) {
@@ -56,7 +50,6 @@ class RolesApi extends aAPI
                     'success' => false,
                     'message' => 'Role not found'
                 ]);
-                return;
             }
 
             $this->dispatch([
@@ -112,19 +105,12 @@ class RolesApi extends aAPI
      * Update role
      * PUT /api/roles/:id
      */
-    public function updateAction(): void
+    public function updateAction($id): void
     {
         $this->requireAdmin();
         
         try {
-            $id = $this->getParam('id');
-            if (!$id) {
-                $this->dispatchError([
-                    'success' => false,
-                    'message' => 'ID parameter is required'
-                ]);
-                return;
-            }
+
 
             $role = Role::findFirst($id);
             if (!$role) {
@@ -132,7 +118,6 @@ class RolesApi extends aAPI
                     'success' => false,
                     'message' => 'Role not found'
                 ]);
-                return;
             }
 
             // Update properties from request data
@@ -163,19 +148,11 @@ class RolesApi extends aAPI
      * Delete role
      * DELETE /api/roles/:id
      */
-    public function deleteAction(): void
+    public function deleteAction($id): void
     {
         $this->requireAdmin();
         
         try {
-            $id = $this->getParam('id');
-            if (!$id) {
-                $this->dispatchError([
-                    'success' => false,
-                    'message' => 'ID parameter is required'
-                ]);
-                return;
-            }
 
             $role = Role::findFirst($id);
             if (!$role) {
@@ -183,7 +160,6 @@ class RolesApi extends aAPI
                     'success' => false,
                     'message' => 'Role not found'
                 ]);
-                return;
             }
 
             $this->delete($role);

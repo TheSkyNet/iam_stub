@@ -1,7 +1,7 @@
 import m from "mithril";
-import * as FilePond from 'filepond';
 import { Icon } from "../components/Icon";
 import { AuthService } from "../services/AuthserviceService";
+import { Fieldset, FormField, SubmitButton } from "../components/Form";
 
 const ProfilePage = {
     // FilePond instance
@@ -186,38 +186,26 @@ const ProfilePage = {
                     "Personal Information"
                 ]),
                 m("form", { onsubmit: ProfilePage.handleUpdateProfile }, [
-                    m("fieldset.fieldset", [
-                        m("legend.fieldset-legend", "Full Name"),
-                        m("label.input.w-full", [
-                            m(Icon, { icon: "fa-solid fa-user", class: "opacity-50" }),
-                            m("input.grow", {
-                                type: "text",
-                                value: ProfilePage.general.name,
-                                oninput: (e) => ProfilePage.general.name = e.target.value,
-                                required: true
-                            })
-                        ]),
-
-                        m("legend.fieldset-legend", "Email Address"),
-                        m("label.input.w-full", [
-                            m(Icon, { icon: "fa-solid fa-envelope", class: "opacity-50" }),
-                            m("input.grow", {
-                                type: "email",
-                                value: ProfilePage.general.email,
-                                oninput: (e) => ProfilePage.general.email = e.target.value,
-                                required: true
-                            })
-                        ]),
-
-                        m("button.btn.btn-primary.mt-6", {
-                            type: "submit",
-                            disabled: ProfilePage.general.isLoading
-                        }, [
-                            ProfilePage.general.isLoading && m("span.loading.loading-spinner"),
-                            m(Icon, { icon: "fa-solid fa-save" }),
-                            " Save Changes"
-                        ])
-                    ])
+                    m(FormField, {
+                        label: "Full Name",
+                        icon: "fa-solid fa-user",
+                        value: ProfilePage.general.name,
+                        oninput: (e) => ProfilePage.general.name = e.target.value,
+                        required: true
+                    }),
+                    m(FormField, {
+                        label: "Email Address",
+                        icon: "fa-solid fa-envelope",
+                        type: "email",
+                        value: ProfilePage.general.email,
+                        oninput: (e) => ProfilePage.general.email = e.target.value,
+                        required: true
+                    }),
+                    m(SubmitButton, {
+                        class: "btn-primary mt-6",
+                        loading: ProfilePage.general.isLoading,
+                        icon: "fa-solid fa-save"
+                    }, " Save Changes")
                 ]),
                 oauthSection
             ])
@@ -231,49 +219,35 @@ const ProfilePage = {
                     "Security"
                 ]),
                 m("form", { onsubmit: ProfilePage.handleChangePassword }, [
-                    m("fieldset.fieldset", [
-                        m("legend.fieldset-legend", "Current Password"),
-                        m("label.input.w-full", [
-                            m(Icon, { icon: "fa-solid fa-lock", class: "opacity-50" }),
-                            m("input.grow", {
-                                type: "password",
-                                value: ProfilePage.security.oldPassword,
-                                oninput: (e) => ProfilePage.security.oldPassword = e.target.value,
-                                required: true
-                            })
-                        ]),
-
-                        m("legend.fieldset-legend", "New Password"),
-                        m("label.input.w-full", [
-                            m(Icon, { icon: "fa-solid fa-key", class: "opacity-50" }),
-                            m("input.grow", {
-                                type: "password",
-                                value: ProfilePage.security.newPassword,
-                                oninput: (e) => ProfilePage.security.newPassword = e.target.value,
-                                required: true
-                            })
-                        ]),
-
-                        m("legend.fieldset-legend", "Confirm New Password"),
-                        m("label.input.w-full", [
-                            m(Icon, { icon: "fa-solid fa-key", class: "opacity-50" }),
-                            m("input.grow", {
-                                type: "password",
-                                value: ProfilePage.security.confirmPassword,
-                                oninput: (e) => ProfilePage.security.confirmPassword = e.target.value,
-                                required: true
-                            })
-                        ]),
-
-                        m("button.btn.btn-warning.mt-6", {
-                            type: "submit",
-                            disabled: ProfilePage.security.isLoading
-                        }, [
-                            ProfilePage.security.isLoading && m("span.loading.loading-spinner"),
-                            m(Icon, { icon: "fa-solid fa-shield-halved" }),
-                            " Update Password"
-                        ])
-                    ])
+                    m(FormField, {
+                        label: "Current Password",
+                        icon: "fa-solid fa-lock",
+                        type: "password",
+                        value: ProfilePage.security.oldPassword,
+                        oninput: (e) => ProfilePage.security.oldPassword = e.target.value,
+                        required: true
+                    }),
+                    m(FormField, {
+                        label: "New Password",
+                        icon: "fa-solid fa-key",
+                        type: "password",
+                        value: ProfilePage.security.newPassword,
+                        oninput: (e) => ProfilePage.security.newPassword = e.target.value,
+                        required: true
+                    }),
+                    m(FormField, {
+                        label: "Confirm New Password",
+                        icon: "fa-solid fa-key",
+                        type: "password",
+                        value: ProfilePage.security.confirmPassword,
+                        oninput: (e) => ProfilePage.security.confirmPassword = e.target.value,
+                        required: true
+                    }),
+                    m(SubmitButton, {
+                        class: "btn-warning mt-6",
+                        loading: ProfilePage.security.isLoading,
+                        icon: "fa-solid fa-shield-halved"
+                    }, " Update Password")
                 ])
             ])
         ]);
@@ -289,25 +263,18 @@ const ProfilePage = {
                     m(Icon, { icon: "fa-solid fa-circle-info" }),
                     m("span", "Your API key allows you to access our services programmatically. Keep it secret!")
                 ]),
-                m("fieldset.fieldset", [
-                    m("legend.fieldset-legend", "API Key"),
-                    m("label.input.w-full", [
-                        m(Icon, { icon: "fa-solid fa-key", class: "opacity-50" }),
-                        m("input.grow", {
-                            type: "text",
-                            value: ProfilePage.profileData.apiKey || "No API key generated",
-                            readonly: true
-                        })
-                    ]),
-                    m("button.btn.btn-secondary.mt-4", {
-                        onclick: ProfilePage.handleGenerateApiKey,
-                        disabled: ProfilePage.developer.isLoading
-                    }, [
-                        ProfilePage.developer.isLoading && m("span.loading.loading-spinner"),
-                        m(Icon, { icon: "fa-solid fa-sync" }),
-                        " Regenerate"
-                    ])
-                ])
+                m(FormField, {
+                    label: "API Key",
+                    icon: "fa-solid fa-key",
+                    value: ProfilePage.profileData.apiKey || "No API key generated",
+                    readonly: true
+                }),
+                m(SubmitButton, {
+                    class: "btn-secondary mt-4",
+                    onclick: ProfilePage.handleGenerateApiKey,
+                    loading: ProfilePage.developer.isLoading,
+                    icon: "fa-solid fa-sync"
+                }, " Regenerate")
             ])
         ]);
 

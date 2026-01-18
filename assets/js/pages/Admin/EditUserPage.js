@@ -1,9 +1,102 @@
 import m from "mithril";
 import { Icon } from "../../components/Icon";
+import { AuthService } from "../../services/AuthserviceService";
+import { Fieldset, FormField, CheckboxField, SubmitButton } from "../../components/Form";
 
 const EditUserPage = {
-    view: (vnode) => {
+    user: null,
+    roles: [],
+    loading: true,
+    saving: false,
+
+    oninit: function(vnode) {
+        this.loadData(vnode.attrs.id);
+    },
+
+    loadData: function(id) {
+        this.loading = true;
+        Promise.all([
+            this.loadUser(id),
+            this.loadRoles()
+        ]).finally(() => {
+            this.loading = false;
+            m.redraw();
+        });
+    },
+
+    loadUser: function(id) {
+        return m.request({
+            method: "GET",
+            url: `/api/users/${id}`,
+            headers: AuthService.getAuthHeaders()
+        }).then((response) => {
+            if (response.success) {
+                this.user = response.data;
+            } else {
+                window.showToast(response.message || "Failed to load user", "error");
+            }
+        });
+    },
+
+    loadRoles: function() {
+        return m.request({
+            method: "GET",
+            url: "/api/roles",
+            headers: AuthService.getAuthHeaders()
+        }).then((response) => {
+            if (response.success) {
+                this.roles = response.data;
+            }
+        });
+    },
+
+    save: function() {
+        this.saving = true;
+        return m.request({
+            method: "PUT",
+            url: `/api/users/${this.user.id}`,
+            body: this.user,
+            headers: AuthService.getAuthHeaders()
+        }).then((response) => {
+            if (response.success) {
+                window.showToast("User updated successfully", "success");
+                m.route.set("/admin/users");
+            } else {
+                window.showToast(response.message || "Failed to update user", "error");
+            }
+            this.saving = false;
+        }).catch((err) => {
+            window.showToast(err.message || "An error occurred", "error");
+            this.saving = false;
+        });
+    },
+
+    toggleRole: function(roleName) {
+        const index = this.user.roles.indexOf(roleName);
+        if (index > -1) {
+            this.user.roles.splice(index, 1);
+        } else {
+            this.user.roles.push(roleName);
+        }
+    },
+
+    view: function(vnode) {
         const userId = vnode.attrs.id;
+        
+        if (this.loading) {
+            return m(".container.mx-auto.p-4", m(".flex.justify-center.p-12", m("span.loading.loading-spinner.loading-lg")));
+        }
+
+        if (!this.user) {
+            return m(".container.mx-auto.p-4", [
+                m(".alert.alert-error", [
+                    m(Icon, { icon: "fa-solid fa-circle-exclamation" }),
+                    m("span", "User not found")
+                ]),
+                m(m.route.Link, { href: "/admin/users", class: "btn btn-ghost mt-4" }, "Back to Users")
+            ]);
+        }
+
         return m(".container.mx-auto.p-4", [
             m(".max-w-2xl.mx-auto", [
                 m(".flex.items-center.gap-4.mb-6", [
@@ -12,37 +105,64 @@ const EditUserPage = {
                 ]),
                 m(".card.bg-base-100.shadow-xl", [
                     m(".card-body", [
-                        m(".grid.grid-cols-1.md:grid-cols-2.gap-4", [
+                        m(Fieldset, { legend: "Account Details", icon: "fa-solid fa-user-gear" }, [
+                            m(".grid.grid-cols-1.md:grid-cols-2.gap-4", [
+                                m(FormField, {
+                                    label: "Full Name",
+                                    icon: "fa-solid fa-user",
+                                    value: this.user.name,
+                                    oninput: (e) => this.user.name = e.target.value,
+                                    required: true
+                                }),
+                                m(FormField, {
+                                    label: "Email",
+                                    icon: "fa-solid fa-envelope",
+                                    type: "email",
+                                    value: this.user.email,
+                                    oninput: (e) => this.user.email = e.target.value,
+                                    required: true
+                                }),
+                                m(FormField, {
+                                    containerClass: "md:col-span-2",
+                                    label: "Password (leave blank to keep current)",
+                                    icon: "fa-solid fa-lock",
+                                    type: "password",
+                                    placeholder: "********",
+                                    oninput: (e) => this.user.password = e.target.value
+                                })
+                            ])
+                        ]),
+
+                        m(Fieldset, { legend: "Roles & Status", icon: "fa-solid fa-user-shield", class: "mt-6" }, [
+                            m(".flex.flex-wrap.gap-2.mb-4", 
+                                this.roles.map(role => 
+                                    m(CheckboxField, {
+                                        label: role.name,
+                                        checked: this.user.roles.includes(role.name),
+                                        onchange: () => this.toggleRole(role.name)
+                                    })
+                                )
+                            ),
                             m(".form-control", [
-                                m("label.label", m("span.label-text", "Full Name")),
-                                m("input.input.input-bordered", { type: "text", value: "John Doe" })
-                            ]),
-                            m(".form-control", [
-                                m("label.label", m("span.label-text", "Email")),
-                                m("input.input.input-bordered", { type: "email", value: "john@example.com" })
-                            ]),
-                            m(".form-control", [
-                                m("label.label", m("span.label-text", "Role")),
-                                m("select.select.select-bordered", [
-                                    m("option", { selected: true }, "Admin"),
-                                    m("option", "Editor"),
-                                    m("option", "Member")
-                                ])
-                            ]),
-                            m(".form-control", [
-                                m("label.label", m("span.label-text", "Status")),
-                                m(".flex.items-center.gap-2.mt-2", [
-                                    m("input.toggle.toggle-success", { type: "checkbox", checked: true }),
-                                    m("span", "Active")
+                                m("label.label.cursor-pointer.justify-start.gap-4", [
+                                    m("input.toggle.toggle-success", { 
+                                        type: "checkbox", 
+                                        checked: this.user.email_verified,
+                                        onchange: (e) => this.user.email_verified = e.target.checked
+                                    }),
+                                    m("span.label-text", `Account Status: ${this.user.email_verified ? "Verified" : "Unverified"}`)
                                 ])
                             ])
                         ]),
+
                         m(".card-actions.justify-end.mt-6", [
                             m(m.route.Link, { href: "/admin/users", class: "btn btn-ghost" }, "Cancel"),
-                            m("button.btn.btn-primary", [
-                                m(Icon, { icon: "fa-solid fa-save" }),
-                                " Save Changes"
-                            ])
+                            m(SubmitButton, {
+                                class: "btn-primary",
+                                onclick: () => this.save(),
+                                loading: this.saving,
+                                icon: "fa-solid fa-save"
+                            }, " Save Changes")
                         ])
                     ])
                 ])

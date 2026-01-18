@@ -44,20 +44,10 @@ class UsersApi extends aAPI
      * Get user by ID
      * GET /api/users/:id
      */
-    public function showAction(): void
+    public function showAction(string $id): void
     {
-        $this->requireAdmin();
-        
-        try {
-            $id = $this->getRouteParam('id');
-            if (!$id) {
-                $this->dispatchError([
-                    'success' => false,
-                    'message' => 'ID parameter is required'
-                ]);
-                return;
-            }
 
+        try {
             $user = User::findFirst([
                 'conditions' => 'id = :id:',
                 'bind' => ['id' => $id]
@@ -67,7 +57,6 @@ class UsersApi extends aAPI
                     'success' => false,
                     'message' => 'User not found'
                 ]);
-                return;
             }
 
             $userData = $user->toArray();
@@ -105,7 +94,6 @@ class UsersApi extends aAPI
                     'success' => false,
                     'message' => 'Name, email, and password are required'
                 ]);
-                return;
             }
             
             // Validate email format
@@ -114,7 +102,6 @@ class UsersApi extends aAPI
                     'success' => false,
                     'message' => 'Invalid email format'
                 ]);
-                return;
             }
             
             // Check if email already exists
@@ -124,7 +111,6 @@ class UsersApi extends aAPI
                     'success' => false,
                     'message' => 'Email already exists'
                 ]);
-                return;
             }
 
             $user = new User();

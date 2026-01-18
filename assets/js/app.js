@@ -15,6 +15,10 @@ import RolesPage from "./pages/Admin/RolesPage";
 import UsersPage from "./pages/Admin/UsersPage";
 import AddUserPage from "./pages/Admin/AddUserPage";
 import EditUserPage from "./pages/Admin/EditUserPage";
+import JobsPage from "./pages/Admin/JobsPage";
+import ErrorsPage from "./pages/Admin/ErrorsPage";
+import SettingsPage from "./pages/Admin/SettingsPage";
+import LMSPage from "./pages/Admin/LMSPage";
 import EditorWelcomePage from "./pages/Role/EditorWelcomePage";
 import MemberWelcomePage from "./pages/Role/MemberWelcomePage";
 import StaffWelcomePage from "./pages/Role/StaffWelcomePage";
@@ -108,6 +112,10 @@ m.route(root, "/", {
     "/admin/users": layout(adminGuard(UsersPage)),
     "/admin/users/add": layout(adminGuard(AddUserPage)),
     "/admin/users/edit/:id": layout(adminGuard(EditUserPage)),
+    "/admin/jobs": layout(adminGuard(JobsPage)),
+    "/admin/errors": layout(adminGuard(ErrorsPage)),
+    "/admin/settings": layout(adminGuard(SettingsPage)),
+    "/admin/lms": layout(adminGuard(LMSPage)),
     // Role-based
     "/editor": layout(roleGuard(EditorWelcomePage, 'editor')),
     "/member": layout(roleGuard(MemberWelcomePage, 'member')),

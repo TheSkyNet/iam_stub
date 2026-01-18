@@ -1,6 +1,7 @@
 import m from "mithril";
 import { Icon } from "../../components/Icon";
 import { AuthService } from "../../services/AuthserviceService";
+import { Fieldset, FormField, SubmitButton } from "../../components/Form";
 
 const ForgotPasswordFormPage = {
     email: '',
@@ -26,11 +27,6 @@ const ForgotPasswordFormPage = {
     },
 
     view: () => {
-        let resetIcon = m(Icon, { icon: "fa-solid fa-paper-plane" });
-        if (ForgotPasswordFormPage.isLoading) {
-            resetIcon = m("span.loading.loading-spinner");
-        }
-
         let content;
         if (ForgotPasswordFormPage.isSent) {
             content = [
@@ -47,28 +43,21 @@ const ForgotPasswordFormPage = {
                 m("p.text-sm.mb-4.text-base-content.opacity-70", "Enter your email address and we'll send you a link to reset your password."),
 
                 m("form", { onsubmit: ForgotPasswordFormPage.handleForgotPassword }, [
-                    m("fieldset.fieldset", [
-                        m("legend.fieldset-legend", "Email"),
-                        m("label.input.w-full", [
-                            m(Icon, { icon: "fa-solid fa-envelope", class: "opacity-50" }),
-                            m("input", { 
-                                type: "email", 
-                                placeholder: "email@example.com", 
-                                class: "grow",
-                                value: ForgotPasswordFormPage.email,
-                                oninput: (e) => ForgotPasswordFormPage.email = e.target.value,
-                                required: true
-                            })
-                        ]),
+                    m(FormField, {
+                        label: "Email",
+                        icon: "fa-solid fa-envelope",
+                        type: "email",
+                        placeholder: "email@example.com",
+                        value: ForgotPasswordFormPage.email,
+                        oninput: (e) => ForgotPasswordFormPage.email = e.target.value,
+                        required: true
+                    }),
 
-                        m("button.btn.btn-primary.w-full.mt-6", { 
-                            type: "submit",
-                            disabled: ForgotPasswordFormPage.isLoading
-                        }, [
-                            resetIcon,
-                            " Send Reset Link"
-                        ])
-                    ]),
+                    m(SubmitButton, {
+                        class: "btn-primary w-full mt-6",
+                        loading: ForgotPasswordFormPage.isLoading,
+                        icon: "fa-solid fa-paper-plane"
+                    }, " Send Reset Link")
                 ]),
 
                 m(".text-center.mt-6", [

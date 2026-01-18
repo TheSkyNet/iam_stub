@@ -35,3 +35,16 @@
 [2026-01-17 21:17:03][ERROR] [FE] null | url=http://localhost:8080/#!/profile
 [2026-01-17 21:17:04][ERROR] [FE] InvalidCharacterError: String contains an invalid character | url=http://localhost:8080/#!/profile
 [2026-01-17 22:06:17][ERROR] [FE] InvalidCharacterError: String contains an invalid character | url=http://localhost:8080/#!/profile
+[2026-01-18 01:06:54][ERROR] [FE] null | url=http://localhost:8080/#!/admin/users/edit/1
+[2026-01-18 01:07:00][ERROR] [FE] null | url=http://localhost:8080/#!/admin/users/edit/2
+[2026-01-18 01:07:02][ERROR] [FE] null | url=http://localhost:8080/#!/admin/users/edit/1
+[2026-01-18 01:07:07][ERROR] [FE] null | url=http://localhost:8080/#!/admin/users/edit/1
+[2026-01-18 01:07:52][ERROR] [FE] null | url=http://localhost:8080/#!/admin/users/edit/1
+[2026-01-18 01:07:56][ERROR] [FE] null | url=http://localhost:8080/#!/admin/users/edit/1
+[2026-01-18 01:16:46][ERROR] [FE] null | url=http://localhost:8080/#!/admin/users/edit/1
+[2026-01-18 01:16:55][ERROR] [FE] [object Object] | url=http://localhost:8080/#!/admin/users/edit/1
+[2026-01-18 01:17:14][ERROR] [FE] null | url=http://localhost:8080/#!/admin/users/edit/1
+[2026-01-18 01:17:26][ERROR] [FE] null | url=http://localhost:8080/#!/admin/users/edit/1
+[2026-01-18 01:21:50][ERROR] [FE] null | url=http://localhost:8080/#!/admin/users/edit/1
+[2026-01-18 01:27:58][ERROR] [FE] null | url=http://localhost:8080/#!/admin/users/edit/1
+[2026-01-18 01:38:52][ERROR] [FE] Error: Sync Error Test | url=http://localhost:8080/#!/test

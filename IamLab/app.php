@@ -15,6 +15,8 @@ use IamLab\Service\UsersApi;
 use IamLab\Service\JobsApi;
 use IamLab\Service\ErrorsApi;
 use IamLab\Service\SseApi;
+use IamLab\Service\SettingsApi;
+use IamLab\Service\LMSApi;
 use IamLab\Service\SettingsService;
 use Phalcon\Mvc\Micro;
 
@@ -77,16 +79,7 @@ RouteGroup::create($app, '/api')
         // OAuth authenticated endpoints
         $group->post('/oauth/unlink', [(new OAuth()), "unlinkAction"]);
         
-        // Jobs API endpoints
-        $group->get('/jobs', [(new JobsApi()), "indexAction"]);
-        $group->get('/jobs/stats', [(new JobsApi()), "statsAction"]);
-        $group->get('/jobs/types', [(new JobsApi()), "typesAction"]);
-        $group->get('/jobs/{id}', [(new JobsApi()), "showAction"]);
-        $group->post('/jobs', [(new JobsApi()), "createAction"]);
-        $group->post('/jobs/cleanup', [(new JobsApi()), "cleanupAction"]);
-        $group->post('/jobs/bulk', [(new JobsApi()), "bulkAction"]);
-        $group->post('/jobs/{id}/retry', [(new JobsApi()), "retryAction"]);
-        $group->delete('/jobs/{id}', [(new JobsApi()), "deleteAction"]);
+
     });
 
 // =============================================================================
@@ -109,13 +102,34 @@ RouteGroup::create($app, '/api')
         $group->post('/users', [(new UsersApi()), "createAction"]);
         $group->put('/users/{id}', [(new UsersApi()), "updateAction"]);
         $group->delete('/users/{id}', [(new UsersApi()), "deleteAction"]);
-        $group->get('/users/search', [(new UsersApi()), "searchAction"]);
+      $group->get('/users/search', [(new UsersApi()), "searchAction"]);
 
         // Errors management endpoints
         $group->get('/errors', [(new ErrorsApi()), "indexAction"]);
         $group->get('/errors/{id}', [(new ErrorsApi()), "showAction"]);
         $group->delete('/errors/{id}', [(new ErrorsApi()), "deleteAction"]);
         $group->post('/errors/cleanup', [(new ErrorsApi()), "cleanupAction"]);
+
+        // Settings management endpoints
+        $group->get('/settings', [(new SettingsApi()), "indexAction"]);
+        $group->post('/settings', [(new SettingsApi()), "createAction"]);
+        $group->put('/settings/{id}', [(new SettingsApi()), "updateAction"]);
+
+        // LMS management endpoints
+        $group->get('/lms/status', [(new LMSApi()), "statusAction"]);
+        $group->post('/lms/refresh', [(new LMSApi()), "refreshAction"]);
+        $group->post('/lms/test', [(new LMSApi()), "testAction"]);
+
+        // Jobs API endpoints
+        $group->get('/jobs', [(new JobsApi()), "indexAction"]);
+        $group->get('/jobs/stats', [(new JobsApi()), "statsAction"]);
+        $group->get('/jobs/types', [(new JobsApi()), "typesAction"]);
+        $group->get('/jobs/{id}', [(new JobsApi()), "showAction"]);
+        $group->post('/jobs', [(new JobsApi()), "createAction"]);
+        $group->post('/jobs/cleanup', [(new JobsApi()), "cleanupAction"]);
+        $group->post('/jobs/bulk', [(new JobsApi()), "bulkAction"]);
+        $group->post('/jobs/{id}/retry', [(new JobsApi()), "retryAction"]);
+        $group->delete('/jobs/{id}', [(new JobsApi()), "deleteAction"]);
     });
 
 // =============================================================================

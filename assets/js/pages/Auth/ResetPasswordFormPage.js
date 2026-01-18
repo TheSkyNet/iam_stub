@@ -1,6 +1,7 @@
 import m from "mithril";
 import { Icon } from "../../components/Icon";
 import { AuthService } from "../../services/AuthserviceService";
+import { Fieldset, FormField, SubmitButton } from "../../components/Form";
 
 const ResetPasswordFormPage = {
     password: '',
@@ -43,11 +44,6 @@ const ResetPasswordFormPage = {
     },
 
     view: () => {
-        let resetIcon = m(Icon, { icon: "fa-solid fa-key" });
-        if (ResetPasswordFormPage.isLoading) {
-            resetIcon = m("span.loading.loading-spinner");
-        }
-
         let content;
         if (ResetPasswordFormPage.isSuccess) {
             content = [
@@ -64,41 +60,30 @@ const ResetPasswordFormPage = {
                 m("p.text-sm.mb-4.text-base-content.opacity-70", "Please enter and confirm your new password."),
 
                 m("form", { onsubmit: ResetPasswordFormPage.handleResetPassword }, [
-                    m("fieldset.fieldset", [
-                        m("legend.fieldset-legend", "New Password"),
-                        m("label.input.w-full", [
-                            m(Icon, { icon: "fa-solid fa-lock", class: "opacity-50" }),
-                            m("input", { 
-                                type: "password", 
-                                placeholder: "••••••••", 
-                                class: "grow",
-                                value: ResetPasswordFormPage.password,
-                                oninput: (e) => ResetPasswordFormPage.password = e.target.value,
-                                required: true
-                            })
-                        ]),
+                    m(FormField, {
+                        label: "New Password",
+                        icon: "fa-solid fa-lock",
+                        type: "password",
+                        placeholder: "••••••••",
+                        value: ResetPasswordFormPage.password,
+                        oninput: (e) => ResetPasswordFormPage.password = e.target.value,
+                        required: true
+                    }),
+                    m(FormField, {
+                        label: "Confirm New Password",
+                        icon: "fa-solid fa-lock",
+                        type: "password",
+                        placeholder: "••••••••",
+                        value: ResetPasswordFormPage.confirmPassword,
+                        oninput: (e) => ResetPasswordFormPage.confirmPassword = e.target.value,
+                        required: true
+                    }),
 
-                        m("legend.fieldset-legend", "Confirm New Password"),
-                        m("label.input.w-full", [
-                            m(Icon, { icon: "fa-solid fa-lock", class: "opacity-50" }),
-                            m("input", { 
-                                type: "password", 
-                                placeholder: "••••••••", 
-                                class: "grow",
-                                value: ResetPasswordFormPage.confirmPassword,
-                                oninput: (e) => ResetPasswordFormPage.confirmPassword = e.target.value,
-                                required: true
-                            })
-                        ]),
-
-                        m("button.btn.btn-primary.w-full.mt-6", { 
-                            type: "submit",
-                            disabled: ResetPasswordFormPage.isLoading
-                        }, [
-                            resetIcon,
-                            " Reset Password"
-                        ])
-                    ]),
+                    m(SubmitButton, {
+                        class: "btn-primary w-full mt-6",
+                        loading: ResetPasswordFormPage.isLoading,
+                        icon: "fa-solid fa-key"
+                    }, " Reset Password")
                 ])
             ];
         }
