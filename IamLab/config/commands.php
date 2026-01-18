@@ -48,5 +48,10 @@ return [
         'description' => 'Add a role to a user account'
     ],
 
+    'user:make-admin' => [
+        'class' => 'IamLab\\Commands\\MakeAdminCommand',
+        'description' => 'Make a user an administrator'
+    ],
+
     // Add more commands here as needed
 ];
