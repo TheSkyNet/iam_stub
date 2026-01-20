@@ -1,13 +1,12 @@
 import m from "mithril";
 import { Icon } from "../../components/Icon";
-import { AuthService } from "../../services/AuthserviceService";
 import { Fieldset, FormField, CheckboxField, SubmitButton } from "../../components/Form";
 import {UsersService} from "../../services/UsersService";
 import {RolesService} from "../../services/RolesService";
 
 const EditUserPage = {
     usersService: null,
-    roalsService: null,
+    rolesService: null,
     user: null,
     roles: [],
     loading: true,
@@ -15,7 +14,7 @@ const EditUserPage = {
 
     oninit: function(vnode) {
         this.usersService = new UsersService();
-        this.roalsService = new RolesService();
+        this.rolesService = new RolesService();
         this.loadData(vnode.attrs.id);
     },
 
@@ -41,7 +40,7 @@ const EditUserPage = {
     },
 
     loadRoles: function() {
-        return this.roalsService.get().then((response) => {
+        return this.rolesService.get().then((response) => {
             if (response.success) {
                 this.roles = response.data;
             }
