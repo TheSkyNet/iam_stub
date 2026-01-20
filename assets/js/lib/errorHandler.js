@@ -15,40 +15,66 @@ export const toMessageStringSync = (value) => {
     
     // Handle Error objects
     if (value instanceof Error) {
-        return value.message;
+        return value.message || String(value);
+    }
+
+    // Handle Arrays
+    if (Array.isArray(value)) {
+        return value.map(item => toMessageStringSync(item)).join('; ');
     }
 
     // Handle API responses
-    if (typeof value === 'object') {
-        // Prefer top-level message
-        let msg = value.message || value.error || value.detail || value.title || '';
+    if (typeof value === 'object' && value !== null) {
+        // Try to find a string message in common fields
+        let msg = '';
+        const possibleKeys = ['message', 'error', 'detail', 'title', 'reason'];
         
-        // Handle validation errors (arrays or objects)
+        for (const key of possibleKeys) {
+            const val = value[key];
+            if (val) {
+                if (typeof val === 'string') {
+                    msg = val;
+                    break;
+                } else if (typeof val === 'object' && val !== null) {
+                    // Try one level deeper
+                    const nested = val.message || val.error || val.detail || val.title || val.reason;
+                    if (typeof nested === 'string') {
+                        msg = nested;
+                        break;
+                    }
+                }
+            }
+        }
+        
+        // If we found a message, return it verbatim (as per guidelines)
+        if (msg) {
+            return String(msg);
+        }
+
+        // Handle validation errors only if no top-level message was found
         if (value.errors && typeof value.errors === 'object') {
             let extra = '';
             if (Array.isArray(value.errors)) {
-                extra = value.errors.join('; ');
+                extra = value.errors
+                    .map(e => (typeof e === 'string' ? e : JSON.stringify(e)))
+                    .join('; ');
             } else {
                 extra = Object.entries(value.errors)
                     .map(([field, errors]) => {
-                        const fieldErrors = Array.isArray(errors) ? errors.join(', ') : errors;
+                        const fieldErrors = Array.isArray(errors) ? errors.join(', ') : String(errors);
                         return `${field}: ${fieldErrors}`;
                     })
                     .join('; ');
             }
             
-            if (extra && extra !== msg) {
-                msg = msg ? `${msg} (${extra})` : extra;
+            if (extra) {
+                return String(extra);
             }
-        }
-        
-        if (msg) {
-            return msg;
         }
     }
 
     // Fallback for Promise rejections that might be Response-like
-    if (value.statusText) {
+    if (value && typeof value === 'object' && value.statusText) {
         return `Request failed: ${value.status} ${value.statusText}`;
     }
 

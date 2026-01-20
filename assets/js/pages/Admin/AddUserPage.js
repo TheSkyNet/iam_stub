@@ -74,6 +74,7 @@ const AddUserPage = {
                                     label: "Full Name",
                                     icon: "fa-solid fa-user",
                                     placeholder: "Jane Doe",
+                                    autocomplete: "name",
                                     value: this.user.name,
                                     oninput: (e) => this.user.name = e.target.value,
                                     required: true
@@ -83,6 +84,7 @@ const AddUserPage = {
                                     icon: "fa-solid fa-envelope",
                                     type: "email",
                                     placeholder: "jane@example.com",
+                                    autocomplete: "email",
                                     value: this.user.email,
                                     oninput: (e) => this.user.email = e.target.value,
                                     required: true
@@ -93,6 +95,7 @@ const AddUserPage = {
                                     icon: "fa-solid fa-lock",
                                     type: "password",
                                     placeholder: "********",
+                                    autocomplete: "new-password",
                                     value: this.user.password,
                                     oninput: (e) => this.user.password = e.target.value,
                                     required: true

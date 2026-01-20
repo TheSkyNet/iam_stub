@@ -65,6 +65,7 @@ const ResetPasswordFormPage = {
                         icon: "fa-solid fa-lock",
                         type: "password",
                         placeholder: "••••••••",
+                        autocomplete: "new-password",
                         value: ResetPasswordFormPage.password,
                         oninput: (e) => ResetPasswordFormPage.password = e.target.value,
                         required: true
@@ -74,6 +75,7 @@ const ResetPasswordFormPage = {
                         icon: "fa-solid fa-lock",
                         type: "password",
                         placeholder: "••••••••",
+                        autocomplete: "new-password",
                         value: ResetPasswordFormPage.confirmPassword,
                         oninput: (e) => ResetPasswordFormPage.confirmPassword = e.target.value,
                         required: true

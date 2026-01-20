@@ -189,6 +189,7 @@ const ProfilePage = {
                     m(FormField, {
                         label: "Full Name",
                         icon: "fa-solid fa-user",
+                        autocomplete: "name",
                         value: ProfilePage.general.name,
                         oninput: (e) => ProfilePage.general.name = e.target.value,
                         required: true
@@ -197,6 +198,7 @@ const ProfilePage = {
                         label: "Email Address",
                         icon: "fa-solid fa-envelope",
                         type: "email",
+                        autocomplete: "email",
                         value: ProfilePage.general.email,
                         oninput: (e) => ProfilePage.general.email = e.target.value,
                         required: true
@@ -223,6 +225,7 @@ const ProfilePage = {
                         label: "Current Password",
                         icon: "fa-solid fa-lock",
                         type: "password",
+                        autocomplete: "current-password",
                         value: ProfilePage.security.oldPassword,
                         oninput: (e) => ProfilePage.security.oldPassword = e.target.value,
                         required: true
@@ -231,6 +234,7 @@ const ProfilePage = {
                         label: "New Password",
                         icon: "fa-solid fa-key",
                         type: "password",
+                        autocomplete: "new-password",
                         value: ProfilePage.security.newPassword,
                         oninput: (e) => ProfilePage.security.newPassword = e.target.value,
                         required: true
@@ -239,6 +243,7 @@ const ProfilePage = {
                         label: "Confirm New Password",
                         icon: "fa-solid fa-key",
                         type: "password",
+                        autocomplete: "new-password",
                         value: ProfilePage.security.confirmPassword,
                         oninput: (e) => ProfilePage.security.confirmPassword = e.target.value,
                         required: true

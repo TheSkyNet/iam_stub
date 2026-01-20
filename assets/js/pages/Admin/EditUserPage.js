@@ -110,6 +110,7 @@ const EditUserPage = {
                                 m(FormField, {
                                     label: "Full Name",
                                     icon: "fa-solid fa-user",
+                                    autocomplete: "name",
                                     value: this.user.name,
                                     oninput: (e) => this.user.name = e.target.value,
                                     required: true
@@ -118,6 +119,7 @@ const EditUserPage = {
                                     label: "Email",
                                     icon: "fa-solid fa-envelope",
                                     type: "email",
+                                    autocomplete: "email",
                                     value: this.user.email,
                                     oninput: (e) => this.user.email = e.target.value,
                                     required: true
@@ -128,6 +130,7 @@ const EditUserPage = {
                                     icon: "fa-solid fa-lock",
                                     type: "password",
                                     placeholder: "********",
+                                    autocomplete: "new-password",
                                     oninput: (e) => this.user.password = e.target.value
                                 })
                             ])

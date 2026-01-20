@@ -5,6 +5,7 @@ const NavSearchInput = {
         return m("input.input.input-bordered.w-24.md:w-auto", {
             type: "text",
             placeholder: "Search",
+            "aria-label": "Search site",
             ...vnode.attrs
         });
     }

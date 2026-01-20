@@ -44,6 +44,7 @@ const RegisterFormPage = {
                                     label: "Name",
                                     icon: "fa-solid fa-user",
                                     placeholder: "John Doe",
+                                    autocomplete: "name",
                                     value: RegisterFormPage.name,
                                     oninput: (e) => RegisterFormPage.name = e.target.value,
                                     required: true
@@ -53,6 +54,7 @@ const RegisterFormPage = {
                                     icon: "fa-solid fa-envelope",
                                     type: "email",
                                     placeholder: "email@example.com",
+                                    autocomplete: "email",
                                     value: RegisterFormPage.email,
                                     oninput: (e) => RegisterFormPage.email = e.target.value,
                                     required: true
@@ -62,6 +64,7 @@ const RegisterFormPage = {
                                     icon: "fa-solid fa-lock",
                                     type: "password",
                                     placeholder: "••••••••",
+                                    autocomplete: "new-password",
                                     value: RegisterFormPage.password,
                                     oninput: (e) => RegisterFormPage.password = e.target.value,
                                     required: true

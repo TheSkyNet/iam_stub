@@ -48,6 +48,7 @@ const ForgotPasswordFormPage = {
                         icon: "fa-solid fa-envelope",
                         type: "email",
                         placeholder: "email@example.com",
+                        autocomplete: "email",
                         value: ForgotPasswordFormPage.email,
                         oninput: (e) => ForgotPasswordFormPage.email = e.target.value,
                         required: true

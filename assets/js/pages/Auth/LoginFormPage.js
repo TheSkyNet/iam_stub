@@ -44,6 +44,7 @@ const LoginFormPage = {
                                     icon: "fa-solid fa-envelope",
                                     type: "email",
                                     placeholder: "email@example.com",
+                                    autocomplete: "email",
                                     value: LoginFormPage.email,
                                     oninput: (e) => LoginFormPage.email = e.target.value,
                                     required: true
@@ -53,6 +54,7 @@ const LoginFormPage = {
                                     icon: "fa-solid fa-lock",
                                     type: "password",
                                     placeholder: "••••••••",
+                                    autocomplete: "current-password",
                                     value: LoginFormPage.password,
                                     oninput: (e) => LoginFormPage.password = e.target.value,
                                     required: true

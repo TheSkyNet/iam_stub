@@ -65,8 +65,11 @@ const SettingsPage = {
 
     renderValueInput: function(setting) {
         if (this.editingId === setting.id) {
+            const inputId = `setting-${setting.id}`;
             if (setting.type === "boolean") {
                 return m("select.select.select-sm.w-full", {
+                    id: inputId,
+                    "aria-label": `Value for ${setting.key}`,
                     value: this.editValue,
                     onchange: (e) => this.editValue = e.target.value
                 }, [
@@ -74,19 +77,25 @@ const SettingsPage = {
                     m("option", { value: "0" }, "False")
                 ]);
             } else if (setting.type === "json" || setting.type === "array") {
-                return m("label.textarea.textarea-sm.w-full", [
+                return m("label.textarea.textarea-sm.w-full", { for: inputId }, [
                     m("textarea.grow", {
+                        id: inputId,
+                        "aria-label": `Value for ${setting.key}`,
                         value: this.editValue,
                         oninput: (e) => this.editValue = e.target.value,
-                        rows: 5
+                        rows: 5,
+                        autocomplete: "off"
                     })
                 ]);
             } else {
-                return m("label.input.input-sm.w-full", [
+                return m("label.input.input-sm.w-full", { for: inputId }, [
                     m("input.grow", {
+                        id: inputId,
+                        "aria-label": `Value for ${setting.key}`,
                         type: setting.type === "integer" || setting.type === "float" ? "number" : "text",
                         value: this.editValue,
-                        oninput: (e) => this.editValue = e.target.value
+                        oninput: (e) => this.editValue = e.target.value,
+                        autocomplete: "off"
                     })
                 ]);
             }
@@ -125,7 +134,7 @@ const SettingsPage = {
                                 m("tr", [
                                     m("th", "Key"),
                                     m("th", "Type"),
-                                    m("th.w-1/2", "Value"),
+                                    m("th", { style: { width: "50%" } }, "Value"),
                                     m("th", "Description"),
                                     m("th.text-right", "Actions")
                                 ])
