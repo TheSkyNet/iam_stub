@@ -11,11 +11,11 @@ volumes:
 services:
     laravel.test:
         build:
-            context: ./docker/${PHP_VERSION:-8.1}
+            context: ./docker/8.4
             dockerfile: Dockerfile
             args:
                 WWWGROUP: '${WWWGROUP}'
-                PHALCON_VERSION: '${PHALCON_VERSION:-5.9.2}'
+                PHALCON_VERSION: '${PHALCON_VERSION:-5.10.0}'
         image: phalcons-${PHP_VERSION:-8.1}/app
         extra_hosts:
             - 'host.docker.internal:host-gateway'

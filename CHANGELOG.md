@@ -1,5 +1,17 @@
 # Phalcon Stub Project - Changelog
 
+## 2026-01-20 — Phalcon Upgrade
+
+### Summary
+- Upgraded Phalcon PHP extension to `v5.10.0` to resolve a critical bug in the Micro component.
+- Aligned Dockerfiles to use the `PHALCON_VERSION` build argument.
+
+### Backend (Docker)
+- Updated `docker/8.4/Dockerfile` and `docker/8.5/Dockerfile` to use `PHALCON_VERSION` (defaulting to `5.10.0`).
+- Ensured `docker-compose.yml` defaults to `PHALCON_VERSION=5.10.0`.
+
+---
+
 ## 2026-01-03 — Adjustments: Keep PHP 8.4, update DB/cache, fix NPM audit
 
 Summary

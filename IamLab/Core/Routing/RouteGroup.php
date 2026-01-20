@@ -224,7 +224,7 @@ class RouteGroup
         $middleware = $this->middleware;
         $routeGroup = $this;
         
-        return function () use ($originalHandler, $app, $guards, $middleware, $routeGroup) {
+        return function (...$args) use ($originalHandler, $app, $guards, $middleware, $routeGroup) {
             // Apply guards first
             foreach ($guards as $guard) {
                 $routeGroup->applyGuard($guard);
@@ -235,31 +235,34 @@ class RouteGroup
                 $middleware();
             }
 
-            // Get all arguments passed to this function (including route parameters)
-            $args = func_get_args();
-
             // If handler is an array with aAPI instance, set route parameters
             if (is_array($originalHandler) && count($originalHandler) >= 2) {
                 $instance = $originalHandler[0];
                 if ($instance instanceof \IamLab\Core\API\aAPI) {
-                    // For routes like /users/{id}, the first argument is typically the ID
-                    $routeParams = [];
-                    if (count($args) > 0) {
-                        $routeParams['id'] = $args[0];
+                    $routeParams = $args;
+                    // Backward compatibility: if no 'id' key but we have arguments, 
+                    // map the first one to 'id' as it's the most common case.
+                    if (!isset($routeParams['id']) && count($args) > 0) {
+                        $routeParams['id'] = array_values($args)[0];
                     }
                     $instance->setRouteParams($routeParams);
                 }
             }
 
             // Execute original handler
+            // We use array_values($args) to pass positional arguments only, 
+            // which prevents "Unknown named parameter" errors in handlers
+            // that don't explicitly define parameters but still receive them from Phalcon.
+            $positionalArgs = array_values($args);
+
             if (is_array($originalHandler)) {
-                return call_user_func_array($originalHandler, $args);
+                return call_user_func_array($originalHandler, $positionalArgs);
             } elseif (is_callable($originalHandler)) {
                 // Pass $app to closure if it's a closure
                 if ($originalHandler instanceof Closure) {
-                    return call_user_func_array($originalHandler, array_merge([$app], $args));
+                    return call_user_func_array($originalHandler, array_merge([$app], $positionalArgs));
                 }
-                return call_user_func_array($originalHandler, $args);
+                return call_user_func_array($originalHandler, $positionalArgs);
             }
         };
     }

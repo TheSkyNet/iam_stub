@@ -1,5 +1,5 @@
-ARG PHALCON_DOCKER_TAG=v5.9.2-php8.5
-FROM phalconphp/cphalcon:${PHALCON_DOCKER_TAG}
+ARG PHALCON_VERSION=5.10.0
+FROM phalconphp/cphalcon:v${PHALCON_VERSION}-php8.5
 
 LABEL maintainer=""
 

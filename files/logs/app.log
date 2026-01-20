@@ -48,3 +48,7 @@
 [2026-01-18 01:21:50][ERROR] [FE] null | url=http://localhost:8080/#!/admin/users/edit/1
 [2026-01-18 01:27:58][ERROR] [FE] null | url=http://localhost:8080/#!/admin/users/edit/1
 [2026-01-18 01:38:52][ERROR] [FE] Error: Sync Error Test | url=http://localhost:8080/#!/test
+[2026-01-20 02:33:25][ERROR] [FE] null | url=http://localhost:8080/#!/admin/users/edit/1
+[2026-01-20 02:33:31][ERROR] [FE] null | url=http://localhost:8080/#!/admin/users/edit/1
+[2026-01-20 02:44:25][ERROR] [FE] null | url=http://localhost:8080/#!/admin/users/edit/1
+[2026-01-20 02:44:32][ERROR] [FE] null | url=http://localhost:8080/#!/admin/users/edit/1
