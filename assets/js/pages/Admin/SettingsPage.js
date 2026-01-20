@@ -56,10 +56,10 @@ const SettingsPage = {
                 this.editingId = null;
                 this.loadSettings();
             } else {
-                window.showToast(response.message || "Update failed", "error");
+                window.showToast(response, "error");
             }
         }).catch((err) => {
-            window.showToast(err.message || "An error occurred", "error");
+            window.showToast(err, "error");
         });
     },
 

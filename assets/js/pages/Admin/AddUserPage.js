@@ -41,11 +41,11 @@ const AddUserPage = {
                 window.showToast("User created successfully", "success");
                 m.route.set("/admin/users");
             } else {
-                window.showToast(response.message || "Failed to create user", "error");
+                window.showToast(response, "error");
             }
             this.loading = false;
         }).catch((err) => {
-            window.showToast(err.message || "An error occurred", "error");
+            window.showToast(err, "error");
             this.loading = false;
         });
     },
@@ -63,7 +63,7 @@ const AddUserPage = {
         return m(".container.mx-auto.p-4", [
             m(".max-w-2xl.mx-auto", [
                 m(".flex.items-center.gap-4.mb-6", [
-                    m(m.route.Link, { href: "/admin/users", class: "btn btn-circle btn-ghost" }, m(Icon, { icon: "fa-solid fa-arrow-left" })),
+                    m(m.route.Link, { href: "/admin/users", class: "btn btn-circle btn-ghost" }, m(Icon, { name: "fa-solid fa-arrow-left" })),
                     m("h1.text-3xl.font-bold", "Add New User")
                 ]),
                 m(".card.bg-base-100.shadow-xl", [

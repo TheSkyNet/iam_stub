@@ -45,10 +45,10 @@ const UsersPage = {
                 window.showToast("User deleted", "success");
                 this.loadUsers();
             } else {
-                window.showToast(response.message || "Failed to delete user", "error");
+                window.showToast(response, "error");
             }
         }).catch((err) => {
-            window.showToast(err.message || "An error occurred", "error");
+            window.showToast(err, "error");
         });
     },
 

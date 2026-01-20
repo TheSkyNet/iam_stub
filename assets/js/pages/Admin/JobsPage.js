@@ -76,10 +76,10 @@ const JobsPage = {
                 window.showToast("Job queued for retry", "success");
                 this.loadJobs();
             } else {
-                window.showToast(response.message || "Failed to retry job", "error");
+                window.showToast(response, "error");
             }
         }).catch((err) => {
-            window.showToast(err.message || "An error occurred", "error");
+            window.showToast(err, "error");
         });
     },
 
@@ -96,10 +96,10 @@ const JobsPage = {
                 window.showToast("Job cancelled", "success");
                 this.loadJobs();
             } else {
-                window.showToast(response.message || "Failed to cancel job", "error");
+                window.showToast(response, "error");
             }
         }).catch((err) => {
-            window.showToast(err.message || "An error occurred", "error");
+            window.showToast(err, "error");
         });
     },
 

@@ -62,10 +62,10 @@ const ErrorsPage = {
                 window.showToast("Log entry deleted", "success");
                 this.loadErrors();
             } else {
-                window.showToast(response.message || "Failed to delete log entry", "error");
+                window.showToast(response, "error");
             }
         }).catch((err) => {
-            window.showToast(err.message || "An error occurred", "error");
+            window.showToast(err, "error");
         });
     },
 
@@ -83,10 +83,10 @@ const ErrorsPage = {
                 window.showToast(`Cleaned up ${response.data.deleted} entries`, "success");
                 this.loadErrors();
             } else {
-                window.showToast(response.message || "Cleanup failed", "error");
+                window.showToast(response, "error");
             }
         }).catch((err) => {
-            window.showToast(err.message || "An error occurred", "error");
+            window.showToast(err, "error");
         });
     },
 

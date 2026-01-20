@@ -54,10 +54,10 @@ const RolesPage = {
                 this.loadRoles();
                 document.getElementById('role_modal').close();
             } else {
-                window.showToast(response.message || "Operation failed", "error");
+                window.showToast(response, "error");
             }
         }).catch((err) => {
-            window.showToast(err.message || "An error occurred", "error");
+            window.showToast(err, "error");
         });
     },
 
@@ -74,10 +74,10 @@ const RolesPage = {
                 window.showToast("Role deleted", "success");
                 this.loadRoles();
             } else {
-                window.showToast(response.message || "Failed to delete role", "error");
+                window.showToast(response, "error");
             }
         }).catch((err) => {
-            window.showToast(err.message || "An error occurred", "error");
+            window.showToast(err, "error");
         });
     },
 

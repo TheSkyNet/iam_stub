@@ -50,10 +50,10 @@ const LMSPage = {
                 window.showToast("LMS status refreshed", "success");
                 this.loadStatus();
             } else {
-                window.showToast(response.message || "Refresh failed", "error");
+                window.showToast(response, "error");
             }
         }).catch((err) => {
-            window.showToast(err.message || "An error occurred", "error");
+            window.showToast(err, "error");
         });
     },
 
@@ -73,11 +73,11 @@ const LMSPage = {
             if (response.success) {
                 this.testResult = response.data;
             } else {
-                window.showToast(response.message || "Test failed", "error");
+                window.showToast(response, "error");
             }
             this.testing = false;
         }).catch((err) => {
-            window.showToast(err.message || "An error occurred", "error");
+            window.showToast(err, "error");
             this.testing = false;
         });
     },

@@ -1,14 +1,21 @@
 import ToastService from '../services/ToastService';
 
 /**
- * Formats various error types into a human-readable string
+ * Formats various error types into a human-readable string.
+ * This is the central formatter that SHOULD be used by everyone.
+ * KISS: Keep it simple. Prefer the backend's 'message' field.
+ * 
  * @param {any} value 
  * @returns {string}
  */
 export const toMessageStringSync = (value) => {
-    if (!value) {
+
+    console.log('toMessageStringSync', value);
+    debugger;
+    if (value === null || value === undefined) {
         return 'An unknown error occurred';
     }
+    
     if (typeof value === 'string') {
         return value;
     }
@@ -18,71 +25,70 @@ export const toMessageStringSync = (value) => {
         return value.message || String(value);
     }
 
-    // Handle Arrays
-    if (Array.isArray(value)) {
-        return value.map(item => toMessageStringSync(item)).join('; ');
-    }
+    // Handle common API response shapes
+    if (typeof value === 'object') {
+        // Priority 1: Backend provided 'message' (from aAPI::dispatchError)
+        if (typeof value.message === 'string' && value.message.trim() !== '') {
+            return value.message;
+        }
 
-    // Handle API responses
-    if (typeof value === 'object' && value !== null) {
-        // Try to find a string message in common fields
-        let msg = '';
-        const possibleKeys = ['message', 'error', 'detail', 'title', 'reason'];
-        
-        for (const key of possibleKeys) {
+        // Priority 2: Other common string error fields
+        const otherKeys = ['error', 'detail', 'title', 'reason', 'msg', 'response', 'data'];
+        for (const key of otherKeys) {
             const val = value[key];
-            if (val) {
-                if (typeof val === 'string') {
-                    msg = val;
-                    break;
-                } else if (typeof val === 'object' && val !== null) {
-                    // Try one level deeper
-                    const nested = val.message || val.error || val.detail || val.title || val.reason;
-                    if (typeof nested === 'string') {
-                        msg = nested;
-                        break;
+            if (typeof val === 'string' && val.trim() !== '') {
+                return val;
+            }
+        }
+
+        // Priority 3: Mithril/XHR responseText
+        if (value.responseText && typeof value.responseText === 'string') {
+            try {
+                const parsed = JSON.parse(value.responseText);
+                return toMessageStringSync(parsed);
+            } catch (e) {
+                return value.responseText;
+            }
+        }
+
+        // Priority 4: If it has validation errors, try to extract something
+        if (value.errors) {
+            if (Array.isArray(value.errors)) {
+                const first = value.errors[0];
+                if (first) {
+                    if (typeof first === 'string') {
+                        return first;
+                    }
+                    if (typeof first.message === 'string') {
+                        return first.message;
                     }
                 }
             }
-        }
-        
-        // If we found a message, return it verbatim (as per guidelines)
-        if (msg) {
-            return String(msg);
-        }
-
-        // Handle validation errors only if no top-level message was found
-        if (value.errors && typeof value.errors === 'object') {
-            let extra = '';
-            if (Array.isArray(value.errors)) {
-                extra = value.errors
-                    .map(e => (typeof e === 'string' ? e : JSON.stringify(e)))
-                    .join('; ');
-            } else {
-                extra = Object.entries(value.errors)
-                    .map(([field, errors]) => {
-                        const fieldErrors = Array.isArray(errors) ? errors.join(', ') : String(errors);
-                        return `${field}: ${fieldErrors}`;
-                    })
-                    .join('; ');
-            }
-            
-            if (extra) {
-                return String(extra);
+            if (typeof value.errors === 'object' && value.errors !== null) {
+                const firstVal = Object.values(value.errors)[0];
+                if (typeof firstVal === 'string') {
+                    return firstVal;
+                }
+                if (firstVal && typeof firstVal.message === 'string') {
+                    return firstVal.message;
+                }
+                if (Array.isArray(firstVal) && typeof firstVal[0] === 'string') {
+                    return firstVal[0];
+                }
             }
         }
     }
 
-    // Fallback for Promise rejections that might be Response-like
-    if (value && typeof value === 'object' && value.statusText) {
-        return `Request failed: ${value.status} ${value.statusText}`;
-    }
-
+    // Fallback: Avoid [object Object] if possible by using JSON stringify
     try {
-        return JSON.stringify(value);
-    } catch (e) {
-        return String(value);
-    }
+        const str = JSON.stringify(value);
+        if (str && str !== '{}' && str !== '[]') {
+            return str;
+        }
+    } catch (e) {}
+
+    const fallback = String(value);
+    return fallback === '[object Object]' ? 'An unexpected error occurred' : fallback;
 };
 
 /**

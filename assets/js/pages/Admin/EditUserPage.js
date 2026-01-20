@@ -2,14 +2,20 @@ import m from "mithril";
 import { Icon } from "../../components/Icon";
 import { AuthService } from "../../services/AuthserviceService";
 import { Fieldset, FormField, CheckboxField, SubmitButton } from "../../components/Form";
+import {UsersService} from "../../services/UsersService";
+import {RolesService} from "../../services/RolesService";
 
 const EditUserPage = {
+    usersService: null,
+    roalsService: null,
     user: null,
     roles: [],
     loading: true,
     saving: false,
 
     oninit: function(vnode) {
+        this.usersService = new UsersService();
+        this.roalsService = new RolesService();
         this.loadData(vnode.attrs.id);
     },
 
@@ -25,25 +31,17 @@ const EditUserPage = {
     },
 
     loadUser: function(id) {
-        return m.request({
-            method: "GET",
-            url: `/api/users/${id}`,
-            headers: AuthService.getAuthHeaders()
-        }).then((response) => {
+        return this.usersService.get(id).then((response) => {
             if (response.success) {
                 this.user = response.data;
             } else {
-                window.showToast(response.message || "Failed to load user", "error");
+                window.showToast(response, "error");
             }
         });
     },
 
     loadRoles: function() {
-        return m.request({
-            method: "GET",
-            url: "/api/roles",
-            headers: AuthService.getAuthHeaders()
-        }).then((response) => {
+        return this.roalsService.get().then((response) => {
             if (response.success) {
                 this.roles = response.data;
             }
@@ -52,21 +50,15 @@ const EditUserPage = {
 
     save: function() {
         this.saving = true;
-        return m.request({
-            method: "PUT",
-            url: `/api/users/${this.user.id}`,
-            body: this.user,
-            headers: AuthService.getAuthHeaders()
-        }).then((response) => {
+        this.usersService.update(this.user.id, this.user).then((response) => {
             if (response.success) {
                 window.showToast("User updated successfully", "success");
-                m.route.set("/admin/users");
             } else {
-                window.showToast(response.message || "Failed to update user", "error");
+                window.showToast(response, "error");
             }
             this.saving = false;
         }).catch((err) => {
-            window.showToast(err.message || "An error occurred", "error");
+            window.showToast(err.response , "error");
             this.saving = false;
         });
     },
@@ -100,7 +92,7 @@ const EditUserPage = {
         return m(".container.mx-auto.p-4", [
             m(".max-w-2xl.mx-auto", [
                 m(".flex.items-center.gap-4.mb-6", [
-                    m(m.route.Link, { href: "/admin/users", class: "btn btn-circle btn-ghost" }, m(Icon, { icon: "fa-solid fa-arrow-left" })),
+                    m(m.route.Link, { href: "/admin/users", class: "btn btn-circle btn-ghost" }, m(Icon, { name: "fa-solid fa-arrow-left" })),
                     m("h1.text-3xl.font-bold", `Edit User #${userId}`)
                 ]),
                 m(".card.bg-base-100.shadow-xl", [

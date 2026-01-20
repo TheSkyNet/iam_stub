@@ -74,7 +74,7 @@ const ProfilePage = {
             email: ProfilePage.general.email
         }).then(response => {
             if (response.success) {
-                window.showToast(response.message, "success");
+                window.showToast(response, "success");
                 // Update local user data
                 const user = AuthService.getUser();
                 if (user) {
@@ -102,7 +102,7 @@ const ProfilePage = {
             ProfilePage.security.confirmPassword
         ).then(response => {
             if (response.success) {
-                window.showToast(response.message, "success");
+                window.showToast(response, "success");
                 ProfilePage.security.oldPassword = '';
                 ProfilePage.security.newPassword = '';
                 ProfilePage.security.confirmPassword = '';
@@ -117,7 +117,7 @@ const ProfilePage = {
         ProfilePage.developer.isLoading = true;
         AuthService.generateApiKey().then(response => {
             if (response.success) {
-                window.showToast(response.message, "success");
+                window.showToast(response, "success");
                 ProfilePage.profileData.apiKey = response.data.api_key;
             }
         }).finally(() => {
@@ -135,7 +135,7 @@ const ProfilePage = {
         if (confirm(`Are you sure you want to unlink your ${provider} account?`)) {
             AuthService.unlinkOAuth(provider).then(response => {
                 if (response.success) {
-                    window.showToast(response.message, "success");
+                    window.showToast(response, "success");
                     ProfilePage.profileData.oauth_provider = null;
                 }
             });
@@ -315,7 +315,7 @@ const ProfilePage = {
                                     }
                                     AuthService.updateAvatar(file.serverId).then(response => {
                                         if (response.success) {
-                                            window.showToast(response.message, 'success');
+                                            window.showToast(response, 'success');
                                             ProfilePage.profileData.avatar = response.data.avatar;
                                             const user = AuthService.getUser();
                                             if (user) {
@@ -324,6 +324,8 @@ const ProfilePage = {
                                                 AuthService.user = user;
                                             }
                                             m.redraw();
+                                        } else {
+                                            window.showToast(response, 'error');
                                         }
                                     }).catch(err => {
                                         window.showToast(err, 'error');
