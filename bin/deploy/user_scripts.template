@@ -1,0 +1,8 @@
+# User-defined deployment scripts
+# This script will be executed at the end of the deployment process.
+# You can use {{APP_PATH}}, {{DOMAIN}}, {{APP_PORT}}, {{SERVER_USER}}, and {{SERVER_HOST}} variables here.
+
+info "Running user-defined scripts..."
+
+# Example:
+# cd {{APP_PATH}} && ./phalcons command your:custom-command

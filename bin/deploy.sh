@@ -202,5 +202,20 @@ CRON_EOF
 echo "\${CRON_TEMP//\{\{APP_PATH\}\}/\$APP_PATH}" > /etc/cron.d/phalcon-app
 chmod 0644 /etc/cron.d/phalcon-app
 
+# 13. Run User Scripts
+info "Checking for user scripts..."
+USER_SCRIPT_TEMP="\$(cat <<'USER_SCRIPT_EOF'
+$(cat "$DEPLOY_DIR/deploy/user_scripts.template")
+USER_SCRIPT_EOF
+)"
+# Replace variables and execute
+USER_SCRIPT="\${USER_SCRIPT_TEMP//\{\{APP_PATH\}\}/\$APP_PATH}"
+USER_SCRIPT="\${USER_SCRIPT//\{\{DOMAIN\}\}/$DOMAIN}"
+USER_SCRIPT="\${USER_SCRIPT//\{\{APP_PORT\}\}/$APP_PORT}"
+USER_SCRIPT="\${USER_SCRIPT//\{\{SERVER_USER\}\}/$SERVER_USER}"
+USER_SCRIPT="\${USER_SCRIPT//\{\{SERVER_HOST\}\}/$SERVER_HOST}"
+
+eval "\$USER_SCRIPT"
+
 info "Deployment complete for $DOMAIN!"
 EOF
