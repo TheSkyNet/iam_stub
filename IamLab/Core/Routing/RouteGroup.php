@@ -246,6 +246,11 @@ class RouteGroup
                         $routeParams['id'] = array_values($args)[0];
                     }
                     $instance->setRouteParams($routeParams);
+                    
+                    // Call initialize if it exists
+                    if (method_exists($instance, 'initialize')) {
+                        $instance->initialize();
+                    }
                 }
             }
 

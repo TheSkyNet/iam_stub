@@ -3,7 +3,7 @@ import { Icon } from "../Icon";
 
 const FormField = {
     view: ({ attrs }) => {
-        const { label, icon, helpText, error, grow = true, class: className = "", containerClass = "", fieldset = true, ...inputProps } = attrs;
+        const { label, icon, name, helpText, error, grow = true, class: className = "", containerClass = "", fieldset = true, ...inputProps } = attrs;
         
         const id = inputProps.id || (label ? `field-${label.toLowerCase().replace(/\s+/g, '-')}` : null);
         const helpId = helpText ? `${id}-help` : null;
@@ -13,7 +13,7 @@ const FormField = {
             class: error ? "input-error" : "",
             for: id
         }, [
-            icon && m(Icon, { icon, class: "opacity-50" }),
+            (name || icon) && m(Icon, { name: name || icon, class: "opacity-50" }),
             m("input", { 
                 id,
                 class: `${grow ? "grow" : ""} ${className}`.trim(),

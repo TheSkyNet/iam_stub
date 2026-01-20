@@ -1,6 +1,7 @@
 import m from "mithril";
 import { Icon } from "../../components/Icon";
 import { AuthService } from "../../services/AuthserviceService";
+import { LMSService } from "../../services/LMSService";
 import { Fieldset, FormField, SubmitButton } from "../../components/Form";
 
 const LMSPage = {
@@ -16,6 +17,7 @@ const LMSPage = {
     testPrompt: "Say hello!",
 
     oninit: function() {
+        this.lmsService = new LMSService();
         this.loadStatus();
     },
 
@@ -23,11 +25,7 @@ const LMSPage = {
         this.loading = true;
         this.error = null;
         
-        return m.request({
-            method: "GET",
-            url: "/api/lms/status",
-            headers: AuthService.getAuthHeaders()
-        }).then((response) => {
+        return this.lmsService.getStatus().then((response) => {
             if (response.success) {
                 this.data = response.data;
             } else {
@@ -41,11 +39,7 @@ const LMSPage = {
     },
 
     refreshStatus: function() {
-        return m.request({
-            method: "POST",
-            url: "/api/lms/refresh",
-            headers: AuthService.getAuthHeaders()
-        }).then((response) => {
+        return this.lmsService.refresh().then((response) => {
             if (response.success) {
                 window.showToast("LMS status refreshed", "success");
                 this.loadStatus();
@@ -61,15 +55,7 @@ const LMSPage = {
         this.testing = true;
         this.testResult = null;
         
-        return m.request({
-            method: "POST",
-            url: "/api/lms/test",
-            body: { 
-                integration: this.testIntegration,
-                prompt: this.testPrompt
-            },
-            headers: AuthService.getAuthHeaders()
-        }).then((response) => {
+        return this.lmsService.test(this.testIntegration, this.testPrompt).then((response) => {
             if (response.success) {
                 this.testResult = response.data;
             } else {
@@ -93,91 +79,116 @@ const LMSPage = {
     },
 
     view: function() {
+        let content;
+
+        if (this.loading) {
+            content = m(".flex.justify-center.p-12", m("span.loading.loading-spinner.loading-lg"));
+        } else if (this.error) {
+            content = m(".alert.alert-error.mb-6", [
+                m(Icon, { name: "fa-solid fa-circle-exclamation" }),
+                m("span", this.error)
+            ]);
+        } else {
+            const integrations = Object.entries(this.data.integrations).map(([name, info]) => {
+                let capabilities = [];
+                if (info.capabilities) {
+                    if (Array.isArray(info.capabilities)) {
+                        capabilities = info.capabilities.map(cap => m(".badge.badge-outline.badge-xs", cap));
+                    } else if (typeof info.capabilities === 'object') {
+                        capabilities = Object.entries(info.capabilities)
+                            .filter(([key, value]) => value === true)
+                            .map(([key, value]) => m(".badge.badge-outline.badge-xs.capitalize", key.replace(/_/g, ' ')));
+                    }
+                }
+
+                return m(".card.bg-base-100.shadow-xl", [
+                    m(".card-body", [
+                        m(".flex.justify-between.items-start", [
+                            m("h2.card-title.capitalize", name),
+                            m(".badge", { class: this.getStatusBadgeClass(info.status) }, info.status)
+                        ]),
+                        m("p.text-sm.opacity-70", info.error || "No issues reported"),
+                        m(".mt-2", [
+                            m("p.text-xs.font-bold", "Capabilities:"),
+                            m(".flex.flex-wrap.gap-1.mt-1", capabilities)
+                        ]),
+                        m(".card-actions.justify-end.mt-4", [
+                            m("button.btn.btn-xs.btn-ghost", {
+                                onclick: () => {
+                                    this.testIntegration = name;
+                                    document.getElementById('test_modal').showModal();
+                                }
+                            }, "Test Integration")
+                        ])
+                    ])
+                ]);
+            });
+
+            const statsData = this.data.statistics || {};
+            const successRate = statsData.total_requests > 0 
+                ? `${Math.round((statsData.successful_requests / statsData.total_requests) * 100)}%`
+                : "0%";
+
+            const stats = [
+                m(".stats.shadow", [
+                    m(".stat", [
+                        m(".stat-title", "Total Requests"),
+                        m(".stat-value", statsData.total_requests || 0)
+                    ])
+                ]),
+                m(".stats.shadow", [
+                    m(".stat", [
+                        m(".stat-title", "Success Rate"),
+                        m(".stat-value.text-success", successRate)
+                    ])
+                ]),
+                m(".stats.shadow", [
+                    m(".stat", [
+                        m(".stat-title", "Errors"),
+                        m(".stat-value.text-error", statsData.failed_requests || 0)
+                    ])
+                ]),
+                m(".stats.shadow", [
+                    m(".stat", [
+                        m(".stat-title", "Last Request"),
+                        m(".stat-desc", statsData.last_request_at || "Never")
+                    ])
+                ])
+            ];
+
+            content = [
+                m(".grid.grid-cols-1.md:grid-cols-3.gap-6.mb-8", integrations),
+                m("h2.text-2xl.font-bold.mb-4", "Usage Statistics"),
+                m(".grid.grid-cols-1.md:grid-cols-4.gap-4.mb-8", stats)
+            ];
+        }
+
+        let testResultView = null;
+        if (this.testResult) {
+            testResultView = m(".mt-4", [
+                m("p.text-sm.font-bold", "Result:"),
+                m(".bg-base-200.p-3.rounded.mt-1.text-xs.max-h-60.overflow-auto", [
+                    m("pre", JSON.stringify(this.testResult, null, 2))
+                ])
+            ]);
+        }
+
         return m(".container.mx-auto.p-4", [
             m(".flex.justify-between.items-center.mb-6", [
                 m("h1.text-3xl.font-bold", "LMS & AI Integrations"),
                 m("button.btn.btn-outline.btn-sm", { onclick: () => this.refreshStatus() }, [
-                    m(Icon, { icon: "fa-solid fa-sync" }),
+                    m(Icon, { name: "fa-solid fa-sync" }),
                     " Refresh Health"
                 ])
             ]),
 
-            this.loading 
-                ? m(".flex.justify-center.p-12", m("span.loading.loading-spinner.loading-lg"))
-                : this.error
-                    ? m(".alert.alert-error.mb-6", [
-                        m(Icon, { icon: "fa-solid fa-circle-exclamation" }),
-                        m("span", this.error)
-                    ])
-                    : [
-                        // Integrations Grid
-                        m(".grid.grid-cols-1.md:grid-cols-3.gap-6.mb-8", 
-                            Object.entries(this.data.integrations).map(([name, info]) => 
-                                m(".card.bg-base-100.shadow-xl", [
-                                    m(".card-body", [
-                                        m(".flex.justify-between.items-start", [
-                                            m("h2.card-title.capitalize", name),
-                                            m(".badge", { class: this.getStatusBadgeClass(info.status) }, info.status)
-                                        ]),
-                                        m("p.text-sm.opacity-70", info.error || "No issues reported"),
-                                        m(".mt-2", [
-                                            m("p.text-xs.font-bold", "Capabilities:"),
-                                            m(".flex.flex-wrap.gap-1.mt-1", 
-                                                (info.capabilities || []).map(cap => m(".badge.badge-outline.badge-xs", cap))
-                                            )
-                                        ]),
-                                        m(".card-actions.justify-end.mt-4", [
-                                            m("button.btn.btn-xs.btn-ghost", {
-                                                onclick: () => {
-                                                    this.testIntegration = name;
-                                                    document.getElementById('test_modal').showModal();
-                                                }
-                                            }, "Test Integration")
-                                        ])
-                                    ])
-                                ])
-                            )
-                        ),
-
-                        // Statistics
-                        m("h2.text-2xl.font-bold.mb-4", "Usage Statistics"),
-                        m(".grid.grid-cols-1.md:grid-cols-4.gap-4.mb-8", [
-                            m(".stats.shadow", [
-                                m(".stat", [
-                                    m(".stat-title", "Total Requests"),
-                                    m(".stat-value", this.data.statistics.total_requests || 0)
-                                ])
-                            ]),
-                            m(".stats.shadow", [
-                                m(".stat", [
-                                    m(".stat-title", "Success Rate"),
-                                    m(".stat-value.text-success", 
-                                        this.data.statistics.total_requests > 0 
-                                            ? `${Math.round((this.data.statistics.successful_requests / this.data.statistics.total_requests) * 100)}%`
-                                            : "0%"
-                                    )
-                                ])
-                            ]),
-                            m(".stats.shadow", [
-                                m(".stat", [
-                                    m(".stat-title", "Errors"),
-                                    m(".stat-value.text-error", this.data.statistics.failed_requests || 0)
-                                ])
-                            ]),
-                            m(".stats.shadow", [
-                                m(".stat", [
-                                    m(".stat-title", "Last Request"),
-                                    m(".stat-desc", this.data.statistics.last_request_at || "Never")
-                                ])
-                            ])
-                        ])
-                    ],
+            content,
 
             // Test Modal
             m("dialog#test_modal.modal", [
                 m(".modal-box", [
                     m("h3.font-bold.text-lg.mb-4", `Test ${this.testIntegration}`),
-                    m(Fieldset, { legend: "Test Prompt", icon: "fa-solid fa-comment-dots" }, [
+                    m(Fieldset, { legend: "Test Prompt", name: "fa-solid fa-comment-dots" }, [
                         m("fieldset.fieldset", [
                             m("legend.fieldset-legend", "Prompt"),
                             m("label.textarea.w-full", [
@@ -189,18 +200,13 @@ const LMSPage = {
                             ])
                         ])
                     ]),
-                    this.testResult && m(".mt-4", [
-                        m("p.text-sm.font-bold", "Result:"),
-                        m(".bg-base-200.p-3.rounded.mt-1.text-xs.max-h-60.overflow-auto", [
-                            m("pre", JSON.stringify(this.testResult, null, 2))
-                        ])
-                    ]),
+                    testResultView,
                     m(".modal-action", [
                         m(SubmitButton, { 
                             class: "btn-primary",
                             onclick: () => this.runTest(),
                             loading: this.testing,
-                            icon: "fa-solid fa-play"
+                            name: "fa-solid fa-play"
                         }, "Run Test"),
                         m("form[method=dialog]", [
                             m("button.btn", "Close")

@@ -51,72 +51,11 @@
         </style>
     </head>
     <body>
-        <h2>Configuration Manager (Tests\Unit\Service\LMS\Configuration\ConfigurationManager)</h2>
-        <ul>
-            <li class="success">Can be instantiated</li>
-            <li class="success">Get all configurations</li>
-            <li class="success">Get integration config</li>
-            <li class="success">Is integration enabled</li>
-            <li class="success">Get enabled integrations</li>
-            <li class="success">Validate configuration</li>
-            <li class="success">Get non existent integration config</li>
-            <li class="success">Is non existent integration enabled</li>
-        </ul>
-        <h2>Error Log (Tests\Unit\Model\ErrorLog)</h2>
-        <ul>
-            <li class="success">Setters and getters work</li>
-            <li class="success">Set context json round trip</li>
-            <li class="success">Before validation on create sets created at</li>
-        </ul>
-        <h2>Integration Factory (Tests\Unit\Service\LMS\Factory\IntegrationFactory)</h2>
-        <ul>
-            <li class="success">Get supported integrations</li>
-            <li class="success">Is supported</li>
-            <li class="success">Create ollama integration</li>
-            <li class="success">Create gemini integration</li>
-            <li class="defect">Create tencent edu integration</li>
-            <li class="success">Create unsupported integration throws exception</li>
-            <li class="success">Create with invalid configuration throws exception</li>
-            <li class="success">Get integration class</li>
-            <li class="success">Create from config</li>
-            <li class="success">Validate config</li>
-            <li class="success">Get integration capabilities</li>
-            <li class="success">Register and unregister integration</li>
-            <li class="success">Register invalid class throws exception</li>
-        </ul>
-        <h2>LMSService (Tests\Unit\Service\LMS\LMSService)</h2>
-        <ul>
-            <li class="success">Can be instantiated</li>
-            <li class="success">Initialize</li>
-            <li class="success">Get configuration manager</li>
-            <li class="success">Get integration registry</li>
-            <li class="success">Get available integrations</li>
-            <li class="success">Is integration available</li>
-            <li class="success">Get integration status</li>
-            <li class="success">Generate content with valid integration</li>
-            <li class="success">Generate content with invalid integration</li>
-            <li class="success">Create course with valid integration</li>
-            <li class="success">Create course with invalid integration</li>
-            <li class="success">Analyze text with valid integration</li>
-            <li class="success">Analyze text with invalid integration</li>
-            <li class="success">Generate content with fallback</li>
-            <li class="success">Get best integration for</li>
-            <li class="success">Get integration capabilities</li>
-            <li class="success">Get statistics</li>
-            <li class="success">Refresh health status</li>
-            <li class="success">Multiple initialization calls are safe</li>
-        </ul>
         <h2>Sse Api (Tests\Unit\Service\SseApi)</h2>
         <ul>
             <li class="success">Echo action outputs single event</li>
             <li class="success">Clock action emits requested count</li>
             <li class="success">Test action outputs ok status</li>
-        </ul>
-        <h2>Sse Emitter (Tests\Unit\Core\SSE\SseEmitter)</h2>
-        <ul>
-            <li class="success">Start sets headers and optional retry</li>
-            <li class="success">Send formats event id and json data</li>
-            <li class="success">Comment and heartbeat</li>
         </ul>
     </body>
 </html>

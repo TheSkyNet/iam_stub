@@ -3,7 +3,7 @@ import { Icon } from "../Icon";
 
 const SubmitButton = {
     view: ({ attrs, children }) => {
-        const { loading, icon, class: className = "", ...props } = attrs;
+        const { loading, icon, name, class: className = "", ...props } = attrs;
         
         return m("button.btn", {
             type: "submit",
@@ -11,7 +11,7 @@ const SubmitButton = {
             disabled: loading,
             ...props
         }, [
-            loading ? m("span.loading.loading-spinner") : (icon && m(Icon, { icon, class: "mr-1" })),
+            loading ? m("span.loading.loading-spinner") : ((name || icon) && m(Icon, { name: name || icon, class: "mr-1" })),
             children
         ]);
     }
