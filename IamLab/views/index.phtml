@@ -21,6 +21,7 @@
 
     <!-- Resources -->
     <link rel="preload" href="/css/main.css" as="style">
+    <link rel="preload" href="/js/app.js" as="script">
     <link rel="stylesheet" href="/css/main.css">
 
     <!-- Structured Data -->
@@ -33,6 +34,7 @@
         window.APP_CONFIG = <?= json_encode($settings['config']) ?>;
         window.APP_THEME = <?= json_encode($settings['theme']) ?>;
     </script>
+    <title id="PAGE_TITLE"> Phalcons Stub Project</title>
 </head>
 <body>
 <?php if ($settings['config']['maintenance']): ?>

@@ -102,6 +102,7 @@ function display_help {
     echo "  ${GREEN}phalcons service:restart${NC}    Restart the application service"
     echo "  ${GREEN}phalcons service:status${NC}     Check the application service status"
     echo "  ${GREEN}phalcons service:uninstall${NC}  Remove the application service"
+    echo "  ${GREEN}phalcons deploy${NC}             Deploy the application to a server"
     echo
     exit 1
 }
@@ -700,6 +701,12 @@ elif [ "$1" == "service:uninstall" ]; then
         rm -f "$HOME/Library/LaunchAgents/com.phalcon.app.plist"
         echo "${GREEN}✓ LaunchD service uninstalled successfully${NC}"
     fi
+
+elif [ "$1" == "deploy" ]; then
+    shift 1
+    chmod +x bin/deploy.sh
+    ./bin/deploy.sh "$@"
+    exit $?
 
 # Pass unknown commands to the "docker-compose" binary...
 else

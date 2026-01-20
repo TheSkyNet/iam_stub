@@ -6,6 +6,7 @@ use IamLab\Core\API\aAPI;
 use IamLab\Core\SSE\PhpOutputWriter;
 use IamLab\Core\SSE\OutputWriterInterface;
 use IamLab\Core\SSE\SseEmitter;
+use JetBrains\PhpStorm\NoReturn;
 
 /**
  * SseApi provides Server-Sent Events endpoints.
@@ -66,7 +67,6 @@ class SseApi extends aAPI
         $this->terminate();
     }
 
-    // ---------- Helpers ----------
 
     protected function createEmitter(?int $retryMs = null): SseEmitter
     {
@@ -98,6 +98,7 @@ class SseApi extends aAPI
     /**
      * Allow tests to override termination behavior.
      */
+    #[NoReturn]
     protected function terminate(): void
     {
         exit;

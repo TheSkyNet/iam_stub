@@ -1,0 +1,1 @@
+* * * * * cd {{APP_PATH}} && ./phalcons phalcon schedule:run >> /dev/null 2>&1
