@@ -52,3 +52,5 @@
 [2026-01-20 02:33:31][ERROR] [FE] null | url=http://localhost:8080/#!/admin/users/edit/1
 [2026-01-20 02:44:25][ERROR] [FE] null | url=http://localhost:8080/#!/admin/users/edit/1
 [2026-01-20 02:44:32][ERROR] [FE] null | url=http://localhost:8080/#!/admin/users/edit/1
+[2026-01-20 05:31:28][ERROR] [FE] Error: Sync Error Test | url=http://localhost:8080/#!/test
+[2026-01-20 05:31:28][ERROR] [FE] Async Rejection Test | url=http://localhost:8080/#!/test

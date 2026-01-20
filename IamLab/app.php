@@ -122,14 +122,15 @@ RouteGroup::create($app, '/api')
 
         // Jobs API endpoints
         $group->get('/jobs', [(new JobsApi()), "indexAction"]);
+        $group->post('/jobs', [(new JobsApi()), "createAction"]);
+        $group->get('/jobs/{id}', [(new JobsApi()), "showAction"]);
+        $group->delete('/jobs/{id}', [(new JobsApi()), "deleteAction"]);
         $group->get('/jobs/stats', [(new JobsApi()), "statsAction"]);
         $group->get('/jobs/types', [(new JobsApi()), "typesAction"]);
-        $group->get('/jobs/{id}', [(new JobsApi()), "showAction"]);
-        $group->post('/jobs', [(new JobsApi()), "createAction"]);
         $group->post('/jobs/cleanup', [(new JobsApi()), "cleanupAction"]);
         $group->post('/jobs/bulk', [(new JobsApi()), "bulkAction"]);
         $group->post('/jobs/{id}/retry', [(new JobsApi()), "retryAction"]);
-        $group->delete('/jobs/{id}', [(new JobsApi()), "deleteAction"]);
+
     });
 
 // =============================================================================

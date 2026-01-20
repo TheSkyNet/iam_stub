@@ -100,18 +100,9 @@ class JobsApi extends aAPI
      * Show a specific job
      * GET /api/jobs/{id}
      */
-    public function showAction(): void
+    public function showAction(int $id): void
     {
         try {
-            $id = $this->getRouteParam('id', null, 'int');
-            
-            if (!$id) {
-                $this->dispatchError([
-                    'status' => 'error',
-                    'message' => 'Job ID is required'
-                ], 400);
-                return;
-            }
 
             $job = $this->jobQueue->getJob($id);
             
@@ -120,7 +111,6 @@ class JobsApi extends aAPI
                     'status' => 'error',
                     'message' => 'Job not found'
                 ], 404);
-                return;
             }
 
             $this->dispatch([
@@ -150,8 +140,7 @@ class JobsApi extends aAPI
                 $this->dispatchError([
                     'status' => 'error',
                     'message' => 'Job type is required'
-                ], 400);
-                return;
+                ]);
             }
 
             $type = $data['type'];
@@ -165,8 +154,7 @@ class JobsApi extends aAPI
                 $this->dispatchError([
                     'status' => 'error',
                     'message' => 'Priority must be between 1 and 15'
-                ], 400);
-                return;
+                ]);
             }
 
             // Validate max attempts
@@ -174,8 +162,7 @@ class JobsApi extends aAPI
                 $this->dispatchError([
                     'status' => 'error',
                     'message' => 'Max attempts must be between 1 and 10'
-                ], 400);
-                return;
+                ]);
             }
 
             // Validate scheduled_at format if provided
@@ -183,8 +170,7 @@ class JobsApi extends aAPI
                 $this->dispatchError([
                     'status' => 'error',
                     'message' => 'Invalid scheduled_at format. Use Y-m-d H:i:s format'
-                ], 400);
-                return;
+                ]);
             }
 
             $job = $this->jobQueue->dispatch($type, $payload, $priority, $scheduledAt, $maxAttempts);
@@ -194,7 +180,6 @@ class JobsApi extends aAPI
                     'status' => 'error',
                     'message' => 'Failed to create job'
                 ], 500);
-                return;
             }
 
             $this->dispatch([
@@ -215,18 +200,9 @@ class JobsApi extends aAPI
      * Cancel a job
      * DELETE /api/jobs/{id}
      */
-    public function deleteAction(): void
+    public function deleteAction(int $id): void
     {
         try {
-            $id = $this->getRouteParam('id', null, 'int');
-            
-            if (!$id) {
-                $this->dispatchError([
-                    'status' => 'error',
-                    'message' => 'Job ID is required'
-                ], 400);
-                return;
-            }
 
             $success = $this->jobQueue->cancelJob($id);
             
@@ -234,8 +210,7 @@ class JobsApi extends aAPI
                 $this->dispatchError([
                     'status' => 'error',
                     'message' => 'Failed to cancel job. Job may not exist or is currently processing.'
-                ], 400);
-                return;
+                ]);
             }
 
             $this->dispatch([
@@ -255,17 +230,15 @@ class JobsApi extends aAPI
      * Retry a failed job
      * POST /api/jobs/{id}/retry
      */
-    public function retryAction(): void
+    public function retryAction($id): void
     {
         try {
-            $id = $this->getRouteParam('id', null, 'int');
-            
+
             if (!$id) {
                 $this->dispatchError([
                     'status' => 'error',
                     'message' => 'Job ID is required'
-                ], 400);
-                return;
+                ]);
             }
 
             $success = $this->jobQueue->retryJob($id);
@@ -274,8 +247,7 @@ class JobsApi extends aAPI
                 $this->dispatchError([
                     'status' => 'error',
                     'message' => 'Failed to retry job. Job may not exist or is not in failed status.'
-                ], 400);
-                return;
+                ]);
             }
 
             $this->dispatch([
@@ -328,8 +300,7 @@ class JobsApi extends aAPI
                 $this->dispatchError([
                     'status' => 'error',
                     'message' => 'Days parameter must be between 1 and 365'
-                ], 400);
-                return;
+                ]);
             }
 
             $deletedCount = $this->jobQueue->cleanup($days);
@@ -392,8 +363,7 @@ class JobsApi extends aAPI
                 $this->dispatchError([
                     'status' => 'error',
                     'message' => 'Action and job_ids are required'
-                ], 400);
-                return;
+                ]);
             }
 
             $action = $data['action'];
@@ -403,8 +373,7 @@ class JobsApi extends aAPI
                 $this->dispatchError([
                     'status' => 'error',
                     'message' => 'job_ids must be a non-empty array'
-                ], 400);
-                return;
+                ]);
             }
 
             $results = [];
