@@ -8,6 +8,8 @@
     "easymde": "^2.20.0",
     "extract-colors": "^4.2.1",
     "filepond": "^4.32.11",
+    "filepond-plugin-file-validate-type": "^1.2.9",
+    "filepond-plugin-image-preview": "^4.6.12",
     "imagesloaded": "^5.0.0",
     "postcss": "^8.5.6",
     "pusher-js": "^8.4.0",
