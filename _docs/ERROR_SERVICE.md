@@ -52,9 +52,19 @@ Manual Toasts
 ```js
 // From any component
 window.showToast('Something happened', 'warning');
+
+// Example: Handling errors in a service call catch block
+// This is the recommended approach for caught errors
+someService.update(id, data)
+    .then(response => {
+        window.showToast("Success!", "success");
+    })
+    .catch(err => {
+        window.showToast(err.response, "error");
+    });
 ```
 
-Tip: You can pass any value to `window.showToast(value)`, not only strings. The formatter will extract a human-readable message from `Error` objects, API responses, or generic objects.
+Tip: You can pass any value to `window.showToast(value)`, not only strings. The formatter will extract a human-readable message from `Error` objects, API responses, or generic objects. In `.catch` blocks of `m.request` calls, it is common to pass `err.response`.
 
 ## Admin Error Logs Viewer (UI)
 

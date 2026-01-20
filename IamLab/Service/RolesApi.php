@@ -42,8 +42,6 @@ class RolesApi extends aAPI
         
         try {
 
-
-
             $role = Role::findFirst($id);
             if (!$role) {
                 $this->dispatchError([
@@ -187,7 +185,6 @@ class RolesApi extends aAPI
                     'success' => false,
                     'message' => 'Search query is required'
                 ]);
-                return;
             }
 
             // Implement search logic based on your model structure

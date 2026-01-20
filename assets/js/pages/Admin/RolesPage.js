@@ -2,8 +2,10 @@ import m from "mithril";
 import { Icon } from "../../components/Icon";
 import { AuthService } from "../../services/AuthserviceService";
 import { Fieldset, FormField, SubmitButton } from "../../components/Form";
+import {RolesService} from "../../services/RolesService";
 
 const RolesPage = {
+
     roles: [],
     loading: true,
     error: null,
@@ -11,6 +13,7 @@ const RolesPage = {
     newRole: { name: "", description: "" },
 
     oninit: function() {
+        this.rolesService = new RolesService();
         this.loadRoles();
     },
 
@@ -18,11 +21,7 @@ const RolesPage = {
         this.loading = true;
         this.error = null;
         
-        return m.request({
-            method: "GET",
-            url: "/api/roles",
-            headers: AuthService.getAuthHeaders()
-        }).then((response) => {
+        return this.rolesService.getAll().then((response) => {
             if (response.success) {
                 this.roles = response.data;
             } else {
@@ -41,35 +40,41 @@ const RolesPage = {
         const url = isEditing ? `/api/roles/${this.editingRole.id}` : "/api/roles";
         const data = isEditing ? this.editingRole : this.newRole;
 
-        return m.request({
-            method: method,
-            url: url,
-            body: data,
-            headers: AuthService.getAuthHeaders()
-        }).then((response) => {
-            if (response.success) {
-                window.showToast(`Role ${isEditing ? "updated" : "created"}`, "success");
-                this.editingRole = null;
-                this.newRole = { name: "", description: "" };
-                this.loadRoles();
-                document.getElementById('role_modal').close();
-            } else {
-                window.showToast(response, "error");
-            }
-        }).catch((err) => {
-            window.showToast(err, "error");
-        });
+        // use the servis
+
+        if(isEditing){
+            this.rolesService.update(data).then((response) => {
+                if (response.success) {
+                    window.showToast(`Role ${isEditing ? "updated" : "created"}`, "success");
+                    this.editingRole = null;
+                    this.newRole = { name: "", description: "" };
+                    this.loadRoles();
+                    document.getElementById('role_modal').close();
+                } else {
+                    window.showToast(response, "error");
+                }
+            })
+        }
+        if (!isEditing){
+            this.rolesService.create(data).then((response) => {
+                if (response.success) {
+                    window.showToast(`Role ${isEditing ? "updated" : "created"}`, "success");
+                    this.editingRole = null;
+                    this.newRole = { name: "", description: "" };
+                    this.loadRoles();
+                    document.getElementById('role_modal').close();
+                } else {
+                    window.showToast(response, "error");
+                }
+            })
+        }
     },
 
     deleteRole: function(id) {
         if (!confirm("Are you sure you want to delete this role?")) {
             return;
         }
-        return m.request({
-            method: "DELETE",
-            url: `/api/roles/${id}`,
-            headers: AuthService.getAuthHeaders()
-        }).then((response) => {
+        return this.rolesService.delete(id).then((response) => {
             if (response.success) {
                 window.showToast("Role deleted", "success");
                 this.loadRoles();

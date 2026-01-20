@@ -297,7 +297,9 @@ chmod +x phalcons
 
 ### Getting Help
 
-- **Documentation**: Check `README.md` and individual component documentation in `IamLab/Core/*/README.md`
+- **API Framework Documentation**: See `_docs/ROUTE_GROUPS_DOCUMENTATION.md`
+- **Frontend Services Approach**: See `_docs/FRONTEND_SERVICES.md` for the recommended pattern for using services in Mithril components
+- **Error Handling**: See `_docs/ERROR_SERVICE.md` for information on global error handling and toasts
 - **Feature Requests**: See `FEATURES_TODO.md` for planned features
 - **Issues**: Check the project repository for known issues and solutions
 

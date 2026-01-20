@@ -9,9 +9,6 @@ import ToastService from '../services/ToastService';
  * @returns {string}
  */
 export const toMessageStringSync = (value) => {
-
-    console.log('toMessageStringSync', value);
-    debugger;
     if (value === null || value === undefined) {
         return 'An unknown error occurred';
     }

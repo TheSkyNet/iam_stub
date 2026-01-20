@@ -72,9 +72,10 @@ abstract class aAPI extends aAPIBase
         if ($data->delete() === false) {
             $this->dispatchError($data->getMessages());
         }
-        $this->response->setContentType('application/json', 'UTF-8');
-        $this->response->setContent(json_encode($data));
-        $this->response->send();
+        $this->dispatch([
+            'success' => true,
+            'data' => $data->toArray(),
+        ]);
     }
     /**
      * Saves a record and handles the response.
@@ -87,9 +88,10 @@ abstract class aAPI extends aAPIBase
         if ($data->save() === false) {
             $this->dispatchError($data->getMessages());
         }
-        $this->response->setContentType('application/json', 'UTF-8');
-        $this->response->setContent(json_encode($data));
-        $this->response->send();
+        $this->dispatch([
+            'success' => true,
+            'data' => $data->toArray(),
+        ]);
     }
 
     /**
