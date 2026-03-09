@@ -5,8 +5,6 @@ declare(strict_types=1);
 use Rector\Config\RectorConfig;
 use Rector\Set\ValueObject\LevelSetList;
 use Rector\Set\ValueObject\SetList;
-use Rector\Set\ValueObject\DeadCodeSetList;
-use Rector\CodingStyle\Rector\Namespace_\ImportFullyQualifiedNamesRector;
 
 return static function (RectorConfig $rectorConfig): void {
     // Limit Rector to application and tests
@@ -35,13 +33,8 @@ return static function (RectorConfig $rectorConfig): void {
         SetList::CODE_QUALITY,
         SetList::TYPE_DECLARATION,
         SetList::EARLY_RETURN,
-        DeadCodeSetList::DEAD_CODE,
+        SetList::DEAD_CODE,
         SetList::CODING_STYLE,
-    ]);
-
-    // Prefer explicit imports over fully qualified names in code
-    $rectorConfig->rules([
-        ImportFullyQualifiedNamesRector::class,
     ]);
 
     // Import class/function/const names into namespaces

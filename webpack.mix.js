@@ -11,12 +11,25 @@ if (process.env.MIX_BROWSER_SYNC) {
 */
 
 
+mix.setPublicPath('public');
+
 mix.webpackConfig({
+    stats: 'errors-warnings',
+    watchOptions: {
+        ignored: [
+            '**/node_modules/**',
+            '**/public/**',
+            '**/vendor/**',
+            '**/mix-manifest.json'
+        ]
+    }
 });
 
-mix.js('assets/js/app.js', 'public/js')
-    .postCss('assets/css/main.css', 'public/css')
+mix.js('assets/js/app.js', 'js')
+    .postCss('assets/css/main.css', 'css')
     .options({
+        clearConsole: false,
+        processCssUrls: false,
         postCss: [
             require('@tailwindcss/postcss'),
         ],
@@ -26,4 +39,5 @@ mix.js('assets/js/app.js', 'public/js')
             fonts: 'fonts',
         },
     })
+    .disableNotifications()
     .sourceMaps()
