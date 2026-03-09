@@ -21,6 +21,13 @@ function layout(view) {
                         m(Icon, { icon: "fa-solid fa-user" }),
                         " Profile"
                     ]),
+                    m(m.route.Link, {
+                        href: "/payments",
+                        class: "btn btn-ghost btn-sm"
+                    }, [
+                        m(Icon, { icon: "fa-solid fa-credit-card" }),
+                        " Payments"
+                    ]),
                     m("button.btn.btn-ghost.btn-sm.text-error", {
                         onclick: () => {
                             AuthService.logout().then(() => m.route.set('/login'));
@@ -59,7 +66,14 @@ function layout(view) {
                         m(m.route.Link, {
                             "class": "btn btn-ghost text-xl",
                             "href": "/"
-                        }, "Phalcon Stub")
+                        }, "Phalcon Stub"),
+                        m(m.route.Link, {
+                            href: "/demo",
+                            class: "btn btn-ghost btn-sm ml-4"
+                        }, [
+                            m(Icon, { icon: "fa-solid fa-flask" }),
+                            " Demo"
+                        ])
                     ]),
                     m(".navbar-end", authLinks)
                 ]),

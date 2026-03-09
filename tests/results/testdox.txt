@@ -1,5 +1,15 @@
-Sse Api (Tests\Unit\Service\SseApi)
- [x] Echo action outputs single event
- [x] Clock action emits requested count
- [x] Test action outputs ok status
+Payment (Tests\Unit\Model\Payment)
+ [x] Setters and getters work
+ [x] Before validation on create sets timestamps
+ [x] Before validation on update sets updated at
+
+Payment Service Multi Provider (Tests\Unit\Service\Payment\PaymentServiceMultiProvider)
+ [x] Can instantiate service
+ [x] Can get available providers
+ [x] Can switch provider
+ [x] Throws exception on invalid provider
+
+Subscription (Tests\Unit\Model\Subscription)
+ [x] Setters and getters work
+ [x] Before validation on create sets timestamps
 

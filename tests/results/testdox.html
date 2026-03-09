@@ -51,11 +51,23 @@
         </style>
     </head>
     <body>
-        <h2>Sse Api (Tests\Unit\Service\SseApi)</h2>
+        <h2>Payment (Tests\Unit\Model\Payment)</h2>
         <ul>
-            <li class="success">Echo action outputs single event</li>
-            <li class="success">Clock action emits requested count</li>
-            <li class="success">Test action outputs ok status</li>
+            <li class="success">Setters and getters work</li>
+            <li class="success">Before validation on create sets timestamps</li>
+            <li class="success">Before validation on update sets updated at</li>
+        </ul>
+        <h2>Payment Service Multi Provider (Tests\Unit\Service\Payment\PaymentServiceMultiProvider)</h2>
+        <ul>
+            <li class="success">Can instantiate service</li>
+            <li class="success">Can get available providers</li>
+            <li class="success">Can switch provider</li>
+            <li class="success">Throws exception on invalid provider</li>
+        </ul>
+        <h2>Subscription (Tests\Unit\Model\Subscription)</h2>
+        <ul>
+            <li class="success">Setters and getters work</li>
+            <li class="success">Before validation on create sets timestamps</li>
         </ul>
     </body>
 </html>

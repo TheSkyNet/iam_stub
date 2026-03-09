@@ -19,6 +19,7 @@ import JobsPage from "./pages/Admin/JobsPage";
 import ErrorsPage from "./pages/Admin/ErrorsPage";
 import SettingsPage from "./pages/Admin/SettingsPage";
 import LMSPage from "./pages/Admin/LMSPage";
+import PaymentsPage from "./pages/Payments/PaymentsPage";
 import EditorWelcomePage from "./pages/Role/EditorWelcomePage";
 import MemberWelcomePage from "./pages/Role/MemberWelcomePage";
 import StaffWelcomePage from "./pages/Role/StaffWelcomePage";
@@ -26,6 +27,7 @@ import PusherTestPage from "./pages/Test/PusherTestPage";
 import SseTestPage from "./pages/Test/SseTestPage";
 import TestPage from "./pages/Test/TestPage";
 import ComponentsPage from "./pages/ComponentsPage";
+import DemoPage from "./pages/Demo/DemoPage";
 
 const root = document.getElementById('app');
 
@@ -102,10 +104,12 @@ m.route(root, "/", {
     "/forgot-password": layout(ForgotPasswordFormPage),
     "/reset-password": layout(ResetPasswordFormPage),
     "/components": layout(ComponentsPage),
+    "/demo": layout(DemoPage),
     "/pusher-test": layout(authGuard(PusherTestPage)),
     "/sse-test": layout(authGuard(SseTestPage)),
     "/test": layout(TestPage),
     "/profile": layout(authGuard(ProfilePage)),
+    "/payments": layout(authGuard(PaymentsPage)),
     // Admin
     "/admin": layout(adminGuard(AdminPage)),
     "/admin/roles": layout(adminGuard(RolesPage)),

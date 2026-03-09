@@ -1,8 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <testsuites>
-  <testsuite name="Tests\Unit\Service\SseApiTest" file="/home/morton/apps/Dev/ima_stub/tests/Unit/Service/SseApiTest.php" tests="3" assertions="13" errors="0" failures="0" skipped="0" time="0.002486">
-    <testcase name="testTestActionOutputsOkStatus" file="/home/morton/apps/Dev/ima_stub/tests/Unit/Service/SseApiTest.php" line="64" class="Tests\Unit\Service\SseApiTest" classname="Tests.Unit.Service.SseApiTest" assertions="3" time="0.002107"/>
-    <testcase name="testEchoActionOutputsSingleEvent" file="/home/morton/apps/Dev/ima_stub/tests/Unit/Service/SseApiTest.php" line="12" class="Tests\Unit\Service\SseApiTest" classname="Tests.Unit.Service.SseApiTest" assertions="6" time="0.000259"/>
-    <testcase name="testClockActionEmitsRequestedCount" file="/home/morton/apps/Dev/ima_stub/tests/Unit/Service/SseApiTest.php" line="38" class="Tests\Unit\Service\SseApiTest" classname="Tests.Unit.Service.SseApiTest" assertions="4" time="0.000120"/>
+  <testsuite name="CLI Arguments" tests="9" assertions="33" errors="0" failures="0" skipped="0" time="0.010578">
+    <testsuite name="Tests\Unit\Model\PaymentTest" file="/var/www/html/tests/Unit/Model/PaymentTest.php" tests="3" assertions="13" errors="0" failures="0" skipped="0" time="0.004973">
+      <testcase name="testSettersAndGettersWork" file="/var/www/html/tests/Unit/Model/PaymentTest.php" line="10" class="Tests\Unit\Model\PaymentTest" classname="Tests.Unit.Model.PaymentTest" assertions="8" time="0.003877"/>
+      <testcase name="testBeforeValidationOnCreateSetsTimestamps" file="/var/www/html/tests/Unit/Model/PaymentTest.php" line="32" class="Tests\Unit\Model\PaymentTest" classname="Tests.Unit.Model.PaymentTest" assertions="4" time="0.000978"/>
+      <testcase name="testBeforeValidationOnUpdateSetsUpdatedAt" file="/var/www/html/tests/Unit/Model/PaymentTest.php" line="44" class="Tests\Unit\Model\PaymentTest" classname="Tests.Unit.Model.PaymentTest" assertions="1" time="0.000118"/>
+    </testsuite>
+    <testsuite name="Tests\Unit\Model\SubscriptionTest" file="/var/www/html/tests/Unit/Model/SubscriptionTest.php" tests="2" assertions="14" errors="0" failures="0" skipped="0" time="0.000624">
+      <testcase name="testSettersAndGettersWork" file="/var/www/html/tests/Unit/Model/SubscriptionTest.php" line="10" class="Tests\Unit\Model\SubscriptionTest" classname="Tests.Unit.Model.SubscriptionTest" assertions="10" time="0.000468"/>
+      <testcase name="testBeforeValidationOnCreateSetsTimestamps" file="/var/www/html/tests/Unit/Model/SubscriptionTest.php" line="36" class="Tests\Unit\Model\SubscriptionTest" classname="Tests.Unit.Model.SubscriptionTest" assertions="4" time="0.000156"/>
+    </testsuite>
+    <testsuite name="Tests\Unit\Service\Payment\PaymentServiceMultiProviderTest" file="/var/www/html/tests/Unit/Service/Payment/PaymentServiceMultiProviderTest.php" tests="4" assertions="6" errors="0" failures="0" skipped="0" time="0.004981">
+      <testcase name="testCanInstantiateService" file="/var/www/html/tests/Unit/Service/Payment/PaymentServiceMultiProviderTest.php" line="21" class="Tests\Unit\Service\Payment\PaymentServiceMultiProviderTest" classname="Tests.Unit.Service.Payment.PaymentServiceMultiProviderTest" assertions="1" time="0.002915"/>
+      <testcase name="testCanGetAvailableProviders" file="/var/www/html/tests/Unit/Service/Payment/PaymentServiceMultiProviderTest.php" line="27" class="Tests\Unit\Service\Payment\PaymentServiceMultiProviderTest" classname="Tests.Unit.Service.Payment.PaymentServiceMultiProviderTest" assertions="3" time="0.000840"/>
+      <testcase name="testCanSwitchProvider" file="/var/www/html/tests/Unit/Service/Payment/PaymentServiceMultiProviderTest.php" line="37" class="Tests\Unit\Service\Payment\PaymentServiceMultiProviderTest" classname="Tests.Unit.Service.Payment.PaymentServiceMultiProviderTest" assertions="1" time="0.000382"/>
+      <testcase name="testThrowsExceptionOnInvalidProvider" file="/var/www/html/tests/Unit/Service/Payment/PaymentServiceMultiProviderTest.php" line="47" class="Tests\Unit\Service\Payment\PaymentServiceMultiProviderTest" classname="Tests.Unit.Service.Payment.PaymentServiceMultiProviderTest" assertions="1" time="0.000843"/>
+    </testsuite>
   </testsuite>
 </testsuites>

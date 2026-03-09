@@ -13,6 +13,7 @@ use IamLab\Service\PusherApi;
 use IamLab\Service\RolesApi;
 use IamLab\Service\UsersApi;
 use IamLab\Service\JobsApi;
+use IamLab\Service\PaymentsApi;
 use IamLab\Service\ErrorsApi;
 use IamLab\Service\SseApi;
 use IamLab\Service\SettingsApi;
@@ -78,6 +79,14 @@ RouteGroup::create($app, '/api')
         
         // OAuth authenticated endpoints
         $group->post('/oauth/unlink', [(new OAuth()), "unlinkAction"]);
+        
+        // Payment and Subscription API
+        $group->get('/payments', [(new PaymentsApi()), "indexAction"]);
+        $group->post('/payments', [(new PaymentsApi()), "createAction"]);
+        $group->get('/payments/providers', [(new PaymentsApi()), "providersAction"]);
+        $group->get('/subscriptions', [(new PaymentsApi()), "subscriptionsAction"]);
+        $group->post('/subscriptions', [(new PaymentsApi()), "createSubscriptionAction"]);
+        $group->delete('/subscriptions/{id}', [(new PaymentsApi()), "cancelSubscriptionAction"]);
         
 
     });
