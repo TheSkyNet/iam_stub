@@ -145,11 +145,11 @@ HELP;
 <body>
     <div class="container">
         <div class="header">
-            <h1>🚀 Phalcon Stub Test Email</h1>
+            <h1>Phalcon Stub Test Email</h1>
         </div>
         <div class="content">
             <h2>Email Service Test</h2>
-            <p class="success">✅ Congratulations! Your email service is working correctly.</p>
+            <p class="success">Congratulations! Your email service is working correctly.</p>
             
             <h3>Test Details:</h3>
             <ul>
@@ -161,10 +161,10 @@ HELP;
             
             <h3>What's Working:</h3>
             <ul>
-                <li>✅ Email service initialization</li>
-                <li>✅ HTML email formatting</li>
-                <li>✅ Command-line email sending</li>
-                <li>✅ Configuration loading</li>
+                <li>Email service initialization</li>
+                <li>HTML email formatting</li>
+                <li>Command-line email sending</li>
+                <li>Configuration loading</li>
             </ul>
             
             <p>This email was sent using the Phalcon Stub command runner system. You can now use the email service throughout your application for notifications, password resets, and other communications.</p>

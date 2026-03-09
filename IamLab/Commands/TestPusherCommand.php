@@ -179,10 +179,10 @@ HELP;
     private function generateTestMessage(): string
     {
         $messages = [
-            "Hello from Phalcon Stub command runner! 🚀",
+            "Hello from Phalcon Stub command runner!",
             "Testing real-time communication with Pusher.js",
             "This is a test message sent via command line",
-            "Real-time events are working correctly! ✅",
+            "Real-time events are working correctly!",
             "Pusher integration test successful",
             "Command runner -> Pusher -> Frontend pipeline active"
         ];

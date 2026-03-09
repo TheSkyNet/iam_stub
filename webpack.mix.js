@@ -29,7 +29,7 @@ mix.js('assets/js/app.js', 'js')
     .postCss('assets/css/main.css', 'css')
     .options({
         clearConsole: false,
-        processCssUrls: false,
+        processCssUrls: true,
         postCss: [
             require('@tailwindcss/postcss'),
         ],

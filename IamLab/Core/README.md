@@ -20,7 +20,7 @@ IamLab/Core/
 
 ## Components
 
-### 🔌 API Framework
+### API Framework
 **Location:** `API/`  
 **Documentation:** [API README](API/README.md)
 
@@ -38,7 +38,7 @@ Provides a robust foundation for building RESTful APIs with standardized respons
 - `Entity` - Enhanced model base class
 - `Rest` - REST API utilities
 
-### 📦 Collection Utilities
+### Collection Utilities
 **Location:** `Collection/`  
 **Documentation:** [Collection README](Collection/README.md)
 
@@ -53,7 +53,7 @@ Enhanced collection class that extends Phalcon's base collection with additional
 **Main Classes:**
 - `Collection` - Enhanced collection with additional methods
 
-### 📧 Email Service System
+### Email Service System
 **Location:** `Email/`  
 **Documentation:** [Email README](Email/README.md)
 
@@ -72,7 +72,7 @@ Comprehensive email service with multiple provider support, making it easy to se
 - `MailHogProvider` - Development email provider
 - `ResendProvider` - Production email provider
 
-### 🌍 Environment Management
+### Environment Management
 **Location:** `Env/`  
 **Documentation:** [Env README](Env/README.md)
 
@@ -87,7 +87,7 @@ Simple and reliable environment variable loading from .env files with validation
 **Main Classes:**
 - `Env` - Environment variable loader
 
-### 🛠️ Helper Utilities
+### Helper Utilities
 **Location:** `Helpers/`  
 **Documentation:** [Helpers README](Helpers/README.md)
 
@@ -107,7 +107,7 @@ Collection of utility functions that simplify common tasks throughout the applic
 - `crypt.php` - Encryption and decryption
 - `include.php` - Autoloader for all helpers
 
-### ⚡ Real-time Communication
+### Real-time Communication
 **Location:** `Pusher/`  
 **Documentation:** [Pusher README](Pusher/README.md)
 

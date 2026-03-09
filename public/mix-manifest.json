@@ -1,4 +1,8 @@
 {
     "/js/app.js": "/js/app.js",
-    "/css/main.css": "/css/main.css"
+    "/css/main.css": "/css/main.css",
+    "/fonts/vendor/@fortawesome/fontawesome-free/webfa-brands-400.woff2?f276979f97f1cf375d23008988fd0506": "/fonts/vendor/@fortawesome/fontawesome-free/webfa-brands-400.woff2?f276979f97f1cf375d23008988fd0506",
+    "/fonts/vendor/@fortawesome/fontawesome-free/webfa-regular-400.woff2?cfbad32c79d9dda6af4a93f19c0fa1e1": "/fonts/vendor/@fortawesome/fontawesome-free/webfa-regular-400.woff2?cfbad32c79d9dda6af4a93f19c0fa1e1",
+    "/fonts/vendor/@fortawesome/fontawesome-free/webfa-solid-900.woff2?ce9a3fa740bd60b4ac3b40a7687029d8": "/fonts/vendor/@fortawesome/fontawesome-free/webfa-solid-900.woff2?ce9a3fa740bd60b4ac3b40a7687029d8",
+    "/fonts/vendor/@fortawesome/fontawesome-free/webfa-v4compatibility.woff2?296da06936a3373940c8784247c30315": "/fonts/vendor/@fortawesome/fontawesome-free/webfa-v4compatibility.woff2?296da06936a3373940c8784247c30315"
 }
