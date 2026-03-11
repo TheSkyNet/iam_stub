@@ -34,6 +34,18 @@ class SquareIntegration implements PaymentIntegrationInterface
     }
 
     /**
+     * Capture a previously created payment
+     */
+    public function capturePayment(string $transactionId, array $options = []): array
+    {
+        return [
+            'success' => true,
+            'status' => 'completed',
+            'provider_payload' => ['message' => 'Square payment captured (mock)']
+        ];
+    }
+
+    /**
      * Create a subscription
      */
     public function createSubscription(array $subscriptionData): array

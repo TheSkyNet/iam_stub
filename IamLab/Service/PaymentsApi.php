@@ -24,26 +24,35 @@ class PaymentsApi extends aAPI
         $this->requireAuth();
         
         try {
-            $amount = $this->getParam('amount');
-            $currency = $this->getParam('currency', 'USD');
-            $provider = $this->getParam('provider', 'stripe');
+            $data = $this->getData();
+            $amount = $data['amount'] ?? null;
+            $currency = $data['currency'] ?? 'USD';
+            $provider = $data['provider'] ?? 'stripe';
+            $transactionId = $data['paypal_order_id'] ?? $data['transaction_id'] ?? null;
             
-            if (!$amount) {
-                $this->dispatchError([
-                    'success' => false,
-                    'message' => 'Amount is required'
-                ]);
-                return;
-            }
-
             $user = $this->getCurrentUser();
             $this->paymentService->setProvider($provider);
-            $payment = $this->paymentService->processSinglePayment($user->getId(), (float)$amount, $currency);
+
+            if ($transactionId && (isset($data['status']) && $data['status'] === 'captured')) {
+                $payment = $this->paymentService->capturePayment($transactionId, $data);
+                $message = 'Payment captured successfully';
+            } else {
+                if (!$amount) {
+                    $this->dispatchError([
+                        'success' => false,
+                        'message' => 'Amount is required'
+                    ]);
+                    return;
+                }
+
+                $payment = $this->paymentService->processSinglePayment($user->getId(), (float)$amount, $currency, $data);
+                $message = 'Payment processed successfully';
+            }
 
             $this->dispatch([
                 'success' => true,
                 'data' => $payment->toArray(),
-                'message' => 'Payment processed successfully'
+                'message' => $message
             ]);
         } catch (Exception $e) {
             $this->dispatchError([
@@ -63,8 +72,9 @@ class PaymentsApi extends aAPI
         $this->requireAuth();
         
         try {
-            $planId = $this->getParam('plan_id');
-            $provider = $this->getParam('provider', 'stripe');
+            $data = $this->getData();
+            $planId = $data['plan_id'] ?? null;
+            $provider = $data['provider'] ?? 'stripe';
             
             if (!$planId) {
                 $this->dispatchError([
@@ -76,7 +86,7 @@ class PaymentsApi extends aAPI
 
             $user = $this->getCurrentUser();
             $this->paymentService->setProvider($provider);
-            $subscription = $this->paymentService->createSubscription($user->getId(), $planId);
+            $subscription = $this->paymentService->createSubscription($user->getId(), $planId, $data);
 
             $this->dispatch([
                 'success' => true,
@@ -171,6 +181,26 @@ class PaymentsApi extends aAPI
                 'error' => $e->getMessage()
             ]);
         }
+    }
+
+    /**
+     * Get PayPal configuration for frontend SDK
+     * GET /api/payments/paypal-config
+     */
+    public function paypalConfigAction(): void
+    {
+        $this->requireAuth();
+        
+        $configManager = new \IamLab\Service\Payment\Configuration\ConfigurationManager();
+        $paypalConfig = $configManager->getIntegrationConfig('paypal');
+        
+        $this->dispatch([
+            'success' => true,
+            'data' => [
+                'clientId' => $paypalConfig['client_id'] ?? '',
+                'mode' => $paypalConfig['mode'] ?? 'sandbox'
+            ]
+        ]);
     }
 
     /**

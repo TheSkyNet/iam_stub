@@ -173,7 +173,7 @@ const ProfilePage = {
                 m("h3.text-lg.font-semibold.mb-4", "Connected Accounts"),
                 m(".flex.items-center.justify-between.bg-base-200.p-4.rounded-lg", [
                     m(".flex.items-center.gap-3", [
-                        m(Icon, { name: `fa-brands fa-${ProfilePage.profileData.oauth_provider}` }),
+                        m(Icon, { icon: `fa-brands fa-${ProfilePage.profileData.oauth_provider}` }),
                         m("span", [
                             "Connected via ",
                             m("span.font-bold", providerName)
@@ -189,7 +189,7 @@ const ProfilePage = {
         const personalCard = m(".card.bg-base-100.shadow-xl.mb-8", [
             m(".card-body", [
                 m("h2.card-title.mb-4", [
-                    m(Icon, { name: "fa-solid fa-id-card" }),
+                    m(Icon, { icon: "fa-solid fa-id-card" }),
                     "Personal Information"
                 ]),
                 m("form", { onsubmit: ProfilePage.handleUpdateProfile }, [
@@ -224,7 +224,7 @@ const ProfilePage = {
         const securityCard = m(".card.bg-base-100.shadow-xl.mb-8", [
             m(".card-body", [
                 m("h2.card-title.mb-4", [
-                    m(Icon, { name: "fa-solid fa-shield-halved" }),
+                    m(Icon, { icon: "fa-solid fa-shield-halved" }),
                     "Security"
                 ]),
                 m("form", { onsubmit: ProfilePage.handleChangePassword }, [
@@ -268,11 +268,11 @@ const ProfilePage = {
         const developerCard = m(".card.bg-base-100.shadow-xl.mb-8", [
             m(".card-body", [
                 m("h2.card-title.mb-4", [
-                    m(Icon, { name: "fa-solid fa-code" }),
+                    m(Icon, { icon: "fa-solid fa-code" }),
                     "Developer Settings"
                 ]),
                 m(".alert.alert-info.mb-6", [
-                    m(Icon, { name: "fa-solid fa-circle-info" }),
+                    m(Icon, { icon: "fa-solid fa-circle-info" }),
                     m("span", "Your API key allows you to access our services programmatically. Keep it secret!")
                 ]),
                 m(FormField, {
@@ -300,7 +300,7 @@ const ProfilePage = {
                     m(".bg-neutral.text-neutral-content.rounded-full.w-24.flex.items-center.justify-center.overflow-hidden.relative", [
                         avatarContent,
                         m(".absolute.inset-0.bg-black.bg-opacity-40.flex.items-center.justify-center.opacity-0.group-hover:opacity-100.transition-opacity", [
-                            m(Icon, { name: "fa-solid fa-camera", class: "text-white text-xl" })
+                            m(Icon, { icon: "fa-solid fa-camera", class: "text-white text-xl" })
                         ])
                     ]),
                     // Hidden FilePond input

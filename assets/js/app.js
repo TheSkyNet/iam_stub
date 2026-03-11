@@ -28,6 +28,7 @@ import SseTestPage from "./pages/Test/SseTestPage";
 import TestPage from "./pages/Test/TestPage";
 import ComponentsPage from "./pages/ComponentsPage";
 import DemoPage from "./pages/Demo/DemoPage";
+import PayPalDemoPage from "./pages/Demo/PayPalDemoPage";
 
 const root = document.getElementById('app');
 
@@ -105,6 +106,7 @@ m.route(root, "/", {
     "/reset-password": layout(ResetPasswordFormPage),
     "/components": layout(ComponentsPage),
     "/demo": layout(DemoPage),
+    "/demo/paypal": layout(authGuard(PayPalDemoPage)),
     "/pusher-test": layout(authGuard(PusherTestPage)),
     "/sse-test": layout(authGuard(SseTestPage)),
     "/test": layout(TestPage),

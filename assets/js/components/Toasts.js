@@ -24,12 +24,12 @@ const Toasts = {
                 }[toast.type] || 'fa-solid fa-circle-info';
 
                 return m("div", {"class": `alert ${alertClass} shadow-sm`, "key": toast.id}, [
-                    m(Icon, { name: iconName }),
+                    m(Icon, { icon: iconName }),
                     m("span", toast.message),
                     m("button", {
                         "class": "btn btn-ghost btn-xs btn-circle",
                         "onclick": () => ToastService.remove(toast.id)
-                    }, m(Icon, { name: 'fa-solid fa-xmark' }))
+                    }, m(Icon, { icon: 'fa-solid fa-xmark' }))
                 ]);
             })
         );

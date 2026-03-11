@@ -15,11 +15,21 @@ class StripeIntegration implements PaymentIntegrationInterface
     {
         // Skeleton implementation
         return [
+            'success' => true,
             'transaction_id' => 'st_' . uniqid(),
             'status' => 'completed',
             'amount' => $paymentData['amount'],
             'currency' => $paymentData['currency'] ?? 'USD',
             'provider_payload' => ['message' => 'Stripe payment created (mock)']
+        ];
+    }
+
+    public function capturePayment(string $transactionId, array $options = []): array
+    {
+        return [
+            'success' => true,
+            'status' => 'completed',
+            'provider_payload' => ['message' => 'Stripe payment captured (mock)']
         ];
     }
 

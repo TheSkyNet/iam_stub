@@ -20,6 +20,11 @@ interface PaymentIntegrationInterface
     public function createPayment(array $paymentData): array;
 
     /**
+     * Capture a previously created payment
+     */
+    public function capturePayment(string $transactionId, array $options = []): array;
+
+    /**
      * Create a subscription
      */
     public function createSubscription(array $subscriptionData): array;

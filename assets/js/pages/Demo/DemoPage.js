@@ -33,6 +33,14 @@ export default class DemoPage {
                 requiresAuth: true
             },
             {
+                title: "PayPal Integration Demo",
+                description: "Deep dive into PayPal-specific features and sandbox testing.",
+                icon: "fa-brands fa-paypal",
+                href: "/demo/paypal",
+                color: "info",
+                requiresAuth: true
+            },
+            {
                 title: "LMS Integration",
                 description: "Manage AI-powered LMS integrations (Ollama, Gemini, Tencent EDU).",
                 icon: "fa-solid fa-graduation-cap",

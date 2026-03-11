@@ -74,6 +74,41 @@ class PaymentService
     }
 
     /**
+     * Capture a previously created payment
+     */
+    public function capturePayment(string $transactionId, array $options = []): Payment
+    {
+        if (!$this->integration) {
+            throw new Exception("Payment integration not initialized");
+        }
+
+        $payment = Payment::findFirst([
+            'conditions' => 'transaction_id = :transactionId:',
+            'bind' => ['transactionId' => $transactionId]
+        ]);
+
+        if (!$payment) {
+            throw new Exception("Payment record not found for transaction: {$transactionId}");
+        }
+
+        $result = $this->integration->capturePayment($transactionId, $options);
+
+        if ($result['success'] ?? false) {
+            $payment->setStatus($result['status'] ?? 'completed');
+            $payment->setPayload(json_encode(array_merge(
+                json_decode($payment->getPayload(), true) ?? [],
+                $result['provider_payload'] ?? []
+            )));
+
+            if (!$payment->save()) {
+                throw new Exception("Failed to update payment record: " . implode(', ', $payment->getMessages()));
+            }
+        }
+
+        return $payment;
+    }
+
+    /**
      * Create a subscription
      */
     public function createSubscription(int $userId, string $planId, array $options = []): Subscription

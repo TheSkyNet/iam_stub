@@ -1,3 +1,5 @@
+import { AuthService } from "./AuthserviceService";
+
 export default class PaymentsService {
     constructor() {
         this.baseUrl = '/api/payments';
@@ -7,11 +9,12 @@ export default class PaymentsService {
     /**
      * Create a single payment
      */
-    createPayment(amount, currency = 'USD', provider = 'stripe') {
+    createPayment(amount, currency = 'USD', provider = 'stripe', options = {}) {
         return m.request({
             method: "POST",
             url: this.baseUrl,
-            body: { amount, currency, provider }
+            body: { amount, currency, provider, ...options },
+            headers: AuthService.getAuthHeaders()
         });
     }
 
@@ -21,7 +24,8 @@ export default class PaymentsService {
     getPayments() {
         return m.request({
             method: "GET",
-            url: this.baseUrl
+            url: this.baseUrl,
+            headers: AuthService.getAuthHeaders()
         });
     }
 
@@ -31,18 +35,31 @@ export default class PaymentsService {
     getProviders() {
         return m.request({
             method: "GET",
-            url: `${this.baseUrl}/providers`
+            url: `${this.baseUrl}/providers`,
+            headers: AuthService.getAuthHeaders()
+        });
+    }
+
+    /**
+     * Get PayPal configuration
+     */
+    getPayPalConfig() {
+        return m.request({
+            method: "GET",
+            url: `${this.baseUrl}/paypal-config`,
+            headers: AuthService.getAuthHeaders()
         });
     }
 
     /**
      * Create a subscription
      */
-    createSubscription(plan_id, provider = 'stripe') {
+    createSubscription(plan_id, provider = 'stripe', options = {}) {
         return m.request({
             method: "POST",
             url: this.subUrl,
-            body: { plan_id, provider }
+            body: { plan_id, provider, ...options },
+            headers: AuthService.getAuthHeaders()
         });
     }
 
@@ -52,7 +69,8 @@ export default class PaymentsService {
     getSubscriptions() {
         return m.request({
             method: "GET",
-            url: this.subUrl
+            url: this.subUrl,
+            headers: AuthService.getAuthHeaders()
         });
     }
 
@@ -62,7 +80,8 @@ export default class PaymentsService {
     cancelSubscription(id) {
         return m.request({
             method: "DELETE",
-            url: `${this.subUrl}/${id}`
+            url: `${this.subUrl}/${id}`,
+            headers: AuthService.getAuthHeaders()
         });
     }
 }
