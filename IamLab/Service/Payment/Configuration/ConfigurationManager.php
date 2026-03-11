@@ -40,6 +40,17 @@ class ConfigurationManager
                     'application_id' => env('SQUARE_APPLICATION_ID', ''),
                     'location_id' => env('SQUARE_LOCATION_ID', '')
                 ];
+            case 'pace':
+                return [
+                    'enabled' => (bool)env('PACE_ENABLED', true),
+                    'api_key' => env('PACE_API_KEY', ''),
+                    'secret' => env('PACE_SECRET', '')
+                ];
+            case 'mollie':
+                return [
+                    'enabled' => (bool)env('MOLLIE_ENABLED', true),
+                    'api_key' => env('MOLLIE_API_KEY', '')
+                ];
             default:
                 return [
                     'enabled' => (bool)env("PAYMENT_{$prefix}_ENABLED", false)
@@ -61,7 +72,7 @@ class ConfigurationManager
      */
     public function getEnabledIntegrations(): array
     {
-        $all = ['stripe', 'paypal', 'square'];
+        $all = ['stripe', 'paypal', 'square', 'pace', 'mollie'];
         return array_filter($all, fn($name) => $this->isIntegrationEnabled($name));
     }
 
@@ -71,7 +82,7 @@ class ConfigurationManager
     public function getAllConfigurations(): array
     {
         $configs = [];
-        foreach (['stripe', 'paypal', 'square'] as $name) {
+        foreach (['stripe', 'paypal', 'square', 'pace', 'mollie'] as $name) {
             $configs[$name] = $this->getIntegrationConfig($name);
         }
         return $configs;

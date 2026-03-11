@@ -1,6 +1,6 @@
 import m from "mithril";
-import { Icon } from "../../components/Icon";
-import PaymentsService from "../../services/PaymentsService";
+import { Icon } from "../../../components/Icon";
+import PaymentsService from "../../../services/PaymentsService";
 
 export default class PayPalDemoPage {
     oninit(vnode) {
@@ -92,9 +92,9 @@ export default class PayPalDemoPage {
                                 paypal_order_id: data.orderId,
                                 status: 'captured'
                             });
-                            window.showToast("Payment successfully captured and recorded!", "success");
+                            window.showToast("PayPal Payment successfully captured and recorded!", "success");
                         } catch (error) {
-                            window.showToast("Failed to record payment on server", "error");
+                            window.showToast("Failed to record PayPal payment on server", "error");
                         } finally {
                             this.isLoading = false;
                             m.redraw();
@@ -145,7 +145,7 @@ export default class PayPalDemoPage {
         this.isLoading = true;
         this.paymentsService.createPayment(this.amount, this.currency, 'paypal')
             .then(res => {
-                window.showToast("Mock PayPal payment created successfully", "success");
+                window.showToast("PayPal payment processed", "success");
                 this.isLoading = false;
                 m.redraw();
             })
@@ -160,7 +160,7 @@ export default class PayPalDemoPage {
         this.isLoading = true;
         this.paymentsService.createSubscription(this.selectedPlan, 'paypal')
             .then(res => {
-                window.showToast("Mock PayPal subscription created successfully", "success");
+                window.showToast("PayPal subscription request sent", "success");
                 this.isLoading = false;
                 m.redraw();
             })
@@ -238,10 +238,10 @@ export default class PayPalDemoPage {
                 ])
             ]),
             paypalButtonSection,
-            m(".divider", "OR (Mock Legacy)"),
+            m(".divider", "OR (Direct API)"),
             m("button.btn.btn-outline.btn-info.btn-sm", { onclick: () => this.handleCreatePayment() }, [
                 m(Icon, { icon: "fa-solid fa-money-bill-1" }),
-                " Mock PayPal Payment"
+                " Pay with PayPal API"
             ])
         ]);
 
@@ -259,7 +259,7 @@ export default class PayPalDemoPage {
             ]),
             m("button.btn.btn-primary", { onclick: () => this.handleCreateSubscription() }, [
                 m(Icon, { icon: "fa-solid fa-repeat" }),
-                " Mock PayPal Subscribe"
+                " Subscribe via PayPal"
             ])
         ]);
 

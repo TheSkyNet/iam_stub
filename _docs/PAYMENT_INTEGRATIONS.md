@@ -14,11 +14,13 @@ The system is composed of several key layers:
 
 ## Supported Providers
 
-Currently, the system supports the following providers (with mock implementations for development):
+The system supports the following providers with real sandbox integration capabilities:
 
--   **Stripe**: Comprehensive support for single payments and subscriptions.
--   **PayPal**: Support for single payments and subscriptions via the PayPal platform.
--   **Square**: Support for single payments and subscriptions via Square.
+-   **Stripe**: Comprehensive support for single payments and subscriptions via Stripe Elements and Checkout.
+-   **PayPal**: Support for single payments and subscriptions via the PayPal SDK v6.
+-   **Square**: Support for single payments and subscriptions via Square Web Payments SDK.
+-   **Pace**: Fast payment provider for UK and Southeast Asia markets with hosted checkout support.
+-   **Mollie**: Highly developer-friendly payment provider for UK and Europe with a simple REST API and hosted checkout.
 
 ## Configuration
 
@@ -42,6 +44,15 @@ SQUARE_ENABLED=true
 SQUARE_ACCESS_TOKEN=your_access_token
 SQUARE_APPLICATION_ID=your_app_id
 SQUARE_LOCATION_ID=your_location_id
+
+# Pace Configuration
+PACE_ENABLED=true
+PACE_API_KEY=your_api_key
+PACE_SECRET=your_secret
+
+# Mollie Configuration
+MOLLIE_ENABLED=true
+MOLLIE_API_KEY=your_api_key
 ```
 
 ## Usage in PHP
@@ -91,11 +102,18 @@ The system is exposed via the following authenticated API endpoints:
 The frontend uses the `PaymentsService.js` to interact with these APIs. When creating a payment or subscription, you can specify the desired provider:
 
 ```javascript
-this.paymentsService.createPayment({
-    amount: 50.00,
-    currency: 'USD',
-    provider: 'paypal'
-})
-.then(res => window.showToast("Payment Successful", "success"))
-.catch(err => window.showToast(err.response, "error"));
+// Single Payment
+this.paymentsService.createPayment(50.00, 'USD', 'paypal')
+    .then(res => window.showToast("Payment Successful", "success"))
+    .catch(err => window.showToast(err.response, "error"));
+
+// Subscription
+this.paymentsService.createSubscription('premium-plan', 'stripe')
+    .then(res => window.showToast("Subscription Created", "success"))
+    .catch(err => window.showToast(err.response, "error"));
 ```
+
+### Frontend Pages and Demos
+
+- **Payments Management**: `assets/js/pages/Payments/PaymentsPage.js` (User payment/subscription history)
+- **PayPal Integration Demo**: `assets/js/pages/Demo/PayPalDemoPage.js` (Complete PayPal SDK integration example)

@@ -1,20 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <testsuites>
-  <testsuite name="CLI Arguments" tests="9" assertions="33" errors="0" failures="0" skipped="0" time="0.010795">
-    <testsuite name="Tests\Unit\Model\PaymentTest" file="/var/www/html/tests/Unit/Model/PaymentTest.php" tests="3" assertions="13" errors="0" failures="0" skipped="0" time="0.006245">
-      <testcase name="testSettersAndGettersWork" file="/var/www/html/tests/Unit/Model/PaymentTest.php" line="10" class="Tests\Unit\Model\PaymentTest" classname="Tests.Unit.Model.PaymentTest" assertions="8" time="0.004034"/>
-      <testcase name="testBeforeValidationOnCreateSetsTimestamps" file="/var/www/html/tests/Unit/Model/PaymentTest.php" line="32" class="Tests\Unit\Model\PaymentTest" classname="Tests.Unit.Model.PaymentTest" assertions="4" time="0.002057"/>
-      <testcase name="testBeforeValidationOnUpdateSetsUpdatedAt" file="/var/www/html/tests/Unit/Model/PaymentTest.php" line="44" class="Tests\Unit\Model\PaymentTest" classname="Tests.Unit.Model.PaymentTest" assertions="1" time="0.000153"/>
+  <testsuite name="CLI Arguments" tests="7" assertions="18" errors="0" failures="0" skipped="0" time="0.057901">
+    <testsuite name="Tests\Unit\Service\Payment\PaceIntegrationTest" file="/var/www/html/tests/Unit/Service/Payment/PaceIntegrationTest.php" tests="4" assertions="10" errors="0" failures="0" skipped="0" time="0.056732">
+      <testcase name="testCreatePayment" file="/var/www/html/tests/Unit/Service/Payment/PaceIntegrationTest.php" line="23" class="Tests\Unit\Service\Payment\PaceIntegrationTest" classname="Tests.Unit.Service.Payment.PaceIntegrationTest" assertions="4" time="0.014355"/>
+      <testcase name="testHealthCheck" file="/var/www/html/tests/Unit/Service/Payment/PaceIntegrationTest.php" line="63" class="Tests\Unit\Service\Payment\PaceIntegrationTest" classname="Tests.Unit.Service.Payment.PaceIntegrationTest" assertions="2" time="0.000451"/>
+      <testcase name="testGetCapabilities" file="/var/www/html/tests/Unit/Service/Payment/PaceIntegrationTest.php" line="80" class="Tests\Unit\Service\Payment\PaceIntegrationTest" classname="Tests.Unit.Service.Payment.PaceIntegrationTest" assertions="2" time="0.000814"/>
+      <testcase name="testCreateSubscription" file="/var/www/html/tests/Unit/Service/Payment/PaceIntegrationTest.php" line="50" class="Tests\Unit\Service\Payment\PaceIntegrationTest" classname="Tests.Unit.Service.Payment.PaceIntegrationTest" assertions="2" time="0.041111"/>
     </testsuite>
-    <testsuite name="Tests\Unit\Model\SubscriptionTest" file="/var/www/html/tests/Unit/Model/SubscriptionTest.php" tests="2" assertions="14" errors="0" failures="0" skipped="0" time="0.000697">
-      <testcase name="testBeforeValidationOnCreateSetsTimestamps" file="/var/www/html/tests/Unit/Model/SubscriptionTest.php" line="36" class="Tests\Unit\Model\SubscriptionTest" classname="Tests.Unit.Model.SubscriptionTest" assertions="4" time="0.000460"/>
-      <testcase name="testSettersAndGettersWork" file="/var/www/html/tests/Unit/Model/SubscriptionTest.php" line="10" class="Tests\Unit\Model\SubscriptionTest" classname="Tests.Unit.Model.SubscriptionTest" assertions="10" time="0.000237"/>
-    </testsuite>
-    <testsuite name="Tests\Unit\Service\Payment\PaymentServiceMultiProviderTest" file="/var/www/html/tests/Unit/Service/Payment/PaymentServiceMultiProviderTest.php" tests="4" assertions="6" errors="0" failures="0" skipped="0" time="0.003853">
-      <testcase name="testCanSwitchProvider" file="/var/www/html/tests/Unit/Service/Payment/PaymentServiceMultiProviderTest.php" line="37" class="Tests\Unit\Service\Payment\PaymentServiceMultiProviderTest" classname="Tests.Unit.Service.Payment.PaymentServiceMultiProviderTest" assertions="1" time="0.002013"/>
-      <testcase name="testThrowsExceptionOnInvalidProvider" file="/var/www/html/tests/Unit/Service/Payment/PaymentServiceMultiProviderTest.php" line="47" class="Tests\Unit\Service\Payment\PaymentServiceMultiProviderTest" classname="Tests.Unit.Service.Payment.PaymentServiceMultiProviderTest" assertions="1" time="0.000907"/>
-      <testcase name="testCanGetAvailableProviders" file="/var/www/html/tests/Unit/Service/Payment/PaymentServiceMultiProviderTest.php" line="27" class="Tests\Unit\Service\Payment\PaymentServiceMultiProviderTest" classname="Tests.Unit.Service.Payment.PaymentServiceMultiProviderTest" assertions="3" time="0.000600"/>
-      <testcase name="testCanInstantiateService" file="/var/www/html/tests/Unit/Service/Payment/PaymentServiceMultiProviderTest.php" line="21" class="Tests\Unit\Service\Payment\PaymentServiceMultiProviderTest" classname="Tests.Unit.Service.Payment.PaymentServiceMultiProviderTest" assertions="1" time="0.000333"/>
+    <testsuite name="Tests\Unit\Service\Payment\MollieIntegrationTest" file="/var/www/html/tests/Unit/Service/Payment/MollieIntegrationTest.php" tests="3" assertions="8" errors="0" failures="0" skipped="0" time="0.001169">
+      <testcase name="testGetCapabilities" file="/var/www/html/tests/Unit/Service/Payment/MollieIntegrationTest.php" line="36" class="Tests\Unit\Service\Payment\MollieIntegrationTest" classname="Tests.Unit.Service.Payment.MollieIntegrationTest" assertions="3" time="0.000726"/>
+      <testcase name="testCreateSubscriptionSimulated" file="/var/www/html/tests/Unit/Service/Payment/MollieIntegrationTest.php" line="44" class="Tests\Unit\Service\Payment\MollieIntegrationTest" classname="Tests.Unit.Service.Payment.MollieIntegrationTest" assertions="3" time="0.000287"/>
+      <testcase name="testHealthCheck" file="/var/www/html/tests/Unit/Service/Payment/MollieIntegrationTest.php" line="22" class="Tests\Unit\Service\Payment\MollieIntegrationTest" classname="Tests.Unit.Service.Payment.MollieIntegrationTest" assertions="2" time="0.000155"/>
     </testsuite>
   </testsuite>
 </testsuites>

@@ -3,11 +3,50 @@ import { Icon } from "../../components/Icon";
 import { AuthService } from "../../services/AuthserviceService";
 
 export default class DemoPage {
+    renderCard(card, isLoggedIn, isAdmin) {
+        const isDisabled = (card.requiresAuth && !isLoggedIn) || (card.requiresAdmin && !isAdmin);
+        
+        let lockIcon = null;
+        if (isDisabled) {
+            lockIcon = m(Icon, { icon: "fa-solid fa-lock text-error ml-2" });
+        }
+
+        let badge = null;
+        if (isDisabled) {
+            const badgeText = card.requiresAdmin ? "Admin required" : "Login required";
+            badge = m("span.text-xs.italic.text-error.mr-2", badgeText);
+        }
+
+        const linkClass = `btn btn-${card.color} ${isDisabled ? 'btn-disabled' : ''}`;
+
+        return m(".card.bg-base-100.shadow-xl.hover:shadow-2xl.transition-all", [
+            m(".card-body", [
+                m(".flex.items-center.mb-2", [
+                    m(`.w-12.h-12.rounded-lg.bg-${card.color}.flex.items-center.justify-center.text-white.text-2xl.mr-4`, [
+                        m(Icon, { icon: card.icon })
+                    ]),
+                    m("h2.card-title", [card.title, lockIcon])
+                ]),
+                m("p.mb-6.opacity-80", card.description),
+                m(".card-actions.justify-end", [
+                    badge,
+                    m(m.route.Link, { 
+                        href: card.href, 
+                        class: linkClass 
+                    }, [
+                        "Launch Demo",
+                        m(Icon, { icon: "fa-solid fa-arrow-right ml-2" })
+                    ])
+                ])
+            ])
+        ]);
+    }
+
     view() {
         const isAdmin = AuthService.isAdmin();
         const isLoggedIn = AuthService.isLoggedIn();
 
-        const demoCards = [
+        const generalDemos = [
             {
                 title: "Real-time (Pusher)",
                 description: "Test WebSocket communication, private channels, and event triggering.",
@@ -25,19 +64,11 @@ export default class DemoPage {
                 requiresAuth: true
             },
             {
-                title: "Payments & Subscriptions",
-                description: "Multi-provider payment system supporting Stripe, PayPal, and Square.",
+                title: "Payments Management",
+                description: "Unified dashboard to view payment history and manage active subscriptions.",
                 icon: "fa-solid fa-credit-card",
                 href: "/payments",
                 color: "accent",
-                requiresAuth: true
-            },
-            {
-                title: "PayPal Integration Demo",
-                description: "Deep dive into PayPal-specific features and sandbox testing.",
-                icon: "fa-brands fa-paypal",
-                href: "/demo/paypal",
-                color: "info",
                 requiresAuth: true
             },
             {
@@ -65,19 +96,54 @@ export default class DemoPage {
                 requiresAdmin: true
             },
             {
-                title: "Error & Activity Logs",
-                description: "Centralized error reporting and monitoring for frontend and backend.",
-                icon: "fa-solid fa-bug",
-                href: "/admin/errors",
-                color: "error",
-                requiresAdmin: true
-            },
-            {
                 title: "UI Components Library",
                 description: "Explore the DaisyUI v5 components and project-specific UI elements.",
                 icon: "fa-solid fa-layer-group",
                 href: "/components",
                 color: "ghost"
+            }
+        ];
+
+        const paymentDemos = [
+            {
+                title: "PayPal Integration",
+                description: "Deep dive into PayPal-specific features, SDK v6 integration, and sandbox testing.",
+                icon: "fa-brands fa-paypal",
+                href: "/demo/paypal",
+                color: "info",
+                requiresAuth: true
+            },
+            {
+                title: "Stripe Integration",
+                description: "Demonstrate Stripe Elements, Apple/Google Pay, and complex subscription flows.",
+                icon: "fa-brands fa-stripe",
+                href: "/demo/stripe",
+                color: "primary",
+                requiresAuth: true
+            },
+            {
+                title: "Square Integration",
+                description: "Test Square's modern payment fields and recurring billing capabilities.",
+                icon: "fa-brands fa-square",
+                href: "/demo/square",
+                color: "secondary",
+                requiresAuth: true
+            },
+            {
+                title: "Pace Integration",
+                description: "UK-market focused payment integration with fast settlement and low fees.",
+                icon: "fa-solid fa-credit-card",
+                href: "/demo/pace",
+                color: "accent",
+                requiresAuth: true
+            },
+            {
+                title: "Mollie Integration",
+                description: "Simple-to-setup payment provider for UK and Europe with a great developer experience.",
+                icon: "fa-solid fa-credit-card",
+                href: "/demo/mollie",
+                color: "secondary",
+                requiresAuth: true
             }
         ];
 
@@ -90,45 +156,20 @@ export default class DemoPage {
                 m("p.text-xl.opacity-70", "Explore the core features and integrations of the Phalcon Stub project.")
             ]),
 
+            m("h2.text-2xl.font-bold.mb-6.flex.items-center.gap-2", [
+                m(Icon, { icon: "fa-solid fa-gears text-primary" }),
+                "General Feature Demos"
+            ]),
+            m(".grid.grid-cols-1.md:grid-cols-2.lg:grid-cols-3.gap-8.mb-16", 
+                generalDemos.map(card => this.renderCard(card, isLoggedIn, isAdmin))
+            ),
+
+            m("h2.text-2xl.font-bold.mb-6.flex.items-center.gap-2", [
+                m(Icon, { icon: "fa-solid fa-wallet text-secondary" }),
+                "Payment Provider Demos"
+            ]),
             m(".grid.grid-cols-1.md:grid-cols-2.lg:grid-cols-3.gap-8", 
-                demoCards.map(card => {
-                    const isDisabled = (card.requiresAuth && !isLoggedIn) || (card.requiresAdmin && !isAdmin);
-                    
-                    let lockIcon = null;
-                    if (isDisabled) {
-                        lockIcon = m(Icon, { icon: "fa-solid fa-lock text-error ml-2" });
-                    }
-
-                    let badge = null;
-                    if (isDisabled) {
-                        const badgeText = card.requiresAdmin ? "Admin required" : "Login required";
-                        badge = m("span.text-xs.italic.text-error.mr-2", badgeText);
-                    }
-
-                    const linkClass = `btn btn-${card.color} ${isDisabled ? 'btn-disabled' : ''}`;
-
-                    return m(".card.bg-base-100.shadow-xl.hover:shadow-2xl.transition-all", [
-                        m(".card-body", [
-                            m(".flex.items-center.mb-2", [
-                                m(`.w-12.h-12.rounded-lg.bg-${card.color}.flex.items-center.justify-center.text-white.text-2xl.mr-4`, [
-                                    m(Icon, { icon: card.icon })
-                                ]),
-                                m("h2.card-title", [card.title, lockIcon])
-                            ]),
-                            m("p.mb-6.opacity-80", card.description),
-                            m(".card-actions.justify-end", [
-                                badge,
-                                m(m.route.Link, { 
-                                    href: card.href, 
-                                    class: linkClass 
-                                }, [
-                                    "Launch Demo",
-                                    m(Icon, { icon: "fa-solid fa-arrow-right ml-2" })
-                                ])
-                            ])
-                        ])
-                    ]);
-                })
+                paymentDemos.map(card => this.renderCard(card, isLoggedIn, isAdmin))
             )
         ]);
     }

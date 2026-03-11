@@ -28,7 +28,11 @@ import SseTestPage from "./pages/Test/SseTestPage";
 import TestPage from "./pages/Test/TestPage";
 import ComponentsPage from "./pages/ComponentsPage";
 import DemoPage from "./pages/Demo/DemoPage";
-import PayPalDemoPage from "./pages/Demo/PayPalDemoPage";
+import PayPalDemoPage from "./pages/Demo/PayPal/PayPalDemoPage";
+import StripeDemoPage from "./pages/Demo/Stripe/StripeDemoPage";
+import SquareDemoPage from "./pages/Demo/Square/SquareDemoPage";
+import PaceDemoPage from "./pages/Demo/Pace/PaceDemoPage";
+import MollieDemoPage from "./pages/Demo/Mollie/MollieDemoPage";
 
 const root = document.getElementById('app');
 
@@ -107,6 +111,10 @@ m.route(root, "/", {
     "/components": layout(ComponentsPage),
     "/demo": layout(DemoPage),
     "/demo/paypal": layout(authGuard(PayPalDemoPage)),
+    "/demo/stripe": layout(authGuard(StripeDemoPage)),
+    "/demo/square": layout(authGuard(SquareDemoPage)),
+    "/demo/pace": layout(authGuard(PaceDemoPage)),
+    "/demo/mollie": layout(authGuard(MollieDemoPage)),
     "/pusher-test": layout(authGuard(PusherTestPage)),
     "/sse-test": layout(authGuard(SseTestPage)),
     "/test": layout(TestPage),

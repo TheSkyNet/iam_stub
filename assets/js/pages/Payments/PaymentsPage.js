@@ -40,7 +40,7 @@ export default class PaymentsPage {
     handleCreatePayment() {
         this.paymentsService.createPayment(10.00, 'USD', this.selectedProvider)
             .then(res => {
-                window.showToast(`Mock payment created via ${this.selectedProvider}`, "success");
+                window.showToast(`Payment created via ${this.selectedProvider}`, "success");
                 this.loadData();
             })
             .catch(err => window.showToast(err.response, "error"));
@@ -49,7 +49,7 @@ export default class PaymentsPage {
     handleCreateSubscription() {
         this.paymentsService.createSubscription('premium_monthly', this.selectedProvider)
             .then(res => {
-                window.showToast(`Mock subscription created via ${this.selectedProvider}`, "success");
+                window.showToast(`Subscription created via ${this.selectedProvider}`, "success");
                 this.loadData();
             })
             .catch(err => window.showToast(err.response, "error"));
@@ -131,7 +131,7 @@ export default class PaymentsPage {
                             m("span", "Your Subscriptions"),
                             m("button", { class: "btn btn-primary btn-sm", onclick: () => this.handleCreateSubscription() }, [
                                 m(Icon, { icon: "fa-solid fa-plus" }),
-                                " Mock Subscribe"
+                                " Subscribe"
                             ])
                         ]),
                         m("div", { class: "overflow-x-auto" }, [
@@ -156,7 +156,7 @@ export default class PaymentsPage {
                     m("div", { class: "card-body" }, [
                         m("h2", { class: "card-title flex justify-between" }, [
                             m("span", "Payment History"),
-                            m("button", { class: "btn btn-outline btn-sm", onclick: () => this.handleCreatePayment() }, "Mock Single Payment")
+                            m("button", { class: "btn btn-outline btn-sm", onclick: () => this.handleCreatePayment() }, "Single Payment")
                         ]),
                         m("div", { class: "overflow-x-auto" }, [
                             m("table", { class: "table table-sm w-full" }, [

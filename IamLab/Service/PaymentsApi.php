@@ -204,6 +204,45 @@ class PaymentsApi extends aAPI
     }
 
     /**
+     * Get Stripe configuration for frontend SDK
+     * GET /api/payments/stripe-config
+     */
+    public function stripeConfigAction(): void
+    {
+        $this->requireAuth();
+        
+        $configManager = new \IamLab\Service\Payment\Configuration\ConfigurationManager();
+        $stripeConfig = $configManager->getIntegrationConfig('stripe');
+        
+        $this->dispatch([
+            'success' => true,
+            'data' => [
+                'publicKey' => $stripeConfig['public_key'] ?? ''
+            ]
+        ]);
+    }
+
+    /**
+     * Get Square configuration for frontend SDK
+     * GET /api/payments/square-config
+     */
+    public function squareConfigAction(): void
+    {
+        $this->requireAuth();
+        
+        $configManager = new \IamLab\Service\Payment\Configuration\ConfigurationManager();
+        $squareConfig = $configManager->getIntegrationConfig('square');
+        
+        $this->dispatch([
+            'success' => true,
+            'data' => [
+                'applicationId' => $squareConfig['application_id'] ?? '',
+                'locationId' => $squareConfig['location_id'] ?? ''
+            ]
+        ]);
+    }
+
+    /**
      * Get available providers
      * GET /api/payments/providers
      */

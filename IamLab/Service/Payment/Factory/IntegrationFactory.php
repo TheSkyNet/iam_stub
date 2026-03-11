@@ -7,6 +7,8 @@ use IamLab\Service\Payment\Integrations\PaymentIntegrationInterface;
 use IamLab\Service\Payment\Integrations\StripeIntegration;
 use IamLab\Service\Payment\Integrations\PayPalIntegration;
 use IamLab\Service\Payment\Integrations\SquareIntegration;
+use IamLab\Service\Payment\Integrations\PaceIntegration;
+use IamLab\Service\Payment\Integrations\MollieIntegration;
 
 /**
  * Payment Integration Factory
@@ -53,6 +55,10 @@ class IntegrationFactory
                 return new PayPalIntegration($config);
             case 'square':
                 return new SquareIntegration($config);
+            case 'pace':
+                return new PaceIntegration($config);
+            case 'mollie':
+                return new MollieIntegration($config);
             default:
                 throw new Exception("Unknown payment provider: {$name}");
         }

@@ -52,6 +52,28 @@ export default class PaymentsService {
     }
 
     /**
+     * Get Stripe configuration
+     */
+    getStripeConfig() {
+        return m.request({
+            method: "GET",
+            url: `${this.baseUrl}/stripe-config`,
+            headers: AuthService.getAuthHeaders()
+        });
+    }
+
+    /**
+     * Get Square configuration
+     */
+    getSquareConfig() {
+        return m.request({
+            method: "GET",
+            url: `${this.baseUrl}/square-config`,
+            headers: AuthService.getAuthHeaders()
+        });
+    }
+
+    /**
      * Create a subscription
      */
     createSubscription(plan_id, provider = 'stripe', options = {}) {

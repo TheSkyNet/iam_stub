@@ -85,6 +85,8 @@ RouteGroup::create($app, '/api')
         $group->post('/payments', [(new PaymentsApi()), "createAction"]);
         $group->get('/payments/providers', [(new PaymentsApi()), "providersAction"]);
         $group->get('/payments/paypal-config', [(new PaymentsApi()), "paypalConfigAction"]);
+        $group->get('/payments/stripe-config', [(new PaymentsApi()), "stripeConfigAction"]);
+        $group->get('/payments/square-config', [(new PaymentsApi()), "squareConfigAction"]);
         $group->get('/subscriptions', [(new PaymentsApi()), "subscriptionsAction"]);
         $group->post('/subscriptions', [(new PaymentsApi()), "createSubscriptionAction"]);
         $group->delete('/subscriptions/{id}', [(new PaymentsApi()), "cancelSubscriptionAction"]);

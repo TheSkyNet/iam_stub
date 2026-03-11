@@ -1,15 +1,11 @@
-Payment (Tests\Unit\Model\Payment)
- [x] Setters and getters work
- [x] Before validation on create sets timestamps
- [x] Before validation on update sets updated at
+Mollie Integration (Tests\Unit\Service\Payment\MollieIntegration)
+ [x] Health check
+ [x] Get capabilities
+ [x] Create subscription simulated
 
-Payment Service Multi Provider (Tests\Unit\Service\Payment\PaymentServiceMultiProvider)
- [x] Can instantiate service
- [x] Can get available providers
- [x] Can switch provider
- [x] Throws exception on invalid provider
-
-Subscription (Tests\Unit\Model\Subscription)
- [x] Setters and getters work
- [x] Before validation on create sets timestamps
+Pace Integration (Tests\Unit\Service\Payment\PaceIntegration)
+ [x] Create payment
+ [x] Create subscription
+ [x] Health check
+ [x] Get capabilities
 
