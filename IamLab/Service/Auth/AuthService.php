@@ -132,7 +132,7 @@ class AuthService extends aAPI
      * @param bool $rememberMe Whether to extend token expiration for "Remember me" functionality.
      * @return array|false Auth data on success, false on failure.
      */
-    public function authenticate(User $user, string $authMethod = "post", bool $rememberMe = false): bool|array
+    public function authenticate(User $user, string $authMethod = "post", bool $rememberMe = true): bool|array
     {
         if ($authMethod == "post") {
             return $this->authenticatePost($user, $rememberMe);
@@ -149,10 +149,14 @@ class AuthService extends aAPI
      * @param bool $rememberMe Whether to extend token expiration for "Remember me" functionality.
      * @return array|false An array with tokens and user data on success, false otherwise.
      */
-    private function authenticatePost(User $user, bool $rememberMe = false): bool|array
+    private function authenticatePost(User $user, bool $rememberMe = true): bool|array
     {
         $password = $user->getPassword();
-        $user = User::findFirst("email='{$user->getEmail()}'");
+        $email = $user->getEmail();
+        $user = User::findFirst([
+            'conditions' => 'email = :email:',
+            'bind'       => ['email' => $email]
+        ]);
 
         if (!$user) {
             return false;
@@ -163,11 +167,17 @@ class AuthService extends aAPI
             $accessToken = $this->getJwtService()->generateAccessToken($user, $rememberMe);
             $refreshToken = $this->getJwtService()->generateRefreshToken($user, $rememberMe);
 
+            // Set refresh token in httpOnly cookie for better security
+            $this->getJwtService()->setRefreshTokenCookie($refreshToken, $rememberMe);
+
             // Set identity for session compatibility (optional)
             $this->setIdentity($user);
 
             // Set appropriate expires_in based on remember me option
-            $expiresIn = $rememberMe ? (30 * 24 * 3600) : 3600; // 30 days or 1 hour
+            $config = $this->getDI()->getShared('config');
+            $expiresIn = $rememberMe 
+                ? $config->jwt->remember_me_access_token_expiry 
+                : $config->jwt->access_token_expiry;
 
             // Create user data with roles
             $userData = [
@@ -212,9 +222,10 @@ class AuthService extends aAPI
      * On success, it generates and returns authentication tokens.
      *
      * @param User $user The new user data.
+     * @param bool $rememberMe Whether to use extended token expiration.
      * @return array|false Returns authentication data array on success, false on failure.
      */
-    public function register(User $user): bool|array
+    public function register(User $user, bool $rememberMe = true): bool|array
     {
         $user->setPassword(password_hash($user->getPassword(), PASSWORD_DEFAULT));
 
@@ -235,8 +246,11 @@ class AuthService extends aAPI
         }
 
         // Generate JWT tokens for the newly registered user
-        $accessToken = $this->getJwtService()->generateAccessToken($user);
-        $refreshToken = $this->getJwtService()->generateRefreshToken($user);
+        $accessToken = $this->getJwtService()->generateAccessToken($user, $rememberMe);
+        $refreshToken = $this->getJwtService()->generateRefreshToken($user, $rememberMe);
+
+        // Set refresh token in httpOnly cookie
+        $this->getJwtService()->setRefreshTokenCookie($refreshToken, $rememberMe);
 
         // Set identity for session compatibility
         $this->setIdentity($user);
@@ -249,12 +263,17 @@ class AuthService extends aAPI
             'roles' => $user->getRoles()
         ];
 
+        $config = $this->getDI()->getShared('config');
+        $expiresIn = $rememberMe 
+            ? $config->jwt->remember_me_access_token_expiry 
+            : $config->jwt->access_token_expiry;
+
         // Return the same authentication data structure as login
         return [
             'user' => $userData, 
             'access_token' => $accessToken, 
             'refresh_token' => $refreshToken, 
-            'expires_in' => 3600, // 1 hour
+            'expires_in' => $expiresIn,
             'token_type' => 'Bearer'
         ];
     }
@@ -270,6 +289,9 @@ class AuthService extends aAPI
         try {
             // Clear the auth identity first
             $this->session->remove('auth-identity');
+
+            // Clear refresh token cookie
+            $this->getJwtService()->clearRefreshTokenCookie();
 
             // Reset session state
             $this->isAuthenticated = false;
@@ -292,15 +314,9 @@ class AuthService extends aAPI
         }
     }
 
-    /**
-     * Refreshes an expired access token using a valid refresh token.
-     *
-     * @param string $refreshToken The refresh token.
-     * @return array|null A new set of tokens on success, null on failure.
-     */
-    public function refreshToken(string $refreshToken): ?array
+    public function refreshToken(string $refreshToken, bool $rememberMe = true): ?array
     {
-        return $this->getJwtService()->refreshAccessToken($refreshToken);
+        return $this->getJwtService()->refreshAccessToken($refreshToken, $rememberMe);
     }
 
     /**
@@ -351,14 +367,22 @@ class AuthService extends aAPI
      */
     public function generateAuthData(User $user , $options = []): array
     {
+        $config = $this->getDI()->getShared('config');
         $defaultOptions =[
-            'expires_in' => 3600, // 1 hour
+            'remember_me' => true,
             'token_type' => 'Bearer'
         ];
         $options = array_merge($defaultOptions, $options);
+        
+        $rememberMe = (bool)$options['remember_me'];
+        $expiresIn = $options['expires_in'] ?? ($rememberMe ? $config->jwt->remember_me_access_token_expiry : $config->jwt->access_token_expiry);
+
         // Generate JWT tokens
-        $accessToken = $this->getJwtService()->generateAccessToken($user);
-        $refreshToken = $this->getJwtService()->generateRefreshToken($user);
+        $accessToken = $this->getJwtService()->generateAccessToken($user, $rememberMe);
+        $refreshToken = $this->getJwtService()->generateRefreshToken($user, $rememberMe);
+
+        // Set refresh token in httpOnly cookie
+        $this->getJwtService()->setRefreshTokenCookie($refreshToken, $rememberMe);
 
         // Set identity for session compatibility
         $this->setIdentity($user);
@@ -375,7 +399,7 @@ class AuthService extends aAPI
             'user' => $userData,
             'access_token' => $accessToken,
             'refresh_token' => $refreshToken,
-            'expires_in' => $options['expires_in'],
+            'expires_in' => $expiresIn,
             'token_type' => $options['token_type']
         ];
 

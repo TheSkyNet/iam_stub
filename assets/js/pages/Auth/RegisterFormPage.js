@@ -1,19 +1,20 @@
 import m from "mithril";
 import { Icon } from "../../components/Icon";
 import { AuthService } from "../../services/AuthserviceService";
-import { Fieldset, FormField, SubmitButton } from "../../components/Form";
+import { Fieldset, FormField, CheckboxField, SubmitButton } from "../../components/Form";
 
 const RegisterFormPage = {
     name: '',
     email: '',
     password: '',
+    rememberMe: true,
     isLoading: false,
 
     handleRegister: (e) => {
         e.preventDefault();
         RegisterFormPage.isLoading = true;
 
-        AuthService.register(RegisterFormPage.name, RegisterFormPage.email, RegisterFormPage.password)
+        AuthService.register(RegisterFormPage.name, RegisterFormPage.email, RegisterFormPage.password, RegisterFormPage.rememberMe)
             .then(() => {
                 m.route.set('/');
             })
@@ -68,6 +69,12 @@ const RegisterFormPage = {
                                     value: RegisterFormPage.password,
                                     oninput: (e) => RegisterFormPage.password = e.target.value,
                                     required: true
+                                }),
+
+                                m(CheckboxField, {
+                                    label: "Remember me",
+                                    checked: RegisterFormPage.rememberMe,
+                                    onchange: (e) => RegisterFormPage.rememberMe = e.target.checked
                                 }),
 
                                 m(SubmitButton, {

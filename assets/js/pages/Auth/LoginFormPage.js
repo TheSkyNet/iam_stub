@@ -6,13 +6,14 @@ import { Fieldset, FormField, CheckboxField, SubmitButton } from "../../componen
 const LoginFormPage = {
     email: '',
     password: '',
+    rememberMe: true,
     isLoading: false,
 
     handleLogin: (e) => {
         e.preventDefault();
         LoginFormPage.isLoading = true;
         
-        AuthService.login(LoginFormPage.email, LoginFormPage.password)
+        AuthService.login(LoginFormPage.email, LoginFormPage.password, LoginFormPage.rememberMe)
             .then(() => {
                 m.route.set('/');
             })
@@ -60,7 +61,12 @@ const LoginFormPage = {
                                     required: true
                                 }),
                                 
-                                m("div.mt-2.text-left", [
+                                m("div.mt-2.flex.justify-between.items-center", [
+                                    m(CheckboxField, {
+                                        label: "Remember me",
+                                        checked: LoginFormPage.rememberMe,
+                                        onchange: (e) => LoginFormPage.rememberMe = e.target.checked
+                                    }),
                                     m(m.route.Link, { href: "/forgot-password", class: "link link-hover text-xs" }, "Forgot password?")
                                 ]),
 

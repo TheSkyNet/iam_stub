@@ -28,6 +28,19 @@ $di->setShared(
 );
 
 /**
+ * Shared encryption service
+ */
+$di->setShared(
+    'crypt',
+    function () {
+        $config = $this->getConfig();
+        $crypt = new \Phalcon\Encryption\Crypt();
+        $crypt->setKey($config->app->encryption_key);
+        return $crypt;
+    }
+);
+
+/**
  * Shared loader service
  */
 $di->setShared(

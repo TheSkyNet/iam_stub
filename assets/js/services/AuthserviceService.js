@@ -71,7 +71,7 @@ const AuthService = {
     /**
      * Login with email and password
      */
-    login: function(email, password, rememberMe = false) {
+    login: function(email, password, rememberMe = true) {
         return m.request({
             method: 'POST',
             url: `${this.baseUrl}/login`,
@@ -89,11 +89,11 @@ const AuthService = {
     /**
      * Register new user
      */
-    register: function(name, email, password) {
+    register: function(name, email, password, rememberMe = true) {
         return m.request({
             method: 'POST',
             url: `${this.baseUrl}/register`,
-            body: { name, email, password }
+            body: { name, email, password, remember_me: rememberMe }
         }).then((response) => {
             if (response.success && response.data) {
                 this.setAuthData(response.data);
@@ -126,14 +126,13 @@ const AuthService = {
      * Refresh access token
      */
     refreshAccessToken: function() {
-        if (!this.refreshToken) {
-            return Promise.reject(new Error('No refresh token available'));
-        }
+        // We always try to refresh, because the token might be in an httpOnly cookie
+        const body = this.refreshToken ? { refresh_token: this.refreshToken } : {};
 
         return m.request({
             method: 'POST',
             url: `${this.baseUrl}/refresh-token`,
-            body: { refresh_token: this.refreshToken }
+            body: body
         }).then((response) => {
             if (response.success && response.data) {
                 this.setAuthData(response.data);
@@ -263,25 +262,26 @@ const AuthService = {
             })
             .catch((error) => {
                 // Try to refresh token if current token is invalid
-                if (this.refreshToken) {
-                    return this.refreshAccessToken()
-                        .then(() => this.getCurrentUser())
-                        .then((response) => {
-                            if (response && response.success !== false) {
-                                // Ensure consistent user data structure
-                                this.user = response.data || response;
-                                this.isAuthenticated = true;
-                                
-                                // Update localStorage with the validated user data
-                                if (this.user) {
-                                    localStorage.setItem('user', JSON.stringify(this.user));
-                                }
+                // We always try to refresh, because it might be in an httpOnly cookie
+                return this.refreshAccessToken()
+                    .then(() => this.getCurrentUser())
+                    .then((response) => {
+                        if (response && response.success !== false) {
+                            // Ensure consistent user data structure
+                            this.user = response.data || response;
+                            this.isAuthenticated = true;
+                            
+                            // Update localStorage with the validated user data
+                            if (this.user) {
+                                localStorage.setItem('user', JSON.stringify(this.user));
                             }
-                            return response;
-                        });
-                }
-                this.clearAuthData();
-                throw error;
+                        }
+                        return response;
+                    })
+                    .catch((err) => {
+                        this.clearAuthData();
+                        throw err;
+                    });
             });
     },
 

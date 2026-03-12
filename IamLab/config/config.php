@@ -118,6 +118,11 @@ return new Config([
         'algorithm' => App\Core\Helpers\env('JWT_ALGORITHM', 'HS256'),
         'access_token_expiry' => App\Core\Helpers\env('JWT_ACCESS_TOKEN_EXPIRY', 3600), // 1 hour
         'refresh_token_expiry' => App\Core\Helpers\env('JWT_REFRESH_TOKEN_EXPIRY', 604800), // 7 days
+        'remember_me_access_token_expiry' => App\Core\Helpers\env('JWT_REMEMBER_ME_ACCESS_TOKEN_EXPIRY', 2592000), // 30 days
+        'remember_me_refresh_token_expiry' => App\Core\Helpers\env('JWT_REMEMBER_ME_REFRESH_TOKEN_EXPIRY', 31536000), // 1 year
+        'refresh_token_cookie' => App\Core\Helpers\env('JWT_REFRESH_TOKEN_COOKIE', 'refresh_token'),
+        'cookie_domain' => App\Core\Helpers\env('COOKIE_DOMAIN', ''),
+        'cookie_secure' => (bool)App\Core\Helpers\env('COOKIE_SECURE', false),
         'issuer' => App\Core\Helpers\env('JWT_ISSUER', 'phalcon-stub'),
         'audience' => App\Core\Helpers\env('JWT_AUDIENCE', 'phalcon-stub-users'),
     ],

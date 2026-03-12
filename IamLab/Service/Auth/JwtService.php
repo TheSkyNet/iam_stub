@@ -16,6 +16,11 @@ class JwtService extends Injectable
     private string $algorithm;
     private int $accessTokenExpiry;
     private int $refreshTokenExpiry;
+    private int $rememberMeAccessTokenExpiry;
+    private int $rememberMeRefreshTokenExpiry;
+    private string $refreshTokenCookieName;
+    private ?string $cookieDomain;
+    private bool $cookieSecure;
     private string $issuer;
     private string $audience;
 
@@ -33,6 +38,11 @@ class JwtService extends Injectable
         $this->algorithm = $jwtConfig->algorithm;
         $this->accessTokenExpiry = $jwtConfig->access_token_expiry;
         $this->refreshTokenExpiry = $jwtConfig->refresh_token_expiry;
+        $this->rememberMeAccessTokenExpiry = $jwtConfig->remember_me_access_token_expiry;
+        $this->rememberMeRefreshTokenExpiry = $jwtConfig->remember_me_refresh_token_expiry;
+        $this->refreshTokenCookieName = $jwtConfig->refresh_token_cookie;
+        $this->cookieDomain = $jwtConfig->cookie_domain;
+        $this->cookieSecure = $jwtConfig->cookie_secure;
         $this->issuer = $jwtConfig->issuer;
         $this->audience = $jwtConfig->audience;
     }
@@ -40,10 +50,10 @@ class JwtService extends Injectable
     /**
      * Generate access token for user
      */
-    public function generateAccessToken(User $user, bool $rememberMe = false): string
+    public function generateAccessToken(User $user, bool $rememberMe = true): string
     {
-        // Use extended expiration if "Remember me" is checked (30 days), otherwise use default
-        $expiry = $rememberMe ? (30 * 24 * 3600) : $this->accessTokenExpiry;
+        // Use extended expiration if "Remember me" is checked, otherwise use default
+        $expiry = $rememberMe ? $this->rememberMeAccessTokenExpiry : $this->accessTokenExpiry;
 
         $payload = [
             'iss' => $this->issuer, // Issuer
@@ -62,10 +72,10 @@ class JwtService extends Injectable
     /**
      * Generate refresh token for user
      */
-    public function generateRefreshToken(User $user, bool $rememberMe = false): string
+    public function generateRefreshToken(User $user, bool $rememberMe = true): string
     {
-        // Use extended expiration if "Remember me" is checked (60 days), otherwise use default
-        $expiry = $rememberMe ? (60 * 24 * 3600) : $this->refreshTokenExpiry;
+        // Use extended expiration if "Remember me" is checked, otherwise use default
+        $expiry = $rememberMe ? $this->rememberMeRefreshTokenExpiry : $this->refreshTokenExpiry;
 
         $payload = [
             'iss' => $this->issuer,
@@ -77,6 +87,54 @@ class JwtService extends Injectable
         ];
 
         return JWT::encode($payload, $this->secretKey, $this->algorithm);
+    }
+
+    /**
+     * Set refresh token in an httpOnly cookie for better security
+     */
+    public function setRefreshTokenCookie(string $token, bool $rememberMe = true): void
+    {
+        $expiry = $rememberMe ? (time() + $this->rememberMeRefreshTokenExpiry) : (time() + $this->refreshTokenExpiry);
+        
+        // Use Phalcon's cookies service
+        // Signature: set(string $name, $value = null, int $expire = 0, string $path = "/", bool $secure = null, string $domain = null, bool $httpOnly = null, array $options = []): CookiesInterface
+        $this->cookies->set(
+            $this->refreshTokenCookieName,
+            $token,
+            $expiry,
+            '/',
+            (bool)$this->cookieSecure,
+            (string)$this->cookieDomain,
+            true // httpOnly
+        );
+    }
+
+    /**
+     * Clear refresh token cookie
+     */
+    public function clearRefreshTokenCookie(): void
+    {
+        $this->cookies->set(
+            $this->refreshTokenCookieName,
+            '',
+            time() - 3600,
+            '/',
+            (bool)$this->cookieSecure,
+            (string)$this->cookieDomain,
+            true // httpOnly
+        );
+        $this->cookies->get($this->refreshTokenCookieName)->delete();
+    }
+
+    /**
+     * Get refresh token from cookie
+     */
+    public function getRefreshTokenFromCookie(): ?string
+    {
+        if ($this->cookies->has($this->refreshTokenCookieName)) {
+            return $this->cookies->get($this->refreshTokenCookieName)->getValue();
+        }
+        return null;
     }
 
     /**
@@ -134,15 +192,12 @@ class JwtService extends Injectable
         }
     }
 
-    /**
-     * Refresh access token using refresh token
-     */
-    public function refreshAccessToken(string $refreshToken): ?array
+    public function refreshAccessToken(string $refreshToken, bool $rememberMe = true): ?array
     {
         try {
             $payload = $this->validateToken($refreshToken);
 
-            if ($payload['type'] !== 'refresh') {
+            if (($payload['type'] ?? '') !== 'refresh') {
                 throw new Exception('Invalid token type for refresh');
             }
 
@@ -151,13 +206,15 @@ class JwtService extends Injectable
                 throw new Exception('User not found');
             }
 
-            $newAccessToken = $this->generateAccessToken($user);
-            $newRefreshToken = $this->generateRefreshToken($user);
+            $newAccessToken = $this->generateAccessToken($user, $rememberMe);
+            $newRefreshToken = $this->generateRefreshToken($user, $rememberMe);
+
+            $expiresIn = $rememberMe ? $this->rememberMeAccessTokenExpiry : $this->accessTokenExpiry;
 
             return [
                 'access_token' => $newAccessToken,
                 'refresh_token' => $newRefreshToken,
-                'expires_in' => $this->accessTokenExpiry,
+                'expires_in' => $expiresIn,
                 'token_type' => 'Bearer'
             ];
         } catch (Exception $e) {

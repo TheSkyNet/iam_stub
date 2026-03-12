@@ -30,7 +30,7 @@ class Auth extends aAPI
     {
         $email = $this->getParam('email');
         $password = $this->getParam('password');
-        $rememberMe = $this->getParam('remember_me', false);
+        $rememberMe = $this->getParam('remember_me', true);
 
         // Validate input
         if (empty($email) || empty($password)) {
@@ -68,6 +68,7 @@ class Auth extends aAPI
         $name = $this->getParam('name');
         $email = $this->getParam('email');
         $password = $this->getParam('password');
+        $rememberMe = (bool)$this->getParam('remember_me', true);
 
         // Validate input
         if (empty($name) || empty($email) || empty($password)) {
@@ -91,7 +92,7 @@ class Auth extends aAPI
                 ->setPassword($password);
 
             $authService = new AuthService();
-            $authData = $authService->register($user);
+            $authData = $authService->register($user, $rememberMe);
 
             if ($authData) {
                 $this->dispatch(['success' => true, 'message' => 'Registration successful! You are now logged in.', 'data' => $authData]);
@@ -218,22 +219,28 @@ class Auth extends aAPI
         }
     }
 
-    /**
-     * Refresh access token using refresh token
-     */
     public function refreshTokenAction(): void
     {
         $refreshToken = $this->getParam('refresh_token');
 
-        if (empty($refreshToken)) {
-            $this->dispatchError('Refresh token is required');
-        }
-
         try {
             $authService = new AuthService();
+            $jwtService = new \IamLab\Service\Auth\JwtService();
+
+            // If refresh token not in params, check cookie
+            if (empty($refreshToken)) {
+                $refreshToken = $jwtService->getRefreshTokenFromCookie();
+            }
+
+            if (empty($refreshToken)) {
+                $this->dispatchError('Refresh token is required');
+            }
+
             $result = $authService->refreshToken($refreshToken);
 
             if ($result) {
+                // If we got new tokens, update the cookie too
+                $jwtService->setRefreshTokenCookie($result['refresh_token'], true); // Assume remember me if it was set before
                 $this->dispatch(['success' => true, 'message' => 'Token refreshed successfully', 'data' => $result]);
             }
 
