@@ -41,8 +41,16 @@ export default class PaymentsPage {
     handleCreatePayment() {
         this.paymentsService.createPayment(10.00, 'GBP', this.selectedProvider)
             .then(res => {
-                window.showToast(`Payment created via ${this.selectedProvider}`, "success");
-                this.loadData();
+                if (res.data.checkout_url || res.data.approval_url) {
+                    const url = res.data.checkout_url || res.data.approval_url;
+                    window.showToast("Redirecting to payment checkout...", "info");
+                    setTimeout(() => {
+                        window.location.href = url;
+                    }, 1000);
+                } else {
+                    window.showToast(`Payment created via ${this.selectedProvider}`, "success");
+                    this.loadData();
+                }
             })
             .catch(err => window.showToast(err.response, "error"));
     }
@@ -50,8 +58,16 @@ export default class PaymentsPage {
     handleCreateSubscription() {
         this.paymentsService.createSubscription('premium_monthly', this.selectedProvider)
             .then(res => {
-                window.showToast(`Subscription created via ${this.selectedProvider}`, "success");
-                this.loadData();
+                if (res.data.checkout_url || res.data.approval_url) {
+                    const url = res.data.checkout_url || res.data.approval_url;
+                    window.showToast("Redirecting to subscription checkout...", "info");
+                    setTimeout(() => {
+                        window.location.href = url;
+                    }, 1000);
+                } else {
+                    window.showToast(`Subscription created via ${this.selectedProvider}`, "success");
+                    this.loadData();
+                }
             })
             .catch(err => window.showToast(err.response, "error"));
     }

@@ -201,6 +201,20 @@ class PaymentsApi extends aAPI
             $user = $this->getCurrentUser();
             $subscriptions = $this->paymentService->getUserSubscriptions($user->getId());
 
+            // For each pending subscription, try to refresh its status
+            foreach ($subscriptions as $subscription) {
+                if ($subscription->getStatus() === 'pending' || $subscription->getStatus() === 'incomplete') {
+                    try {
+                        $this->paymentService->refreshSubscriptionStatus($subscription->getId());
+                    } catch (Exception $e) {
+                        // Log or ignore errors during list refresh
+                    }
+                }
+            }
+
+            // Reload after refresh to get latest statuses
+            $subscriptions = $this->paymentService->getUserSubscriptions($user->getId());
+
             $this->dispatch([
                 'success' => true,
                 'data' => $subscriptions->toArray()
@@ -307,6 +321,8 @@ class PaymentsApi extends aAPI
         // Mollie / Pace / Revolut / others
         if (isset($decoded['checkout_url'])) {
             $data['checkout_url'] = $decoded['checkout_url'];
+        } elseif (isset($decoded['url'])) {
+            $data['checkout_url'] = $decoded['url'];
         } elseif (isset($decoded['_links']['checkout']['href'])) {
             $data['checkout_url'] = $decoded['_links']['checkout']['href'];
         }

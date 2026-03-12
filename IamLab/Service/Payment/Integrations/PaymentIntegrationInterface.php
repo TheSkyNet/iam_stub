@@ -45,6 +45,11 @@ interface PaymentIntegrationInterface
     public function getSubscriptionStatus(string $subscriptionId): string;
 
     /**
+     * Refresh subscription data from provider
+     */
+    public function refreshSubscription(string $subscriptionId): array;
+
+    /**
      * Check if the integration is healthy and accessible
      */
     public function healthCheck(): bool;

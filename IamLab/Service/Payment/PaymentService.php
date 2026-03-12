@@ -151,6 +151,8 @@ class PaymentService
             throw new Exception("Subscription not found");
         }
 
+        $this->setProvider($subscription->getPaymentMethod());
+
         if (!$this->integration) {
             throw new Exception("Payment integration not initialized");
         }
@@ -164,6 +166,46 @@ class PaymentService
         }
 
         return false;
+    }
+
+    /**
+     * Refresh a subscription status
+     */
+    public function refreshSubscriptionStatus(int $subscriptionId): Subscription
+    {
+        $subscription = Subscription::findFirstById($subscriptionId);
+        if (!$subscription) {
+            throw new Exception("Subscription not found");
+        }
+
+        $this->setProvider($subscription->getPaymentMethod());
+
+        if (!$this->integration) {
+            throw new Exception("Payment integration not initialized");
+        }
+
+        $result = $this->integration->refreshSubscription($subscription->getSubscriptionId());
+
+        if (isset($result['subscription_id']) && $result['subscription_id'] !== $subscription->getSubscriptionId()) {
+            $subscription->setSubscriptionId($result['subscription_id']);
+        }
+
+        if (isset($result['status'])) {
+            $subscription->setStatus($result['status']);
+        }
+
+        if (isset($result['provider_payload'])) {
+            $subscription->setPayload(json_encode(array_merge(
+                json_decode($subscription->getPayload() ?: '{}', true) ?? [],
+                $result['provider_payload']
+            )));
+        }
+
+        if (!$subscription->save()) {
+            throw new Exception("Failed to update subscription record: " . implode(', ', $subscription->getMessages()));
+        }
+
+        return $subscription;
     }
 
     /**

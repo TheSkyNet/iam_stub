@@ -137,6 +137,17 @@ class PaceIntegration implements PaymentIntegrationInterface
     }
 
     /**
+     * Refresh subscription data from provider
+     */
+    public function refreshSubscription(string $subscriptionId): array
+    {
+        return [
+            'status' => $this->getSubscriptionStatus($subscriptionId),
+            'provider_payload' => []
+        ];
+    }
+
+    /**
      * Check if the integration is healthy and accessible
      */
     public function healthCheck(): bool

@@ -121,17 +121,34 @@ export default class StripeDemoPage {
             });
     }
 
-    handleCreateSubscription() {
+    handleCreateSubscription(useElements = false) {
         this.isLoading = true;
         this.paymentsService.createSubscription(this.selectedPlan, 'stripe', {
             currency: this.currency,
-            amount: 25.00 // Default for demo plans
+            amount: 25.00, // Default for demo plans
+            use_elements: useElements
         })
             .then(res => {
-                if (res.data.checkout_url) {
+                if (useElements && res.data.client_secret) {
+                    // Confirm in-page using Elements
+                    return this.stripe.confirmCardPayment(res.data.client_secret, {
+                        payment_method: {
+                            card: this.cardElement,
+                            billing_details: { name: 'Demo User' }
+                        }
+                    }).then(result => {
+                        if (result.error) {
+                            window.showToast(result.error.message, "error");
+                        } else {
+                            window.showToast("Stripe Subscription Succeeded!", "success");
+                        }
+                        this.isLoading = false;
+                        m.redraw();
+                    });
+                } else if (res.data.checkout_url) {
                     window.location.href = res.data.checkout_url;
                 } else {
-                    window.showToast("Subscription session created", "success");
+                    window.showToast("Subscription request processed", "success");
                     this.isLoading = false;
                     m.redraw();
                 }
@@ -258,12 +275,21 @@ export default class StripeDemoPage {
                                 m("option", { value: "pro_yearly" }, "Pro Yearly ($250/yr)")
                             ])
                         ]),
-                        m("button.btn.btn-secondary", { 
-                            onclick: () => this.handleCreateSubscription(),
-                            disabled: this.isLoading
-                        }, [
-                            m(Icon, { icon: "fa-solid fa-repeat" }),
-                            " Subscribe via Checkout"
+                        m("div.flex.flex-col.gap-3", [
+                            m("button.btn.btn-secondary", { 
+                                onclick: () => this.handleCreateSubscription(true),
+                                disabled: this.isLoading || !this.stripeLoaded
+                            }, [
+                                m(Icon, { icon: "fa-solid fa-credit-card" }),
+                                " Subscribe In-Page (Elements)"
+                            ]),
+                            m("button.btn.btn-outline.btn-secondary", { 
+                                onclick: () => this.handleCreateSubscription(false),
+                                disabled: this.isLoading
+                            }, [
+                                m(Icon, { icon: "fa-solid fa-external-link" }),
+                                " Subscribe via Checkout (Redirect)"
+                            ])
                         ])
                     ])
                 ])

@@ -148,6 +148,18 @@ class SquareIntegration implements PaymentIntegrationInterface
     }
 
     /**
+     * Refresh subscription data from provider
+     */
+    public function refreshSubscription(string $subscriptionId): array
+    {
+        $response = $this->request('GET', "/subscriptions/{$subscriptionId}");
+        return [
+            'status' => strtolower($response['subscription']['status'] ?? 'unknown'),
+            'provider_payload' => $response
+        ];
+    }
+
+    /**
      * Check if the integration is healthy and accessible
      */
     public function healthCheck(): bool
