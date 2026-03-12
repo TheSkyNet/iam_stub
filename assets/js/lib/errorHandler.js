@@ -113,7 +113,23 @@ export const initGlobalErrorHandling = () => {
         isProcessingError = true;
         
         try {
-            // Skip some known noisy errors if needed
+            const message = event.message || (event.error ? event.error.message : '');
+            
+            // Skip some known noisy or non-critical errors
+            const noisyPatterns = [
+                'Request for font',
+                'blocked at visibility level',
+                'mozOrientation is deprecated',
+                'onmozorientationchange is deprecated',
+                'Partitioned cookie or storage access',
+                'm.stripe.network',
+                'Script error.' // Usually cross-origin errors with no detail
+            ];
+
+            if (noisyPatterns.some(pattern => message && message.includes(pattern))) {
+                return;
+            }
+
             window.showToast(event.error || event.message, 'error');
             
             // Report to backend if endpoint exists
@@ -140,10 +156,24 @@ export const initGlobalErrorHandling = () => {
         isProcessingError = true;
 
         try {
+            const reasonString = toMessageStringSync(event.reason);
+            
+            // Skip some known noisy or non-critical errors
+            const noisyPatterns = [
+                'Request for font',
+                'blocked at visibility level',
+                'm.stripe.network',
+                'Script error.'
+            ];
+
+            if (noisyPatterns.some(pattern => reasonString && reasonString.includes(pattern))) {
+                return;
+            }
+
             window.showToast(event.reason, 'error');
             
             reportErrorToBackend({
-                message: toMessageStringSync(event.reason),
+                message: reasonString,
                 level: 'error',
                 url: window.location.href,
                 user_agent: navigator.userAgent,

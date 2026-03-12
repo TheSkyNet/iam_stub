@@ -165,7 +165,8 @@ export default class SquareDemoPage {
             { label: "Mastercard", number: "5555 5555 5555 4444" }
         ];
 
-        return m(".container.mx-auto.p-4.py-12", [
+        return m(".container.mx-auto.p-4.py-12.max-w-6xl", [
+            m(TestCardInfo, { cards }),
             m(".flex.items-center.gap-4.mb-12", [
                 m(m.route.Link, { href: "/demo", class: "btn btn-ghost btn-sm" }, [
                     m(Icon, { icon: "fa-solid fa-arrow-left" }),
@@ -173,8 +174,6 @@ export default class SquareDemoPage {
                 ]),
                 m("h1.text-4xl.font-bold", "Square Integration Demo")
             ]),
-            m(TestCardInfo, { cards }),
-            credentialsCard,
             m(".grid.grid-cols-1.lg:grid-cols-2.gap-8", [
                 m(".card.bg-base-100.shadow-xl.relative", [
                     this.renderLoadingOverlay(),
@@ -187,12 +186,14 @@ export default class SquareDemoPage {
                         m(".divider"),
                         m(".form-control.w-full.mb-4", [
                             m("label.label", m("span.label-text", "Card Details")),
-                            this.squareLoaded
-                                ? m("#card-container.border.rounded-lg.bg-base-200.p-4", {
-                                    key: "square-card",
-                                    oncreate: (vnode) => this.mountCardElement(vnode)
-                                  })
-                                : m(".skeleton.h-14.w-full", { key: "square-skeleton" })
+                            m("div", [
+                                this.squareLoaded
+                                    ? m("#card-container.border.rounded-lg.bg-base-200.p-4", {
+                                        key: "square-card",
+                                        oncreate: (vnode) => this.mountCardElement(vnode)
+                                      })
+                                    : m(".skeleton.h-14.w-full", { key: "square-skeleton" })
+                            ])
                         ]),
                         m(".form-control.w-full.max-w-xs.mb-4", [
                             m("label.label", m("span.label-text", "Amount")),
@@ -237,6 +238,8 @@ export default class SquareDemoPage {
                     ])
                 ])
             ]),
+
+            m(".mt-12", credentialsCard),
 
             m(".mt-12.card.bg-base-100.shadow-xl", [
                 m(".card-body", [

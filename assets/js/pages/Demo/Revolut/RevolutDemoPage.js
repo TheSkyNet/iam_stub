@@ -88,7 +88,8 @@ export default class RevolutDemoPage {
             { label: "Mastercard", number: "5273 4600 0000 0001" }
         ];
 
-        return m(".container.mx-auto.p-4.py-12", [
+        return m(".container.mx-auto.p-4.py-12.max-w-6xl", [
+            m(TestCardInfo, { cards }),
             m(".flex.items-center.gap-4.mb-12", [
                 m(m.route.Link, { href: "/demo", class: "btn btn-ghost btn-sm" }, [
                     m(Icon, { icon: "fa-solid fa-arrow-left" }),
@@ -96,8 +97,6 @@ export default class RevolutDemoPage {
                 ]),
                 m("h1.text-4xl.font-bold", "Revolut Pay Integration Demo")
             ]),
-            m(TestCardInfo, { cards }),
-            credentialsCard,
             m(".grid.grid-cols-1.lg:grid-cols-2.gap-8", [
                 m(".card.bg-base-100.shadow-xl.relative", [
                     this.renderLoadingOverlay(),
@@ -160,6 +159,8 @@ export default class RevolutDemoPage {
                     ])
                 ])
             ]),
+
+            m(".mt-12", credentialsCard),
 
             m(".mt-12.card.bg-base-100.shadow-xl", [
                 m(".card-body", [

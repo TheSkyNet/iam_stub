@@ -67,6 +67,7 @@ export default class StripeDemoPage {
 
         this.elements = this.stripe.elements();
         this.cardElement = this.elements.create('card', {
+            hidePostalCode: true,
             style: {
                 base: {
                     fontSize: '16px',
@@ -180,7 +181,8 @@ export default class StripeDemoPage {
             { label: "Visa (Decline)", number: "4000 0000 0000 0002" }
         ];
 
-        return m(".container.mx-auto.p-4.py-12", [
+        return m(".container.mx-auto.p-4.py-12.max-w-6xl", [
+            m(TestCardInfo, { cards }),
             m(".flex.items-center.gap-4.mb-12", [
                 m(m.route.Link, { href: "/demo", class: "btn btn-ghost btn-sm" }, [
                     m(Icon, { icon: "fa-solid fa-arrow-left" }),
@@ -188,8 +190,6 @@ export default class StripeDemoPage {
                 ]),
                 m("h1.text-4xl.font-bold", "Stripe Integration Demo")
             ]),
-            m(TestCardInfo, { cards }),
-            publicKeyCard,
             m(".grid.grid-cols-1.lg:grid-cols-2.gap-8", [
                 m(".card.bg-base-100.shadow-xl.relative", [
                     this.renderLoadingOverlay(),
@@ -202,12 +202,14 @@ export default class StripeDemoPage {
                         m(".divider"),
                         m(".form-control.w-full.mb-4", [
                             m("label.label", m("span.label-text", "Card Details")),
-                            this.stripeLoaded 
-                                ? m(".border.rounded-lg.bg-base-200.p-4", {
-                                    key: "stripe-card",
-                                    oncreate: (vnode) => this.mountCardElement(vnode)
-                                  })
-                                : m(".skeleton.h-14.w-full", { key: "stripe-skeleton" })
+                            m("div", [
+                                this.stripeLoaded 
+                                    ? m(".border.rounded-lg.bg-base-200.p-4", {
+                                        key: "stripe-card",
+                                        oncreate: (vnode) => this.mountCardElement(vnode)
+                                      })
+                                    : m(".skeleton.h-14.w-full", { key: "stripe-skeleton" })
+                            ])
                         ]),
                         m(".form-control.w-full.max-w-xs.mb-4", [
                             m("label.label", m("span.label-text", "Amount")),
@@ -252,6 +254,8 @@ export default class StripeDemoPage {
                     ])
                 ])
             ]),
+
+            m(".mt-12", publicKeyCard),
 
             m(".mt-12.card.bg-base-100.shadow-xl", [
                 m(".card-body", [
