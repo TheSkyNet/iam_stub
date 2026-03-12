@@ -27,7 +27,7 @@ class SquareIntegration implements PaymentIntegrationInterface
         }
 
         $amount = $paymentData['amount'];
-        $currency = strtoupper($paymentData['currency'] ?? 'USD');
+        $currency = strtoupper($paymentData['currency'] ?? 'GBP');
         $sourceId = $paymentData['options']['source_id'] ?? 'cnon:card-nonce-ok'; // Default to sandbox nonce
 
         $payload = [

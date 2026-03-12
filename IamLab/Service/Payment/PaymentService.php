@@ -42,7 +42,7 @@ class PaymentService
     /**
      * Process a single payment
      */
-    public function processSinglePayment(int $userId, float $amount, string $currency = 'USD', array $options = []): Payment
+    public function processSinglePayment(int $userId, float $amount, string $currency = 'GBP', array $options = []): Payment
     {
         if (!$this->integration) {
             throw new Exception("Payment integration not initialized");

@@ -39,7 +39,7 @@ export default class PaymentsPage {
     }
 
     handleCreatePayment() {
-        this.paymentsService.createPayment(10.00, 'USD', this.selectedProvider)
+        this.paymentsService.createPayment(10.00, 'GBP', this.selectedProvider)
             .then(res => {
                 window.showToast(`Payment created via ${this.selectedProvider}`, "success");
                 this.loadData();

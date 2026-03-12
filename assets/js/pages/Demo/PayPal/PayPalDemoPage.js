@@ -8,7 +8,7 @@ export default class PayPalDemoPage {
         this.paymentsService = new PaymentsService();
         this.selectedPlan = 'premium_monthly';
         this.amount = 10.00;
-        this.currency = 'USD';
+        this.currency = 'GBP';
         this.isLoading = true;
         this.sdkLoaded = false;
         

@@ -26,7 +26,7 @@ class PaymentsApi extends aAPI
         try {
             $data = $this->getData();
             $amount = $data['amount'] ?? null;
-            $currency = $data['currency'] ?? 'USD';
+            $currency = $data['currency'] ?? 'GBP';
             $provider = $data['provider'] ?? 'stripe';
             $transactionId = $data['paypal_order_id'] ?? $data['transaction_id'] ?? null;
             
@@ -46,12 +46,36 @@ class PaymentsApi extends aAPI
                 }
 
                 $payment = $this->paymentService->processSinglePayment($user->getId(), (float)$amount, $currency, $data);
-                $message = 'Payment processed successfully';
+                
+                $status = $payment->getStatus();
+                if ($status === 'failed') {
+                    $this->dispatchError([
+                        'success' => false,
+                        'message' => 'Payment failed',
+                        'data' => $payment->toArray()
+                    ]);
+                    return;
+                }
+
+                if ($status === 'canceled') {
+                    $this->dispatchError([
+                        'success' => false,
+                        'message' => 'Payment was canceled',
+                        'data' => $payment->toArray()
+                    ]);
+                    return;
+                }
+
+                $message = ($status === 'completed') 
+                    ? 'Payment processed successfully' 
+                    : 'Payment initiated, further action required';
             }
+
+            $paymentData = $this->enhanceResponse($payment->toArray(), $payment->getPayload() ?: '');
 
             $this->dispatch([
                 'success' => true,
-                'data' => $payment->toArray(),
+                'data' => $paymentData,
                 'message' => $message
             ]);
         } catch (Exception $e) {
@@ -88,10 +112,17 @@ class PaymentsApi extends aAPI
             $this->paymentService->setProvider($provider);
             $subscription = $this->paymentService->createSubscription($user->getId(), $planId, $data);
 
+            $status = $subscription->getStatus();
+            $message = ($status === 'active') 
+                ? 'Subscription created successfully' 
+                : 'Subscription initiated, further action required';
+
+            $subscriptionData = $this->enhanceResponse($subscription->toArray(), $subscription->getPayload() ?: '');
+
             $this->dispatch([
                 'success' => true,
-                'data' => $subscription->toArray(),
-                'message' => 'Subscription created successfully'
+                'data' => $subscriptionData,
+                'message' => $message
             ]);
         } catch (Exception $e) {
             $this->dispatchError([
@@ -252,5 +283,44 @@ class PaymentsApi extends aAPI
             'success' => true,
             'data' => $this->paymentService->getAvailableProviders()
         ]);
+    }
+
+    /**
+     * Enhance response data with provider-specific fields from payload
+     */
+    protected function enhanceResponse(array $data, string $payload): array
+    {
+        if (empty($payload)) {
+            return $data;
+        }
+
+        $decoded = json_decode($payload, true);
+        if (!$decoded) {
+            return $data;
+        }
+
+        // Stripe
+        if (isset($decoded['client_secret'])) {
+            $data['client_secret'] = $decoded['client_secret'];
+        }
+
+        // Mollie / Pace / Revolut / others
+        if (isset($decoded['checkout_url'])) {
+            $data['checkout_url'] = $decoded['checkout_url'];
+        } elseif (isset($decoded['_links']['checkout']['href'])) {
+            $data['checkout_url'] = $decoded['_links']['checkout']['href'];
+        }
+
+        // PayPal
+        if (isset($decoded['links']) && is_array($decoded['links'])) {
+            foreach ($decoded['links'] as $link) {
+                if (isset($link['rel']) && ($link['rel'] === 'approve' || $link['rel'] === 'payer-action')) {
+                    $data['approval_url'] = $link['href'];
+                    $data['checkout_url'] = $link['href']; // Alias for common access
+                }
+            }
+        }
+
+        return $data;
     }
 }

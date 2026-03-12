@@ -8,7 +8,7 @@ export default class StripeDemoPage {
         this.paymentsService = new PaymentsService();
         this.selectedPlan = 'premium_monthly';
         this.amount = 25.00;
-        this.currency = 'USD';
+        this.currency = 'GBP';
         this.isLoading = true;
         this.stripeLoaded = false;
         this.stripe = null;
@@ -123,7 +123,10 @@ export default class StripeDemoPage {
 
     handleCreateSubscription() {
         this.isLoading = true;
-        this.paymentsService.createSubscription(this.selectedPlan, 'stripe')
+        this.paymentsService.createSubscription(this.selectedPlan, 'stripe', {
+            currency: this.currency,
+            amount: 25.00 // Default for demo plans
+        })
             .then(res => {
                 if (res.data.checkout_url) {
                     window.location.href = res.data.checkout_url;
@@ -209,6 +212,17 @@ export default class StripeDemoPage {
                                         oncreate: (vnode) => this.mountCardElement(vnode)
                                       })
                                     : m(".skeleton.h-14.w-full", { key: "stripe-skeleton" })
+                            ])
+                        ]),
+                        m(".form-control.w-full.max-w-xs.mb-4", [
+                            m("label.label", m("span.label-text", "Currency")),
+                            m("select.select.select-bordered", {
+                                value: this.currency,
+                                onchange: (e) => this.currency = e.target.value
+                            }, [
+                                m("option", { value: "GBP" }, "GBP (£)"),
+                                m("option", { value: "EUR" }, "EUR (€)"),
+                                m("option", { value: "USD" }, "USD ($)")
                             ])
                         ]),
                         m(".form-control.w-full.max-w-xs.mb-4", [

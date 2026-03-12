@@ -19,7 +19,7 @@ class StripeIntegration implements PaymentIntegrationInterface
         }
 
         $amount = $paymentData['amount'];
-        $currency = strtolower($paymentData['currency'] ?? 'usd');
+        $currency = strtolower($paymentData['currency'] ?? 'gbp');
 
         // Stripe expects amounts in cents
         $amountInCents = (int)($amount * 100);
@@ -29,6 +29,14 @@ class StripeIntegration implements PaymentIntegrationInterface
             'currency' => $currency,
             'payment_method_types' => ['card'],
         ];
+
+        // Add optional payment method from options if present for backend-initiated confirmation
+        if (isset($paymentData['options']['payment_method'])) {
+            $payload['payment_method'] = $paymentData['options']['payment_method'];
+            $payload['confirm'] = true;
+            // return_url is required for confirm: true for some payment methods
+            $payload['return_url'] = 'http://localhost:8080/payments/confirm';
+        }
 
         $response = $this->request('POST', '/payment_intents', $payload);
 
@@ -49,6 +57,16 @@ class StripeIntegration implements PaymentIntegrationInterface
 
     public function capturePayment(string $transactionId, array $options = []): array
     {
+        // Check current status first. If already succeeded, no need to capture.
+        $statusResponse = $this->request('GET', "/payment_intents/{$transactionId}");
+        if (isset($statusResponse['status']) && $statusResponse['status'] === 'succeeded') {
+            return [
+                'success' => true,
+                'status' => 'completed',
+                'provider_payload' => $statusResponse
+            ];
+        }
+
         $response = $this->request('POST', "/payment_intents/{$transactionId}/capture");
 
         if (isset($response['error'])) {
@@ -68,17 +86,19 @@ class StripeIntegration implements PaymentIntegrationInterface
         // For the demo, we'll try to create a Checkout Session for a subscription which is easier.
         
         $planId = $subscriptionData['plan_id'] ?? '';
+        $currency = strtolower($subscriptionData['options']['currency'] ?? 'gbp');
+        $amount = (float)($subscriptionData['options']['amount'] ?? 25.00);
         
         $payload = [
             'mode' => 'subscription',
             'payment_method_types' => ['card'],
             'line_items' => [[
                 'price_data' => [
-                    'currency' => 'usd',
+                    'currency' => $currency,
                     'product_data' => [
                         'name' => "Plan: " . $planId,
                     ],
-                    'unit_amount' => 2500, // $25.00
+                    'unit_amount' => (int)($amount * 100),
                     'recurring' => ['interval' => 'month'],
                 ],
                 'quantity' => 1,
@@ -184,6 +204,7 @@ class StripeIntegration implements PaymentIntegrationInterface
             case 'requires_confirmation':
             case 'requires_action':
             case 'processing':
+            case 'requires_capture':
                 return 'pending';
             case 'canceled':
                 return 'canceled';

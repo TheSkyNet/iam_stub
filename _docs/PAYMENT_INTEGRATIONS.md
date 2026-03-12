@@ -115,7 +115,7 @@ The frontend uses the `PaymentsService.js` to interact with these APIs. When cre
 
 ```javascript
 // Single Payment
-this.paymentsService.createPayment(50.00, 'USD', 'paypal')
+this.paymentsService.createPayment(50.00, 'GBP', 'paypal')
     .then(res => window.showToast("Payment Successful", "success"))
     .catch(err => window.showToast(err.response, "error"));
 

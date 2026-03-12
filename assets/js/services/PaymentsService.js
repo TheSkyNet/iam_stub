@@ -9,7 +9,7 @@ export default class PaymentsService {
     /**
      * Create a single payment
      */
-    createPayment(amount, currency = 'USD', provider = 'stripe', options = {}) {
+    createPayment(amount, currency = 'GBP', provider = 'stripe', options = {}) {
         return m.request({
             method: "POST",
             url: this.baseUrl,

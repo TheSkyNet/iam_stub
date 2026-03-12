@@ -8,7 +8,7 @@ export default class SquareDemoPage {
         this.paymentsService = new PaymentsService();
         this.selectedPlan = 'business_monthly';
         this.amount = 30.00;
-        this.currency = 'USD';
+        this.currency = 'GBP';
         this.isLoading = true;
         this.squareLoaded = false;
         this.card = null;

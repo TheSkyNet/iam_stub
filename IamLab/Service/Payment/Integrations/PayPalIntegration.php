@@ -24,7 +24,7 @@ class PayPalIntegration implements PaymentIntegrationInterface
         $options = $paymentData['options'] ?? [];
         $intent = $options['intent'] ?? 'capture';
         $amountValue = $paymentData['amount'] ?? 0;
-        $currency = $paymentData['currency'] ?? 'USD';
+        $currency = $paymentData['currency'] ?? 'GBP';
 
         // For v6 SDK with intent=create_only, we must create a real order on PayPal
         if ($intent === 'create_only') {
