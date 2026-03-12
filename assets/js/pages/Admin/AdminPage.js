@@ -3,7 +3,7 @@ import { Icon } from "../../components/Icon";
 
 const AdminPage = {
     view: () => {
-        return m(".container.mx-auto.p-4.py-12", [
+        return m(".container-fluid.p-4.py-12", [
             m("h1.text-3xl.font-bold.mb-8", "Admin Dashboard"),
             m(".grid.grid-cols-1.md:grid-cols-3.gap-6", [
                 m(".card.bg-primary.text-primary-content.shadow-xl", [

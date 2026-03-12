@@ -3,7 +3,7 @@ import { Icon } from "../../components/Icon";
 
 const StaffWelcomePage = {
     view: () => {
-        return m(".container.mx-auto.p-4", [
+        return m(".container-fluid.p-4", [
             m(".hero.bg-base-100.rounded-xl.shadow-xl", [
                 m(".hero-content.text-center", [
                     m(".max-w-md", [

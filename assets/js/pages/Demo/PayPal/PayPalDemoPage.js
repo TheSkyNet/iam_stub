@@ -305,7 +305,7 @@ export default class PayPalDemoPage {
             { label: "Sandbox Password", number: "12345678" }
         ];
 
-        return m(".container.mx-auto.p-4.py-12.max-w-6xl", [
+        return m(".container-fluid.p-4.py-12", [
             m(TestCardInfo, { cards }),
             m(".flex.items-center.gap-4.mb-12", [
                 m(m.route.Link, { href: "/demo", class: "btn btn-ghost btn-sm" }, [

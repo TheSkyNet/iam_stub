@@ -15,7 +15,7 @@ const TestPage = {
     },
 
     view: () => {
-        return m(".container.mx-auto.p-4", [
+        return m(".container-fluid.p-4", [
             m("h1.text-3xl.font-bold.mb-6", "Generic Test Page"),
             m(".grid.grid-cols-1.md:grid-cols-2.gap-6", [
                 m(".card.bg-base-100.shadow-xl", [

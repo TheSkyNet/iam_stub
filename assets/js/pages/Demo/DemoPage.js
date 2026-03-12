@@ -155,7 +155,7 @@ export default class DemoPage {
             }
         ];
 
-        return m(".container.mx-auto.p-4.py-12", [
+        return m(".container-fluid.p-4.py-12", [
             m(".text-center.mb-12", [
                 m("h1.text-5xl.font-bold.mb-4", [
                     m(Icon, { icon: "fa-solid fa-flask text-primary mr-4" }),

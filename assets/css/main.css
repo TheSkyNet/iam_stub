@@ -6,6 +6,10 @@
 
 @plugin "daisyui";
 
+@utility container-fluid {
+    width: 100%;
+}
+
 @source "../js/**/*.js";
 @source "../../IamLab/views/**/*.phtml";
 @source "../../public/**/*.html";

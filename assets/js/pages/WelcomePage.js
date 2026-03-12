@@ -3,7 +3,7 @@ import { Icon } from "../components/Icon";
 
 const WelcomePage = {
     view: () => {
-        return m(".container.mx-auto.p-4.py-20.flex.flex-col.items-center.justify-center", [
+        return m(".container-fluid.p-4.py-20.flex.flex-col.items-center.justify-center", [
             m(".text-center.mb-12", [
                 m("h1.text-5xl.font-bold.mb-4", "Welcome to IamLab"),
                 m("p.text-xl.text-base-content.opacity-70", "Your Phalcon-based Laboratory for Identity and Access Management."),

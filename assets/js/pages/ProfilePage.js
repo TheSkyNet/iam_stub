@@ -151,7 +151,7 @@ const ProfilePage = {
 
     view: () => {
         if (ProfilePage.profileData.isLoading) {
-            return m(".container.mx-auto.p-4.flex.justify-center.items-center.min-h-screen", [
+            return m(".container-fluid.p-4.flex.justify-center.items-center.min-h-screen", [
                 m("span.loading.loading-spinner.loading-lg")
             ]);
         }
@@ -290,7 +290,7 @@ const ProfilePage = {
             ])
         ]);
 
-        return m(".container.mx-auto.p-4.max-w-4xl", [
+        return m(".container-fluid.p-4", [
             // Profile Header
             m(".flex.flex-col.sm:flex-row.items-center.gap-6.mb-10.p-6.bg-base-100.rounded-2xl.shadow-sm", [
                 m(".avatar.placeholder.cursor-pointer.relative.group", {

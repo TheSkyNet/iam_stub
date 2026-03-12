@@ -227,7 +227,7 @@ HELP;
     },
 
     view: function(vnode) {
-        return m(\".container.mx-auto.p-6\", [
+        return m(\".container-fluid.p-6\", [
             m(\"h1.text-3xl.font-bold.text-base-content.mb-6\", \"{$name} Management\"),
 
             // Error display

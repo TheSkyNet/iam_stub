@@ -10,7 +10,7 @@ import Footer from "../components/Footer";
 
 const ComponentsPage = {
     view: () => {
-        return m(".container.mx-auto.p-4.space-y-12", [
+        return m(".container-fluid.p-4.space-y-12", [
             m("header.mb-8", [
                 m("h1.text-4xl.font-bold", "Navigation Components"),
                 m("p", { class: "text-base-content opacity-70" }, "Modular DaisyUI navbar components built with Mithril.")

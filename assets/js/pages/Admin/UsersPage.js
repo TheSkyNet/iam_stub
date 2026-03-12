@@ -53,7 +53,7 @@ const UsersPage = {
     },
 
     view: function() {
-        return m(".container.mx-auto.p-4.py-12", [
+        return m(".container-fluid.p-4.py-12", [
             m(".flex.justify-between.items-center.mb-8", [
                 m("h1.text-3xl.font-bold", "Users Management"),
                 m(".flex.gap-2", [

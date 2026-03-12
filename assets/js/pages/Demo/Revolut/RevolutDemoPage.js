@@ -88,7 +88,7 @@ export default class RevolutDemoPage {
             { label: "Mastercard", number: "5273 4600 0000 0001" }
         ];
 
-        return m(".container.mx-auto.p-4.py-12.max-w-6xl", [
+        return m(".container-fluid.p-4.py-12", [
             m(TestCardInfo, { cards }),
             m(".flex.items-center.gap-4.mb-12", [
                 m(m.route.Link, { href: "/demo", class: "btn btn-ghost btn-sm" }, [

@@ -101,7 +101,7 @@ const ErrorsPage = {
     },
 
     view: function() {
-        return m(".container.mx-auto.p-4", [
+        return m(".container-fluid.p-4", [
             m(".flex.justify-between.items-center.mb-6", [
                 m("h1.text-3xl.font-bold", "Application Error Logs"),
                 m(".flex.gap-2", [

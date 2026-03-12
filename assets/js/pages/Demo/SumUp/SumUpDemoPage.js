@@ -88,7 +88,7 @@ export default class SumUpDemoPage {
             { label: "Mastercard", number: "5412 7500 0000 0000" }
         ];
 
-        return m(".container.mx-auto.p-4.py-12.max-w-6xl", [
+        return m(".container-fluid.p-4.py-12", [
             // TEST CARDS AT THE TOP
             m(TestCardInfo, { cards, key: "test-card-info" }),
 
