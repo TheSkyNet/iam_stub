@@ -17,13 +17,13 @@ const Footer = {
             ]),
             m("nav", [
                 m(".grid.grid-flow-col.gap-4", [
-                    m("a", { href: "#", class: "link link-hover" }, [
+                    m("a", { href: "#", class: "link link-hover", "aria-label": "Twitter" }, [
                         m(Icon, { name: "fa-brands fa-x-twitter", class: "text-2xl" })
                     ]),
-                    m("a", { href: "#", class: "link link-hover" }, [
+                    m("a", { href: "#", class: "link link-hover", "aria-label": "YouTube" }, [
                         m(Icon, { name: "fa-brands fa-youtube", class: "text-2xl" })
                     ]),
-                    m("a", { href: "#", class: "link link-hover" }, [
+                    m("a", { href: "#", class: "link link-hover", "aria-label": "Facebook" }, [
                         m(Icon, { name: "fa-brands fa-facebook-f", class: "text-2xl" })
                     ])
                 ])

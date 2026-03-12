@@ -23,11 +23,16 @@ const Toasts = {
                     error: 'fa-solid fa-circle-xmark'
                 }[toast.type] || 'fa-solid fa-circle-info';
 
-                return m("div", {"class": `alert ${alertClass} shadow-sm`, "key": toast.id}, [
+                return m("div", {
+                    "class": `alert ${alertClass} shadow-sm`,
+                    "key": toast.id,
+                    "role": "alert"
+                }, [
                     m(Icon, { icon: iconName }),
                     m("span", toast.message),
                     m("button", {
                         "class": "btn btn-ghost btn-xs btn-circle",
+                        "aria-label": "Close",
                         "onclick": () => ToastService.remove(toast.id)
                     }, m(Icon, { icon: 'fa-solid fa-xmark' }))
                 ]);

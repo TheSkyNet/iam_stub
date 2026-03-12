@@ -293,9 +293,10 @@ const ProfilePage = {
         return m(".container-fluid.p-4", [
             // Profile Header
             m(".flex.flex-col.sm:flex-row.items-center.gap-6.mb-10.p-6.bg-base-100.rounded-2xl.shadow-sm", [
-                m(".avatar.placeholder.cursor-pointer.relative.group", {
+                m("button.avatar.placeholder.cursor-pointer.relative.group.border-none.bg-transparent.p-0", {
                     onclick: () => ProfilePage.pond && ProfilePage.pond.browse(),
-                    title: "Click to change avatar"
+                    title: "Click to change avatar",
+                    "aria-label": "Change avatar"
                 }, [
                     m(".bg-neutral.text-neutral-content.rounded-full.w-24.flex.items-center.justify-center.overflow-hidden.relative", [
                         avatarContent,
