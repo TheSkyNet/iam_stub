@@ -51,6 +51,12 @@ class ConfigurationManager
                     'enabled' => (bool)env('MOLLIE_ENABLED', true),
                     'api_key' => env('MOLLIE_API_KEY', '')
                 ];
+            case 'revolut':
+                return [
+                    'enabled' => (bool)env('REVOLUT_ENABLED', true),
+                    'api_key' => env('REVOLUT_API_KEY', ''),
+                    'mode' => env('REVOLUT_MODE', 'sandbox')
+                ];
             default:
                 return [
                     'enabled' => (bool)env("PAYMENT_{$prefix}_ENABLED", false)
@@ -72,7 +78,7 @@ class ConfigurationManager
      */
     public function getEnabledIntegrations(): array
     {
-        $all = ['stripe', 'paypal', 'square', 'pace', 'mollie'];
+        $all = ['stripe', 'paypal', 'square', 'pace', 'mollie', 'revolut'];
         return array_filter($all, fn($name) => $this->isIntegrationEnabled($name));
     }
 
@@ -82,7 +88,7 @@ class ConfigurationManager
     public function getAllConfigurations(): array
     {
         $configs = [];
-        foreach (['stripe', 'paypal', 'square', 'pace', 'mollie'] as $name) {
+        foreach (['stripe', 'paypal', 'square', 'pace', 'mollie', 'revolut'] as $name) {
             $configs[$name] = $this->getIntegrationConfig($name);
         }
         return $configs;

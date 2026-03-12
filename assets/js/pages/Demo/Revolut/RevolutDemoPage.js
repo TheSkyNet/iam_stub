@@ -3,26 +3,26 @@ import { Icon } from "../../../components/Icon";
 import TestCardInfo from "../../../components/TestCardInfo";
 import PaymentsService from "../../../services/PaymentsService";
 
-export default class MollieDemoPage {
+export default class RevolutDemoPage {
     oninit(vnode) {
         this.paymentsService = new PaymentsService();
-        this.selectedPlan = 'uk_pro_monthly';
-        this.amount = 20.00;
+        this.selectedPlan = 'revolut_premium_monthly';
+        this.amount = 25.00;
         this.currency = 'GBP';
         this.isLoading = false;
     }
 
     handleCreatePayment() {
         this.isLoading = true;
-        this.paymentsService.createPayment(this.amount, this.currency, 'mollie')
+        this.paymentsService.createPayment(this.amount, this.currency, 'revolut')
             .then(res => {
                 if (res.data.checkout_url) {
-                    window.showToast("Redirecting to Mollie Checkout...", "info");
+                    window.showToast("Redirecting to Revolut Checkout...", "info");
                     setTimeout(() => {
                         window.location.href = res.data.checkout_url;
                     }, 1000);
                 } else {
-                    window.showToast("Mollie Payment created successfully!", "success");
+                    window.showToast("Revolut Order created successfully!", "success");
                     this.isLoading = false;
                     m.redraw();
                 }
@@ -36,9 +36,9 @@ export default class MollieDemoPage {
 
     handleCreateSubscription() {
         this.isLoading = true;
-        this.paymentsService.createSubscription(this.selectedPlan, 'mollie')
+        this.paymentsService.createSubscription(this.selectedPlan, 'revolut')
             .then(res => {
-                window.showToast("Mollie subscription request processed", "success");
+                window.showToast("Revolut subscription request processed", "success");
                 this.isLoading = false;
                 m.redraw();
             })
@@ -57,36 +57,35 @@ export default class MollieDemoPage {
     }
 
     view() {
-
         const credentialsCard = m(".card.bg-base-100.shadow-xl.mb-8", [
             m(".card-body", [
                 m("h2.card-title.flex.items-center.gap-2", [
                     m(Icon, { icon: "fa-solid fa-credit-card text-primary" }),
-                    "Mollie Sandbox Credentials"
+                    "Revolut Sandbox Credentials"
                 ]),
                 m(".grid.grid-cols-1.md:grid-cols-2.gap-4.mt-4", [
                     m(".form-control", [
                         m("label.label", m("span.label-text.font-bold", "API Mode")),
-                        m("input.input.input-bordered.input-sm.bg-base-200", { value: "Test Mode", readonly: true })
+                        m("input.input.input-bordered.input-sm.bg-base-200", { value: "Sandbox Mode", readonly: true })
                     ]),
                     m(".form-control", [
-                        m("label.label", m("span.label-text.font-bold", "Mollie Dashboard")),
+                        m("label.label", m("span.label-text.font-bold", "Revolut Dashboard")),
                         m("a.btn.btn-outline.btn-primary.btn-sm", { 
-                            href: "https://www.mollie.com/dashboard/developers/api-keys", 
+                            href: "https://sandbox-merchant.revolut.com/", 
                             target: "_blank" 
                         }, [
                             m(Icon, { icon: "fa-solid fa-external-link" }),
-                            " Get API Keys"
+                            " Merchant Sandbox"
                         ])
                     ])
                 ]),
-                m("p.text-xs.mt-4.opacity-60", "Use your 'test_' prefix keys for sandbox testing. Your API keys are managed in the Mollie Dashboard.")
+                m("p.text-xs.mt-4.opacity-60", "Revolut Pay requires a valid API Key from the Merchant Dashboard.")
             ])
         ]);
 
         const cards = [
-            { label: "Visa (Success)", number: "4242 4242 4242 4242" },
-            { label: "Visa (Open)", number: "4242 4242 4242 4244" }
+            { label: "Visa (Revolut Test)", number: "4596 5400 0000 0001" },
+            { label: "Mastercard", number: "5273 4600 0000 0001" }
         ];
 
         return m(".container.mx-auto.p-4.py-12", [
@@ -95,7 +94,7 @@ export default class MollieDemoPage {
                     m(Icon, { icon: "fa-solid fa-arrow-left" }),
                     " Back to Demo"
                 ]),
-                m("h1.text-4xl.font-bold", "Mollie Integration Demo")
+                m("h1.text-4xl.font-bold", "Revolut Pay Integration Demo")
             ]),
             m(TestCardInfo, { cards }),
             credentialsCard,
@@ -105,9 +104,9 @@ export default class MollieDemoPage {
                     m(".card-body", [
                         m("h2.card-title", [
                             m(Icon, { icon: "fa-solid fa-credit-card text-primary text-2xl" }),
-                            "Mollie Payment Demo"
+                            "Revolut Pay Demo"
                         ]),
-                        m("p.opacity-70", "Mollie offers a very simple setup for UK businesses with support for all major payment methods."),
+                        m("p.opacity-70", "Revolut Pay offers a seamless checkout experience for millions of Revolut users."),
                         m(".divider"),
                         m(".form-control.w-full.max-w-xs.mb-4", [
                             m("label.label", m("span.label-text", "Amount")),
@@ -131,7 +130,7 @@ export default class MollieDemoPage {
                             disabled: this.isLoading
                         }, [
                             m(Icon, { icon: "fa-solid fa-credit-card" }),
-                            " Pay with Mollie"
+                            " Pay with Revolut"
                         ])
                     ])
                 ]),
@@ -139,16 +138,16 @@ export default class MollieDemoPage {
                 m(".card.bg-base-100.shadow-xl.relative", [
                     this.renderLoadingOverlay(),
                     m(".card-body", [
-                        m("h2.card-title", "Mollie Subscriptions"),
-                        m("p.opacity-70", "Easily manage recurring payments in the UK and Europe."),
+                        m("h2.card-title", "Revolut Subscriptions"),
+                        m("p.opacity-70", "Handle recurring billing for your UK and global customers."),
                         m(".divider"),
                         m(".form-control.w-full.max-w-xs.mb-4", [
                             m("label.label", m("span.label-text", "Select Plan")),
                             m("select.select.select-bordered", {
                                 onchange: (e) => this.selectedPlan = e.target.value
                             }, [
-                                m("option", { value: "uk_pro_monthly" }, "UK Pro ($20/mo)"),
-                                m("option", { value: "eu_standard_monthly" }, "EU Standard (€15/mo)")
+                                m("option", { value: "revolut_premium_monthly" }, "Revolut Premium (£25/mo)"),
+                                m("option", { value: "revolut_metal_yearly" }, "Revolut Metal (£250/yr)")
                             ])
                         ]),
                         m("button.btn.btn-secondary", { 
@@ -156,7 +155,7 @@ export default class MollieDemoPage {
                             disabled: this.isLoading
                         }, [
                             m(Icon, { icon: "fa-solid fa-repeat" }),
-                            " Subscribe via Mollie"
+                            " Subscribe via Revolut"
                         ])
                     ])
                 ])
@@ -164,11 +163,11 @@ export default class MollieDemoPage {
 
             m(".mt-12.card.bg-base-100.shadow-xl", [
                 m(".card-body", [
-                    m("h2.card-title", "Why Mollie?"),
-                    m("p", "Mollie is renowned for its effortless integration and transparent pricing. It's particularly strong in the UK and European markets."),
+                    m("h2.card-title", "Why Revolut?"),
+                    m("p", "Revolut is one of the fastest-growing fintech companies in the world, with a massive user base in the UK and Europe."),
                     m(".flex.items-center.gap-3.mt-4", [
                         m(Icon, { icon: "fa-solid fa-bolt text-warning" }),
-                        m("span.text-sm", "Ready for Apple Pay, Google Pay, and localized payment methods.")
+                        m("span.text-sm", "One-click payments for Revolut users and high authorization rates.")
                     ])
                 ])
             ])

@@ -75,11 +75,11 @@ const EditUserPage = {
         const userId = vnode.attrs.id;
         
         if (this.loading) {
-            return m(".container.mx-auto.p-4", m(".flex.justify-center.p-12", m("span.loading.loading-spinner.loading-lg")));
+            return m(".container.mx-auto.p-4.py-12", m(".flex.justify-center.p-12", m("span.loading.loading-spinner.loading-lg")));
         }
 
         if (!this.user) {
-            return m(".container.mx-auto.p-4", [
+            return m(".container.mx-auto.p-4.py-12", [
                 m(".alert.alert-error", [
                     m(Icon, { icon: "fa-solid fa-circle-exclamation" }),
                     m("span", "User not found")
@@ -88,7 +88,7 @@ const EditUserPage = {
             ]);
         }
 
-        return m(".container.mx-auto.p-4", [
+        return m(".container.mx-auto.p-4.py-12", [
             m(".max-w-2xl.mx-auto", [
                 m(".flex.items-center.gap-4.mb-6", [
                     m(m.route.Link, { href: "/admin/users", class: "btn btn-circle btn-ghost" }, m(Icon, { name: "fa-solid fa-arrow-left" })),

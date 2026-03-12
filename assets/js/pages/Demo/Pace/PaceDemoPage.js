@@ -1,5 +1,6 @@
 import m from "mithril";
 import { Icon } from "../../../components/Icon";
+import TestCardInfo from "../../../components/TestCardInfo";
 import PaymentsService from "../../../services/PaymentsService";
 
 export default class PaceDemoPage {
@@ -48,13 +49,44 @@ export default class PaceDemoPage {
             });
     }
 
+    renderLoadingOverlay() {
+        if (!this.isLoading) return null;
+        return m(".absolute.inset-0.bg-base-100.bg-opacity-50.flex.justify-center.items-center.z-10", [
+            m("span.loading.loading-spinner.loading-lg")
+        ]);
+    }
+
     view() {
-        let loadingOverlay = null;
-        if (this.isLoading) {
-            loadingOverlay = m(".absolute.inset-0.bg-base-100.bg-opacity-50.flex.justify-center.items-center.z-10", [
-                m("span.loading.loading-spinner.loading-lg")
-            ]);
-        }
+
+        const credentialsCard = m(".card.bg-base-100.shadow-xl.mb-8", [
+            m(".card-body", [
+                m("h2.card-title.flex.items-center.gap-2", [
+                    m(Icon, { icon: "fa-solid fa-credit-card text-primary" }),
+                    "Pace Sandbox Credentials"
+                ]),
+                m(".grid.grid-cols-1.md:grid-cols-2.gap-4.mt-4", [
+                    m(".form-control", [
+                        m("label.label", m("span.label-text.font-bold", "API Mode")),
+                        m("input.input.input-bordered.input-sm.bg-base-200", { value: "Sandbox Mode", readonly: true })
+                    ]),
+                    m(".form-control", [
+                        m("label.label", m("span.label-text.font-bold", "Pace Dashboard")),
+                        m("a.btn.btn-outline.btn-primary.btn-sm", { 
+                            href: "https://dashboard.pacenow.co/", 
+                            target: "_blank" 
+                        }, [
+                            m(Icon, { icon: "fa-solid fa-external-link" }),
+                            " Merchant Dashboard"
+                        ])
+                    ])
+                ]),
+                m("p.text-xs.mt-4.opacity-60", "Manage your Pace API keys and settlement settings in the Merchant Dashboard.")
+            ])
+        ]);
+
+        const cards = [
+            { label: "Visa (Pace Test)", number: "4242 4242 4242 4242" }
+        ];
 
         return m(".container.mx-auto.p-4.py-12", [
             m(".flex.items-center.gap-4.mb-12", [
@@ -64,9 +96,11 @@ export default class PaceDemoPage {
                 ]),
                 m("h1.text-4xl.font-bold", "Pace Integration Demo")
             ]),
-
+            m(TestCardInfo, { cards }),
+            credentialsCard,
             m(".grid.grid-cols-1.lg:grid-cols-2.gap-8", [
-                m(".card.bg-base-100.shadow-xl", [
+                m(".card.bg-base-100.shadow-xl.relative", [
+                    this.renderLoadingOverlay(),
                     m(".card-body", [
                         m("h2.card-title", [
                             m(Icon, { icon: "fa-solid fa-credit-card text-primary text-2xl" }),
@@ -92,7 +126,8 @@ export default class PaceDemoPage {
                     ])
                 ]),
 
-                m(".card.bg-base-100.shadow-xl", [
+                m(".card.bg-base-100.shadow-xl.relative", [
+                    this.renderLoadingOverlay(),
                     m(".card-body", [
                         m("h2.card-title", "Pace Subscriptions"),
                         m("p.opacity-70", "Test recurring payments specifically for the UK market with Pace."),

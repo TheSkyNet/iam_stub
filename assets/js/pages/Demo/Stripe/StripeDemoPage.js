@@ -1,5 +1,6 @@
 import m from "mithril";
 import { Icon } from "../../../components/Icon";
+import TestCardInfo from "../../../components/TestCardInfo";
 import PaymentsService from "../../../services/PaymentsService";
 
 export default class StripeDemoPage {
@@ -138,13 +139,46 @@ export default class StripeDemoPage {
             });
     }
 
+    renderLoadingOverlay() {
+        if (!this.isLoading) return null;
+        return m(".absolute.inset-0.bg-base-100.bg-opacity-50.flex.justify-center.items-center.z-10", [
+            m("span.loading.loading-spinner.loading-lg")
+        ]);
+    }
+
     view() {
-        let loadingOverlay = null;
-        if (this.isLoading) {
-            loadingOverlay = m(".absolute.inset-0.bg-base-100.bg-opacity-50.flex.justify-center.items-center.z-10", [
-                m("span.loading.loading-spinner.loading-lg")
-            ]);
-        }
+
+        const publicKeyCard = m(".card.bg-base-100.shadow-xl.mb-8", [
+            m(".card-body", [
+                m("h2.card-title.flex.items-center.gap-2", [
+                    m(Icon, { icon: "fa-brands fa-stripe text-primary" }),
+                    "Stripe Sandbox Credentials"
+                ]),
+                m(".grid.grid-cols-1.md:grid-cols-2.gap-4.mt-4", [
+                    m(".form-control", [
+                        m("label.label", m("span.label-text.font-bold", "Public Key")),
+                        m("input.input.input-bordered.input-sm.bg-base-200", { value: this.publicKey || 'Loading...', readonly: true })
+                    ]),
+                    m(".form-control", [
+                        m("label.label", m("span.label-text.font-bold", "Stripe Dashboard")),
+                        m("a.btn.btn-outline.btn-primary.btn-sm", { 
+                            href: "https://dashboard.stripe.com/test/apikeys", 
+                            target: "_blank" 
+                        }, [
+                            m(Icon, { icon: "fa-solid fa-external-link" }),
+                            " Get API Keys"
+                        ])
+                    ])
+                ]),
+                m("p.text-xs.mt-4.opacity-60", "Make sure you use your TEST keys for sandbox integration. Your secret key should never be shared with the frontend.")
+            ])
+        ]);
+
+        const cards = [
+            { label: "Visa (Succeeds)", number: "4242 4242 4242 4242" },
+            { label: "Visa (3DS)", number: "4000 0000 0000 3106" },
+            { label: "Visa (Decline)", number: "4000 0000 0000 0002" }
+        ];
 
         return m(".container.mx-auto.p-4.py-12", [
             m(".flex.items-center.gap-4.mb-12", [
@@ -154,9 +188,11 @@ export default class StripeDemoPage {
                 ]),
                 m("h1.text-4xl.font-bold", "Stripe Integration Demo")
             ]),
-
+            m(TestCardInfo, { cards }),
+            publicKeyCard,
             m(".grid.grid-cols-1.lg:grid-cols-2.gap-8", [
-                m(".card.bg-base-100.shadow-xl", [
+                m(".card.bg-base-100.shadow-xl.relative", [
+                    this.renderLoadingOverlay(),
                     m(".card-body", [
                         m("h2.card-title", [
                             m(Icon, { icon: "fa-brands fa-stripe text-primary text-2xl" }),
@@ -166,9 +202,12 @@ export default class StripeDemoPage {
                         m(".divider"),
                         m(".form-control.w-full.mb-4", [
                             m("label.label", m("span.label-text", "Card Details")),
-                            m(".input.input-bordered.h-auto.p-4", {
-                                oncreate: (vnode) => this.mountCardElement(vnode)
-                            })
+                            this.stripeLoaded 
+                                ? m(".border.rounded-lg.bg-base-200.p-4", {
+                                    key: "stripe-card",
+                                    oncreate: (vnode) => this.mountCardElement(vnode)
+                                  })
+                                : m(".skeleton.h-14.w-full", { key: "stripe-skeleton" })
                         ]),
                         m(".form-control.w-full.max-w-xs.mb-4", [
                             m("label.label", m("span.label-text", "Amount")),
@@ -188,7 +227,8 @@ export default class StripeDemoPage {
                     ])
                 ]),
 
-                m(".card.bg-base-100.shadow-xl", [
+                m(".card.bg-base-100.shadow-xl.relative", [
+                    this.renderLoadingOverlay(),
                     m(".card-body", [
                         m("h2.card-title", "Stripe Subscriptions"),
                         m("p.opacity-70", "Redirect to Stripe Checkout for recurring billing."),

@@ -24,7 +24,19 @@ The system supports the following providers with real sandbox integration capabi
 
 ## Configuration
 
-Provider settings are managed via environment variables in the `.env` file:
+Provider settings are managed via environment variables in the `.env` file.
+
+### Provider Dashboards & API Keys
+
+To get your API keys for testing, visit the following developer dashboards:
+
+- **Stripe**: [Stripe Dashboard - API Keys](https://dashboard.stripe.com/test/apikeys)
+- **PayPal**: [PayPal Developer Dashboard](https://developer.paypal.com/dashboard/applications/sandbox)
+- **Square**: [Square Developer Dashboard](https://developer.squareup.com/apps)
+- **Mollie**: [Mollie Dashboard - API Keys](https://www.mollie.com/dashboard/developers/api-keys)
+- **Pace**: [Pace Merchant Dashboard](https://dashboard.pacenow.co/)
+
+### Environment Variables
 
 ```env
 # Stripe Configuration

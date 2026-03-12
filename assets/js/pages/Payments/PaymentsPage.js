@@ -1,5 +1,6 @@
 import PaymentsService from "../../services/PaymentsService";
 import { Icon } from "../../components/Icon";
+import TestCardInfo from "../../components/TestCardInfo";
 
 export default class PaymentsPage {
     oninit(vnode) {
@@ -177,11 +178,24 @@ export default class PaymentsPage {
             ]);
         }
 
-        return m("div", { class: "container mx-auto p-4" }, [
+        const providerCards = {
+            stripe: [{ label: "Visa", number: "4242 4242 4242 4242" }],
+            paypal: [{ label: "Sandbox", number: "sb-pkp6n32704513@personal.example.com" }],
+            square: [{ label: "Visa", number: "4111 1111 1111 1111" }],
+            pace: [{ label: "Visa", number: "4242 4242 4242 4242" }],
+            mollie: [{ label: "Visa", number: "4242 4242 4242 4242" }],
+            revolut: [
+                { label: "Visa (Revolut)", number: "4596 5400 0000 0001" },
+                { label: "Mastercard", number: "5273 4600 0000 0001" }
+            ]
+        };
+
+        return m("div", { class: "container mx-auto p-4 py-12 max-w-6xl" }, [
             m("h1", { class: "text-3xl font-bold mb-8 flex items-center gap-3" }, [
                 m(Icon, { icon: "fa-solid fa-credit-card text-primary" }),
                 "Payments & Subscriptions"
             ]),
+            m(TestCardInfo, { cards: providerCards[this.selectedProvider] || [] }),
             providerSelector,
             loadingSpinner,
             content

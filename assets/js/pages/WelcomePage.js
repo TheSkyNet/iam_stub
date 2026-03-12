@@ -3,14 +3,28 @@ import { Icon } from "../components/Icon";
 
 const WelcomePage = {
     view: () => {
-        return m(".container.mx-auto.p-4.min-h-screen.flex.flex-col.items-center.justify-center", [
+        return m(".container.mx-auto.p-4.py-20.flex.flex-col.items-center.justify-center", [
             m(".text-center.mb-12", [
                 m("h1.text-5xl.font-bold.mb-4", "Welcome to IamLab"),
                 m("p.text-xl.text-base-content.opacity-70", "Your Phalcon-based Laboratory for Identity and Access Management."),
             ]),
             
             m(".flex.flex-wrap.justify-center.gap-6.w-full", [
-                // Card 1: Components
+                // Card 1: Payments
+                m("div", {"class":"card bg-base-100 image-full w-96 shadow-sm"}, [
+                    m("figure", 
+                        m("img", {"src":"https://images.unsplash.com/photo-1556742044-3c52d6e88c62?auto=format&fit=crop&w=800&q=80","alt":"Payments"})
+                    ),
+                    m("div", {"class":"card-body"}, [
+                        m("h2", {"class":"card-title"}, "Payment Systems"),
+                        m("p", "Integrated with Stripe, PayPal, Square, and more UK providers."),
+                        m("div", {"class":"card-actions justify-end"}, 
+                            m(m.route.Link, { href: "/payments", class: "btn btn-primary" }, "Manage Payments")
+                        )
+                    ])
+                ]),
+
+                // Card 2: Components
                 m("div", {"class":"card bg-base-100 image-full w-96 shadow-sm"}, [
                     m("figure", 
                         m("img", {"src":"https://images.unsplash.com/photo-1557683316-973673baf926?auto=format&fit=crop&w=800&q=80","alt":"Components"})
@@ -24,7 +38,7 @@ const WelcomePage = {
                     ])
                 ]),
 
-                // Card 2: Authentication
+                // Card 3: Authentication
                 m("div", {"class":"card bg-base-100 image-full w-96 shadow-sm"}, [
                     m("figure", 
                         m("img", {"src":"https://images.unsplash.com/photo-1557682250-33bd709cbe85?auto=format&fit=crop&w=800&q=80","alt":"Auth"})
@@ -38,7 +52,7 @@ const WelcomePage = {
                     ])
                 ]),
 
-                // Card 3: Real-time
+                // Card 4: Real-time
                 m("div", {"class":"card bg-base-100 image-full w-96 shadow-sm"}, [
                     m("figure", 
                         m("img", {"src":"https://images.unsplash.com/photo-1557683311-eac922347aa1?auto=format&fit=crop&w=800&q=80","alt":"Real-time"})
@@ -52,7 +66,7 @@ const WelcomePage = {
                     ])
                 ]),
 
-                // Card 4: Error Service
+                // Card 5: Error Service
                 m("div", {"class":"card bg-base-100 image-full w-96 shadow-sm"}, [
                     m("figure", 
                         m("img", {"src":"https://images.unsplash.com/photo-1550684848-fac1c5b4e853?auto=format&fit=crop&w=800&q=80","alt":"Testing"})

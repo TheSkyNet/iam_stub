@@ -87,8 +87,8 @@ const RolesPage = {
     },
 
     view: function() {
-        return m(".container.mx-auto.p-4", [
-            m(".flex.justify-between.items-center.mb-6", [
+        return m(".container.mx-auto.p-4.py-12", [
+            m(".flex.justify-between.items-center.mb-8", [
                 m("h1.text-3xl.font-bold", "Roles Management"),
                 m(".flex.gap-2", [
                     m("button.btn.btn-outline.btn-sm", { onclick: () => this.loadRoles() }, [

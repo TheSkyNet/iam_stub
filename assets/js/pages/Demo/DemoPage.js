@@ -144,6 +144,14 @@ export default class DemoPage {
                 href: "/demo/mollie",
                 color: "secondary",
                 requiresAuth: true
+            },
+            {
+                title: "Revolut Pay",
+                description: "Popular UK-based digital banking and payment solution with high conversion rates.",
+                icon: "fa-solid fa-credit-card",
+                href: "/demo/revolut",
+                color: "primary",
+                requiresAuth: true
             }
         ];
 

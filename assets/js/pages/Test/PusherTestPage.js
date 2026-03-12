@@ -3,7 +3,7 @@ import { Icon } from "../../components/Icon";
 
 const PusherTestPage = {
     view: () => {
-        return m(".container.mx-auto.p-4", [
+        return m(".container.mx-auto.p-4.py-12", [
             m(".card.bg-base-100.shadow-xl", [
                 m(".card-body", [
                     m("h2.card-title", [

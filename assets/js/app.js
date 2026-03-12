@@ -33,6 +33,7 @@ import StripeDemoPage from "./pages/Demo/Stripe/StripeDemoPage";
 import SquareDemoPage from "./pages/Demo/Square/SquareDemoPage";
 import PaceDemoPage from "./pages/Demo/Pace/PaceDemoPage";
 import MollieDemoPage from "./pages/Demo/Mollie/MollieDemoPage";
+import RevolutDemoPage from "./pages/Demo/Revolut/RevolutDemoPage";
 
 const root = document.getElementById('app');
 
@@ -115,6 +116,7 @@ m.route(root, "/", {
     "/demo/square": layout(authGuard(SquareDemoPage)),
     "/demo/pace": layout(authGuard(PaceDemoPage)),
     "/demo/mollie": layout(authGuard(MollieDemoPage)),
+    "/demo/revolut": layout(authGuard(RevolutDemoPage)),
     "/pusher-test": layout(authGuard(PusherTestPage)),
     "/sse-test": layout(authGuard(SseTestPage)),
     "/test": layout(TestPage),

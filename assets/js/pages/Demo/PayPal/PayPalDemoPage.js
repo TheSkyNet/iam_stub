@@ -1,5 +1,6 @@
 import m from "mithril";
 import { Icon } from "../../../components/Icon";
+import TestCardInfo from "../../../components/TestCardInfo";
 import PaymentsService from "../../../services/PaymentsService";
 
 export default class PayPalDemoPage {
@@ -171,13 +172,14 @@ export default class PayPalDemoPage {
             });
     }
 
+    renderLoadingOverlay() {
+        if (!this.isLoading) return null;
+        return m(".absolute.inset-0.bg-base-100.bg-opacity-50.flex.justify-center.items-center.z-10", [
+            m("span.loading.loading-spinner.loading-lg")
+        ]);
+    }
+
     view() {
-        let loadingOverlay = null;
-        if (this.isLoading) {
-            loadingOverlay = m(".absolute.inset-0.bg-base-100.bg-opacity-50.flex.justify-center.items-center.z-10", [
-                m("span.loading.loading-spinner.loading-lg")
-            ]);
-        }
 
         const clientIdValue = this.credentials.clientId || 'Loading...';
         
@@ -264,7 +266,7 @@ export default class PayPalDemoPage {
         ]);
 
         const actionsCard = m(".card.bg-base-100.shadow-xl.relative", [
-            loadingOverlay,
+            this.renderLoadingOverlay(),
             m(".card-body", [
                 m("h2.card-title", "Demo Actions"),
                 m(".grid.grid-cols-1.md:grid-cols-2.gap-8.mt-4", [
@@ -298,6 +300,11 @@ export default class PayPalDemoPage {
             ])
         ]);
 
+        const cards = [
+            { label: "Sandbox Email", number: "sb-pkp6n32704513@personal.example.com" },
+            { label: "Sandbox Password", number: "12345678" }
+        ];
+
         return m(".container.mx-auto.p-4.py-12", [
             m(".flex.items-center.gap-4.mb-12", [
                 m(m.route.Link, { href: "/demo", class: "btn btn-ghost btn-sm" }, [
@@ -306,6 +313,7 @@ export default class PayPalDemoPage {
                 ]),
                 m("h1.text-4xl.font-bold", "PayPal Integration Demo")
             ]),
+            m(TestCardInfo, { cards }),
             credentialsCard,
             actionsCard,
             featuresInfo

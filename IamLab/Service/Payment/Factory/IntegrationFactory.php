@@ -9,6 +9,7 @@ use IamLab\Service\Payment\Integrations\PayPalIntegration;
 use IamLab\Service\Payment\Integrations\SquareIntegration;
 use IamLab\Service\Payment\Integrations\PaceIntegration;
 use IamLab\Service\Payment\Integrations\MollieIntegration;
+use IamLab\Service\Payment\Integrations\RevolutIntegration;
 
 /**
  * Payment Integration Factory
@@ -59,6 +60,8 @@ class IntegrationFactory
                 return new PaceIntegration($config);
             case 'mollie':
                 return new MollieIntegration($config);
+            case 'revolut':
+                return new RevolutIntegration($config);
             default:
                 throw new Exception("Unknown payment provider: {$name}");
         }

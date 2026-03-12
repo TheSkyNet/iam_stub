@@ -60,7 +60,7 @@ const AddUserPage = {
     },
 
     view: function() {
-        return m(".container.mx-auto.p-4", [
+        return m(".container.mx-auto.p-4.py-12", [
             m(".max-w-2xl.mx-auto", [
                 m(".flex.items-center.gap-4.mb-6", [
                     m(m.route.Link, { href: "/admin/users", class: "btn btn-circle btn-ghost" }, m(Icon, { name: "fa-solid fa-arrow-left" })),

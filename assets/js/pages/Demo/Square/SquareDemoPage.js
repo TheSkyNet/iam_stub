@@ -1,5 +1,6 @@
 import m from "mithril";
 import { Icon } from "../../../components/Icon";
+import TestCardInfo from "../../../components/TestCardInfo";
 import PaymentsService from "../../../services/PaymentsService";
 
 export default class SquareDemoPage {
@@ -120,13 +121,49 @@ export default class SquareDemoPage {
             });
     }
 
+    renderLoadingOverlay() {
+        if (!this.isLoading) return null;
+        return m(".absolute.inset-0.bg-base-100.bg-opacity-50.flex.justify-center.items-center.z-10", [
+            m("span.loading.loading-spinner.loading-lg")
+        ]);
+    }
+
     view() {
-        let loadingOverlay = null;
-        if (this.isLoading) {
-            loadingOverlay = m(".absolute.inset-0.bg-base-100.bg-opacity-50.flex.justify-center.items-center.z-10", [
-                m("span.loading.loading-spinner.loading-lg")
-            ]);
-        }
+
+        const credentialsCard = m(".card.bg-base-100.shadow-xl.mb-8", [
+            m(".card-body", [
+                m("h2.card-title.flex.items-center.gap-2", [
+                    m(Icon, { icon: "fa-brands fa-square text-primary" }),
+                    "Square Sandbox Credentials"
+                ]),
+                m(".grid.grid-cols-1.md:grid-cols-3.gap-4.mt-4", [
+                    m(".form-control", [
+                        m("label.label", m("span.label-text.font-bold", "Application ID")),
+                        m("input.input.input-bordered.input-sm.bg-base-200", { value: this.applicationId || 'Loading...', readonly: true })
+                    ]),
+                    m(".form-control", [
+                        m("label.label", m("span.label-text.font-bold", "Location ID")),
+                        m("input.input.input-bordered.input-sm.bg-base-200", { value: this.locationId || 'Loading...', readonly: true })
+                    ]),
+                    m(".form-control", [
+                        m("label.label", m("span.label-text.font-bold", "Square Dashboard")),
+                        m("a.btn.btn-outline.btn-primary.btn-sm", { 
+                            href: "https://developer.squareup.com/apps", 
+                            target: "_blank" 
+                        }, [
+                            m(Icon, { icon: "fa-solid fa-external-link" }),
+                            " Get Credentials"
+                        ])
+                    ])
+                ]),
+                m("p.text-xs.mt-4.opacity-60", "Use your Sandbox Application ID and Location ID. Ensure the Access Token is set in your server-side .env file.")
+            ])
+        ]);
+
+        const cards = [
+            { label: "Visa (Square Test)", number: "4111 1111 1111 1111" },
+            { label: "Mastercard", number: "5555 5555 5555 4444" }
+        ];
 
         return m(".container.mx-auto.p-4.py-12", [
             m(".flex.items-center.gap-4.mb-12", [
@@ -136,9 +173,11 @@ export default class SquareDemoPage {
                 ]),
                 m("h1.text-4xl.font-bold", "Square Integration Demo")
             ]),
-
+            m(TestCardInfo, { cards }),
+            credentialsCard,
             m(".grid.grid-cols-1.lg:grid-cols-2.gap-8", [
-                m(".card.bg-base-100.shadow-xl", [
+                m(".card.bg-base-100.shadow-xl.relative", [
+                    this.renderLoadingOverlay(),
                     m(".card-body", [
                         m("h2.card-title", [
                             m(Icon, { icon: "fa-brands fa-square text-primary text-2xl" }),
@@ -148,9 +187,12 @@ export default class SquareDemoPage {
                         m(".divider"),
                         m(".form-control.w-full.mb-4", [
                             m("label.label", m("span.label-text", "Card Details")),
-                            m("#card-container.input.input-bordered.h-auto.p-4", {
-                                oncreate: (vnode) => this.mountCardElement(vnode)
-                            })
+                            this.squareLoaded
+                                ? m("#card-container.border.rounded-lg.bg-base-200.p-4", {
+                                    key: "square-card",
+                                    oncreate: (vnode) => this.mountCardElement(vnode)
+                                  })
+                                : m(".skeleton.h-14.w-full", { key: "square-skeleton" })
                         ]),
                         m(".form-control.w-full.max-w-xs.mb-4", [
                             m("label.label", m("span.label-text", "Amount")),
@@ -170,7 +212,8 @@ export default class SquareDemoPage {
                     ])
                 ]),
 
-                m(".card.bg-base-100.shadow-xl", [
+                m(".card.bg-base-100.shadow-xl.relative", [
+                    this.renderLoadingOverlay(),
                     m(".card-body", [
                         m("h2.card-title", "Square Subscriptions"),
                         m("p.opacity-70", "Handle recurring billing and customer vaulting with Square."),
