@@ -123,7 +123,28 @@ export const initGlobalErrorHandling = () => {
                 'onmozorientationchange is deprecated',
                 'Partitioned cookie or storage access',
                 'm.stripe.network',
-                'Script error.' // Usually cross-origin errors with no detail
+                'js.stripe.com',
+                'hcaptcha.com',
+                'newassets.hcaptcha.com',
+                'Content-Security-Policy',
+                'script-src-elem',
+                'script-src \'self\'',
+                'sha256-',
+                'Report-Only policy',
+                'hcaptcha-invisible',
+                'elements-inner-card',
+                'universal-link-modal-inner',
+                'elements-inner-link-button-for-card',
+                'reflow.js',
+                'utils.js', // hCaptcha/Stripe internal
+                'URL constructor: is not a valid URL',
+                'Source map error',
+                'Script error.', // Usually cross-origin errors with no detail
+                'stripe-js-v3', // Internal Stripe script
+                'stripe.com',
+                'stripecdn.com',
+                'hcaptcha-checkbox',
+                'hcaptcha-challenge'
             ];
 
             if (noisyPatterns.some(pattern => message && message.includes(pattern))) {
@@ -163,7 +184,28 @@ export const initGlobalErrorHandling = () => {
                 'Request for font',
                 'blocked at visibility level',
                 'm.stripe.network',
-                'Script error.'
+                'js.stripe.com',
+                'hcaptcha.com',
+                'newassets.hcaptcha.com',
+                'Content-Security-Policy',
+                'script-src-elem',
+                'script-src \'self\'',
+                'sha256-',
+                'Report-Only policy',
+                'hcaptcha-invisible',
+                'elements-inner-card',
+                'universal-link-modal-inner',
+                'elements-inner-link-button-for-card',
+                'reflow.js',
+                'utils.js',
+                'URL constructor: is not a valid URL',
+                'Source map error',
+                'Script error.',
+                'stripe-js-v3',
+                'stripe.com',
+                'stripecdn.com',
+                'hcaptcha-checkbox',
+                'hcaptcha-challenge'
             ];
 
             if (noisyPatterns.some(pattern => reasonString && reasonString.includes(pattern))) {
@@ -184,6 +226,12 @@ export const initGlobalErrorHandling = () => {
         } finally {
             setTimeout(() => { isProcessingError = false; }, 100);
         }
+    });
+
+    // Quietly ignore CSP violations - they are almost always from third-party iframes
+    window.addEventListener('securitypolicyviolation', (event) => {
+        // We log them to console for developers but don't show toasts or report to backend
+        console.debug('CSP Violation ignored:', event.violatedDirective, event.blockedURI);
     });
 };
 

@@ -12,6 +12,7 @@
     "filepond-plugin-image-preview": "^4.6.12",
     "imagesloaded": "^5.0.0",
     "postcss": "^8.5.8",
+    "puppeteer": "^24.39.0",
     "pusher-js": "^8.4.0",
     "vibrant": "^0.0.1"
   },
