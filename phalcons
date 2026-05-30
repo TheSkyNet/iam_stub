@@ -87,7 +87,7 @@ function display_help {
     echo "  ${GREEN}phalcons bash${NC}         Alias for 'phalcons shell'"
     echo "  ${GREEN}phalcons root-shell${NC}   Start a root shell session within the application container"
     echo "  ${GREEN}phalcons root-bash${NC}    Alias for 'phalcons root-shell'"
-    echo "  ${GREEN}phalcons tinker${NC}       Start a new Laravel Tinker session"
+    echo "  ${GREEN}phalcons tinker${NC}       Start a new Tinker session"
     echo
     echo "${YELLOW}Sharing:${NC}"
     echo "  ${GREEN}phalcons share${NC}   Share the application publicly via a temporary URL"
@@ -104,6 +104,9 @@ function display_help {
     echo "  ${GREEN}phalcons service:uninstall${NC}  Remove the application service"
     echo "  ${GREEN}phalcons deploy${NC}             Deploy the application to a server"
     echo
+    echo "${YELLOW}Project Generation:${NC}"
+    echo "  ${GREEN}phalcons project:init${NC}        Initialize a new project from this stub"
+    echo
     exit 1
 }
 
@@ -116,7 +119,7 @@ else
     display_help
 fi
 
-# Source the ".env" file so Laravel's environment variables are available...
+# Source the ".env" file so environment variables are available...
 if [ ! -z "$APP_ENV" ] && [ -f ./.env.$APP_ENV ]; then
   source ./.env.$APP_ENV;
 elif [ -f ./.env ]; then
@@ -141,7 +144,7 @@ export SAIL_SHARE_DOMAIN=${SAIL_SHARE_DOMAIN:-""}
 function phalcons_is_not_running {
     echo "${BOLD}Phalcon is not running.${NC}" >&2
     echo "" >&2
-    echo "${BOLD}You may Phalcon using the following commands:${NC} './vendor/bin/phalcons up' or './vendor/bin/phalcons up -d'" >&2
+    echo "${BOLD}You may start Phalcon using the following commands:${NC} './phalcons up' or './phalcons up -d'" >&2
 
     exit 1
 }
@@ -229,6 +232,18 @@ elif [ "$1" == "command" ]; then
         phalcons_is_not_running
     fi
 
+# Proxy custom project generation command...
+elif [ "$1" == "project:init" ]; then
+    shift 1
+
+    if [ "$EXEC" == "yes" ]; then
+        ARGS+=(exec -u phalcons)
+        [ ! -t 0 ] && ARGS+=(-T)
+        ARGS+=("$APP_SERVICE" "php" "bin/command.php" "project:init" "$@")
+    else
+        phalcons_is_not_running
+    fi
+
 # Proxy docker-compose commands to the docker-compose binary on the application container...
 elif [ "$1" == "docker-compose" ]; then
     shift 1
@@ -260,7 +275,7 @@ elif [ "$1" == "phalcon" ] || [ "$1" == "art" ]; then
     if [ "$EXEC" == "yes" ]; then
         ARGS+=(exec -u phalcons)
         [ ! -t 0 ] && ARGS+=(-T)
-        ARGS+=("$APP_SERVICE" phalcon "$@")
+        ARGS+=("$APP_SERVICE" ./vendor/bin/phalcon "$@")
     else
         phalcons_is_not_running
     fi
@@ -272,7 +287,7 @@ elif [ "$1" == "debug" ]; then
     if [ "$EXEC" == "yes" ]; then
         ARGS+=(exec -u phalcons -e XDEBUG_SESSION=1)
         [ ! -t 0 ] && ARGS+=(-T)
-        ARGS+=("$APP_SERVICE" phalcon "$@")
+        ARGS+=("$APP_SERVICE" ./vendor/bin/phalcon "$@")
     else
         phalcons_is_not_running
     fi
@@ -284,19 +299,19 @@ elif [ "$1" == "test" ]; then
     if [ "$EXEC" == "yes" ]; then
         ARGS+=(exec -u phalcons)
         [ ! -t 0 ] && ARGS+=(-T)
-        ARGS+=("$APP_SERVICE" phalcon test "$@")
+        ARGS+=("$APP_SERVICE" ./vendor/bin/phalcon test "$@")
     else
         phalcons_is_not_running
     fi
 
-# Initiate a Laravel Tinker session within the application container...
+# Initiate a Tinker session within the application container...
 elif [ "$1" == "tinker" ] ; then
     shift 1
 
     if [ "$EXEC" == "yes" ]; then
         ARGS+=(exec -u phalcons)
         [ ! -t 0 ] && ARGS+=(-T)
-        ARGS+=("$APP_SERVICE" phalcon tinker)
+        ARGS+=("$APP_SERVICE" ./vendor/bin/phalcon tinker)
     else
         phalcons_is_not_running
     fi
@@ -471,7 +486,7 @@ elif [ "$1" == "migrate:generate" ]; then
             ARGS+=("$APP_SERVICE" ./vendor/bin/phalcon-migrations generate --config=./bin/migrations.php "$@")
         else
             # If no additional arguments, run basic generate
-            ARGS+=("$APP_SERVICE" ./vendor/bin/phalcon-migrations generate --config=migrations.php)
+            ARGS+=("$APP_SERVICE" ./vendor/bin/phalcon-migrations generate --config=./bin/migrations.php)
         fi
     else
         phalcons_is_not_running
@@ -484,7 +499,7 @@ elif [ "$1" == "migrate:list" ]; then
     if [ "$EXEC" == "yes" ]; then
         ARGS+=(exec -u phalcons)
         [ ! -t 0 ] && ARGS+=(-T)
-        ARGS+=("$APP_SERVICE" ./vendor/bin/phalcon-migrations list --config=migrations.php)
+        ARGS+=("$APP_SERVICE" ./vendor/bin/phalcon-migrations list --config=./bin/migrations.php)
     else
         phalcons_is_not_running
     fi

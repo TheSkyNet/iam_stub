@@ -18,21 +18,6 @@ return [
         'description' => 'Test Pusher real-time functionality'
     ],
 
-    'make:command' => [
-        'class' => 'IamLab\\Commands\\MakeCommandCommand',
-        'description' => 'Generate a new command class'
-    ],
-
-    'cache:clear' => [
-        'class' => 'IamLab\\Commands\\CacheClearCommand',
-        'description' => 'Clear application cache'
-    ],
-
-    'user:create' => [
-        'class' => 'IamLab\\Commands\\UserCreateCommand',
-        'description' => 'Create a new user account'
-    ],
-
     'make:js' => [
         'class' => 'IamLab\\Commands\\MakeJsCommand',
         'description' => 'Generate Mithril.js views, services, and API controllers'
@@ -51,6 +36,16 @@ return [
     'user:make-admin' => [
         'class' => 'IamLab\\Commands\\MakeAdminCommand',
         'description' => 'Make a user an administrator'
+    ],
+
+    'worker:run' => [
+        'class' => 'IamLab\\Core\\Command\\WorkerCommand',
+        'description' => 'Run the job queue worker'
+    ],
+
+    'project:init' => [
+        'class' => 'IamLab\\Commands\\ProjectInitCommand',
+        'description' => 'Initialize a new project from this stub'
     ],
 
     // Add more commands here as needed

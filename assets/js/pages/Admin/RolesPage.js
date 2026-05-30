@@ -2,10 +2,9 @@ import m from "mithril";
 import { Icon } from "../../components/Icon";
 import { AuthService } from "../../services/AuthserviceService";
 import { Fieldset, FormField, SubmitButton } from "../../components/Form";
-import {RolesService} from "../../services/RolesService";
+import { RolesService } from "../../services/RolesService";
 
 const RolesPage = {
-
     roles: [],
     loading: true,
     error: null,
@@ -36,38 +35,25 @@ const RolesPage = {
 
     saveRole: function() {
         const isEditing = !!this.editingRole;
-        const method = isEditing ? "PUT" : "POST";
-        const url = isEditing ? `/api/roles/${this.editingRole.id}` : "/api/roles";
         const data = isEditing ? this.editingRole : this.newRole;
+        const promise = isEditing ? this.rolesService.update(data) : this.rolesService.create(data);
 
-        // use the servis
-
-        if(isEditing){
-            this.rolesService.update(data).then((response) => {
-                if (response.success) {
-                    window.showToast(`Role ${isEditing ? "updated" : "created"}`, "success");
-                    this.editingRole = null;
-                    this.newRole = { name: "", description: "" };
-                    this.loadRoles();
-                    document.getElementById('role_modal').close();
-                } else {
-                    window.showToast(response, "error");
+        return promise.then((response) => {
+            if (response.success) {
+                window.showToast(`Role ${isEditing ? "updated" : "created"}`, "success");
+                this.editingRole = null;
+                this.newRole = { name: "", description: "" };
+                this.loadRoles();
+                const modal = document.getElementById('role_modal');
+                if (modal) {
+                    modal.close();
                 }
-            })
-        }
-        if (!isEditing){
-            this.rolesService.create(data).then((response) => {
-                if (response.success) {
-                    window.showToast(`Role ${isEditing ? "updated" : "created"}`, "success");
-                    this.editingRole = null;
-                    this.newRole = { name: "", description: "" };
-                    this.loadRoles();
-                    document.getElementById('role_modal').close();
-                } else {
-                    window.showToast(response, "error");
-                }
-            })
-        }
+            } else {
+                window.showToast(response, "error");
+            }
+        }).catch((err) => {
+            window.showToast(err.response, "error");
+        });
     },
 
     deleteRole: function(id) {
@@ -82,8 +68,57 @@ const RolesPage = {
                 window.showToast(response, "error");
             }
         }).catch((err) => {
-            window.showToast(err, "error");
+            window.showToast(err.response, "error");
         });
+    },
+
+    renderContent: function() {
+        if (this.loading) {
+            return m(".flex.justify-center.p-12", m("span.loading.loading-spinner.loading-lg"));
+        }
+        
+        if (this.error) {
+            return m(".alert.alert-error", [
+                m(Icon, { icon: "fa-solid fa-circle-exclamation" }),
+                m("span", this.error)
+            ]);
+        }
+
+        return m(".overflow-x-auto.bg-base-100.rounded-xl.shadow", [
+            m("table.table.table-zebra", [
+                m("thead", [
+                    m("tr", [
+                        m("th", "ID"),
+                        m("th", "Name"),
+                        m("th", "Description"),
+                        m("th.text-right", "Actions")
+                    ])
+                ]),
+                m("tbody", [
+                    this.roles.length === 0 
+                        ? m("tr", m("td.text-center[colspan=4]", "No roles found"))
+                        : this.roles.map(role => m("tr", [
+                            m("td", role.id),
+                            m("td.font-bold", role.name),
+                            m("td", role.description),
+                            m("td.text-right", [
+                                m("button.btn.btn-sm.btn-ghost", {
+                                    onclick: () => {
+                                        this.editingRole = JSON.parse(JSON.stringify(role));
+                                        const modal = document.getElementById('role_modal');
+                                        if (modal) {
+                                            modal.showModal();
+                                        }
+                                    }
+                                }, m(Icon, { icon: "fa-solid fa-pen" })),
+                                m("button.btn.btn-sm.btn-ghost.text-error", {
+                                    onclick: () => this.deleteRole(role.id)
+                                }, m(Icon, { icon: "fa-solid fa-trash" }))
+                            ])
+                        ]))
+                ])
+            ])
+        ]);
     },
 
     view: function() {
@@ -99,7 +134,10 @@ const RolesPage = {
                         onclick: () => {
                             this.editingRole = null;
                             this.newRole = { name: "", description: "" };
-                            document.getElementById('role_modal').showModal();
+                            const modal = document.getElementById('role_modal');
+                            if (modal) {
+                                modal.showModal();
+                            }
                         }
                     }, [
                         m(Icon, { icon: "fa-solid fa-plus" }),
@@ -108,45 +146,7 @@ const RolesPage = {
                 ])
             ]),
 
-            this.loading 
-                ? m(".flex.justify-center.p-12", m("span.loading.loading-spinner.loading-lg"))
-                : this.error
-                    ? m(".alert.alert-error", [
-                        m(Icon, { icon: "fa-solid fa-circle-exclamation" }),
-                        m("span", this.error)
-                    ])
-                    : m(".overflow-x-auto.bg-base-100.rounded-xl.shadow", [
-                        m("table.table.table-zebra", [
-                            m("thead", [
-                                m("tr", [
-                                    m("th", "ID"),
-                                    m("th", "Name"),
-                                    m("th", "Description"),
-                                    m("th.text-right", "Actions")
-                                ])
-                            ]),
-                            m("tbody", [
-                                this.roles.length === 0 
-                                    ? m("tr", m("td.text-center[colspan=4]", "No roles found"))
-                                    : this.roles.map(role => m("tr", [
-                                        m("td", role.id),
-                                        m("td.font-bold", role.name),
-                                        m("td", role.description),
-                                        m("td.text-right", [
-                                            m("button.btn.btn-sm.btn-ghost", {
-                                                onclick: () => {
-                                                    this.editingRole = JSON.parse(JSON.stringify(role));
-                                                    document.getElementById('role_modal').showModal();
-                                                }
-                                            }, m(Icon, { icon: "fa-solid fa-pen" })),
-                                            m("button.btn.btn-sm.btn-ghost.text-error", {
-                                                onclick: () => this.deleteRole(role.id)
-                                            }, m(Icon, { icon: "fa-solid fa-trash" }))
-                                        ])
-                                    ]))
-                            ])
-                        ])
-                    ]),
+            this.renderContent(),
 
             // Role Modal
             m("dialog#role_modal.modal", [
@@ -159,8 +159,11 @@ const RolesPage = {
                             placeholder: "e.g. Editor",
                             value: this.editingRole ? this.editingRole.name : this.newRole.name,
                             oninput: (e) => {
-                                if (this.editingRole) this.editingRole.name = e.target.value;
-                                else this.newRole.name = e.target.value;
+                                if (this.editingRole) {
+                                    this.editingRole.name = e.target.value;
+                                } else {
+                                    this.newRole.name = e.target.value;
+                                }
                             },
                             required: true
                         }),
@@ -171,8 +174,11 @@ const RolesPage = {
                                     placeholder: "Role description...",
                                     value: this.editingRole ? this.editingRole.description : this.newRole.description,
                                     oninput: (e) => {
-                                        if (this.editingRole) this.editingRole.description = e.target.value;
-                                        else this.newRole.description = e.target.value;
+                                        if (this.editingRole) {
+                                            this.editingRole.description = e.target.value;
+                                        } else {
+                                            this.newRole.description = e.target.value;
+                                        }
                                     }
                                 })
                             ])

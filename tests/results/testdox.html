@@ -62,11 +62,6 @@
             <li class="success">Get non existent integration config</li>
             <li class="success">Is non existent integration enabled</li>
         </ul>
-        <h2>Cookie Encryption (Tests\Unit\CookieEncryption)</h2>
-        <ul>
-            <li class="success">Cookie sending triggers encryption error</li>
-            <li class="success">Setting encryption key fixes error</li>
-        </ul>
         <h2>Error Log (Tests\Unit\Model\ErrorLog)</h2>
         <ul>
             <li class="success">Setters and getters work</li>
@@ -126,13 +121,15 @@
         </ul>
         <h2>Payment (Tests\Unit\Model\Payment)</h2>
         <ul>
-            <li class="success">Setters and getters work</li>
-            <li class="success">Before validation on create sets timestamps</li>
-            <li class="success">Before validation on update sets updated at</li>
+            <li class="defect">Setters and getters work</li>
+            <li class="defect">Before validation on create sets timestamps</li>
+            <li class="defect">Before validation on update sets updated at</li>
         </ul>
-        <h2>Services Registration (Tests\Unit\ServicesRegistration)</h2>
+        <h2>Role (Tests\Unit\Model\Role)</h2>
         <ul>
-            <li class="success">Crypt service is registered and configured</li>
+            <li class="defect">Setters and getters work</li>
+            <li class="defect">Can be instantiated</li>
+            <li class="defect">Validation fails without name</li>
         </ul>
         <h2>Sse Api (Tests\Unit\Service\SseApi)</h2>
         <ul>
@@ -148,8 +145,13 @@
         </ul>
         <h2>Subscription (Tests\Unit\Model\Subscription)</h2>
         <ul>
-            <li class="success">Setters and getters work</li>
-            <li class="success">Before validation on create sets timestamps</li>
+            <li class="defect">Setters and getters work</li>
+            <li class="defect">Before validation on create sets timestamps</li>
+        </ul>
+        <h2>User (Tests\Unit\Model\User)</h2>
+        <ul>
+            <li class="defect">Setters and getters work</li>
+            <li class="defect">Can be instantiated</li>
         </ul>
     </body>
 </html>

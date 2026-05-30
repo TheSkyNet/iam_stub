@@ -7,7 +7,7 @@ import { Icon } from './Icon';
  */
 const Toasts = {
     view: () => {
-        return m("div", {"class": "toast toast-end z-50"}, 
+        return m("div", {"class": "toast toast-top toast-center z-50"}, 
             ToastService.toasts.map(toast => {
                 const alertClass = {
                     info: 'alert-info',

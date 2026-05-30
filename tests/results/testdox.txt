@@ -8,10 +8,6 @@ Configuration Manager (Tests\Unit\Service\LMS\Configuration\ConfigurationManager
  [x] Get non existent integration config
  [x] Is non existent integration enabled
 
-Cookie Encryption (Tests\Unit\CookieEncryption)
- [x] Cookie sending triggers encryption error
- [x] Setting encryption key fixes error
-
 Error Log (Tests\Unit\Model\ErrorLog)
  [x] Setters and getters work
  [x] Set context json round trip
@@ -65,12 +61,14 @@ Pace Integration (Tests\Unit\Service\Payment\PaceIntegration)
  [x] Get capabilities
 
 Payment (Tests\Unit\Model\Payment)
- [x] Setters and getters work
- [x] Before validation on create sets timestamps
- [x] Before validation on update sets updated at
+ [ ] Setters and getters work
+ [ ] Before validation on create sets timestamps
+ [ ] Before validation on update sets updated at
 
-Services Registration (Tests\Unit\ServicesRegistration)
- [x] Crypt service is registered and configured
+Role (Tests\Unit\Model\Role)
+ [ ] Setters and getters work
+ [ ] Can be instantiated
+ [ ] Validation fails without name
 
 Sse Api (Tests\Unit\Service\SseApi)
  [x] Echo action outputs single event
@@ -83,6 +81,10 @@ Sse Emitter (Tests\Unit\Core\SSE\SseEmitter)
  [x] Comment and heartbeat
 
 Subscription (Tests\Unit\Model\Subscription)
- [x] Setters and getters work
- [x] Before validation on create sets timestamps
+ [ ] Setters and getters work
+ [ ] Before validation on create sets timestamps
+
+User (Tests\Unit\Model\User)
+ [ ] Setters and getters work
+ [ ] Can be instantiated
 
