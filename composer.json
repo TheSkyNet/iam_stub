@@ -36,7 +36,7 @@
         "symfony/var-dumper": "^6.4",
         "symfony/finder": "^6.4",
         "filp/whoops": "^2.15",
-        "ext-memcache": "*",
+        "ext-redis": "*",
         "ext-sodium": "*",
         "defuse/php-encryption": "^2.4",
         "nesbot/carbon": "^3.7",

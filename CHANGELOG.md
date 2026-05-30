@@ -1,5 +1,25 @@
 # Phalcon Stub Project - Changelog
 
+## 2026-05-30 — PHP 8.5 & Phalcon 5.13.0 Support
+
+### Summary
+- Enabled full support for PHP 8.5 and Phalcon 5.13.0.
+- Resolved Docker build failures on PHP 8.5 by removing incompatible extensions and fixing package names.
+- Fixed model compatibility issues for PHP 8.5 strict typing.
+
+### Backend (Docker & PHP)
+- Updated `docker/8.5/Dockerfile` to use `Phalcon 5.13.0` and `Node 22`.
+- Switched from `memcache` (incompatible with PHP 8.5) to `redis` for model caching in `services.php`.
+- Removed `npm install -g npm` from all Dockerfiles to avoid `promise-retry` module errors.
+- Fixed `apt` package names in `docker/8.5/Dockerfile` (`default-mysql-client` and `postgresql-client`).
+- Updated `IamLab/Model/User.php` and `IamLab/Model/Role.php` for PHP 8.5 compatibility (nullable getters, missing properties).
+
+### Dependencies
+- Updated `composer.json` to require `ext-redis` and remove `ext-memcache`.
+- Updated `composer.lock` to include PHP 8.5 polyfills.
+
+---
+
 ## 2026-01-20 — Phalcon Upgrade
 
 ### Summary

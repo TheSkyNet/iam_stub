@@ -61,14 +61,14 @@ Pace Integration (Tests\Unit\Service\Payment\PaceIntegration)
  [x] Get capabilities
 
 Payment (Tests\Unit\Model\Payment)
- [ ] Setters and getters work
- [ ] Before validation on create sets timestamps
- [ ] Before validation on update sets updated at
+ [x] Setters and getters work
+ [x] Before validation on create sets timestamps
+ [x] Before validation on update sets updated at
 
 Role (Tests\Unit\Model\Role)
- [ ] Setters and getters work
- [ ] Can be instantiated
- [ ] Validation fails without name
+ [x] Setters and getters work
+ [x] Can be instantiated
+ [x] Validation fails without name
 
 Sse Api (Tests\Unit\Service\SseApi)
  [x] Echo action outputs single event
@@ -81,10 +81,10 @@ Sse Emitter (Tests\Unit\Core\SSE\SseEmitter)
  [x] Comment and heartbeat
 
 Subscription (Tests\Unit\Model\Subscription)
- [ ] Setters and getters work
- [ ] Before validation on create sets timestamps
+ [x] Setters and getters work
+ [x] Before validation on create sets timestamps
 
 User (Tests\Unit\Model\User)
- [ ] Setters and getters work
- [ ] Can be instantiated
+ [x] Setters and getters work
+ [x] Can be instantiated
 

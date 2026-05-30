@@ -87,24 +87,24 @@
         <h2>LMSService (Tests\Unit\Service\LMS\LMSService)</h2>
         <ul>
             <li class="success">Can be instantiated</li>
-            <li class="success">Initialize</li>
+            <li class="defect">Initialize</li>
             <li class="success">Get configuration manager</li>
             <li class="success">Get integration registry</li>
             <li class="success">Get available integrations</li>
             <li class="success">Is integration available</li>
             <li class="success">Get integration status</li>
-            <li class="success">Generate content with valid integration</li>
+            <li class="defect">Generate content with valid integration</li>
             <li class="success">Generate content with invalid integration</li>
-            <li class="success">Create course with valid integration</li>
+            <li class="defect">Create course with valid integration</li>
             <li class="success">Create course with invalid integration</li>
-            <li class="success">Analyze text with valid integration</li>
+            <li class="defect">Analyze text with valid integration</li>
             <li class="success">Analyze text with invalid integration</li>
-            <li class="success">Generate content with fallback</li>
+            <li class="defect">Generate content with fallback</li>
             <li class="success">Get best integration for</li>
             <li class="success">Get integration capabilities</li>
             <li class="success">Get statistics</li>
-            <li class="success">Refresh health status</li>
-            <li class="success">Multiple initialization calls are safe</li>
+            <li class="defect">Refresh health status</li>
+            <li class="defect">Multiple initialization calls are safe</li>
         </ul>
         <h2>Mollie Integration (Tests\Unit\Service\Payment\MollieIntegration)</h2>
         <ul>
@@ -115,21 +115,21 @@
         <h2>Pace Integration (Tests\Unit\Service\Payment\PaceIntegration)</h2>
         <ul>
             <li class="success">Create payment</li>
-            <li class="success">Create subscription</li>
+            <li class="defect">Create subscription</li>
             <li class="success">Health check</li>
             <li class="success">Get capabilities</li>
         </ul>
         <h2>Payment (Tests\Unit\Model\Payment)</h2>
         <ul>
-            <li class="defect">Setters and getters work</li>
-            <li class="defect">Before validation on create sets timestamps</li>
-            <li class="defect">Before validation on update sets updated at</li>
+            <li class="success">Setters and getters work</li>
+            <li class="success">Before validation on create sets timestamps</li>
+            <li class="success">Before validation on update sets updated at</li>
         </ul>
         <h2>Role (Tests\Unit\Model\Role)</h2>
         <ul>
-            <li class="defect">Setters and getters work</li>
-            <li class="defect">Can be instantiated</li>
-            <li class="defect">Validation fails without name</li>
+            <li class="success">Setters and getters work</li>
+            <li class="success">Can be instantiated</li>
+            <li class="success">Validation fails without name</li>
         </ul>
         <h2>Sse Api (Tests\Unit\Service\SseApi)</h2>
         <ul>
@@ -145,13 +145,13 @@
         </ul>
         <h2>Subscription (Tests\Unit\Model\Subscription)</h2>
         <ul>
-            <li class="defect">Setters and getters work</li>
-            <li class="defect">Before validation on create sets timestamps</li>
+            <li class="success">Setters and getters work</li>
+            <li class="success">Before validation on create sets timestamps</li>
         </ul>
         <h2>User (Tests\Unit\Model\User)</h2>
         <ul>
-            <li class="defect">Setters and getters work</li>
-            <li class="defect">Can be instantiated</li>
+            <li class="success">Setters and getters work</li>
+            <li class="success">Can be instantiated</li>
         </ul>
     </body>
 </html>

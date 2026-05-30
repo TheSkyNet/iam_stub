@@ -202,7 +202,17 @@ $app->notFound(function () use ($app) {
         ]);
         $app->response->send();
     } else {
-        $app->response->setStatusCode(404, "Not Found")->sendHeaders();
-        echo $app['view']->render('404');
+        /**
+         * For non-API GET requests, we serve the index page to support SPA routing (reloads).
+         * This allows Mithril to handle the route on the frontend.
+         */
+        if ($app->request->isGet() && !str_starts_with($app->request->getURI(), '/api')) {
+            $settingsService = new SettingsService();
+            $settingsService->initialize();
+            echo $app['view']->render('index', ['settings' => $settingsService->getFormatted()]);
+        } else {
+            $app->response->setStatusCode(404, "Not Found")->sendHeaders();
+            echo $app['view']->render('404');
+        }
     }
 });

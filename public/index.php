@@ -14,6 +14,13 @@ use function App\Core\Helpers\loadEnv;
 include "../vendor/autoload.php";
 define('APP_PATH', realpath('../IamLab'));
 define('ROOT_PATH', realpath('../'));
+if (php_sapi_name() === 'cli-server') {
+    $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+    if (file_exists(__DIR__ . $uri) && is_file(__DIR__ . $uri)) {
+        return false;
+    }
+}
+
 if (!file_exists(__DIR__ . '/' . $_SERVER['REQUEST_URI'])) {
     $_GET['_url'] = $_SERVER['REQUEST_URI'];
 }

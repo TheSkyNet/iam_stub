@@ -1,4 +1,4 @@
-ARG PHALCON_VERSION=5.10.0
+ARG PHALCON_VERSION=5.13.0
 FROM phalconphp/cphalcon:v${PHALCON_VERSION}-php8.5
 
 LABEL maintainer=""
@@ -22,13 +22,12 @@ RUN apt-get update \
         gosu supervisor curl ca-certificates zip unzip git gnupg sqlite3 libcap2-bin dnsutils libpng-dev \
     && curl -sLS https://deb.nodesource.com/setup_${NODE_VERSION}.x | bash - \
     && apt-get install -y --no-install-recommends nodejs \
-    && npm install -g npm \
     && curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | gpg --dearmor | tee /usr/share/keyrings/yarn.gpg >/dev/null \
     && echo "deb [signed-by=/usr/share/keyrings/yarn.gpg] https://dl.yarnpkg.com/debian/ stable main" > /etc/apt/sources.list.d/yarn.list \
     && apt-get update \
-    && apt-get install -y --no-install-recommends yarn mysql-client postgresql-client-${POSTGRES_VERSION} \
+    && apt-get install -y --no-install-recommends yarn default-mysql-client postgresql-client \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin --filename=composer \
-    && install-php-extensions psr igbinary msgpack memcache memcached redis pcov xdebug imap ldap intl gd zip soap bcmath \
+    && install-php-extensions psr igbinary msgpack memcached redis pcov xdebug imap ldap intl gd zip soap bcmath \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Allow php (non-root) to bind to privileged port 80

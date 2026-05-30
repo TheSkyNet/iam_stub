@@ -71,6 +71,12 @@ class User extends Model
 
     /**
      * @var string
+     * @Column(type="string", length=20, nullable=false, default="active")
+     */
+    protected $status;
+
+    /**
+     * @var string
      * @Column(type="datetime", nullable=true)
      */
     protected $created_at;
@@ -287,6 +293,18 @@ class User extends Model
      *
      * @return $this
      */
+    public function getStatus(): ?string
+    {
+        return $this->status;
+    }
+
+    public function setStatus(string $status): static
+    {
+        $this->status = $status;
+
+        return $this;
+    }
+
     public function setCreatedAt(string $created_at): static
     {
         $this->created_at = $created_at;

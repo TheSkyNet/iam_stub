@@ -2,7 +2,10 @@
 
 use IamLab\Service\Filepond\FilepondService;
 use League\Flysystem\Local\LocalFilesystemAdapter;
-use Phalcon\Acl\Adapter\Memory;
+use Phalcon\Acl\Adapter\Memory as AclMemory;
+use Phalcon\Cache\Adapter\Redis as RedisAdapter;
+use Phalcon\Storage\SerializerFactory;
+use Phalcon\Cache\Cache;
 use Phalcon\Autoload\Loader;
 use IamLab\Service\Auth\AuthService;
 use Phalcon\Logger\Logger;
@@ -166,22 +169,14 @@ $di->setShared(
 $di->set(
     'modelsCache',
     function () {
+        $serializerFactory = new SerializerFactory();
+        $adapter = new RedisAdapter($serializerFactory, [
+            'host' => 'redis',
+            'port' => 6379,
+            'lifetime' => 86400
+        ]);
 
-        // Cache data for one day by default
-        $frontCache = new Memcache(
-            [
-                "lifetime" => 86400,
-            ]
-        );
-
-        // Memcached connection settings
-        return new Memory(
-            $frontCache,
-            [
-                "host" => "localhost",
-                "port" => "11211",
-            ]
-        );
+        return new Cache($adapter);
     }
 );
 
