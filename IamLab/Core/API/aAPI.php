@@ -32,6 +32,16 @@ abstract class aAPI extends aAPIBase
     protected array $routeParams = [];
 
     /**
+     * Set to true to skip CSRF verification for this controller/action.
+     */
+    protected bool $skipCsrf = false;
+
+    /**
+     * List of actions to skip CSRF verification for.
+     */
+    protected array $skipCsrfActions = [];
+
+    /**
      * Set route parameters from function arguments
      *
      * @param array $params
@@ -58,6 +68,13 @@ abstract class aAPI extends aAPIBase
     {
         $this->response->setStatusCode($status);
         $this->response->setContentType('application/json', 'UTF-8');
+        
+        // Add security headers
+        $this->response->setHeader('X-Content-Type-Options', 'nosniff');
+        $this->response->setHeader('X-Frame-Options', 'SAMEORIGIN');
+        $this->response->setHeader('X-XSS-Protection', '1; mode=block');
+        $this->response->setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+        
         $this->response->setContent(json_encode($data));
         $this->response->send();
         exit();
@@ -363,6 +380,44 @@ abstract class aAPI extends aAPIBase
                     'error' => 'FORBIDDEN'
                 ], 403);
             }
+        }
+    }
+
+    /**
+     * Initializes the controller and performs CSRF verification.
+     */
+    public function initialize(): void
+    {
+        // Check if current action is in skip list
+        if ($this->dispatcher && in_array($this->dispatcher->getActionName(), $this->skipCsrfActions)) {
+            $this->skipCsrf = true;
+        }
+
+        $this->verifyCsrf();
+    }
+
+    /**
+     * Verifies the CSRF token for state-changing requests.
+     */
+    protected function verifyCsrf(): void
+    {
+        // Skip for GET/HEAD/OPTIONS or if explicitly disabled
+        if ($this->skipCsrf || in_array($this->request->getMethod(), ['GET', 'HEAD', 'OPTIONS'])) {
+            return;
+        }
+
+        // Get token from header
+        $token = $this->request->getHeader('X-CSRF-Token');
+
+        // Check token using Phalcon Security service
+        // We use the second parameter as false to NOT destroy the token on check,
+        // allowing multiple requests with the same token.
+        if (empty($token) || !$this->security->checkToken(null, $token, false)) {
+            $this->dispatch([
+                'success' => false,
+                'message' => 'CSRF token validation failed. Please refresh the page.',
+                'error' => 'CSRF_ERROR'
+            ], 403);
         }
     }
 

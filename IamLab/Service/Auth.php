@@ -124,6 +124,10 @@ class Auth extends aAPI
                 'data' => [
                     'inactivity_timeout_minutes' => $inactivity,
                     'token_check_interval_minutes' => $tokenCheck,
+                    'csrf' => [
+                        'token' => $this->security->getToken(),
+                        'header' => 'X-CSRF-Token'
+                    ]
                 ],
             ]);
         } catch (\Throwable $throwable) {

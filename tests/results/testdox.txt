@@ -1,3 +1,8 @@
+Auth Security (Tests\Feature\AuthSecurity)
+ [x] Get request does not require csrf
+ [x] Post request fails without csrf token
+ [x] Security headers are present in response
+
 Configuration Manager (Tests\Unit\Service\LMS\Configuration\ConfigurationManager)
  [x] Can be instantiated
  [x] Get all configurations

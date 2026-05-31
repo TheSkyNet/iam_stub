@@ -11,6 +11,8 @@ use IamLab\Model\ErrorLog;
 
 class ErrorsApi extends aAPI
 {
+    protected bool $skipCsrf = true;
+
     /**
      * POST /api/errors
      * Public endpoint to record a frontend or client error

@@ -17,6 +17,10 @@ const AuthService = {
     inactivityTimeoutMs: 30 * 60 * 1000, // default: 30 minutes (overridden by backend config)
     tokenCheckIntervalMs: 5 * 60 * 1000, // default: Check token validity every 5 minutes (overridden by backend config)
     _configLoaded: false,
+    
+    // CSRF protection
+    csrfToken: null,
+    csrfHeader: 'X-CSRF-Token',
 
     /**
      * Initialize the auth service - check for existing tokens on page load
@@ -62,6 +66,13 @@ const AuthService = {
                 if (!isNaN(checkMinutes) && checkMinutes > 0) {
                     this.tokenCheckIntervalMs = checkMinutes * 60 * 1000;
                 }
+                
+                // Load CSRF configuration
+                if (response.data.csrf) {
+                    this.csrfToken = response.data.csrf.token;
+                    this.csrfHeader = response.data.csrf.header || 'X-CSRF-Token';
+                }
+                
                 this._configLoaded = true;
             }
             return response;
@@ -75,7 +86,8 @@ const AuthService = {
         return m.request({
             method: 'POST',
             url: `${this.baseUrl}/login`,
-            body: { email, password, remember_me: rememberMe }
+            body: { email, password, remember_me: rememberMe },
+            headers: this.getAuthHeaders()
         }).then((response) => {
             if (response.success && response.data) {
                 this.setAuthData(response.data);
@@ -93,7 +105,8 @@ const AuthService = {
         return m.request({
             method: 'POST',
             url: `${this.baseUrl}/register`,
-            body: { name, email, password, remember_me: rememberMe }
+            body: { name, email, password, remember_me: rememberMe },
+            headers: this.getAuthHeaders()
         }).then((response) => {
             if (response.success && response.data) {
                 this.setAuthData(response.data);
@@ -132,7 +145,8 @@ const AuthService = {
         return m.request({
             method: 'POST',
             url: `${this.baseUrl}/refresh-token`,
-            body: body
+            body: body,
+            headers: this.getAuthHeaders()
         }).then((response) => {
             if (response.success && response.data) {
                 this.setAuthData(response.data);
@@ -356,12 +370,17 @@ const AuthService = {
      * Get authorization headers
      */
     getAuthHeaders: function() {
+        const headers = {};
+        
         if (this.accessToken) {
-            return {
-                'Authorization': `Bearer ${this.accessToken}`
-            };
+            headers['Authorization'] = `Bearer ${this.accessToken}`;
         }
-        return {};
+        
+        if (this.csrfToken) {
+            headers[this.csrfHeader] = this.csrfToken;
+        }
+        
+        return headers;
     },
 
     /**
@@ -431,7 +450,8 @@ const AuthService = {
     generateQRCode: function() {
         return m.request({
             method: 'POST',
-            url: `${this.baseUrl}/generate-qr-code`
+            url: `${this.baseUrl}/generate-qr-code`,
+            headers: this.getAuthHeaders()
         });
     },
 
@@ -442,7 +462,8 @@ const AuthService = {
         return m.request({
             method: 'POST',
             url: `${this.baseUrl}/check-qr-status`,
-            body: { session_token: sessionToken }
+            body: { session_token: sessionToken },
+            headers: this.getAuthHeaders()
         });
     },
 
@@ -517,7 +538,8 @@ const AuthService = {
         return m.request({
             method: 'POST',
             url: `${this.baseUrl}/check-mobile-qr-status`,
-            body: { session_token: sessionToken }
+            body: { session_token: sessionToken },
+            headers: this.getAuthHeaders()
         });
     },
 
@@ -580,7 +602,8 @@ const AuthService = {
         return m.request({
             method: 'POST',
             url: `${this.baseUrl}/forgot-password`,
-            body: { email: email }
+            body: { email: email },
+            headers: this.getAuthHeaders()
         });
     },
 
@@ -591,7 +614,8 @@ const AuthService = {
         return m.request({
             method: 'POST',
             url: `${this.baseUrl}/reset-password`,
-            body: { token: token, password: password }
+            body: { token: token, password: password },
+            headers: this.getAuthHeaders()
         });
     },
 
@@ -602,7 +626,8 @@ const AuthService = {
         return m.request({
             method: 'POST',
             url: `${this.baseUrl}/verify-email`,
-            body: { email: email }
+            body: { email: email },
+            headers: this.getAuthHeaders()
         });
     },
 
