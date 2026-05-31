@@ -11,18 +11,19 @@ namespace IamLab\Core\Collection;
  */
 class Collection extends \Phalcon\Support\Collection
 {
-
     /**
      * Iterates over the items in the collection and applies a callback to each one.
      *
      * @param callable $callback The callback function to execute for each item.
      * @return static The collection instance for method chaining.
      */
+    #[\Override]
     public function each(callable $callback): static
     {
-        foreach ($this->data as $key => $item) {
+        foreach ($this->data as $item) {
             $callback($item);
         }
+
         return $this;
     }
 
@@ -32,11 +33,13 @@ class Collection extends \Phalcon\Support\Collection
      * @param callable $callback The callback function to apply to each item.
      * @return static The modified collection instance.
      */
+    #[\Override]
     public function map(callable $callback): static
     {
         foreach ($this->data as $key => $item) {
             $this->data[$key] = $callback($item);
         }
+
         return $this;
     }
 
@@ -49,14 +52,15 @@ class Collection extends \Phalcon\Support\Collection
      * @param callable $callback The callback to apply.
      * @return static The modified collection instance.
      */
+    #[\Override]
     public function filter(callable $callback): static
     {
         foreach ($this->data as $key => $item) {
             if ($callback($item)) {
                 $this->data[$key] = $callback($item);
             }
-
         }
+
         return $this;
     }
 
@@ -67,9 +71,9 @@ class Collection extends \Phalcon\Support\Collection
      *
      * @return mixed The first item.
      */
+    #[\Override]
     public function first(): mixed
     {
         return $this->data[0];
     }
-
 }

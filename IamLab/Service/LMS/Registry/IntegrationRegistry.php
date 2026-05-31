@@ -10,20 +10,20 @@ use IamLab\Service\LMS\Exception\IntegrationNotFoundException;
 
 /**
  * Integration Registry
- * 
+ *
  * Manages integration instances and their lifecycle
  * Following Single Responsibility Principle (SRP)
  */
 class IntegrationRegistry
 {
     private array $integrations = [];
-    private array $healthStatus = [];
-    private array $errors = [];
-    private ConfigurationManager $configManager;
 
-    public function __construct(ConfigurationManager $configManager)
+    private array $healthStatus = [];
+
+    private array $errors = [];
+
+    public function __construct(private readonly ConfigurationManager $configManager)
     {
-        $this->configManager = $configManager;
         $this->initializeIntegrations();
     }
 
@@ -34,23 +34,23 @@ class IntegrationRegistry
     {
         $configurations = $this->configManager->getAllConfigurations();
         $result = IntegrationFactory::createFromConfig($configurations);
-        
+
         $this->integrations = $result['integrations'];
         $this->errors = $result['errors'];
-        
+
         // Initialize health status
         $this->refreshHealthStatus();
     }
 
     /**
      * Get integration instance
-     * 
+     *
      * @throws IntegrationNotFoundException
      */
     public function getIntegration(string $name): LMSIntegrationInterface
     {
         if (!$this->hasIntegration($name)) {
-            throw new IntegrationNotFoundException("Integration '{$name}' is not available");
+            throw new IntegrationNotFoundException(sprintf("Integration '%s' is not available", $name));
         }
 
         return $this->integrations[$name];
@@ -125,14 +125,14 @@ class IntegrationRegistry
     public function getIntegrationStatus(): array
     {
         $status = [];
-        
+
         foreach ($this->integrations as $name => $integration) {
             $status[$name] = [
                 'enabled' => true,
                 'healthy' => $this->healthStatus[$name] ?? false,
                 'config' => $this->configManager->getIntegrationConfig($name),
                 'capabilities' => $integration->getCapabilities(),
-                'class' => get_class($integration)
+                'class' => $integration::class
             ];
         }
 
@@ -162,7 +162,7 @@ class IntegrationRegistry
      */
     public function hasErrors(): bool
     {
-        return !empty($this->errors);
+        return $this->errors !== [];
     }
 
     /**
@@ -180,7 +180,7 @@ class IntegrationRegistry
     {
         $this->integrations[$name] = $integration;
         $this->healthStatus[$name] = $integration->healthCheck();
-        
+
         // Remove from errors if it was there
         unset($this->errors[$name]);
     }
@@ -213,7 +213,7 @@ class IntegrationRegistry
     public function findIntegrationsByCapability(string $capability): array
     {
         $matches = [];
-        
+
         foreach ($this->integrations as $name => $integration) {
             $capabilities = $integration->getCapabilities();
             if ($capabilities[$capability] ?? false) {
@@ -230,15 +230,15 @@ class IntegrationRegistry
     public function getBestIntegrationFor(string $capability, array $preferences = []): ?string
     {
         $candidates = $this->findIntegrationsByCapability($capability);
-        
-        if (empty($candidates)) {
+
+        if ($candidates === []) {
             return null;
         }
 
         // Filter by health status
-        $healthyCandidates = array_filter($candidates, fn($name) => $this->isIntegrationHealthy($name));
-        
-        if (!empty($healthyCandidates)) {
+        $healthyCandidates = array_filter($candidates, fn($name): bool => $this->isIntegrationHealthy($name));
+
+        if ($healthyCandidates !== []) {
             $candidates = $healthyCandidates;
         }
 
@@ -258,7 +258,7 @@ class IntegrationRegistry
      */
     public function executeWithFallback(callable $operation, array $integrationOrder = []): array
     {
-        if (empty($integrationOrder)) {
+        if ($integrationOrder === []) {
             $integrationOrder = $this->getAvailableIntegrations();
         }
 
@@ -272,11 +272,11 @@ class IntegrationRegistry
             try {
                 $integration = $this->getIntegration($integrationName);
                 $result = $operation($integration, $integrationName);
-                
+
                 if ($result['success'] ?? false) {
                     return $result;
                 }
-                
+
                 $lastError = $result['error'] ?? 'Unknown error';
             } catch (Exception $e) {
                 $lastError = $e->getMessage();
@@ -297,16 +297,16 @@ class IntegrationRegistry
     public function getStatistics(): array
     {
         $healthy = array_filter($this->healthStatus);
-        $unhealthy = array_filter($this->healthStatus, fn($status) => !$status);
-        
+        $unhealthy = array_filter($this->healthStatus, fn($status): bool => !$status);
+
         return [
             'total_integrations' => count($this->integrations),
             'healthy_integrations' => count($healthy),
             'unhealthy_integrations' => count($unhealthy),
             'failed_initializations' => count($this->errors),
             'enabled_configurations' => count($this->configManager->getEnabledIntegrations()),
-            'health_percentage' => count($this->integrations) > 0 
-                ? round((count($healthy) / count($this->integrations)) * 100, 2) 
+            'health_percentage' => $this->integrations !== []
+                ? round((count($healthy) / count($this->integrations)) * 100, 2)
                 : 0
         ];
     }

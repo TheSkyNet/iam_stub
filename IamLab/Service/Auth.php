@@ -2,7 +2,7 @@
 
 namespace IamLab\Service;
 
-
+use IamLab\Service\Auth\JwtService;
 use Exception;
 use IamLab\Core\API\aAPI;
 use IamLab\Model\User;
@@ -18,14 +18,11 @@ use Endroid\QrCode\Label\Alignment\LabelAlignmentCenter;
 use Endroid\QrCode\Label\Font\NotoSans;
 use Endroid\QrCode\RoundBlockSizeMode\RoundBlockSizeModeMargin;
 use Endroid\QrCode\Writer\PngWriter;
+
 use function App\Core\Helpers\email;
 
 class Auth extends aAPI
 {
-
-    /**
-     * @return void
-     */
     public function loginAction(): void
     {
         $email = $this->getParam('email');
@@ -45,9 +42,8 @@ class Auth extends aAPI
             }
 
             $this->dispatchError('Invalid email or password', 401);
-
-        } catch (Exception $e) {
-            $this->dispatchError($e);
+        } catch (Exception $exception) {
+            $this->dispatchError($exception);
         }
     }
 
@@ -60,6 +56,7 @@ class Auth extends aAPI
             $this->dispatch((new AuthService())->getIdentity());
         }
     }
+
 /*
  *
  */
@@ -81,7 +78,7 @@ class Auth extends aAPI
         }
 
         // Basic password validation
-        if (strlen($password) < 6) {
+        if (strlen((string) $password) < 6) {
             $this->dispatchError('Password must be at least 6 characters long');
         }
 
@@ -99,9 +96,8 @@ class Auth extends aAPI
             }
 
             $this->dispatchError('Registration failed. Email may already be in use.');
-
-        } catch (Exception $e) {
-            $this->dispatchError($e);
+        } catch (Exception $exception) {
+            $this->dispatchError($exception);
         }
     }
 
@@ -130,11 +126,11 @@ class Auth extends aAPI
                     'token_check_interval_minutes' => $tokenCheck,
                 ],
             ]);
-        } catch (\Throwable $e) {
+        } catch (\Throwable $throwable) {
             $this->dispatch([
                 'success' => false,
                 'message' => 'Unable to load auth client configuration',
-                'errors' => ['original' => ['exception' => $e->getMessage()]],
+                'errors' => ['original' => ['exception' => $throwable->getMessage()]],
             ]);
         }
     }
@@ -200,9 +196,8 @@ class Auth extends aAPI
             }
 
             $this->dispatch(['success' => true, 'message' => 'If an account with that email exists, a password reset link has been sent.']);
-
-        } catch (Exception $e) {
-            $this->dispatchError($e);
+        } catch (Exception $exception) {
+            $this->dispatchError($exception);
         }
     }
 
@@ -213,9 +208,8 @@ class Auth extends aAPI
             $authService->deauthenticate();
 
             $this->dispatch(['success' => true, 'message' => 'Logged out successfully']);
-
-        } catch (Exception $e) {
-            $this->dispatchError($e);
+        } catch (Exception $exception) {
+            $this->dispatchError($exception);
         }
     }
 
@@ -225,7 +219,7 @@ class Auth extends aAPI
 
         try {
             $authService = new AuthService();
-            $jwtService = new \IamLab\Service\Auth\JwtService();
+            $jwtService = new JwtService();
 
             // If refresh token not in params, check cookie
             if (empty($refreshToken)) {
@@ -245,9 +239,8 @@ class Auth extends aAPI
             }
 
             $this->dispatchError('Invalid or expired refresh token', 401);
-
-        } catch (Exception $e) {
-            $this->dispatchError($e);
+        } catch (Exception $exception) {
+            $this->dispatchError($exception);
         }
     }
 
@@ -264,16 +257,15 @@ class Auth extends aAPI
             }
 
             $user = $authService->getUser();
-            if (!$user) {
+            if (!$user instanceof User) {
                 $this->dispatchError('User not found', 404);
             }
 
             $apiKey = $authService->generateApiKey($user);
 
             $this->dispatch(['success' => true, 'message' => 'API key generated successfully', 'data' => ['api_key' => $apiKey]]);
-
-        } catch (Exception $e) {
-            $this->dispatchError($e);
+        } catch (Exception $exception) {
+            $this->dispatchError($exception);
         }
     }
 
@@ -290,7 +282,7 @@ class Auth extends aAPI
             }
 
             $user = $authService->getUser();
-            if (!$user) {
+            if (!$user instanceof User) {
                 $this->dispatchError('User not found', 404);
             }
 
@@ -304,9 +296,8 @@ class Auth extends aAPI
             ];
 
             $this->dispatch(['success' => true, 'data' => $profile]);
-
-        } catch (Exception $e) {
-            $this->dispatchError($e);
+        } catch (Exception $exception) {
+            $this->dispatchError($exception);
         }
     }
 
@@ -323,7 +314,7 @@ class Auth extends aAPI
             }
 
             $user = $authService->getUser();
-            if (!$user) {
+            if (!$user instanceof User) {
                 $this->dispatchError('User not found');
             }
 
@@ -338,6 +329,7 @@ class Auth extends aAPI
                 if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
                     $this->dispatchError('Please provide a valid email address');
                 }
+
                 $user->setEmail($email);
             }
 
@@ -346,9 +338,8 @@ class Auth extends aAPI
             } else {
                 $this->dispatchError('Failed to update profile');
             }
-
-        } catch (Exception $e) {
-            $this->dispatchError($e);
+        } catch (Exception $exception) {
+            $this->dispatchError($exception);
         }
     }
 
@@ -365,7 +356,7 @@ class Auth extends aAPI
             }
 
             $user = $authService->getUser();
-            if (!$user) {
+            if (!$user instanceof User) {
                 $this->dispatchError('User not found', 404);
             }
 
@@ -388,6 +379,7 @@ class Auth extends aAPI
             if (!is_dir($avatarDir)) {
                 mkdir($avatarDir, 0755, true);
             }
+
             $destination = $avatarDir . '/' . $newFilename;
             $publicPath = '/files/avatars/' . $newFilename;
 
@@ -411,9 +403,8 @@ class Auth extends aAPI
             } else {
                 $this->dispatchError('Failed to move uploaded avatar to final destination');
             }
-
-        } catch (Exception $e) {
-            $this->dispatchError($e);
+        } catch (Exception $exception) {
+            $this->dispatchError($exception);
         }
     }
 
@@ -430,7 +421,7 @@ class Auth extends aAPI
             }
 
             $user = $authService->getUser();
-            if (!$user) {
+            if (!$user instanceof User) {
                 $this->dispatchError('User not found');
             }
 
@@ -446,24 +437,23 @@ class Auth extends aAPI
                 $this->dispatchError('New passwords do not match');
             }
 
-            if (strlen($newPassword) < 6) {
+            if (strlen((string) $newPassword) < 6) {
                 $this->dispatchError('New password must be at least 6 characters long');
             }
 
-            if (!password_verify($oldPassword, $user->getPassword())) {
+            if (!password_verify((string) $oldPassword, $user->getPassword())) {
                 $this->dispatchError('Invalid old password');
             }
 
-            $user->setPassword(password_hash($newPassword, PASSWORD_DEFAULT));
+            $user->setPassword(password_hash((string) $newPassword, PASSWORD_DEFAULT));
 
             if ($user->save()) {
                 $this->dispatch(['success' => true, 'message' => 'Password changed successfully']);
             } else {
                 $this->dispatchError('Failed to change password');
             }
-
-        } catch (Exception $e) {
-            $this->dispatchError($e);
+        } catch (Exception $exception) {
+            $this->dispatchError($exception);
         }
     }
 
@@ -514,9 +504,8 @@ class Auth extends aAPI
                     'expires_in' => 300 // 5 minutes in seconds
                 ]
             ]);
-
-        } catch (Exception $e) {
-            $this->dispatchError($e);
+        } catch (Exception $exception) {
+            $this->dispatchError($exception);
         }
     }
 
@@ -534,7 +523,7 @@ class Auth extends aAPI
 
             $session = QRLoginSession::findByToken($sessionToken);
 
-            if (!$session) {
+            if (!$session instanceof QRLoginSession) {
                 $this->dispatchError('Invalid session token');
             }
 
@@ -558,7 +547,7 @@ class Auth extends aAPI
                 $session->delete();
 
                 $this->dispatch([
-                    'success' => true, 
+                    'success' => true,
                     'message' => 'Authentication successful',
                     'status' => 'authenticated',
                     'data' => $authData
@@ -570,9 +559,8 @@ class Auth extends aAPI
                 'status' => 'pending',
                 'message' => 'Waiting for authentication'
             ]);
-
-        } catch (Exception $e) {
-            $this->dispatchError($e);
+        } catch (Exception $exception) {
+            $this->dispatchError($exception);
         }
     }
 
@@ -597,7 +585,7 @@ class Auth extends aAPI
 
             $session = QRLoginSession::findByToken($sessionToken);
 
-            if (!$session) {
+            if (!$session instanceof QRLoginSession) {
                 $this->dispatchError('Invalid session token');
             }
 
@@ -606,7 +594,7 @@ class Auth extends aAPI
             }
 
             $user = $authService->getUser();
-            if (!$user) {
+            if (!$user instanceof User) {
                 $this->dispatchError('User not found');
             }
 
@@ -619,9 +607,8 @@ class Auth extends aAPI
             } else {
                 $this->dispatchError('Failed to authenticate QR session');
             }
-
-        } catch (Exception $e) {
-            $this->dispatchError($e);
+        } catch (Exception $exception) {
+            $this->dispatchError($exception);
         }
     }
 
@@ -647,7 +634,7 @@ class Auth extends aAPI
 
             // Set the user ID immediately since mobile user is already authenticated
             $user = $authService->getUser();
-            if (!$user) {
+            if (!$user instanceof User) {
                 $this->dispatchError('User not found');
             }
 
@@ -691,9 +678,8 @@ class Auth extends aAPI
                     'user_name' => $user->getName()
                 ]
             ]);
-
-        } catch (Exception $e) {
-            $this->dispatchError($e);
+        } catch (Exception $exception) {
+            $this->dispatchError($exception);
         }
     }
 
@@ -719,7 +705,7 @@ class Auth extends aAPI
 
             $session = QRLoginSession::findByToken($sessionToken);
 
-            if (!$session) {
+            if (!$session instanceof QRLoginSession) {
                 $this->dispatchError('Invalid session token');
             }
 
@@ -751,9 +737,8 @@ class Auth extends aAPI
             } else {
                 $this->dispatchError('Failed to authenticate mobile session');
             }
-
-        } catch (Exception $e) {
-            $this->dispatchError($e);
+        } catch (Exception $exception) {
+            $this->dispatchError($exception);
         }
     }
 
@@ -772,7 +757,7 @@ class Auth extends aAPI
 
             $session = QRLoginSession::findByToken($sessionToken);
 
-            if (!$session) {
+            if (!$session instanceof QRLoginSession) {
                 $this->dispatchError('Invalid session token');
             }
 
@@ -796,7 +781,7 @@ class Auth extends aAPI
                 $session->delete();
 
                 $this->dispatch([
-                    'success' => true, 
+                    'success' => true,
                     'message' => 'Mobile authentication successful',
                     'status' => 'authenticated',
                     'data' => $authData
@@ -808,9 +793,8 @@ class Auth extends aAPI
                 'status' => 'pending',
                 'message' => 'Waiting for desktop authentication'
             ]);
-
-        } catch (Exception $e) {
-            $this->dispatchError($e);
+        } catch (Exception $exception) {
+            $this->dispatchError($exception);
         }
     }
 
@@ -828,7 +812,7 @@ class Auth extends aAPI
         }
 
         // Basic password validation
-        if (strlen($password) < 6) {
+        if (strlen((string) $password) < 6) {
             $this->dispatchError('Password must be at least 6 characters long');
         }
 
@@ -847,19 +831,18 @@ class Auth extends aAPI
             }
 
             // Update the password
-            $user->setPassword(password_hash($password, PASSWORD_DEFAULT));
-            
+            $user->setPassword(password_hash((string) $password, PASSWORD_DEFAULT));
+
             if ($user->save()) {
                 // Delete the used token
                 $resetToken->delete();
-                
+
                 $this->dispatch(['success' => true, 'message' => 'Password reset successfully']);
             } else {
                 $this->dispatchError('Failed to update password');
             }
-
-        } catch (Exception $e) {
-            $this->dispatchError($e);
+        } catch (Exception $exception) {
+            $this->dispatchError($exception);
         }
     }
 
@@ -873,7 +856,7 @@ class Auth extends aAPI
 
         // If token is provided, verify the email
         if ($token) {
-            $this->handleEmailVerification($token);
+            $this->handleEmailVerification();
             return;
         }
 
@@ -889,14 +872,14 @@ class Auth extends aAPI
     /**
      * Handle email verification with token
      */
-    private function handleEmailVerification($token): void
+    private function handleEmailVerification(): void
     {
         try {
             // In a real implementation, you would have an email verification token system
             // For now, we'll just return success
             $this->dispatch(['success' => true, 'message' => 'Email verified successfully']);
-        } catch (Exception $e) {
-            $this->dispatchError($e);
+        } catch (Exception $exception) {
+            $this->dispatchError($exception);
         }
     }
 
@@ -926,7 +909,7 @@ class Auth extends aAPI
 
             // Generate verification token (in a real implementation, you'd store this)
             $verificationToken = bin2hex(random_bytes(32));
-            
+
             // Send verification email
             $verificationUrl = $_SERVER['HTTP_HOST'] . '/verify-email?token=' . $verificationToken;
             $emailBody = "
@@ -953,10 +936,8 @@ class Auth extends aAPI
             } else {
                 $this->dispatchError('Failed to send verification email');
             }
-
-        } catch (Exception $e) {
-            $this->dispatchError($e);
+        } catch (Exception $exception) {
+            $this->dispatchError($exception);
         }
     }
-
 }

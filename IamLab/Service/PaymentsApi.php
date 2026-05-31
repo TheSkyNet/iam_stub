@@ -2,6 +2,7 @@
 
 namespace IamLab\Service;
 
+use IamLab\Service\Payment\Configuration\ConfigurationManager;
 use Exception;
 use IamLab\Core\API\aAPI;
 use IamLab\Service\Payment\PaymentService;
@@ -10,7 +11,7 @@ class PaymentsApi extends aAPI
 {
     protected PaymentService $paymentService;
 
-    public function initialize()
+    public function initialize(): void
     {
         $this->paymentService = new PaymentService();
     }
@@ -22,14 +23,14 @@ class PaymentsApi extends aAPI
     public function createAction(): void
     {
         $this->requireAuth();
-        
+
         try {
             $data = $this->getData();
             $amount = $data['amount'] ?? null;
             $currency = $data['currency'] ?? 'GBP';
             $provider = $data['provider'] ?? 'stripe';
             $transactionId = $data['paypal_order_id'] ?? $data['transaction_id'] ?? null;
-            
+
             $user = $this->getCurrentUser();
             $this->paymentService->setProvider($provider);
 
@@ -46,7 +47,7 @@ class PaymentsApi extends aAPI
                 }
 
                 $payment = $this->paymentService->processSinglePayment($user->getId(), (float)$amount, $currency, $data);
-                
+
                 $status = $payment->getStatus();
                 if ($status === 'failed') {
                     $this->dispatchError([
@@ -66,8 +67,8 @@ class PaymentsApi extends aAPI
                     return;
                 }
 
-                $message = ($status === 'completed') 
-                    ? 'Payment processed successfully' 
+                $message = ($status === 'completed')
+                    ? 'Payment processed successfully'
                     : 'Payment initiated, further action required';
             }
 
@@ -78,11 +79,11 @@ class PaymentsApi extends aAPI
                 'data' => $paymentData,
                 'message' => $message
             ]);
-        } catch (Exception $e) {
+        } catch (Exception $exception) {
             $this->dispatchError([
                 'success' => false,
                 'message' => 'Failed to process payment',
-                'error' => $e->getMessage()
+                'error' => $exception->getMessage()
             ]);
         }
     }
@@ -94,12 +95,12 @@ class PaymentsApi extends aAPI
     public function createSubscriptionAction(): void
     {
         $this->requireAuth();
-        
+
         try {
             $data = $this->getData();
             $planId = $data['plan_id'] ?? null;
             $provider = $data['provider'] ?? 'stripe';
-            
+
             if (!$planId) {
                 $this->dispatchError([
                     'success' => false,
@@ -113,8 +114,8 @@ class PaymentsApi extends aAPI
             $subscription = $this->paymentService->createSubscription($user->getId(), $planId, $data);
 
             $status = $subscription->getStatus();
-            $message = ($status === 'active') 
-                ? 'Subscription created successfully' 
+            $message = ($status === 'active')
+                ? 'Subscription created successfully'
                 : 'Subscription initiated, further action required';
 
             $subscriptionData = $this->enhanceResponse($subscription->toArray(), $subscription->getPayload() ?: '');
@@ -124,11 +125,11 @@ class PaymentsApi extends aAPI
                 'data' => $subscriptionData,
                 'message' => $message
             ]);
-        } catch (Exception $e) {
+        } catch (Exception $exception) {
             $this->dispatchError([
                 'success' => false,
                 'message' => 'Failed to create subscription',
-                'error' => $e->getMessage()
+                'error' => $exception->getMessage()
             ]);
         }
     }
@@ -140,7 +141,7 @@ class PaymentsApi extends aAPI
     public function cancelSubscriptionAction(string $id): void
     {
         $this->requireAuth();
-        
+
         try {
             $success = $this->paymentService->cancelSubscription((int)$id);
 
@@ -155,11 +156,11 @@ class PaymentsApi extends aAPI
                     'message' => 'Failed to cancel subscription'
                 ]);
             }
-        } catch (Exception $e) {
+        } catch (Exception $exception) {
             $this->dispatchError([
                 'success' => false,
                 'message' => 'Error canceling subscription',
-                'error' => $e->getMessage()
+                'error' => $exception->getMessage()
             ]);
         }
     }
@@ -171,7 +172,7 @@ class PaymentsApi extends aAPI
     public function indexAction(): void
     {
         $this->requireAuth();
-        
+
         try {
             $user = $this->getCurrentUser();
             $payments = $this->paymentService->getUserPayments($user->getId());
@@ -180,11 +181,11 @@ class PaymentsApi extends aAPI
                 'success' => true,
                 'data' => $payments->toArray()
             ]);
-        } catch (Exception $e) {
+        } catch (Exception $exception) {
             $this->dispatchError([
                 'success' => false,
                 'message' => 'Failed to retrieve payments',
-                'error' => $e->getMessage()
+                'error' => $exception->getMessage()
             ]);
         }
     }
@@ -196,7 +197,7 @@ class PaymentsApi extends aAPI
     public function subscriptionsAction(): void
     {
         $this->requireAuth();
-        
+
         try {
             $user = $this->getCurrentUser();
             $subscriptions = $this->paymentService->getUserSubscriptions($user->getId());
@@ -206,7 +207,7 @@ class PaymentsApi extends aAPI
                 if ($subscription->getStatus() === 'pending' || $subscription->getStatus() === 'incomplete') {
                     try {
                         $this->paymentService->refreshSubscriptionStatus($subscription->getId());
-                    } catch (Exception $e) {
+                    } catch (Exception) {
                         // Log or ignore errors during list refresh
                     }
                 }
@@ -219,11 +220,11 @@ class PaymentsApi extends aAPI
                 'success' => true,
                 'data' => $subscriptions->toArray()
             ]);
-        } catch (Exception $e) {
+        } catch (Exception $exception) {
             $this->dispatchError([
                 'success' => false,
                 'message' => 'Failed to retrieve subscriptions',
-                'error' => $e->getMessage()
+                'error' => $exception->getMessage()
             ]);
         }
     }
@@ -235,10 +236,10 @@ class PaymentsApi extends aAPI
     public function paypalConfigAction(): void
     {
         $this->requireAuth();
-        
-        $configManager = new \IamLab\Service\Payment\Configuration\ConfigurationManager();
+
+        $configManager = new ConfigurationManager();
         $paypalConfig = $configManager->getIntegrationConfig('paypal');
-        
+
         $this->dispatch([
             'success' => true,
             'data' => [
@@ -255,10 +256,10 @@ class PaymentsApi extends aAPI
     public function stripeConfigAction(): void
     {
         $this->requireAuth();
-        
-        $configManager = new \IamLab\Service\Payment\Configuration\ConfigurationManager();
+
+        $configManager = new ConfigurationManager();
         $stripeConfig = $configManager->getIntegrationConfig('stripe');
-        
+
         $this->dispatch([
             'success' => true,
             'data' => [
@@ -274,10 +275,10 @@ class PaymentsApi extends aAPI
     public function squareConfigAction(): void
     {
         $this->requireAuth();
-        
-        $configManager = new \IamLab\Service\Payment\Configuration\ConfigurationManager();
+
+        $configManager = new ConfigurationManager();
         $squareConfig = $configManager->getIntegrationConfig('square');
-        
+
         $this->dispatch([
             'success' => true,
             'data' => [
@@ -304,7 +305,7 @@ class PaymentsApi extends aAPI
      */
     protected function enhanceResponse(array $data, string $payload): array
     {
-        if (empty($payload)) {
+        if ($payload === '' || $payload === '0') {
             return $data;
         }
 

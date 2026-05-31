@@ -8,7 +8,7 @@ This folder contains the core components for API development:
 
 - **aAPI.php** - Abstract base class for API controllers
 - **Entity.php** - Abstract model class with JSON serialization
-- **iAPI.php** - API interface (placeholder for future extensions)
+- **iAPI.php** - API interface
 - **Rest.php** - REST utilities class (work in progress)
 
 ## Components
@@ -196,7 +196,6 @@ echo json_encode($user); // Automatically includes casts and amendments
 namespace IamLab\Service;
 
 use IamLab\Core\API\aAPI;
-use IamLab\Model\User;
 
 class UserApi extends aAPI
 {

@@ -2,35 +2,30 @@
 
 namespace IamLab\Core\Routing;
 
+use IamLab\Core\API\aAPI;
+use IamLab\Model\User;
 use Closure;
 use IamLab\Service\Auth\AuthService;
 use Phalcon\Mvc\Micro;
 
 /**
  * RouteGroup - Helper class for grouping routes with shared guards/middleware
- * 
+ *
  * This class allows grouping multiple routes together and applying guards
  * or middleware to the entire group, making route organization cleaner.
  */
 class RouteGroup
 {
-    private Micro $app;
-    private string $prefix;
     private array $guards = [];
+
     private array $middleware = [];
 
-    public function __construct(Micro $app, string $prefix = '')
+    public function __construct(private readonly Micro $app, private readonly string $prefix = '')
     {
-        $this->app = $app;
-        $this->prefix = $prefix;
     }
 
     /**
      * Create a new route group
-     *
-     * @param Micro $app
-     * @param string $prefix
-     * @return static
      */
     public static function create(Micro $app, string $prefix = ''): static
     {
@@ -74,7 +69,6 @@ class RouteGroup
     /**
      * Add custom middleware to the group
      *
-     * @param callable $middleware
      * @return $this
      */
     public function middleware(callable $middleware): static
@@ -86,7 +80,6 @@ class RouteGroup
     /**
      * Define routes within this group
      *
-     * @param callable $callback
      * @return $this
      */
     public function group(callable $callback): static
@@ -98,11 +91,9 @@ class RouteGroup
     /**
      * Add a GET route to the group
      *
-     * @param string $pattern
-     * @param mixed $handler
      * @return $this
      */
-    public function get(string $pattern, $handler): static
+    public function get(string $pattern, mixed $handler): static
     {
         $this->addRoute('GET', $pattern, $handler);
         return $this;
@@ -111,11 +102,9 @@ class RouteGroup
     /**
      * Add a POST route to the group
      *
-     * @param string $pattern
-     * @param mixed $handler
      * @return $this
      */
-    public function post(string $pattern, $handler): static
+    public function post(string $pattern, mixed $handler): static
     {
         $this->addRoute('POST', $pattern, $handler);
         return $this;
@@ -124,11 +113,9 @@ class RouteGroup
     /**
      * Add a PUT route to the group
      *
-     * @param string $pattern
-     * @param mixed $handler
      * @return $this
      */
-    public function put(string $pattern, $handler): static
+    public function put(string $pattern, mixed $handler): static
     {
         $this->addRoute('PUT', $pattern, $handler);
         return $this;
@@ -137,11 +124,9 @@ class RouteGroup
     /**
      * Add a PATCH route to the group
      *
-     * @param string $pattern
-     * @param mixed $handler
      * @return $this
      */
-    public function patch(string $pattern, $handler): static
+    public function patch(string $pattern, mixed $handler): static
     {
         $this->addRoute('PATCH', $pattern, $handler);
         return $this;
@@ -150,11 +135,9 @@ class RouteGroup
     /**
      * Add a DELETE route to the group
      *
-     * @param string $pattern
-     * @param mixed $handler
      * @return $this
      */
-    public function delete(string $pattern, $handler): static
+    public function delete(string $pattern, mixed $handler): static
     {
         $this->addRoute('DELETE', $pattern, $handler);
         return $this;
@@ -163,12 +146,9 @@ class RouteGroup
     /**
      * Add any HTTP method route to the group
      *
-     * @param string $method
-     * @param string $pattern
-     * @param mixed $handler
      * @return $this
      */
-    public function map(string $method, string $pattern, $handler): static
+    public function map(string $method, string $pattern, mixed $handler): static
     {
         $this->addRoute($method, $pattern, $handler);
         return $this;
@@ -176,54 +156,35 @@ class RouteGroup
 
     /**
      * Internal method to add routes with guards applied
-     *
-     * @param string $method
-     * @param string $pattern
-     * @param mixed $handler
      */
-    private function addRoute(string $method, string $pattern, $handler): void
+    private function addRoute(string $method, string $pattern, mixed $handler): void
     {
         $fullPattern = $this->prefix . $pattern;
-        
+
         // Wrap handler with guards and middleware
         $wrappedHandler = $this->wrapHandler($handler);
-        
+
         // Add route to the app
-        switch (strtoupper($method)) {
-            case 'GET':
-                $this->app->get($fullPattern, $wrappedHandler);
-                break;
-            case 'POST':
-                $this->app->post($fullPattern, $wrappedHandler);
-                break;
-            case 'PUT':
-                $this->app->put($fullPattern, $wrappedHandler);
-                break;
-            case 'PATCH':
-                $this->app->patch($fullPattern, $wrappedHandler);
-                break;
-            case 'DELETE':
-                $this->app->delete($fullPattern, $wrappedHandler);
-                break;
-            default:
-                $this->app->map($fullPattern, $wrappedHandler)->via([$method]);
-                break;
-        }
+        match (strtoupper($method)) {
+            'GET' => $this->app->get($fullPattern, $wrappedHandler),
+            'POST' => $this->app->post($fullPattern, $wrappedHandler),
+            'PUT' => $this->app->put($fullPattern, $wrappedHandler),
+            'PATCH' => $this->app->patch($fullPattern, $wrappedHandler),
+            'DELETE' => $this->app->delete($fullPattern, $wrappedHandler),
+            default => $this->app->map($fullPattern, $wrappedHandler)->via([$method]),
+        };
     }
 
     /**
      * Wrap the original handler with guards and middleware
-     *
-     * @param mixed $originalHandler
-     * @return callable
      */
-    private function wrapHandler($originalHandler): callable
+    private function wrapHandler(mixed $originalHandler): callable
     {
         $app = $this->app;
         $guards = $this->guards;
         $middleware = $this->middleware;
         $routeGroup = $this;
-        
+
         return function (...$args) use ($originalHandler, $app, $guards, $middleware, $routeGroup) {
             // Apply guards first
             foreach ($guards as $guard) {
@@ -238,15 +199,16 @@ class RouteGroup
             // If handler is an array with aAPI instance, set route parameters
             if (is_array($originalHandler) && count($originalHandler) >= 2) {
                 $instance = $originalHandler[0];
-                if ($instance instanceof \IamLab\Core\API\aAPI) {
+                if ($instance instanceof aAPI) {
                     $routeParams = $args;
-                    // Backward compatibility: if no 'id' key but we have arguments, 
+                    // Backward compatibility: if no 'id' key but we have arguments,
                     // map the first one to 'id' as it's the most common case.
-                    if (!isset($routeParams['id']) && count($args) > 0) {
+                    if (!isset($routeParams['id']) && $args !== []) {
                         $routeParams['id'] = array_values($args)[0];
                     }
+
                     $instance->setRouteParams($routeParams);
-                    
+
                     // Call initialize if it exists
                     if (method_exists($instance, 'initialize')) {
                         $instance->initialize();
@@ -255,18 +217,20 @@ class RouteGroup
             }
 
             // Execute original handler
-            // We use array_values($args) to pass positional arguments only, 
+            // We use array_values($args) to pass positional arguments only,
             // which prevents "Unknown named parameter" errors in handlers
             // that don't explicitly define parameters but still receive them from Phalcon.
             $positionalArgs = array_values($args);
-
             if (is_array($originalHandler)) {
                 return call_user_func_array($originalHandler, $positionalArgs);
-            } elseif (is_callable($originalHandler)) {
+            }
+
+            if (is_callable($originalHandler)) {
                 // Pass $app to closure if it's a closure
                 if ($originalHandler instanceof Closure) {
                     return call_user_func_array($originalHandler, array_merge([$app], $positionalArgs));
                 }
+
                 return call_user_func_array($originalHandler, $positionalArgs);
             }
         };
@@ -274,10 +238,8 @@ class RouteGroup
 
     /**
      * Apply a specific guard
-     *
-     * @param mixed $guard
      */
-    private function applyGuard($guard): void
+    private function applyGuard(mixed $guard): void
     {
         $authService = new AuthService();
 
@@ -289,6 +251,7 @@ class RouteGroup
             if (!$authService->isAuthenticated()) {
                 $this->sendUnauthorizedResponse();
             }
+
             $user = $authService->getUser();
             if (!$user || !$user->hasRole('admin')) {
                 $this->sendForbiddenResponse('Admin access required');
@@ -297,8 +260,9 @@ class RouteGroup
             if (!$authService->isAuthenticated()) {
                 $this->sendUnauthorizedResponse();
             }
+
             $user = $authService->getUser();
-            if (!$user) {
+            if (!$user instanceof User) {
                 $this->sendUnauthorizedResponse();
             }
 
@@ -313,7 +277,7 @@ class RouteGroup
 
             if (!$hasRole) {
                 $rolesList = implode(', ', $roles);
-                $this->sendForbiddenResponse("Access denied. Required role(s): {$rolesList}");
+                $this->sendForbiddenResponse('Access denied. Required role(s): ' . $rolesList);
             }
         }
     }
@@ -336,8 +300,6 @@ class RouteGroup
 
     /**
      * Send forbidden response
-     *
-     * @param string $message
      */
     private function sendForbiddenResponse(string $message): void
     {

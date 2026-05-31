@@ -13,7 +13,6 @@ class RolesMigration_101 extends Migration
     /**
      * Define the table structure
      *
-     * @return void
      * @throws Exception
      */
     public function morph(): void
@@ -81,8 +80,6 @@ class RolesMigration_101 extends Migration
 
     /**
      * Run the migrations
-     *
-     * @return void
      */
     public function up(): void
     {
@@ -99,7 +96,7 @@ class RolesMigration_101 extends Migration
             $existingRole = $this->getConnection()->fetchOne(
                 "SELECT COUNT(*) as count FROM roles WHERE name = '" . $role[0] . "'"
             );
-            
+
             if ($existingRole['count'] == 0) {
                 $this->getConnection()->insert(
                     'roles',
@@ -122,8 +119,6 @@ class RolesMigration_101 extends Migration
 
     /**
      * Reverse the migrations
-     *
-     * @return void
      */
     public function down(): void
     {

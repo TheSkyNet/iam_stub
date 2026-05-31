@@ -4,7 +4,7 @@ namespace IamLab\Service\Payment\Integrations;
 
 /**
  * Payment Integration Interface
- * 
+ *
  * Defines the contract that all payment integrations must implement
  */
 interface PaymentIntegrationInterface

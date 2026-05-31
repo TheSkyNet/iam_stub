@@ -9,12 +9,9 @@ use Throwable;
  */
 class InvalidConfigurationException extends LMSException
 {
-    private array $validationErrors = [];
-
-    public function __construct(string $message = "", int $code = 0, ?Throwable $previous = null, array $validationErrors = [])
+    public function __construct(string $message = "", int $code = 0, ?Throwable $previous = null, private array $validationErrors = [])
     {
         parent::__construct($message, $code, $previous);
-        $this->validationErrors = $validationErrors;
     }
 
     /**
@@ -46,6 +43,7 @@ class InvalidConfigurationException extends LMSException
     /**
      * Get formatted error information including validation errors
      */
+    #[\Override]
     public function toArray(): array
     {
         $data = parent::toArray();

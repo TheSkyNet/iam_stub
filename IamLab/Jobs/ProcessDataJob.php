@@ -6,16 +6,13 @@ use Exception;
 
 /**
  * Process Data Job
- * 
+ *
  * Example job for processing data/files
  */
 class ProcessDataJob
 {
     /**
      * Handle the job
-     *
-     * @param array $payload
-     * @return bool|string
      */
     public function handle(array $payload): bool|string
     {
@@ -30,36 +27,22 @@ class ProcessDataJob
             $options = $payload['options'] ?? [];
 
             // Process based on data type
-            switch ($dataType) {
-                case 'csv':
-                    return $this->processCsvData($data, $options);
-                
-                case 'json':
-                    return $this->processJsonData($data, $options);
-                
-                case 'image':
-                    return $this->processImageData($data, $options);
-                
-                case 'text':
-                    return $this->processTextData($data, $options);
-                
-                default:
-                    return "Unsupported data type: {$dataType}";
-            }
-
-        } catch (Exception $e) {
-            return 'Failed to process data: ' . $e->getMessage();
+            return match ($dataType) {
+                'csv' => $this->processCsvData($data, $options),
+                'json' => $this->processJsonData($data, $options),
+                'image' => $this->processImageData($data, $options),
+                'text' => $this->processTextData($data, $options),
+                default => 'Unsupported data type: ' . $dataType,
+            };
+        } catch (Exception $exception) {
+            return 'Failed to process data: ' . $exception->getMessage();
         }
     }
 
     /**
      * Process CSV data
-     *
-     * @param mixed $data
-     * @param array $options
-     * @return bool|string
      */
-    protected function processCsvData($data, array $options): bool|string
+    protected function processCsvData(mixed $data, array $options): bool|string
     {
         try {
             // Simulate CSV processing
@@ -70,27 +53,22 @@ class ProcessDataJob
                 // Simulate row processing
                 $this->processRow($row);
                 $processedCount++;
-                
+
                 // Simulate processing time
                 usleep(100000); // 0.1 seconds per row
             }
 
-            error_log("Processed {$processedCount} CSV rows");
+            error_log(sprintf('Processed %d CSV rows', $processedCount));
             return true;
-
-        } catch (Exception $e) {
-            return "CSV processing failed: " . $e->getMessage();
+        } catch (Exception $exception) {
+            return "CSV processing failed: " . $exception->getMessage();
         }
     }
 
     /**
      * Process JSON data
-     *
-     * @param mixed $data
-     * @param array $options
-     * @return bool|string
      */
-    protected function processJsonData($data, array $options): bool|string
+    protected function processJsonData(mixed $data, array $options): bool|string
     {
         try {
             // Simulate JSON processing
@@ -102,26 +80,21 @@ class ProcessDataJob
             }
 
             $itemCount = is_array($data) ? count($data) : 1;
-            
+
             // Simulate processing time based on data size
             sleep(max(1, intval($itemCount / 100)));
 
-            error_log("Processed JSON data with {$itemCount} items");
+            error_log(sprintf('Processed JSON data with %d items', $itemCount));
             return true;
-
-        } catch (Exception $e) {
-            return "JSON processing failed: " . $e->getMessage();
+        } catch (Exception $exception) {
+            return "JSON processing failed: " . $exception->getMessage();
         }
     }
 
     /**
      * Process image data
-     *
-     * @param mixed $data
-     * @param array $options
-     * @return bool|string
      */
-    protected function processImageData($data, array $options): bool|string
+    protected function processImageData(mixed $data, array $options): bool|string
     {
         try {
             $imagePath = $data['path'] ?? null;
@@ -137,36 +110,31 @@ class ProcessDataJob
                     case 'resize':
                         $this->simulateImageResize($imagePath, $options);
                         break;
-                    
+
                     case 'compress':
                         $this->simulateImageCompress($imagePath, $options);
                         break;
-                    
+
                     case 'watermark':
                         $this->simulateImageWatermark($imagePath, $options);
                         break;
                 }
-                
+
                 // Simulate processing time
                 sleep(2);
             }
 
-            error_log("Processed image: {$imagePath} with operations: " . implode(', ', $operations));
+            error_log(sprintf('Processed image: %s with operations: ', $imagePath) . implode(', ', $operations));
             return true;
-
-        } catch (Exception $e) {
-            return "Image processing failed: " . $e->getMessage();
+        } catch (Exception $exception) {
+            return "Image processing failed: " . $exception->getMessage();
         }
     }
 
     /**
      * Process text data
-     *
-     * @param mixed $data
-     * @param array $options
-     * @return bool|string
      */
-    protected function processTextData($data, array $options): bool|string
+    protected function processTextData(mixed $data, array $options): bool|string
     {
         try {
             $text = is_string($data) ? $data : (string)$data;
@@ -180,11 +148,11 @@ class ProcessDataJob
                         $results['word_count'] = str_word_count($text);
                         $results['char_count'] = strlen($text);
                         break;
-                    
+
                     case 'sentiment':
                         $results['sentiment'] = $this->simulateSentimentAnalysis($text);
                         break;
-                    
+
                     case 'keywords':
                         $results['keywords'] = $this->simulateKeywordExtraction($text);
                         break;
@@ -196,18 +164,15 @@ class ProcessDataJob
 
             error_log("Processed text data: " . json_encode($results));
             return true;
-
-        } catch (Exception $e) {
-            return "Text processing failed: " . $e->getMessage();
+        } catch (Exception $exception) {
+            return "Text processing failed: " . $exception->getMessage();
         }
     }
 
     /**
      * Process a single row (helper method)
-     *
-     * @param mixed $row
      */
-    protected function processRow($row): void
+    protected function processRow(mixed $row): void
     {
         // Simulate row processing logic
         // In a real implementation, this might involve database operations,
@@ -216,91 +181,76 @@ class ProcessDataJob
 
     /**
      * Simulate image resize operation
-     *
-     * @param string $imagePath
-     * @param array $options
      */
     protected function simulateImageResize(string $imagePath, array $options): void
     {
         $width = $options['width'] ?? 800;
         $height = $options['height'] ?? 600;
-        error_log("Simulating image resize: {$imagePath} to {$width}x{$height}");
+        error_log(sprintf('Simulating image resize: %s to %sx%s', $imagePath, $width, $height));
     }
 
     /**
      * Simulate image compress operation
-     *
-     * @param string $imagePath
-     * @param array $options
      */
     protected function simulateImageCompress(string $imagePath, array $options): void
     {
         $quality = $options['quality'] ?? 80;
-        error_log("Simulating image compression: {$imagePath} at {$quality}% quality");
+        error_log(sprintf('Simulating image compression: %s at %s%% quality', $imagePath, $quality));
     }
 
     /**
      * Simulate image watermark operation
-     *
-     * @param string $imagePath
-     * @param array $options
      */
     protected function simulateImageWatermark(string $imagePath, array $options): void
     {
         $watermark = $options['watermark'] ?? 'default.png';
-        error_log("Simulating watermark application: {$imagePath} with {$watermark}");
+        error_log(sprintf('Simulating watermark application: %s with %s', $imagePath, $watermark));
     }
 
     /**
      * Simulate sentiment analysis
-     *
-     * @param string $text
-     * @return string
      */
     protected function simulateSentimentAnalysis(string $text): string
     {
         // Simple simulation based on text length and content
         $positiveWords = ['good', 'great', 'excellent', 'amazing', 'wonderful'];
         $negativeWords = ['bad', 'terrible', 'awful', 'horrible', 'disappointing'];
-        
+
         $positiveCount = 0;
         $negativeCount = 0;
-        
+
         foreach ($positiveWords as $word) {
             $positiveCount += substr_count(strtolower($text), $word);
         }
-        
+
         foreach ($negativeWords as $word) {
             $negativeCount += substr_count(strtolower($text), $word);
         }
-        
+
         if ($positiveCount > $negativeCount) {
             return 'positive';
-        } elseif ($negativeCount > $positiveCount) {
-            return 'negative';
-        } else {
-            return 'neutral';
         }
+
+        if ($negativeCount > $positiveCount) {
+            return 'negative';
+        }
+
+        return 'neutral';
     }
 
     /**
      * Simulate keyword extraction
-     *
-     * @param string $text
-     * @return array
      */
     protected function simulateKeywordExtraction(string $text): array
     {
         // Simple simulation - extract words longer than 4 characters
         $words = str_word_count(strtolower($text), 1);
-        $keywords = array_filter($words, function($word) {
-            return strlen($word) > 4;
-        });
-        
+        $keywords = array_filter($words, fn($word): bool => strlen($word) > 4);
+
         // Return top 5 most frequent keywords
         $wordCounts = array_count_values($keywords);
         arsort($wordCounts);
-        
+
         return array_slice(array_keys($wordCounts), 0, 5);
     }
 }

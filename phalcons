@@ -81,6 +81,7 @@ function display_help {
     echo
     echo "${YELLOW}Running Tests:${NC}"
     echo "  ${GREEN}phalcons test${NC}          Run the PHPUnit tests via the Phalcon test command"
+    echo "  ${GREEN}phalcons ci${NC}            Run all CI checks (tests, Rector, PHPCS)"
     echo
     echo "${YELLOW}Container CLI:${NC}"
     echo "  ${GREEN}phalcons shell${NC}        Start a shell session within the application container"
@@ -300,6 +301,18 @@ elif [ "$1" == "test" ]; then
         ARGS+=(exec -u phalcons)
         [ ! -t 0 ] && ARGS+=(-T)
         ARGS+=("$APP_SERVICE" ./vendor/bin/phalcon test "$@")
+    else
+        phalcons_is_not_running
+    fi
+
+# Run CI checks
+elif [ "$1" == "ci" ]; then
+    shift 1
+
+    if [ "$EXEC" == "yes" ]; then
+        ARGS+=(exec -u phalcons)
+        [ ! -t 0 ] && ARGS+=(-T)
+        ARGS+=("$APP_SERVICE" bash bin/ci.sh "$@")
     else
         phalcons_is_not_running
     fi

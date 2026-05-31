@@ -86,58 +86,162 @@ class Subscription extends Model
      */
     protected $updated_at;
 
-    public function initialize()
+    public function initialize(): void
     {
         $this->setSource('subscription');
         $this->belongsTo('user_id', User::class, 'id', ['alias' => 'user']);
     }
 
-    public function getId() { return $this->id; }
-    public function setId($id) { $this->id = $id; return $this; }
+    public function getId()
+    {
+        return $this->id;
+    }
 
-    public function getUserId() { return $this->user_id; }
-    public function setUserId($user_id) { $this->user_id = $user_id; return $this; }
+    public function setId($id): static
+    {
+        $this->id = $id;
+        return $this;
+    }
 
-    public function getPaymentMethod() { return $this->payment_method; }
-    public function setPaymentMethod($payment_method) { $this->payment_method = $payment_method; return $this; }
+    public function getUserId()
+    {
+        return $this->user_id;
+    }
 
-    public function getSubscriptionId() { return $this->subscription_id; }
-    public function setSubscriptionId($subscription_id) { $this->subscription_id = $subscription_id; return $this; }
+    public function setUserId($user_id): static
+    {
+        $this->user_id = $user_id;
+        return $this;
+    }
 
-    public function getPlanId() { return $this->plan_id; }
-    public function setPlanId($plan_id) { $this->plan_id = $plan_id; return $this; }
+    public function getPaymentMethod()
+    {
+        return $this->payment_method;
+    }
 
-    public function getStatus() { return $this->status; }
-    public function setStatus($status) { $this->status = $status; return $this; }
+    public function setPaymentMethod($payment_method): static
+    {
+        $this->payment_method = $payment_method;
+        return $this;
+    }
 
-    public function getStartsAt() { return $this->starts_at; }
-    public function setStartsAt($starts_at) { $this->starts_at = $starts_at; return $this; }
+    public function getSubscriptionId()
+    {
+        return $this->subscription_id;
+    }
 
-    public function getEndsAt() { return $this->ends_at; }
-    public function setEndsAt($ends_at) { $this->ends_at = $ends_at; return $this; }
+    public function setSubscriptionId($subscription_id): static
+    {
+        $this->subscription_id = $subscription_id;
+        return $this;
+    }
 
-    public function getTrialEndsAt() { return $this->trial_ends_at; }
-    public function setTrialEndsAt($trial_ends_at) { $this->trial_ends_at = $trial_ends_at; return $this; }
+    public function getPlanId()
+    {
+        return $this->plan_id;
+    }
 
-    public function getCanceledAt() { return $this->canceled_at; }
-    public function setCanceledAt($canceled_at) { $this->canceled_at = $canceled_at; return $this; }
+    public function setPlanId($plan_id): static
+    {
+        $this->plan_id = $plan_id;
+        return $this;
+    }
 
-    public function getPayload() { return $this->payload; }
-    public function setPayload($payload) { $this->payload = $payload; return $this; }
+    public function getStatus()
+    {
+        return $this->status;
+    }
 
-    public function getCreatedAt() { return $this->created_at; }
-    public function setCreatedAt($created_at) { $this->created_at = $created_at; return $this; }
+    public function setStatus($status): static
+    {
+        $this->status = $status;
+        return $this;
+    }
 
-    public function getUpdatedAt() { return $this->updated_at; }
-    public function setUpdatedAt($updated_at) { $this->updated_at = $updated_at; return $this; }
+    public function getStartsAt()
+    {
+        return $this->starts_at;
+    }
 
-    public function beforeValidationOnCreate()
+    public function setStartsAt($starts_at): static
+    {
+        $this->starts_at = $starts_at;
+        return $this;
+    }
+
+    public function getEndsAt()
+    {
+        return $this->ends_at;
+    }
+
+    public function setEndsAt($ends_at): static
+    {
+        $this->ends_at = $ends_at;
+        return $this;
+    }
+
+    public function getTrialEndsAt()
+    {
+        return $this->trial_ends_at;
+    }
+
+    public function setTrialEndsAt($trial_ends_at): static
+    {
+        $this->trial_ends_at = $trial_ends_at;
+        return $this;
+    }
+
+    public function getCanceledAt()
+    {
+        return $this->canceled_at;
+    }
+
+    public function setCanceledAt($canceled_at): static
+    {
+        $this->canceled_at = $canceled_at;
+        return $this;
+    }
+
+    public function getPayload()
+    {
+        return $this->payload;
+    }
+
+    public function setPayload($payload): static
+    {
+        $this->payload = $payload;
+        return $this;
+    }
+
+    public function getCreatedAt()
+    {
+        return $this->created_at;
+    }
+
+    public function setCreatedAt($created_at): static
+    {
+        $this->created_at = $created_at;
+        return $this;
+    }
+
+    public function getUpdatedAt()
+    {
+        return $this->updated_at;
+    }
+
+    public function setUpdatedAt($updated_at): static
+    {
+        $this->updated_at = $updated_at;
+        return $this;
+    }
+
+    public function beforeValidationOnCreate(): void
     {
         $this->created_at = date('Y-m-d H:i:s');
         $this->updated_at = date('Y-m-d H:i:s');
     }
 
-    public function beforeValidationOnUpdate()
+    public function beforeValidationOnUpdate(): void
     {
         $this->updated_at = date('Y-m-d H:i:s');
     }

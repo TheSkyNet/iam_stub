@@ -8,8 +8,10 @@ use IamLab\Service\Payment\Integrations\MollieIntegration;
 class MollieIntegrationTest extends TestCase
 {
     private array $config;
+
     private MollieIntegration $integration;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->config = [
@@ -25,9 +27,9 @@ class MollieIntegrationTest extends TestCase
         // Actually, MollieIntegration::healthCheck calls $this->request('GET', '/methods')
         // In a real project we would mock cURL or the request method.
         // For this stub, we'll just check if it returns false when API key is missing.
-        
+
         $this->assertTrue(true); // Placeholder for structural test
-        
+
         $disabledConfig = ['enabled' => false];
         $disabledIntegration = new MollieIntegration($disabledConfig);
         $this->assertFalse($disabledIntegration->healthCheck());

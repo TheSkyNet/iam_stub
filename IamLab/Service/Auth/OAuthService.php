@@ -5,23 +5,22 @@ namespace IamLab\Service\Auth;
 use IamLab\Core\API\aAPI;
 use IamLab\Model\User;
 use Exception;
+
 use function App\Core\Helpers\config;
 
 abstract class OAuthService extends aAPI
 {
-    protected string $provider;
     protected array $config;
 
     /**
      * @throws Exception
      */
-    public function __construct(string $provider)
+    public function __construct(protected string $provider)
     {
-        $this->provider = $provider;
-        $this->config = config('oauth.' . $provider);
+        $this->config = config('oauth.' . $this->provider);
 
         if (!$this->isEnabled()) {
-            throw new Exception("OAuth provider '{$provider}' is not enabled");
+            throw new Exception(sprintf("OAuth provider '%s' is not enabled", $this->provider));
         }
     }
 
@@ -36,12 +35,12 @@ abstract class OAuthService extends aAPI
     /**
      * Get the authorization URL for the OAuth provider
      */
-    abstract public function getAuthorizationUrl(string $state = null): string;
+    abstract public function getAuthorizationUrl(?string $state = null): string;
 
     /**
      * Exchange authorization code for access token
      */
-    abstract public function getAccessToken(string $code, string $state = null): array;
+    abstract public function getAccessToken(string $code, ?string $state = null): array;
 
     /**
      * Get user information from the OAuth provider

@@ -9,9 +9,8 @@ class MakeJsCommand extends BaseCommand
 {
     /**
      * Get command signature/usage
-     *
-     * @return string
      */
+    #[\Override]
     public function getSignature(): string
     {
         return 'make:js <name> [--type=] [--api] [--controller] [-a|--all] [-v|--verbose]';
@@ -19,9 +18,8 @@ class MakeJsCommand extends BaseCommand
 
     /**
      * Get command description
-     *
-     * @return string
      */
+    #[\Override]
     public function getDescription(): string
     {
         return 'Generate Mithril.js views, services, and API controllers';
@@ -29,9 +27,8 @@ class MakeJsCommand extends BaseCommand
 
     /**
      * Get command help text
-     *
-     * @return string
      */
+    #[\Override]
     public function getHelp(): string
     {
         return <<<HELP
@@ -64,6 +61,7 @@ HELP;
      *
      * @return int Exit code
      */
+    #[\Override]
     protected function handle(): int
     {
         $name = $this->argument(0);
@@ -74,7 +72,7 @@ HELP;
 
         // Validate and format name
         $name = $this->formatName($name);
-        $this->verbose("Formatted name: {$name}");
+        $this->verbose('Formatted name: ' . $name);
 
         $type = $this->option('type', 'both');
         $generateApi = $this->hasOption('api');
@@ -87,7 +85,7 @@ HELP;
             $generateApi = true;
         }
 
-        $this->info("Generating components for: {$name}");
+        $this->info('Generating components for: ' . $name);
 
         try {
             if ($controllerOnly) {
@@ -106,10 +104,10 @@ HELP;
                 }
             }
 
-            $this->success("Successfully generated components for {$name}");
+            $this->success('Successfully generated components for ' . $name);
             return 0;
-        } catch (Exception $e) {
-            $this->error("Error generating components: " . $e->getMessage());
+        } catch (Exception $exception) {
+            $this->error("Error generating components: " . $exception->getMessage());
             return 1;
         }
     }
@@ -127,13 +125,13 @@ HELP;
      */
     private function generateView(string $name): void
     {
-        $this->info("Generating view component for {$name}...");
+        $this->info(sprintf('Generating view component for %s...', $name));
 
         $viewContent = $this->getViewTemplate($name);
-        $viewPath = "assets/js/components/{$name}.js";
+        $viewPath = sprintf('assets/js/components/%s.js', $name);
 
         $this->createFile($viewPath, $viewContent);
-        $this->verbose("Created view: {$viewPath}");
+        $this->verbose('Created view: ' . $viewPath);
     }
 
     /**
@@ -141,20 +139,20 @@ HELP;
      */
     private function generateService(string $name): void
     {
-        $this->info("Generating service for {$name}...");
+        $this->info(sprintf('Generating service for %s...', $name));
 
         $serviceContent = $this->getServiceTemplate($name);
-        $servicePath = "assets/js/services/{$name}Service.js";
+        $servicePath = sprintf('assets/js/services/%sService.js', $name);
 
         // Create services directory if it doesn't exist
         $servicesDir = "assets/js/services";
         if (!is_dir($servicesDir)) {
             mkdir($servicesDir, 0755, true);
-            $this->verbose("Created directory: {$servicesDir}");
+            $this->verbose('Created directory: ' . $servicesDir);
         }
 
         $this->createFile($servicePath, $serviceContent);
-        $this->verbose("Created service: {$servicePath}");
+        $this->verbose('Created service: ' . $servicePath);
     }
 
     /**
@@ -162,13 +160,13 @@ HELP;
      */
     private function generateController(string $name): void
     {
-        $this->info("Generating API controller for {$name}...");
+        $this->info(sprintf('Generating API controller for %s...', $name));
 
         $controllerContent = $this->getControllerTemplate($name);
-        $controllerPath = "IamLab/Service/{$name}Api.php";
+        $controllerPath = sprintf('IamLab/Service/%sApi.php', $name);
 
         $this->createFile($controllerPath, $controllerContent);
-        $this->verbose("Created controller: {$controllerPath}");
+        $this->verbose('Created controller: ' . $controllerPath);
     }
 
     /**
@@ -181,11 +179,9 @@ HELP;
             mkdir($directory, 0755, true);
         }
 
-        if (file_exists($path)) {
-            if (!$this->confirm("File {$path} already exists. Overwrite?", false)) {
-                $this->warn("Skipped: {$path}");
-                return;
-            }
+        if (file_exists($path) && !$this->confirm(sprintf('File %s already exists. Overwrite?', $path), false)) {
+            $this->warn('Skipped: ' . $path);
+            return;
         }
 
         file_put_contents($path, $content);

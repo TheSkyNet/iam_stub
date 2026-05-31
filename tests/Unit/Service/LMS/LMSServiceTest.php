@@ -11,6 +11,7 @@ class LMSServiceTest extends TestCase
 {
     private LMSService $lmsService;
 
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();
@@ -27,7 +28,7 @@ class LMSServiceTest extends TestCase
     {
         $service = new LMSService();
         $service->initialize();
-        
+
         // Should not throw any exceptions
         $this->assertInstanceOf(LMSService::class, $service);
     }
@@ -35,21 +36,21 @@ class LMSServiceTest extends TestCase
     public function testGetConfigurationManager(): void
     {
         $configManager = $this->lmsService->getConfigurationManager();
-        
+
         $this->assertInstanceOf(ConfigurationManager::class, $configManager);
     }
 
     public function testGetIntegrationRegistry(): void
     {
         $registry = $this->lmsService->getIntegrationRegistry();
-        
+
         $this->assertInstanceOf(IntegrationRegistry::class, $registry);
     }
 
     public function testGetAvailableIntegrations(): void
     {
         $integrations = $this->lmsService->getAvailableIntegrations();
-        
+
         $this->assertIsArray($integrations);
         // Ollama should be available by default
         $this->assertContains('ollama', $integrations);
@@ -59,7 +60,7 @@ class LMSServiceTest extends TestCase
     {
         // Ollama should be available
         $this->assertTrue($this->lmsService->isIntegrationAvailable('ollama'));
-        
+
         // Non-existent integration should not be available
         $this->assertFalse($this->lmsService->isIntegrationAvailable('nonexistent'));
     }
@@ -67,10 +68,10 @@ class LMSServiceTest extends TestCase
     public function testGetIntegrationStatus(): void
     {
         $status = $this->lmsService->getIntegrationStatus();
-        
+
         $this->assertIsArray($status);
         $this->assertArrayHasKey('ollama', $status);
-        
+
         // Check status structure
         $ollamaStatus = $status['ollama'];
         $this->assertArrayHasKey('enabled', $ollamaStatus);
@@ -85,13 +86,13 @@ class LMSServiceTest extends TestCase
             'ollama',
             ['max_tokens' => 50]
         );
-        
+
         $this->assertIsArray($result);
         $this->assertArrayHasKey('success', $result);
         $this->assertArrayHasKey('integration', $result);
         $this->assertArrayHasKey('timestamp', $result);
         $this->assertEquals('ollama', $result['integration']);
-        
+
         // Note: The actual success depends on Ollama being available
         // In a real test environment, we might mock this
     }
@@ -102,7 +103,7 @@ class LMSServiceTest extends TestCase
             "Test prompt",
             'nonexistent'
         );
-        
+
         $this->assertIsArray($result);
         $this->assertFalse($result['success']);
         $this->assertArrayHasKey('error', $result);
@@ -120,9 +121,9 @@ class LMSServiceTest extends TestCase
             'description' => 'Test Description',
             'teacher_id' => 'test_teacher'
         ];
-        
+
         $result = $this->lmsService->createCourse($courseData, 'ollama');
-        
+
         $this->assertIsArray($result);
         $this->assertArrayHasKey('success', $result);
         $this->assertArrayHasKey('integration', $result);
@@ -135,9 +136,9 @@ class LMSServiceTest extends TestCase
         $courseData = [
             'title' => 'Test Course'
         ];
-        
+
         $result = $this->lmsService->createCourse($courseData, 'nonexistent');
-        
+
         $this->assertIsArray($result);
         $this->assertFalse($result['success']);
         $this->assertArrayHasKey('error', $result);
@@ -154,7 +155,7 @@ class LMSServiceTest extends TestCase
             'ollama',
             ['type' => 'general']
         );
-        
+
         $this->assertIsArray($result);
         $this->assertArrayHasKey('success', $result);
         $this->assertArrayHasKey('integration', $result);
@@ -168,7 +169,7 @@ class LMSServiceTest extends TestCase
             "Test text",
             'nonexistent'
         );
-        
+
         $this->assertIsArray($result);
         $this->assertFalse($result['success']);
         $this->assertArrayHasKey('error', $result);
@@ -185,10 +186,10 @@ class LMSServiceTest extends TestCase
             ['nonexistent', 'ollama'],
             ['max_tokens' => 50]
         );
-        
+
         $this->assertIsArray($result);
         $this->assertArrayHasKey('success', $result);
-        
+
         // Should fallback to ollama if nonexistent fails
         if ($result['success']) {
             $this->assertArrayHasKey('integration', $result);
@@ -199,7 +200,7 @@ class LMSServiceTest extends TestCase
     public function testGetBestIntegrationFor(): void
     {
         $best = $this->lmsService->getBestIntegrationFor('content_generation', ['ollama']);
-        
+
         // Should return ollama if it's available and supports content generation
         if ($this->lmsService->isIntegrationAvailable('ollama')) {
             $this->assertEquals('ollama', $best);
@@ -209,7 +210,7 @@ class LMSServiceTest extends TestCase
     public function testGetIntegrationCapabilities(): void
     {
         $capabilities = $this->lmsService->getIntegrationCapabilities('ollama');
-        
+
         $this->assertIsArray($capabilities);
         $this->assertArrayHasKey('content_generation', $capabilities);
         $this->assertArrayHasKey('text_analysis', $capabilities);
@@ -219,13 +220,13 @@ class LMSServiceTest extends TestCase
     public function testGetStatistics(): void
     {
         $stats = $this->lmsService->getStatistics();
-        
+
         $this->assertIsArray($stats);
         $this->assertArrayHasKey('total_integrations', $stats);
         $this->assertArrayHasKey('healthy_integrations', $stats);
         $this->assertArrayHasKey('unhealthy_integrations', $stats);
         $this->assertArrayHasKey('health_percentage', $stats);
-        
+
         $this->assertIsInt($stats['total_integrations']);
         $this->assertIsInt($stats['healthy_integrations']);
         $this->assertIsInt($stats['unhealthy_integrations']);
@@ -236,7 +237,7 @@ class LMSServiceTest extends TestCase
     {
         // Should not throw any exceptions
         $this->lmsService->refreshHealthStatus();
-        
+
         // Verify that status is still accessible after refresh
         $status = $this->lmsService->getIntegrationStatus();
         $this->assertIsArray($status);
@@ -247,13 +248,13 @@ class LMSServiceTest extends TestCase
         $service = new LMSService();
         $service->initialize();
         $service->initialize(); // Second call should be safe
-        
+
         $this->assertInstanceOf(LMSService::class, $service);
         $integrations1 = $service->getAvailableIntegrations();
-        
+
         $service->initialize(); // Third call should also be safe
         $integrations2 = $service->getAvailableIntegrations();
-        
+
         $this->assertEquals($integrations1, $integrations2);
     }
 }

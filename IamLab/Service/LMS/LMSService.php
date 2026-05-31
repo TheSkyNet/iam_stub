@@ -2,6 +2,7 @@
 
 namespace IamLab\Service\LMS;
 
+use Phalcon\Di\Di;
 use Exception;
 use IamLab\Service\LMS\Configuration\ConfigurationManager;
 use IamLab\Service\LMS\Registry\IntegrationRegistry;
@@ -10,21 +11,25 @@ use IamLab\Service\LMS\Exception\LMSException;
 use Phalcon\Di\Injectable;
 
 // Conditionally use Phalcon Injectable if available
-if (class_exists('Phalcon\Di\Injectable')) {
-    class LMSServiceBase extends Injectable {}
+if (class_exists(Injectable::class)) {
+    class LMSServiceBase extends Injectable
+    {
+    }
 } else {
-    class LMSServiceBase {}
+    class LMSServiceBase
+    {
+    }
 }
 
 /**
  * LMS Integration Service
- * 
+ *
  * This service provides a unified interface for integrating with various
  * Learning Management Systems and AI platforms including:
  * - Google Gemini API
  * - Ollama (local LLM)
  * - Tencent Education Cloud (Chinese LMS)
- * 
+ *
  * Refactored to follow SOLID principles:
  * - Single Responsibility: Each class has one clear responsibility
  * - Open/Closed: Easy to extend with new integrations
@@ -35,7 +40,9 @@ if (class_exists('Phalcon\Di\Injectable')) {
 class LMSService extends LMSServiceBase
 {
     private ConfigurationManager $configManager;
+
     private IntegrationRegistry $registry;
+
     private bool $initialized = false;
 
     public function initialize(): void
@@ -58,13 +65,13 @@ class LMSService extends LMSServiceBase
 
         // Avoid calling $this->getDI() directly because it throws when no DI is set
         try {
-            if (class_exists('Phalcon\\Di\\Di')) {
-                $di = \Phalcon\Di\Di::getDefault();
+            if (class_exists(Di::class)) {
+                $di = Di::getDefault();
                 if ($di && $di->has('config')) {
                     $configService = $di->get('config');
                 }
             }
-        } catch (\Throwable $e) {
+        } catch (\Throwable) {
             // No available DI. That's fine for tests/CLI: ConfigurationManager will fall back to env.
         }
 
@@ -119,9 +126,7 @@ class LMSService extends LMSServiceBase
             $result['timestamp'] = time();
 
             return $result;
-        } catch (IntegrationNotFoundException $e) {
-            return $this->formatErrorResponse($e, $integration, 'content_generation');
-        } catch (Exception $e) {
+        } catch (IntegrationNotFoundException | Exception $e) {
             return $this->formatErrorResponse($e, $integration, 'content_generation');
         }
     }
@@ -142,9 +147,7 @@ class LMSService extends LMSServiceBase
             $result['timestamp'] = time();
 
             return $result;
-        } catch (IntegrationNotFoundException $e) {
-            return $this->formatErrorResponse($e, $integration, 'course_creation');
-        } catch (Exception $e) {
+        } catch (IntegrationNotFoundException | Exception $e) {
             return $this->formatErrorResponse($e, $integration, 'course_creation');
         }
     }
@@ -165,9 +168,7 @@ class LMSService extends LMSServiceBase
             $result['timestamp'] = time();
 
             return $result;
-        } catch (IntegrationNotFoundException $e) {
-            return $this->formatErrorResponse($e, $integration, 'text_analysis');
-        } catch (Exception $e) {
+        } catch (IntegrationNotFoundException | Exception $e) {
             return $this->formatErrorResponse($e, $integration, 'text_analysis');
         }
     }
@@ -206,13 +207,13 @@ class LMSService extends LMSServiceBase
     {
         $this->ensureInitialized();
 
-        if (empty($integrationOrder)) {
+        if ($integrationOrder === []) {
             // Default fallback order: local first, then cloud services
             $integrationOrder = ['ollama', 'gemini', 'tencent_edu'];
         }
 
         return $this->registry->executeWithFallback(
-            function($integration, $integrationName) use ($prompt, $options) {
+            function ($integration, $integrationName) use ($prompt, $options) {
                 $result = $integration->generateContent($prompt, $options);
                 $result['integration'] = $integrationName;
                 $result['timestamp'] = time();

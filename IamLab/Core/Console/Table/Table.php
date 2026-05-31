@@ -9,19 +9,16 @@ use IamLab\Core\Console\Table\Renderers\ConsoleRenderer;
 
 class Table implements TableInterface
 {
-    private FormatterInterface $formatter;
-    private RendererInterface $renderer;
     private array $processors;
+
     private array $data = [];
+
     private ?string $title = null;
 
     public function __construct(
-        FormatterInterface $formatter = null,
-        RendererInterface $renderer = null
+        private FormatterInterface $formatter = new ConsoleTableFormatter(),
+        private RendererInterface $renderer = new ConsoleRenderer()
     ) {
-        $this->formatter = $formatter ?? new ConsoleTableFormatter();
-        $this->renderer = $renderer ?? new ConsoleRenderer();
-
         // Register default processors
         $this->processors = [
             new AssociativeArrayProcessor(),
@@ -31,12 +28,8 @@ class Table implements TableInterface
 
     /**
      * Display a table with the given data
-     *
-     * @param array $data
-     * @param string|null $title
-     * @return void
      */
-    public function display(array $data, string $title = null): void
+    public function display(array $data, ?string $title = null): void
     {
         $output = $this->generate($data, $title);
         $this->renderer->render($output);
@@ -44,14 +37,10 @@ class Table implements TableInterface
 
     /**
      * Generate table output as string
-     *
-     * @param array $data
-     * @param string|null $title
-     * @return string
      */
-    public function generate(array $data, string $title = null): string
+    public function generate(array $data, ?string $title = null): string
     {
-        if (empty($data)) {
+        if ($data === []) {
             return "Empty table\n";
         }
 
@@ -79,6 +68,7 @@ class Table implements TableInterface
         foreach ($headers as $header) {
             $headerRow[$header] = $header;
         }
+
         $output .= $this->formatter->formatRow($headerRow, $headers, $widths) . "\n";
 
         // Header separator
@@ -97,9 +87,6 @@ class Table implements TableInterface
 
     /**
      * Process data using appropriate processor
-     *
-     * @param array $data
-     * @return array
      */
     private function processData(array $data): array
     {
@@ -118,9 +105,6 @@ class Table implements TableInterface
 
     /**
      * Add a custom data processor
-     *
-     * @param DataProcessorInterface $processor
-     * @return self
      */
     public function addProcessor(DataProcessorInterface $processor): self
     {
@@ -130,9 +114,6 @@ class Table implements TableInterface
 
     /**
      * Set the formatter
-     *
-     * @param FormatterInterface $formatter
-     * @return self
      */
     public function setFormatter(FormatterInterface $formatter): self
     {
@@ -142,9 +123,6 @@ class Table implements TableInterface
 
     /**
      * Set the renderer
-     *
-     * @param RendererInterface $renderer
-     * @return self
      */
     public function setRenderer(RendererInterface $renderer): self
     {
@@ -154,8 +132,6 @@ class Table implements TableInterface
 
     /**
      * Get the current formatter
-     *
-     * @return FormatterInterface
      */
     public function getFormatter(): FormatterInterface
     {
@@ -164,8 +140,6 @@ class Table implements TableInterface
 
     /**
      * Get the current renderer
-     *
-     * @return RendererInterface
      */
     public function getRenderer(): RendererInterface
     {
@@ -174,8 +148,6 @@ class Table implements TableInterface
 
     /**
      * Check if the table can be rendered in current environment
-     *
-     * @return bool
      */
     public function isSupported(): bool
     {
@@ -184,10 +156,8 @@ class Table implements TableInterface
 
     /**
      * Set the data to be displayed in the table
-     *
-     * @param array $data
-     * @return self
      */
+    #[\Override]
     public function setData(array $data): self
     {
         $this->data = $data;
@@ -196,10 +166,8 @@ class Table implements TableInterface
 
     /**
      * Set the table title
-     *
-     * @param string|null $title
-     * @return self
      */
+    #[\Override]
     public function setTitle(?string $title): self
     {
         $this->title = $title;
@@ -208,9 +176,8 @@ class Table implements TableInterface
 
     /**
      * Render and output the table
-     *
-     * @return void
      */
+    #[\Override]
     public function render(): void
     {
         $this->display($this->data, $this->title);
@@ -218,9 +185,8 @@ class Table implements TableInterface
 
     /**
      * Get the table as a string without outputting
-     *
-     * @return string
      */
+    #[\Override]
     public function toString(): string
     {
         return $this->generate($this->data, $this->title);

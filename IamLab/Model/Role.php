@@ -50,7 +50,7 @@ class Role extends Model
      *
      * @return $this
      */
-    public function setId($id)
+    public function setId($id): static
     {
         $this->id = $id;
         return $this;
@@ -59,7 +59,6 @@ class Role extends Model
     /**
      * Method to set the value of field name
      *
-     * @param string $name
      *
      * @return $this
      */
@@ -72,7 +71,6 @@ class Role extends Model
     /**
      * Method to set the value of field description
      *
-     * @param string $description
      *
      * @return $this
      */
@@ -85,7 +83,6 @@ class Role extends Model
     /**
      * Method to set the value of field created_at
      *
-     * @param string $created_at
      *
      * @return $this
      */
@@ -98,7 +95,6 @@ class Role extends Model
     /**
      * Method to set the value of field updated_at
      *
-     * @param string $updated_at
      *
      * @return $this
      */
@@ -161,10 +157,10 @@ class Role extends Model
     /**
      * Initialize method for model.
      */
-    public function initialize()
+    public function initialize(): void
     {
         $this->setSource('roles');
-        
+
         // Define many-to-many relationship with User through user_roles
         $this->hasManyToMany(
             'id',
@@ -184,6 +180,7 @@ class Role extends Model
      *
      * @return Role[]|Model\ResultsetInterface
      */
+    #[\Override]
     public static function find($parameters = null): ResultsetInterface
     {
         return parent::find($parameters);
@@ -196,6 +193,7 @@ class Role extends Model
      *
      * @return Role|Model
      */
+    #[\Override]
     public static function findFirst($parameters = null): mixed
     {
         return parent::findFirst($parameters);

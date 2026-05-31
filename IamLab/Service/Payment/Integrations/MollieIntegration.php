@@ -4,22 +4,20 @@ namespace IamLab\Service\Payment\Integrations;
 
 /**
  * Mollie Integration
- * 
+ *
  * Implements a real Mollie integration for the payment system.
  * Mollie is a popular and simple payment provider in the UK and Europe.
  */
 class MollieIntegration implements PaymentIntegrationInterface
 {
-    protected array $config;
-
-    public function __construct(array $config)
+    public function __construct(protected array $config)
     {
-        $this->config = $config;
     }
 
     /**
      * Create a single payment
      */
+    #[\Override]
     public function createPayment(array $paymentData): array
     {
         $apiKey = $this->config['api_key'] ?? '';
@@ -63,6 +61,7 @@ class MollieIntegration implements PaymentIntegrationInterface
     /**
      * Capture a previously created payment (Mollie does this automatically for most methods)
      */
+    #[\Override]
     public function capturePayment(string $transactionId, array $options = []): array
     {
         // Mollie usually captures automatically, but some methods might need manual capture.
@@ -77,16 +76,17 @@ class MollieIntegration implements PaymentIntegrationInterface
     /**
      * Create a subscription
      */
+    #[\Override]
     public function createSubscription(array $subscriptionData): array
     {
         // Mollie subscriptions require a customer and a mandate (via a first payment).
         // For the demo, we simulate the success if real API fails due to missing mandate.
-        
+
         $planId = $subscriptionData['plan_id'] ?? '';
-        
+
         // This would normally call POST /customers/{customerId}/subscriptions
         // But since it needs a previous payment, we'll return a simulated success for the UI demo.
-        
+
         return [
             'success' => true,
             'subscription_id' => 'sub_' . bin2hex(random_bytes(8)),
@@ -104,6 +104,7 @@ class MollieIntegration implements PaymentIntegrationInterface
     /**
      * Cancel a subscription
      */
+    #[\Override]
     public function cancelSubscription(string $subscriptionId): bool
     {
         // Mollie: DELETE /customers/{customerId}/subscriptions/{subscriptionId}
@@ -114,15 +115,17 @@ class MollieIntegration implements PaymentIntegrationInterface
     /**
      * Get payment status
      */
+    #[\Override]
     public function getPaymentStatus(string $transactionId): string
     {
-        $response = $this->request('GET', "/payments/{$transactionId}");
+        $response = $this->request('GET', '/payments/' . $transactionId);
         return $this->mapMollieStatus($response['status'] ?? 'unknown');
     }
 
     /**
      * Get subscription status
      */
+    #[\Override]
     public function getSubscriptionStatus(string $subscriptionId): string
     {
         // For demo purposes, we return active.
@@ -132,6 +135,7 @@ class MollieIntegration implements PaymentIntegrationInterface
     /**
      * Refresh subscription data from provider
      */
+    #[\Override]
     public function refreshSubscription(string $subscriptionId): array
     {
         return [
@@ -143,6 +147,7 @@ class MollieIntegration implements PaymentIntegrationInterface
     /**
      * Check if the integration is healthy and accessible
      */
+    #[\Override]
     public function healthCheck(): bool
     {
         if (empty($this->config['api_key'])) {
@@ -153,7 +158,7 @@ class MollieIntegration implements PaymentIntegrationInterface
             // Simple call to list methods to check connectivity
             $response = $this->request('GET', '/methods');
             return !isset($response['error']);
-        } catch (\Exception $e) {
+        } catch (\Exception) {
             return false;
         }
     }
@@ -161,6 +166,7 @@ class MollieIntegration implements PaymentIntegrationInterface
     /**
      * Get integration-specific capabilities
      */
+    #[\Override]
     public function getCapabilities(): array
     {
         return [
@@ -181,12 +187,12 @@ class MollieIntegration implements PaymentIntegrationInterface
 
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        
+
         $headers = [
             'Authorization: Bearer ' . $this->config['api_key'],
             'Content-Type: application/json'
         ];
-        
+
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 
         if ($method === 'POST') {
@@ -207,20 +213,12 @@ class MollieIntegration implements PaymentIntegrationInterface
      */
     protected function mapMollieStatus(string $status): string
     {
-        switch ($status) {
-            case 'paid':
-            case 'authorized':
-                return 'completed';
-            case 'open':
-            case 'pending':
-                return 'pending';
-            case 'canceled':
-                return 'canceled';
-            case 'expired':
-            case 'failed':
-                return 'failed';
-            default:
-                return 'unknown';
-        }
+        return match ($status) {
+            'paid', 'authorized' => 'completed',
+            'open', 'pending' => 'pending',
+            'canceled' => 'canceled',
+            'expired', 'failed' => 'failed',
+            default => 'unknown',
+        };
     }
 }

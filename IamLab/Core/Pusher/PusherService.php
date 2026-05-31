@@ -10,7 +10,9 @@ use Pusher\Pusher;
 class PusherService extends Injectable
 {
     private ?Pusher $pusher = null;
+
     private array $config;
+
     private string $lastError = '';
 
     public function __construct()
@@ -26,7 +28,7 @@ class PusherService extends Injectable
     {
         try {
             // Check if Pusher class exists (package installed)
-            if (!class_exists('\Pusher\Pusher')) {
+            if (!class_exists(Pusher::class)) {
                 throw new Exception("Pusher PHP package not installed. Run: composer require pusher/pusher-php-server");
             }
 
@@ -45,6 +47,7 @@ class PusherService extends Injectable
             if (!empty($this->config['host'])) {
                 $options['host'] = $this->config['host'];
             }
+
             if (!empty($this->config['port'])) {
                 $options['port'] = $this->config['port'];
             }
@@ -55,9 +58,9 @@ class PusherService extends Injectable
                 $this->config['app_id'],
                 $options
             );
-        } catch (Exception $e) {
-            $this->lastError = $e->getMessage();
-            error_log("Pusher service initialization failed: " . $e->getMessage());
+        } catch (Exception $exception) {
+            $this->lastError = $exception->getMessage();
+            error_log("Pusher service initialization failed: " . $exception->getMessage());
         }
     }
 
@@ -74,7 +77,7 @@ class PusherService extends Injectable
      */
     public function trigger(string $channel, string $event, array $data = [], array $options = []): bool
     {
-        if (!$this->pusher) {
+        if (!$this->pusher instanceof Pusher) {
             $this->lastError = "Pusher not initialized";
             return false;
         }
@@ -82,8 +85,8 @@ class PusherService extends Injectable
         try {
             $result = $this->pusher->trigger($channel, $event, $data, $options);
             return $result != false;
-        } catch (Exception $e) {
-            $this->lastError = $e->getMessage();
+        } catch (Exception $exception) {
+            $this->lastError = $exception->getMessage();
             return false;
         }
     }
@@ -101,7 +104,7 @@ class PusherService extends Injectable
      */
     public function triggerBatch(array $channels, string $event, array $data = [], array $options = []): bool
     {
-        if (!$this->pusher) {
+        if (!$this->pusher instanceof Pusher) {
             $this->lastError = "Pusher not initialized";
             return false;
         }
@@ -109,8 +112,8 @@ class PusherService extends Injectable
         try {
             $result = $this->pusher->trigger($channels, $event, $data, $options);
             return $result !== false;
-        } catch (Exception $e) {
-            $this->lastError = $e->getMessage();
+        } catch (Exception $exception) {
+            $this->lastError = $exception->getMessage();
             return false;
         }
     }
@@ -124,16 +127,15 @@ class PusherService extends Injectable
      */
     public function getChannelInfo(string $channel, array $info = []): array|false
     {
-        if (!$this->pusher) {
+        if (!$this->pusher instanceof Pusher) {
             $this->lastError = "Pusher not initialized";
             return false;
         }
 
         try {
-            $result = $this->pusher->getChannelInfo($channel, $info);
-            return $result;
-        } catch (Exception $e) {
-            $this->lastError = $e->getMessage();
+            return $this->pusher->getChannelInfo($channel, $info);
+        } catch (Exception $exception) {
+            $this->lastError = $exception->getMessage();
             return false;
         }
     }
@@ -146,16 +148,15 @@ class PusherService extends Injectable
      */
     public function getChannels(array $options = []): array|false
     {
-        if (!$this->pusher) {
+        if (!$this->pusher instanceof Pusher) {
             $this->lastError = "Pusher not initialized";
             return false;
         }
 
         try {
-            $result = $this->pusher->getChannels($options);
-            return $result;
-        } catch (Exception $e) {
-            $this->lastError = $e->getMessage();
+            return $this->pusher->getChannels($options);
+        } catch (Exception $exception) {
+            $this->lastError = $exception->getMessage();
             return false;
         }
     }
@@ -170,7 +171,7 @@ class PusherService extends Injectable
      */
     public function authenticateChannel(string $channel, string $socketId, array $customData = []): string|false
     {
-        if (!$this->pusher) {
+        if (!$this->pusher instanceof Pusher) {
             $this->lastError = "Pusher not initialized";
             return false;
         }
@@ -178,14 +179,13 @@ class PusherService extends Injectable
         try {
             if (str_starts_with($channel, 'presence-')) {
                 // Presence channel
-                $result = $this->pusher->presenceAuth($channel, $socketId, null, $customData);
-            } else {
-                // Private channel
-                $result = $this->pusher->socketAuth($channel, $socketId);
+                return $this->pusher->presenceAuth($channel, $socketId, null, $customData);
             }
-            return $result;
-        } catch (Exception $e) {
-            $this->lastError = $e->getMessage();
+
+            // Private channel
+            return $this->pusher->socketAuth($channel, $socketId);
+        } catch (Exception $exception) {
+            $this->lastError = $exception->getMessage();
             return false;
         }
     }
@@ -199,7 +199,7 @@ class PusherService extends Injectable
      */
     public function verifyWebhook(array $headers, string $body): bool
     {
-        if (!$this->pusher) {
+        if (!$this->pusher instanceof Pusher) {
             $this->lastError = "Pusher not initialized";
             return false;
         }
@@ -207,8 +207,8 @@ class PusherService extends Injectable
         try {
             $webhook = $this->pusher->webhook($headers, $body);
             return $webhook->isValid();
-        } catch (Exception $e) {
-            $this->lastError = $e->getMessage();
+        } catch (Exception $exception) {
+            $this->lastError = $exception->getMessage();
             return false;
         }
     }
@@ -230,7 +230,7 @@ class PusherService extends Injectable
      */
     public function isReady(): bool
     {
-        return $this->pusher !== null;
+        return $this->pusher instanceof Pusher;
     }
 
     /**
@@ -254,8 +254,8 @@ class PusherService extends Injectable
             'key' => $this->config['key'],
             'cluster' => $this->config['cluster'],
             'forceTLS' => $this->config['use_tls'] ?? true,
-            'host' => !empty($this->config['host']) ? $this->config['host'] : null,
-            'port' => !empty($this->config['port']) ? $this->config['port'] : null,
+            'host' => empty($this->config['host']) ? null : $this->config['host'],
+            'port' => empty($this->config['port']) ? null : $this->config['port'],
             'disableStats' => $this->config['disable_stats'] ?? false,
             'enabledTransports' => $this->config['enabled_transports'] ?? ['ws', 'wss'],
         ];

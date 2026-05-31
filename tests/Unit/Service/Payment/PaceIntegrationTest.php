@@ -8,8 +8,10 @@ use IamLab\Service\Payment\Integrations\PaceIntegration;
 class PaceIntegrationTest extends TestCase
 {
     private array $config;
+
     private PaceIntegration $integration;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->config = [

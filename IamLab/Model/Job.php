@@ -7,7 +7,7 @@ use Phalcon\Mvc\Model\ResultsetInterface;
 
 /**
  * Job Model
- * 
+ *
  * Represents a job in the queue system
  */
 class Job extends Model
@@ -16,17 +16,24 @@ class Job extends Model
      * Job statuses
      */
     const STATUS_PENDING = 'pending';
+
     const STATUS_PROCESSING = 'processing';
+
     const STATUS_COMPLETED = 'completed';
+
     const STATUS_FAILED = 'failed';
+
     const STATUS_RETRYING = 'retrying';
 
     /**
      * Job priorities
      */
     const PRIORITY_LOW = 1;
+
     const PRIORITY_NORMAL = 5;
+
     const PRIORITY_HIGH = 10;
+
     const PRIORITY_CRITICAL = 15;
 
     /**
@@ -322,7 +329,7 @@ class Job extends Model
         if ($this->scheduled_at === null) {
             return true;
         }
-        
+
         return strtotime($this->scheduled_at) <= time();
     }
 
@@ -358,34 +365,36 @@ class Job extends Model
     /**
      * Mark job as failed
      */
-    public function markAsFailed(string $error = null): static
+    public function markAsFailed(?string $error = null): static
     {
         $this->setStatus(self::STATUS_FAILED);
         if ($error) {
             $this->setErrorMessage($error);
         }
+
         return $this;
     }
 
     /**
      * Mark job for retry
      */
-    public function markForRetry(string $error = null): static
+    public function markForRetry(?string $error = null): static
     {
         $this->setStatus(self::STATUS_RETRYING);
         if ($error) {
             $this->setErrorMessage($error);
         }
+
         return $this;
     }
 
     /**
      * Initialize method for model
      */
-    public function initialize()
+    public function initialize(): void
     {
         $this->setSource('jobs');
-        
+
         // Set default values
         $this->keepSnapshots(true);
     }
@@ -393,21 +402,24 @@ class Job extends Model
     /**
      * Before create hook
      */
-    public function beforeCreate()
+    public function beforeCreate(): void
     {
         $this->created_at = date('Y-m-d H:i:s');
         $this->updated_at = date('Y-m-d H:i:s');
-        
+
         // Set defaults
         if (!$this->status) {
             $this->status = self::STATUS_PENDING;
         }
+
         if (!$this->priority) {
             $this->priority = self::PRIORITY_NORMAL;
         }
+
         if (!$this->attempts) {
             $this->attempts = 0;
         }
+
         if (!$this->max_attempts) {
             $this->max_attempts = 3;
         }
@@ -416,7 +428,7 @@ class Job extends Model
     /**
      * Before update hook
      */
-    public function beforeUpdate()
+    public function beforeUpdate(): void
     {
         $this->updated_at = date('Y-m-d H:i:s');
     }
@@ -468,7 +480,7 @@ class Job extends Model
     public static function getStats(): array
     {
         $stats = [];
-        
+
         $statuses = [
             self::STATUS_PENDING,
             self::STATUS_PROCESSING,
@@ -476,7 +488,7 @@ class Job extends Model
             self::STATUS_FAILED,
             self::STATUS_RETRYING
         ];
-        
+
         foreach ($statuses as $status) {
             $count = static::count([
                 'conditions' => 'status = :status:',
@@ -484,7 +496,7 @@ class Job extends Model
             ]);
             $stats[$status] = $count;
         }
-        
+
         return $stats;
     }
 
@@ -493,8 +505,8 @@ class Job extends Model
      */
     public static function cleanup(int $days = 7): int
     {
-        $cutoff = date('Y-m-d H:i:s', strtotime("-{$days} days"));
-        
+        $cutoff = date('Y-m-d H:i:s', strtotime(sprintf('-%d days', $days)));
+
         $jobs = static::find([
             'conditions' => 'status = :status: AND completed_at < :cutoff:',
             'bind' => [
@@ -502,20 +514,21 @@ class Job extends Model
                 'cutoff' => $cutoff
             ]
         ]);
-        
+
         $deleted = 0;
         foreach ($jobs as $job) {
             if ($job->delete()) {
                 $deleted++;
             }
         }
-        
+
         return $deleted;
     }
 
     /**
      * Find method override
      */
+    #[\Override]
     public static function find($parameters = null): ResultsetInterface
     {
         return parent::find($parameters);
@@ -524,6 +537,7 @@ class Job extends Model
     /**
      * FindFirst method override
      */
+    #[\Override]
     public static function findFirst($parameters = null): ?Job
     {
         return parent::findFirst($parameters);

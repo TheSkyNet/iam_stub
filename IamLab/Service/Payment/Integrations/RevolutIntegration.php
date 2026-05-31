@@ -4,22 +4,20 @@ namespace IamLab\Service\Payment\Integrations;
 
 /**
  * Revolut Pay Integration
- * 
+ *
  * Implements a real Revolut Pay integration for the payment system.
  * Revolut is a highly popular digital bank and payment provider in the UK.
  */
 class RevolutIntegration implements PaymentIntegrationInterface
 {
-    protected array $config;
-
-    public function __construct(array $config)
+    public function __construct(protected array $config)
     {
-        $this->config = $config;
     }
 
     /**
      * Create a single payment (Order)
      */
+    #[\Override]
     public function createPayment(array $paymentData): array
     {
         $apiKey = $this->config['api_key'] ?? '';
@@ -61,6 +59,7 @@ class RevolutIntegration implements PaymentIntegrationInterface
     /**
      * Capture a payment
      */
+    #[\Override]
     public function capturePayment(string $transactionId, array $options = []): array
     {
         // Revolut often uses automatic capture, but we can call /capture if needed.
@@ -75,12 +74,13 @@ class RevolutIntegration implements PaymentIntegrationInterface
     /**
      * Create a subscription
      */
+    #[\Override]
     public function createSubscription(array $subscriptionData): array
     {
         // Revolut handles recurring payments via 'merchant_customer_id' and payment methods.
         // For the demo, we simulate the success.
         $planId = $subscriptionData['plan_id'] ?? '';
-        
+
         return [
             'success' => true,
             'subscription_id' => 'rev_sub_' . bin2hex(random_bytes(8)),
@@ -98,6 +98,7 @@ class RevolutIntegration implements PaymentIntegrationInterface
     /**
      * Cancel a subscription
      */
+    #[\Override]
     public function cancelSubscription(string $subscriptionId): bool
     {
         return true;
@@ -106,15 +107,17 @@ class RevolutIntegration implements PaymentIntegrationInterface
     /**
      * Get payment status
      */
+    #[\Override]
     public function getPaymentStatus(string $transactionId): string
     {
-        $response = $this->request('GET', "/orders/{$transactionId}");
+        $response = $this->request('GET', '/orders/' . $transactionId);
         return $this->mapRevolutStatus($response['state'] ?? 'unknown');
     }
 
     /**
      * Get subscription status
      */
+    #[\Override]
     public function getSubscriptionStatus(string $subscriptionId): string
     {
         return 'active';
@@ -123,6 +126,7 @@ class RevolutIntegration implements PaymentIntegrationInterface
     /**
      * Refresh subscription data from provider
      */
+    #[\Override]
     public function refreshSubscription(string $subscriptionId): array
     {
         return [
@@ -134,6 +138,7 @@ class RevolutIntegration implements PaymentIntegrationInterface
     /**
      * Check if the integration is healthy and accessible
      */
+    #[\Override]
     public function healthCheck(): bool
     {
         if (empty($this->config['api_key'])) {
@@ -144,7 +149,7 @@ class RevolutIntegration implements PaymentIntegrationInterface
             // Simple call to check connectivity
             $response = $this->request('GET', '/orders?limit=1');
             return is_array($response);
-        } catch (\Exception $e) {
+        } catch (\Exception) {
             return false;
         }
     }
@@ -152,6 +157,7 @@ class RevolutIntegration implements PaymentIntegrationInterface
     /**
      * Get integration-specific capabilities
      */
+    #[\Override]
     public function getCapabilities(): array
     {
         return [
@@ -167,8 +173,8 @@ class RevolutIntegration implements PaymentIntegrationInterface
      */
     protected function request(string $method, string $path, array $data = []): array
     {
-        $baseUrl = ($this->config['mode'] ?? 'sandbox') === 'sandbox' 
-            ? 'https://sandbox-merchant.revolut.com/api/1.0' 
+        $baseUrl = ($this->config['mode'] ?? 'sandbox') === 'sandbox'
+            ? 'https://sandbox-merchant.revolut.com/api/1.0'
             : 'https://merchant.revolut.com/api/1.0';
 
         $url = $baseUrl . $path;
@@ -176,13 +182,13 @@ class RevolutIntegration implements PaymentIntegrationInterface
 
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        
+
         $headers = [
             'Authorization: Bearer ' . $this->config['api_key'],
             'Content-Type: application/json',
             'Accept: application/json'
         ];
-        
+
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 
         if ($method === 'POST') {
@@ -195,7 +201,7 @@ class RevolutIntegration implements PaymentIntegrationInterface
         curl_close($ch);
 
         $result = json_decode($response, true);
-        
+
         if ($httpCode >= 400 && !isset($result['id'])) {
             return [
                 'error' => true,
@@ -212,20 +218,12 @@ class RevolutIntegration implements PaymentIntegrationInterface
      */
     protected function mapRevolutStatus(string $state): string
     {
-        switch (strtoupper($state)) {
-            case 'COMPLETED':
-                return 'completed';
-            case 'PENDING':
-            case 'PROCESSING':
-            case 'AUTHORISING':
-                return 'pending';
-            case 'CANCELLED':
-                return 'canceled';
-            case 'FAILED':
-            case 'EXPIRED':
-                return 'failed';
-            default:
-                return 'unknown';
-        }
+        return match (strtoupper($state)) {
+            'COMPLETED' => 'completed',
+            'PENDING', 'PROCESSING', 'AUTHORISING' => 'pending',
+            'CANCELLED' => 'canceled',
+            'FAILED', 'EXPIRED' => 'failed',
+            default => 'unknown',
+        };
     }
 }

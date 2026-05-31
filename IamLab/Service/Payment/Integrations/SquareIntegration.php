@@ -4,21 +4,19 @@ namespace IamLab\Service\Payment\Integrations;
 
 /**
  * Square Integration (Mock)
- * 
+ *
  * Implements a mock Square integration for the payment system
  */
 class SquareIntegration implements PaymentIntegrationInterface
 {
-    protected array $config;
-
-    public function __construct(array $config)
+    public function __construct(protected array $config)
     {
-        $this->config = $config;
     }
 
     /**
      * Create a single payment
      */
+    #[\Override]
     public function createPayment(array $paymentData): array
     {
         $accessToken = $this->config['access_token'] ?? '';
@@ -61,9 +59,10 @@ class SquareIntegration implements PaymentIntegrationInterface
     /**
      * Capture a previously created payment
      */
+    #[\Override]
     public function capturePayment(string $transactionId, array $options = []): array
     {
-        $response = $this->request('POST', "/payments/{$transactionId}/complete");
+        $response = $this->request('POST', sprintf('/payments/%s/complete', $transactionId));
 
         if (isset($response['errors'])) {
             throw new \Exception("Square Capture Error: " . $response['errors'][0]['detail']);
@@ -79,6 +78,7 @@ class SquareIntegration implements PaymentIntegrationInterface
     /**
      * Create a subscription
      */
+    #[\Override]
     public function createSubscription(array $subscriptionData): array
     {
         $planId = $subscriptionData['plan_id'] ?? '';
@@ -123,36 +123,40 @@ class SquareIntegration implements PaymentIntegrationInterface
     /**
      * Cancel a subscription
      */
+    #[\Override]
     public function cancelSubscription(string $subscriptionId): bool
     {
-        $response = $this->request('POST', "/subscriptions/{$subscriptionId}/cancel");
+        $response = $this->request('POST', sprintf('/subscriptions/%s/cancel', $subscriptionId));
         return !isset($response['errors']);
     }
 
     /**
      * Get payment status
      */
+    #[\Override]
     public function getPaymentStatus(string $transactionId): string
     {
-        $response = $this->request('GET', "/payments/{$transactionId}");
+        $response = $this->request('GET', '/payments/' . $transactionId);
         return $this->mapSquareStatus($response['payment']['status'] ?? 'unknown');
     }
 
     /**
      * Get subscription status
      */
+    #[\Override]
     public function getSubscriptionStatus(string $subscriptionId): string
     {
-        $response = $this->request('GET', "/subscriptions/{$subscriptionId}");
+        $response = $this->request('GET', '/subscriptions/' . $subscriptionId);
         return strtolower($response['subscription']['status'] ?? 'unknown');
     }
 
     /**
      * Refresh subscription data from provider
      */
+    #[\Override]
     public function refreshSubscription(string $subscriptionId): array
     {
-        $response = $this->request('GET', "/subscriptions/{$subscriptionId}");
+        $response = $this->request('GET', '/subscriptions/' . $subscriptionId);
         return [
             'status' => strtolower($response['subscription']['status'] ?? 'unknown'),
             'provider_payload' => $response
@@ -162,6 +166,7 @@ class SquareIntegration implements PaymentIntegrationInterface
     /**
      * Check if the integration is healthy and accessible
      */
+    #[\Override]
     public function healthCheck(): bool
     {
         if (empty($this->config['access_token'])) {
@@ -171,7 +176,7 @@ class SquareIntegration implements PaymentIntegrationInterface
         try {
             $response = $this->request('GET', '/locations');
             return !isset($response['errors']);
-        } catch (\Exception $e) {
+        } catch (\Exception) {
             return false;
         }
     }
@@ -179,6 +184,7 @@ class SquareIntegration implements PaymentIntegrationInterface
     /**
      * Get integration-specific capabilities
      */
+    #[\Override]
     public function getCapabilities(): array
     {
         return [
@@ -196,17 +202,17 @@ class SquareIntegration implements PaymentIntegrationInterface
     {
         $baseUrl = "https://connect.squareupsandbox.com/v2"; // Default to sandbox
         $url = $baseUrl . $path;
-        
+
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        
+
         $headers = [
             'Authorization: Bearer ' . ($this->config['access_token'] ?? ''),
             'Content-Type: application/json',
             'Square-Version: 2024-01-18'
         ];
-        
+
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 
         if ($method === 'POST') {
@@ -217,7 +223,6 @@ class SquareIntegration implements PaymentIntegrationInterface
         }
 
         $response = curl_exec($ch);
-        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         curl_close($ch);
 
         return json_decode($response, true) ?? ['errors' => [['detail' => 'Failed to parse response']]];
@@ -228,17 +233,11 @@ class SquareIntegration implements PaymentIntegrationInterface
      */
     protected function mapSquareStatus(string $status): string
     {
-        switch (strtoupper($status)) {
-            case 'COMPLETED':
-            case 'APPROVED':
-                return 'completed';
-            case 'PENDING':
-                return 'pending';
-            case 'CANCELED':
-                return 'canceled';
-            case 'FAILED':
-            default:
-                return 'failed';
-        }
+        return match (strtoupper($status)) {
+            'COMPLETED', 'APPROVED' => 'completed',
+            'PENDING' => 'pending',
+            'CANCELED' => 'canceled',
+            default => 'failed',
+        };
     }
 }

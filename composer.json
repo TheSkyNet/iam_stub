@@ -32,6 +32,7 @@
         }
     },
     "require": {
+        "php": ">=8.5.0",
         "marc-mabe/php-enum": "^4.7.2",
         "symfony/var-dumper": "^6.4",
         "symfony/finder": "^6.4",
@@ -66,7 +67,8 @@
         "mpyw/php-hyper-builtin-server": "^3.0",
         "phalcon/ide-stubs": "dev-master",
         "rector/rector": "^1.1",
-        "vildanbina/composer-upgrader": "^1.2"
+        "vildanbina/composer-upgrader": "^1.2",
+        "squizlabs/php_codesniffer": "^3.11"
     },
     "scripts": {
         "post-create-project-cmd": [

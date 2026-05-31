@@ -7,13 +7,15 @@ use InvalidArgumentException;
 
 /**
  * Google Gemini Integration
- * 
+ *
  * Integrates with Google's Gemini AI API for content generation and analysis
  */
 class GeminiIntegration implements LMSIntegrationInterface
 {
-    private string $apiKey;
-    private string $model;
+    private readonly string $apiKey;
+
+    private readonly string $model;
+
     private string $baseUrl = 'https://generativelanguage.googleapis.com/v1beta/models/';
 
     public function __construct(array $config)
@@ -26,10 +28,11 @@ class GeminiIntegration implements LMSIntegrationInterface
         }
     }
 
+    #[\Override]
     public function generateContent(string $prompt, array $options = []): array
     {
         $url = $this->baseUrl . $this->model . ':generateContent?key=' . $this->apiKey;
-        
+
         $data = [
             'contents' => [
                 [
@@ -48,7 +51,7 @@ class GeminiIntegration implements LMSIntegrationInterface
 
         try {
             $response = $this->makeRequest($url, $data);
-            
+
             if (isset($response['candidates'][0]['content']['parts'][0]['text'])) {
                 return [
                     'success' => true,
@@ -63,15 +66,15 @@ class GeminiIntegration implements LMSIntegrationInterface
                 'error' => 'No content generated',
                 'response' => $response
             ];
-
-        } catch (Exception $e) {
+        } catch (Exception $exception) {
             return [
                 'success' => false,
-                'error' => $e->getMessage()
+                'error' => $exception->getMessage()
             ];
         }
     }
 
+    #[\Override]
     public function createCourse(array $courseData): array
     {
         // Gemini doesn't directly support course creation, but we can generate course content
@@ -82,7 +85,7 @@ class GeminiIntegration implements LMSIntegrationInterface
         $prompt .= "Please provide a detailed course structure with modules, lessons, and learning objectives.";
 
         $result = $this->generateContent($prompt);
-        
+
         if ($result['success']) {
             return [
                 'success' => true,
@@ -95,10 +98,11 @@ class GeminiIntegration implements LMSIntegrationInterface
         return $result;
     }
 
+    #[\Override]
     public function analyzeText(string $text, array $options = []): array
     {
         $analysisType = $options['type'] ?? 'general';
-        
+
         $prompts = [
             'general' => "Analyze the following text and provide insights about its content, tone, and key themes:\n\n",
             'educational' => "Analyze this educational content and provide feedback on clarity, structure, and learning effectiveness:\n\n",
@@ -111,16 +115,18 @@ class GeminiIntegration implements LMSIntegrationInterface
         return $this->generateContent($prompt, $options);
     }
 
+    #[\Override]
     public function healthCheck(): bool
     {
         try {
             $result = $this->generateContent("Hello, this is a health check.", ['max_tokens' => 50]);
             return $result['success'] ?? false;
-        } catch (Exception $e) {
+        } catch (Exception) {
             return false;
         }
     }
 
+    #[\Override]
     public function getCapabilities(): array
     {
         return [
@@ -138,7 +144,7 @@ class GeminiIntegration implements LMSIntegrationInterface
     private function makeRequest(string $url, array $data): array
     {
         $ch = curl_init();
-        
+
         curl_setopt_array($ch, [
             CURLOPT_URL => $url,
             CURLOPT_RETURNTRANSFER => true,
@@ -156,7 +162,7 @@ class GeminiIntegration implements LMSIntegrationInterface
         $error = curl_error($ch);
         curl_close($ch);
 
-        if ($error) {
+        if ($error !== '' && $error !== '0') {
             throw new Exception("cURL error: " . $error);
         }
 

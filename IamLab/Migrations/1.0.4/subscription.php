@@ -14,7 +14,6 @@ class SubscriptionMigration_104 extends Migration
     /**
      * Define the table structure
      *
-     * @return void
      * @throws Exception
      */
     public function morph(): void
@@ -166,8 +165,6 @@ class SubscriptionMigration_104 extends Migration
 
     /**
      * Run the migrations
-     *
-     * @return void
      */
     public function up(): void
     {
@@ -175,8 +172,6 @@ class SubscriptionMigration_104 extends Migration
 
     /**
      * Reverse the migrations
-     *
-     * @return void
      */
     public function down(): void
     {

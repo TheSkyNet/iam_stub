@@ -1,5 +1,7 @@
 <?php
+
 namespace IamLab\Model;
+
 use IamLab\Core\API\Entity;
 use Phalcon\Mvc\Model\ResultInterface;
 use Phalcon\Mvc\Model\ResultsetInterface;
@@ -7,7 +9,6 @@ use Phalcon\Mvc\ModelInterface;
 
 class Filepond extends Entity
 {
-
     /**
      *
      * @var integer
@@ -47,7 +48,7 @@ class Filepond extends Entity
     /**
      * Initialize method for model.
      */
-    public function initialize()
+    public function initialize(): void
     {
         $this->setSchema("phalcons");
         $this->setSource("filepond");
@@ -59,6 +60,7 @@ class Filepond extends Entity
      * @param mixed $parameters
      * @return Filepond[]|Filepond|ResultSetInterface
      */
+    #[\Override]
     public static function find($parameters = null): ResultsetInterface
     {
         return parent::find($parameters);
@@ -70,9 +72,9 @@ class Filepond extends Entity
      * @param mixed $parameters
      * @return Filepond|ResultInterface|ModelInterface|null
      */
+    #[\Override]
     public static function findFirst($parameters = null): ?ModelInterface
     {
         return parent::findFirst($parameters);
     }
-
 }

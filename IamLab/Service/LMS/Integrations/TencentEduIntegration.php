@@ -7,16 +7,24 @@ use InvalidArgumentException;
 
 /**
  * Tencent Education Cloud Integration
- * 
+ *
  * Integrates with Tencent Cloud's Education services for LMS functionality
  * This is a popular Chinese LMS platform with comprehensive course management
  */
 class TencentEduIntegration implements LMSIntegrationInterface
 {
-    private string $appId;
-    private string $secretKey;
-    private string $region;
-    private string $baseUrl;
+    /**
+     * @var mixed[]
+     */
+    public $config;
+
+    private readonly string $appId;
+
+    private readonly string $secretKey;
+
+    private readonly string $region;
+
+    private readonly string $baseUrl;
 
     public function __construct(array $config)
     {
@@ -31,31 +39,29 @@ class TencentEduIntegration implements LMSIntegrationInterface
         }
     }
 
+    #[\Override]
     public function generateContent(string $prompt, array $options = []): array
     {
-        // Tencent Education doesn't have direct content generation, 
+        // Tencent Education doesn't have direct content generation,
         // but we can use their AI services or create structured content
         try {
             $contentType = $options['content_type'] ?? 'lesson';
-            
-            switch ($contentType) {
-                case 'lesson':
-                    return $this->generateLessonContent($prompt, $options);
-                case 'quiz':
-                    return $this->generateQuizContent($prompt, $options);
-                case 'assignment':
-                    return $this->generateAssignmentContent($prompt, $options);
-                default:
-                    return $this->generateGenericContent($prompt, $options);
-            }
-        } catch (Exception $e) {
+
+            return match ($contentType) {
+                'lesson' => $this->generateLessonContent($prompt),
+                'quiz' => $this->generateQuizContent($prompt, $options),
+                'assignment' => $this->generateAssignmentContent($prompt, $options),
+                default => $this->generateGenericContent($prompt),
+            };
+        } catch (Exception $exception) {
             return [
                 'success' => false,
-                'error' => $e->getMessage()
+                'error' => $exception->getMessage()
             ];
         }
     }
 
+    #[\Override]
     public function createCourse(array $courseData): array
     {
         try {
@@ -99,21 +105,21 @@ class TencentEduIntegration implements LMSIntegrationInterface
                 'error' => 'Failed to create course',
                 'response' => $response
             ];
-
-        } catch (Exception $e) {
+        } catch (Exception $exception) {
             return [
                 'success' => false,
-                'error' => $e->getMessage()
+                'error' => $exception->getMessage()
             ];
         }
     }
 
+    #[\Override]
     public function analyzeText(string $text, array $options = []): array
     {
         // Implement text analysis using Tencent's NLP services
         try {
             $analysisType = $options['type'] ?? 'general';
-            
+
             // This would integrate with Tencent's NLP API
             // For now, we'll provide a structured analysis
             $analysis = [
@@ -133,15 +139,15 @@ class TencentEduIntegration implements LMSIntegrationInterface
             ];
 
             return $analysis;
-
-        } catch (Exception $e) {
+        } catch (Exception $exception) {
             return [
                 'success' => false,
-                'error' => $e->getMessage()
+                'error' => $exception->getMessage()
             ];
         }
     }
 
+    #[\Override]
     public function healthCheck(): bool
     {
         try {
@@ -153,12 +159,12 @@ class TencentEduIntegration implements LMSIntegrationInterface
 
             $response = $this->makeRequest($action, $params);
             return isset($response['Response']);
-
-        } catch (Exception $e) {
+        } catch (Exception) {
             return false;
         }
     }
 
+    #[\Override]
     public function getCapabilities(): array
     {
         return [
@@ -203,11 +209,10 @@ class TencentEduIntegration implements LMSIntegrationInterface
                 'success' => false,
                 'error' => 'Course not found'
             ];
-
-        } catch (Exception $e) {
+        } catch (Exception $exception) {
             return [
                 'success' => false,
-                'error' => $e->getMessage()
+                'error' => $exception->getMessage()
             ];
         }
     }
@@ -230,26 +235,25 @@ class TencentEduIntegration implements LMSIntegrationInterface
                 'message' => 'Course deleted successfully',
                 'response' => $response['Response'] ?? null
             ];
-
-        } catch (Exception $e) {
+        } catch (Exception $exception) {
             return [
                 'success' => false,
-                'error' => $e->getMessage()
+                'error' => $exception->getMessage()
             ];
         }
     }
 
-    private function generateLessonContent(string $prompt, array $options): array
+    private function generateLessonContent(string $prompt): array
     {
         // Generate structured lesson content
         return [
             'success' => true,
             'content' => [
                 'title' => $this->extractTitle($prompt),
-                'objectives' => $this->generateObjectives($prompt),
-                'content_outline' => $this->generateOutline($prompt),
-                'activities' => $this->generateActivities($prompt),
-                'assessment' => $this->generateAssessment($prompt)
+                'objectives' => $this->generateObjectives(),
+                'content_outline' => $this->generateOutline(),
+                'activities' => $this->generateActivities(),
+                'assessment' => $this->generateAssessment()
             ],
             'type' => 'lesson',
             'generated_by' => 'tencent_edu'
@@ -277,8 +281,8 @@ class TencentEduIntegration implements LMSIntegrationInterface
             'content' => [
                 'title' => $this->extractTitle($prompt),
                 'instructions' => $prompt,
-                'requirements' => $this->generateRequirements($prompt),
-                'rubric' => $this->generateRubric($prompt),
+                'requirements' => $this->generateRequirements(),
+                'rubric' => $this->generateRubric(),
                 'due_date' => $options['due_date'] ?? null
             ],
             'type' => 'assignment',
@@ -286,7 +290,7 @@ class TencentEduIntegration implements LMSIntegrationInterface
         ];
     }
 
-    private function generateGenericContent(string $prompt, array $options): array
+    private function generateGenericContent(string $prompt): array
     {
         return [
             'success' => true,
@@ -299,8 +303,8 @@ class TencentEduIntegration implements LMSIntegrationInterface
     private function makeRequest(string $action, array $params): array
     {
         $timestamp = time();
-        $nonce = rand(10000, 99999);
-        
+        $nonce = random_int(10000, 99999);
+
         $headers = [
             'Authorization' => $this->generateAuthHeader($action, $params, $timestamp, $nonce),
             'Content-Type' => 'application/json; charset=utf-8',
@@ -317,9 +321,7 @@ class TencentEduIntegration implements LMSIntegrationInterface
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_POST => true,
             CURLOPT_POSTFIELDS => json_encode($params),
-            CURLOPT_HTTPHEADER => array_map(function($key, $value) {
-                return "$key: $value";
-            }, array_keys($headers), $headers),
+            CURLOPT_HTTPHEADER => array_map(fn($key, $value): string => sprintf('%s: %s', $key, $value), array_keys($headers), $headers),
             CURLOPT_TIMEOUT => 30,
             CURLOPT_SSL_VERIFYPEER => true,
         ]);
@@ -329,7 +331,7 @@ class TencentEduIntegration implements LMSIntegrationInterface
         $error = curl_error($ch);
         curl_close($ch);
 
-        if ($error) {
+        if ($error !== '' && $error !== '0') {
             throw new Exception("cURL error: " . $error);
         }
 
@@ -350,7 +352,7 @@ class TencentEduIntegration implements LMSIntegrationInterface
         // Simplified auth header generation for Tencent Cloud API
         // In production, this would implement the full TC3-HMAC-SHA256 signature
         $signature = hash_hmac('sha256', $action . json_encode($params) . $timestamp . $nonce, $this->secretKey);
-        return "TC3-HMAC-SHA256 Credential={$this->appId}, SignedHeaders=content-type;host, Signature={$signature}";
+        return sprintf('TC3-HMAC-SHA256 Credential=%s, SignedHeaders=content-type;host, Signature=%s', $this->appId, $signature);
     }
 
     private function generateUserSig(string $userId): string
@@ -362,7 +364,7 @@ class TencentEduIntegration implements LMSIntegrationInterface
 
     private function generateCourseUrl(int $roomId): string
     {
-        return "https://edu.qq.com/room/{$roomId}";
+        return 'https://edu.qq.com/room/' . $roomId;
     }
 
     // Helper methods for content analysis and generation
@@ -392,18 +394,18 @@ class TencentEduIntegration implements LMSIntegrationInterface
         // Basic sentiment analysis
         $positive = ['good', 'great', 'excellent', 'amazing', 'wonderful'];
         $negative = ['bad', 'terrible', 'awful', 'horrible', 'poor'];
-        
+
         $positiveCount = 0;
         $negativeCount = 0;
-        
+
         foreach ($positive as $word) {
             $positiveCount += substr_count(strtolower($text), $word);
         }
-        
+
         foreach ($negative as $word) {
             $negativeCount += substr_count(strtolower($text), $word);
         }
-        
+
         if ($positiveCount > $negativeCount) {
             $sentiment = 'positive';
         } elseif ($negativeCount > $positiveCount) {
@@ -411,7 +413,7 @@ class TencentEduIntegration implements LMSIntegrationInterface
         } else {
             $sentiment = 'neutral';
         }
-        
+
         return [
             'sentiment' => $sentiment,
             'confidence' => abs($positiveCount - $negativeCount) / max(strlen($text) / 100, 1)
@@ -421,8 +423,14 @@ class TencentEduIntegration implements LMSIntegrationInterface
     private function assessComplexity(string $text): string
     {
         $avgWordLength = strlen($text) / max(str_word_count($text), 1);
-        if ($avgWordLength < 4) return 'beginner';
-        if ($avgWordLength < 6) return 'intermediate';
+        if ($avgWordLength < 4) {
+            return 'beginner';
+        }
+
+        if ($avgWordLength < 6) {
+            return 'intermediate';
+        }
+
         return 'advanced';
     }
 
@@ -433,6 +441,7 @@ class TencentEduIntegration implements LMSIntegrationInterface
         foreach ($objectives as $objective) {
             $count += substr_count(strtolower($text), $objective);
         }
+
         return min($count / 5.0, 1.0);
     }
 
@@ -443,6 +452,7 @@ class TencentEduIntegration implements LMSIntegrationInterface
         foreach ($engaging as $word) {
             $count += substr_count(strtolower($text), $word);
         }
+
         return min($count / 3.0, 1.0);
     }
 
@@ -452,7 +462,7 @@ class TencentEduIntegration implements LMSIntegrationInterface
         return trim($lines[0]);
     }
 
-    private function generateObjectives(string $prompt): array
+    private function generateObjectives(): array
     {
         return [
             'Students will understand the key concepts presented',
@@ -461,7 +471,7 @@ class TencentEduIntegration implements LMSIntegrationInterface
         ];
     }
 
-    private function generateOutline(string $prompt): array
+    private function generateOutline(): array
     {
         return [
             'Introduction',
@@ -471,7 +481,7 @@ class TencentEduIntegration implements LMSIntegrationInterface
         ];
     }
 
-    private function generateActivities(string $prompt): array
+    private function generateActivities(): array
     {
         return [
             'Discussion questions',
@@ -481,7 +491,7 @@ class TencentEduIntegration implements LMSIntegrationInterface
         ];
     }
 
-    private function generateAssessment(string $prompt): array
+    private function generateAssessment(): array
     {
         return [
             'type' => 'mixed',
@@ -496,16 +506,17 @@ class TencentEduIntegration implements LMSIntegrationInterface
         for ($i = 1; $i <= $count; $i++) {
             $questions[] = [
                 'id' => $i,
-                'question' => "Question {$i} based on: " . substr($prompt, 0, 50) . "...",
+                'question' => sprintf('Question %d based on: ', $i) . substr($prompt, 0, 50) . "...",
                 'type' => 'multiple_choice',
                 'options' => ['Option A', 'Option B', 'Option C', 'Option D'],
                 'correct_answer' => 'A'
             ];
         }
+
         return $questions;
     }
 
-    private function generateRequirements(string $prompt): array
+    private function generateRequirements(): array
     {
         return [
             'Complete all sections of the assignment',
@@ -515,7 +526,7 @@ class TencentEduIntegration implements LMSIntegrationInterface
         ];
     }
 
-    private function generateRubric(string $prompt): array
+    private function generateRubric(): array
     {
         return [
             'criteria' => [

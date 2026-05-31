@@ -7,15 +7,15 @@ use IamLab\Core\Command\BaseCommand;
 use IamLab\Model\Role;
 use IamLab\Model\User;
 use IamLab\Service\RolesService;
+
 use function App\Core\Helpers\dd;
 
 class AddRoleCommand extends BaseCommand
 {
     /**
      * Get command signature/usage
-     *
-     * @return string
      */
+    #[\Override]
     public function getSignature(): string
     {
         return 'user:add-role [email] [role] [-v|--verbose]';
@@ -23,9 +23,8 @@ class AddRoleCommand extends BaseCommand
 
     /**
      * Get command help text
-     *
-     * @return string
      */
+    #[\Override]
     public function getHelp(): string
     {
         return <<<HELP
@@ -59,6 +58,7 @@ HELP;
      *
      * @return int Exit code
      */
+    #[\Override]
     protected function handle(): int
     {
         $this->info("Starting role assignment...");
@@ -74,16 +74,16 @@ HELP;
             return 1;
         }
 
-        $this->verbose("User email: {$email}");
+        $this->verbose('User email: ' . $email);
 
         // Find the user
         $user = User::findFirstByEmail($email);
         if (!$user) {
-            $this->error("User with email '{$email}' not found");
+            $this->error(sprintf("User with email '%s' not found", $email));
             return 1;
         }
 
-        $this->verbose("User found: {$user->getName()} (ID: {$user->getId()})");
+        $this->verbose(sprintf('User found: %s (ID: %d)', $user->getName(), $user->getId()));
 
         // Get role name
         $roleName = $this->argument(1);
@@ -97,12 +97,12 @@ HELP;
             return 1;
         }
 
-        $this->verbose("Role to assign: {$roleName}");
+        $this->verbose('Role to assign: ' . $roleName);
 
         // Validate role exists
         $role = Role::findFirstByName($roleName);
         if (!$role) {
-            $this->error("Role '{$roleName}' does not exist");
+            $this->error(sprintf("Role '%s' does not exist", $roleName));
             $this->info("Available roles:");
             $this->displayAvailableRoles();
             return 1;
@@ -111,22 +111,22 @@ HELP;
         try {
             // Check if user already has this role
             $rolesService = new RolesService();
-            $userRoles= $rolesService->listRoles($user);
+            $userRoles = $rolesService->listRoles($user);
 
             foreach ($userRoles as $userRole) {
-                $this->info("User has role $userRole");
+                $this->info('User has role ' . $userRole);
             }
 
             if ($rolesService->hasRole($user, $roleName)) {
-                $this->warn("User '{$email}' already has the role '{$roleName}'");
+                $this->warn(sprintf("User '%s' already has the role '%s'", $email, $roleName));
                 return 0;
             }
 
             // Add the role
-            $this->info("Adding role '{$roleName}' to user '{$email}'...");
+            $this->info(sprintf("Adding role '%s' to user '%s'...", $roleName, $email));
 
             if ($rolesService->addRole($user, $roleName)) {
-                $this->success("Successfully added role '{$roleName}' to user '{$email}'");
+                $this->success(sprintf("Successfully added role '%s' to user '%s'", $roleName, $email));
 
                 // Display current user roles
                 if ($this->isVerbose()) {
@@ -135,21 +135,19 @@ HELP;
                 }
 
                 return 0;
-            } else {
-                $this->error("Failed to add role '{$roleName}' to user '{$email}'");
-                return 1;
             }
-        } catch (Exception $e) {
-            $this->error("Exception occurred while adding role: " . $e->getMessage());
-            $this->verbose("Stack trace: " . $e->getTraceAsString());
+
+            $this->error(sprintf("Failed to add role '%s' to user '%s'", $roleName, $email));
+            return 1;
+        } catch (Exception $exception) {
+            $this->error("Exception occurred while adding role: " . $exception->getMessage());
+            $this->verbose("Stack trace: " . $exception->getTraceAsString());
             return 1;
         }
     }
 
     /**
      * Display available roles
-     *
-     * @return void
      */
     private function displayAvailableRoles(): void
     {
@@ -157,21 +155,20 @@ HELP;
             $roles = Role::find();
             if ($roles->count() > 0) {
                 foreach ($roles as $role) {
-                    $this->info("  - {$role->getName()}: {$role->getDescription()}");
+                    $this->info(sprintf('  - %s: %s', $role->getName(), $role->getDescription()));
                 }
             } else {
                 $this->warn("No roles found in the system");
             }
-        } catch (Exception $e) {
-            $this->error("Could not retrieve available roles: " . $e->getMessage());
+        } catch (Exception $exception) {
+            $this->error("Could not retrieve available roles: " . $exception->getMessage());
         }
     }
 
     /**
      * Get command description
-     *
-     * @return string
      */
+    #[\Override]
     public function getDescription(): string
     {
         return 'Add a role to a user account';

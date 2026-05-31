@@ -91,7 +91,10 @@ class SseApi extends aAPI
 
     protected function sleepMs(int $ms): void
     {
-        if ($ms <= 0) { return; }
+        if ($ms <= 0) {
+            return;
+        }
+
         usleep($ms * 1000);
     }
 

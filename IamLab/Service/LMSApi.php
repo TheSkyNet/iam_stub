@@ -10,7 +10,7 @@ class LMSApi extends aAPI
 {
     protected LMSService $lmsService;
 
-    public function initialize()
+    public function initialize(): void
     {
         $this->lmsService = new LMSService();
         $this->lmsService->initialize();
@@ -35,10 +35,10 @@ class LMSApi extends aAPI
                     'statistics' => $stats
                 ]
             ]);
-        } catch (Exception $e) {
+        } catch (Exception $exception) {
             $this->dispatchError([
                 'status' => 'error',
-                'message' => 'Failed to get LMS status: ' . $e->getMessage()
+                'message' => 'Failed to get LMS status: ' . $exception->getMessage()
             ], 500);
         }
     }
@@ -57,10 +57,10 @@ class LMSApi extends aAPI
                 'success' => true,
                 'message' => 'LMS health status refreshed successfully'
             ]);
-        } catch (Exception $e) {
+        } catch (Exception $exception) {
             $this->dispatchError([
                 'status' => 'error',
-                'message' => 'Failed to refresh LMS status: ' . $e->getMessage()
+                'message' => 'Failed to refresh LMS status: ' . $exception->getMessage()
             ], 500);
         }
     }
@@ -82,10 +82,10 @@ class LMSApi extends aAPI
                 'success' => true,
                 'data' => $result
             ]);
-        } catch (Exception $e) {
+        } catch (Exception $exception) {
             $this->dispatchError([
                 'status' => 'error',
-                'message' => 'LMS test failed: ' . $e->getMessage()
+                'message' => 'LMS test failed: ' . $exception->getMessage()
             ], 500);
         }
     }

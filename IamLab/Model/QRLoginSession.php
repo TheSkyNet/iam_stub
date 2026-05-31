@@ -8,17 +8,24 @@ use Phalcon\Mvc\Model\ResultsetInterface;
 class QRLoginSession extends Model
 {
     public $id;
+
     public $session_token;
+
     public $user_id;
-    public $status; // 'pending', 'authenticated', 'expired'
+
+    public $status;
+
+     // 'pending', 'authenticated', 'expired'
     public $created_at;
+
     public $expires_at;
+
     public $authenticated_at;
 
     /**
      * Initialize method for model.
      */
-    public function initialize()
+    public function initialize(): void
     {
         $this->setSource('qr_login_sessions');
 
@@ -43,7 +50,7 @@ class QRLoginSession extends Model
         $session->session_token = self::generateSessionToken();
         $session->status = 'pending';
         $session->created_at = date('Y-m-d H:i:s');
-        $session->expires_at = date('Y-m-d H:i:s', strtotime("+{$expirationMinutes} minutes"));
+        $session->expires_at = date('Y-m-d H:i:s', strtotime(sprintf('+%d minutes', $expirationMinutes)));
 
         return $session;
     }
@@ -64,8 +71,8 @@ class QRLoginSession extends Model
      */
     public function isValid(): bool
     {
-        return ($this->status === 'pending' || $this->status === 'pending_mobile_auth') && 
-               strtotime($this->expires_at) > time();
+        return ($this->status === 'pending' || $this->status === 'pending_mobile_auth') &&
+               strtotime((string) $this->expires_at) > time();
     }
 
     /**
@@ -146,6 +153,7 @@ class QRLoginSession extends Model
     /**
      * Allows to query a set of records that match the specified conditions
      */
+    #[\Override]
     public static function find($parameters = null): ResultsetInterface
     {
         return parent::find($parameters);
@@ -154,6 +162,7 @@ class QRLoginSession extends Model
     /**
      * Allows to query the first record that match the specified conditions
      */
+    #[\Override]
     public static function findFirst($parameters = null): mixed
     {
         return parent::findFirst($parameters);

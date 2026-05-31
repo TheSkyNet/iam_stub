@@ -15,7 +15,7 @@ class RolesApi extends aAPI
     public function indexAction(): void
     {
         $this->requireAdmin();
-        
+
         try {
             $roles = Role::find();
 
@@ -23,11 +23,11 @@ class RolesApi extends aAPI
                 'success' => true,
                 'data' => $roles->toArray()
             ]);
-        } catch (Exception $e) {
+        } catch (Exception $exception) {
             $this->dispatchError([
                 'success' => false,
                 'message' => 'Failed to retrieve roles',
-                'error' => $e->getMessage()
+                'error' => $exception->getMessage()
             ]);
         }
     }
@@ -39,9 +39,8 @@ class RolesApi extends aAPI
     public function showAction($id): void
     {
         $this->requireAdmin();
-        
-        try {
 
+        try {
             $role = Role::findFirst($id);
             if (!$role) {
                 $this->dispatchError([
@@ -54,11 +53,11 @@ class RolesApi extends aAPI
                 'success' => true,
                 'data' => $role->toArray()
             ]);
-        } catch (Exception $e) {
+        } catch (Exception $exception) {
             $this->dispatchError([
                 'success' => false,
                 'message' => 'Failed to retrieve role',
-                'error' => $e->getMessage()
+                'error' => $exception->getMessage()
             ]);
         }
     }
@@ -70,7 +69,7 @@ class RolesApi extends aAPI
     public function createAction(): void
     {
         $this->requireAdmin();
-        
+
         try {
             $role = new Role();
 
@@ -90,11 +89,11 @@ class RolesApi extends aAPI
             $role->setUpdatedAt(date('Y-m-d H:i:s'));
 
             $this->save($role);
-        } catch (Exception $e) {
+        } catch (Exception $exception) {
             $this->dispatchError([
                 'success' => false,
                 'message' => 'Failed to create role',
-                'error' => $e->getMessage()
+                'error' => $exception->getMessage()
             ]);
         }
     }
@@ -106,10 +105,8 @@ class RolesApi extends aAPI
     public function updateAction($id): void
     {
         $this->requireAdmin();
-        
+
         try {
-
-
             $role = Role::findFirst($id);
             if (!$role) {
                 $this->dispatchError([
@@ -133,11 +130,11 @@ class RolesApi extends aAPI
             $role->setUpdatedAt(date('Y-m-d H:i:s'));
 
             $this->save($role);
-        } catch (Exception $e) {
+        } catch (Exception $exception) {
             $this->dispatchError([
                 'success' => false,
                 'message' => 'Failed to update role',
-                'error' => $e->getMessage()
+                'error' => $exception->getMessage()
             ]);
         }
     }
@@ -149,9 +146,8 @@ class RolesApi extends aAPI
     public function deleteAction($id): void
     {
         $this->requireAdmin();
-        
-        try {
 
+        try {
             $role = Role::findFirst($id);
             if (!$role) {
                 $this->dispatchError([
@@ -161,11 +157,11 @@ class RolesApi extends aAPI
             }
 
             $this->delete($role);
-        } catch (Exception $e) {
+        } catch (Exception $exception) {
             $this->dispatchError([
                 'success' => false,
                 'message' => 'Failed to delete role',
-                'error' => $e->getMessage()
+                'error' => $exception->getMessage()
             ]);
         }
     }
@@ -177,7 +173,7 @@ class RolesApi extends aAPI
     public function searchAction(): void
     {
         $this->requireAdmin();
-        
+
         try {
             $query = $this->getParam('q', '');
             if (empty($query)) {
@@ -190,7 +186,7 @@ class RolesApi extends aAPI
             // Implement search logic based on your model structure
             $roles = Role::find([
                 "name LIKE :query: OR description LIKE :query:",
-                'bind' => ['query' => "%$query%"]
+                'bind' => ['query' => sprintf('%%%s%%', $query)]
             ]);
 
             $this->dispatch([
@@ -198,11 +194,11 @@ class RolesApi extends aAPI
                 'data' => $roles->toArray(),
                 'query' => $query
             ]);
-        } catch (Exception $e) {
+        } catch (Exception $exception) {
             $this->dispatchError([
                 'success' => false,
                 'message' => 'Search failed',
-                'error' => $e->getMessage()
+                'error' => $exception->getMessage()
             ]);
         }
     }

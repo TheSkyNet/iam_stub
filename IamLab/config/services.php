@@ -1,5 +1,10 @@
 <?php
 
+use Phalcon\Encryption\Crypt;
+use League\Flysystem\Filesystem;
+use IamLab\Core\SSE\SseEmitter;
+use IamLab\Core\SSE\PhpOutputWriter;
+use Phalcon\Di\FactoryDefault;
 use IamLab\Service\Filepond\FilepondService;
 use League\Flysystem\Local\LocalFilesystemAdapter;
 use Phalcon\Acl\Adapter\Memory as AclMemory;
@@ -17,17 +22,13 @@ use Phalcon\Mvc\Url as UrlResolver;
 use Phalcon\Db\Adapter\Pdo\Mysql;
 use Phalcon\Session\Manager;
 use Phalcon\Session\Adapter\Stream;
+
 use function App\Core\Helpers\config;
 
-/**
- * Shared configuration service
- */
-/** @var Phalcon\Di\FactoryDefault $di */
+/** @var FactoryDefault $di */
 $di->setShared(
     'config',
-    function () {
-        return include APP_PATH . "/config/config.php";
-    }
+    fn() => include APP_PATH . "/config/config.php"
 );
 
 /**
@@ -35,9 +36,9 @@ $di->setShared(
  */
 $di->setShared(
     'crypt',
-    function () {
+    function (): Crypt {
         $config = $this->getConfig();
-        $crypt = new \Phalcon\Encryption\Crypt();
+        $crypt = new Crypt();
         $crypt->setKey($config->app->encryption_key);
         return $crypt;
     }
@@ -48,7 +49,7 @@ $di->setShared(
  */
 $di->setShared(
     'loader',
-    function () {
+    function (): Loader {
         $loader = new Loader();
         $config = $this->getConfig();
 
@@ -68,7 +69,7 @@ $di->setShared(
  */
 $di->set(
     'view',
-    function () {
+    function (): Simple {
         $config = $this->getConfig();
 
         $view = new Simple();
@@ -83,7 +84,7 @@ $di->set(
  */
 $di->setShared(
     'url',
-    function () {
+    function (): UrlResolver {
         $config = $this->getConfig();
 
         $url = new UrlResolver();
@@ -94,7 +95,7 @@ $di->setShared(
 );
 $di->setShared(
     'logger',
-    function () {
+    function (): Logger {
         $cfg = config('logger');
         // If disabled, return a basic logger to /dev/null to avoid null checks
         $path = $cfg['path'] ?? '/var/www/html/files/logs/app.log';
@@ -103,7 +104,7 @@ $di->setShared(
         $format = (string)($cfg['format'] ?? '[%date%][%level%] %message%');
 
         // Ensure directory exists
-        $dir = dirname($path);
+        $dir = dirname((string) $path);
         if (!is_dir($dir)) {
             @mkdir($dir, 0775, true);
         }
@@ -120,31 +121,29 @@ $di->setShared(
 );
 $di->setShared(
     'filepond',
-    function () {
-        return new FilepondService();
-    }
+    fn(): FilepondService => new FilepondService()
 );
 $di->setShared(
     'file',
-    function () {
+    function (): Filesystem {
         $adapter = new LocalFilesystemAdapter(FILE_PATH);
 
-        return new League\Flysystem\Filesystem($adapter);
+        return new Filesystem($adapter);
     }
 );
 $di->setShared(
     'tmp',
-    function () {
+    function (): Filesystem {
 
         $adapter = new LocalFilesystemAdapter(TMP_DISK);
-        return new League\Flysystem\Filesystem($adapter);
+        return new Filesystem($adapter);
     }
 );
 $di->setShared(
     'fs',
-    function () {
+    function (): Filesystem {
         $adapter = new LocalFilesystemAdapter(ROOT_DISK);
-        return new League\Flysystem\Filesystem($adapter);
+        return new Filesystem($adapter);
     }
 );
 /**
@@ -153,7 +152,7 @@ $di->setShared(
  */
 $di->setShared(
     'db',
-    function () {
+    function (): Mysql {
         $config = config('database');
         return new Mysql(
             [
@@ -168,7 +167,7 @@ $di->setShared(
 // Set the models cache service
 $di->set(
     'modelsCache',
-    function () {
+    function (): Cache {
         $serializerFactory = new SerializerFactory();
         $adapter = new RedisAdapter($serializerFactory, [
             'host' => 'redis',
@@ -182,13 +181,11 @@ $di->set(
 
 $di->setShared(
     'authService',
-    function () {
-        return new  AuthService();
-    }
+    fn(): AuthService => new  AuthService()
 );
 $di->setShared(
     'session',
-    function () {
+    function (): Manager {
 
         $session = new Manager();
         $files = new Stream(
@@ -203,13 +200,13 @@ $di->setShared(
 
 $di->setShared(
     'isAuthenticated',
-    function () {
+    function (): true {
         if (!(new AuthService())->isAuthenticated()) {
             $response = new Response();
             $response->redirect('/auth');
             $response->send();
-
         }
+
         return true;
     }
 );
@@ -218,8 +215,5 @@ $di->setShared(
 // Server-Sent Events: shared emitter factory
 $di->set(
     'sseEmitter',
-    function () {
-        return new \IamLab\Core\SSE\SseEmitter(new \IamLab\Core\SSE\PhpOutputWriter());
-    }
+    fn(): \SseEmitter => new SseEmitter(new PhpOutputWriter())
 );
-

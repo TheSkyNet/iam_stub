@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace IamLab\Seeding\Runner;
@@ -9,7 +10,7 @@ use IamLab\Seeding\Infrastructure\UnitOfWorkInterface;
 use IamLab\Seeding\Support\ClockInterface;
 use IamLab\Seeding\Support\ConsolePrinter;
 
-final class SeedRunner
+final readonly class SeedRunner
 {
     /** @param array<string,mixed> $options */
     public function __construct(
@@ -27,13 +28,13 @@ final class SeedRunner
     {
         try {
             $this->seedLog->ensureTable();
-        } catch (\Throwable $e) {
-            $this->printer->error('Failed ensuring seed_log table: ' . $e->getMessage());
+        } catch (\Throwable $throwable) {
+            $this->printer->error('Failed ensuring seed_log table: ' . $throwable->getMessage());
             return 1;
         }
 
         $batch = $this->seedLog->nextBatchNumber();
-        $this->printer->info("Starting seeders (batch {$batch})" . ($dryRun ? ' [DRY-RUN]' : '') . '...');
+        $this->printer->info(sprintf('Starting seeders (batch %d)', $batch) . ($dryRun ? ' [DRY-RUN]' : '') . '...');
         $this->printer->info('');
 
         try {
@@ -42,14 +43,14 @@ final class SeedRunner
             foreach ($classes as $class) {
                 $already = $this->seedLog->isSeeded($class);
                 if ($already && !$force) {
-                    $this->printer->info("[SKIP] {$class} already seeded. Use --force to re-run.");
+                    $this->printer->info(sprintf('[SKIP] %s already seeded. Use --force to re-run.', $class));
                     continue;
                 }
 
-                $this->printer->info("[RUN ] {$class}");
+                $this->printer->info('[RUN ] ' . $class);
                 $seeder = $this->registry->instantiate($class, $this->options);
                 if (!method_exists($seeder, 'run')) {
-                    throw new \RuntimeException("Seeder {$class} missing run() method");
+                    throw new \RuntimeException(sprintf('Seeder %s missing run() method', $class));
                 }
 
                 $seeder->run();
@@ -58,7 +59,7 @@ final class SeedRunner
                     $this->seedLog->markSeeded($class, $batch, $this->clock->now());
                 }
 
-                $this->printer->info("[DONE] {$class}");
+                $this->printer->info('[DONE] ' . $class);
                 $this->printer->info('');
             }
 
@@ -70,12 +71,17 @@ final class SeedRunner
 
             $this->printer->info('Seeding completed successfully!');
             return 0;
-        } catch (\Throwable $e) {
-            try { $this->uow->rollback(); } catch (\Throwable) {}
-            $this->printer->error('Error: ' . $e->getMessage());
-            if (PHP_SAPI === 'cli' && function_exists('debug_backtrace')) {
-                $this->printer->error($e->getTraceAsString());
+        } catch (\Throwable $throwable) {
+            try {
+                $this->uow->rollback();
+            } catch (\Throwable) {
             }
+
+            $this->printer->error('Error: ' . $throwable->getMessage());
+            if (PHP_SAPI === 'cli' && function_exists('debug_backtrace')) {
+                $this->printer->error($throwable->getTraceAsString());
+            }
+
             return 1;
         }
     }

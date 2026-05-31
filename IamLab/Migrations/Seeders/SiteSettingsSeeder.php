@@ -13,7 +13,7 @@ class SiteSettingsSeeder extends Migration
             // Basic Site Information
             [
                 'key' => 'site_name',
-                'value' => 'IAM Lab - Kevin Morton\'s Portfolio',
+                'value' => "IAM Lab - Kevin Morton's Portfolio",
                 'type' => SiteSetting::TYPE_STRING,
                 'description' => 'The name of the website'
             ],

@@ -12,7 +12,6 @@ use Phalcon\Mvc\Model\ResultsetInterface;
  */
 class User extends Model
 {
-
     /**
      * @var integer
      * @Primary
@@ -39,6 +38,7 @@ class User extends Model
      * @Column(type="string", length=255, nullable=false)
      */
     protected $password;
+
     /**
      * @var string
      * @Column(type="string", length=255, nullable=false)
@@ -105,7 +105,7 @@ class User extends Model
      *
      * @return $this
      */
-    public function setId($id)
+    public function setId($id): static
     {
         $this->id = $id;
 
@@ -115,7 +115,6 @@ class User extends Model
     /**
      * Method to set the value of a field name
      *
-     * @param string $name
      *
      * @return $this
      */
@@ -129,7 +128,6 @@ class User extends Model
     /**
      * Method to set the value of field email
      *
-     * @param string $email
      *
      * @return $this
      */
@@ -143,7 +141,6 @@ class User extends Model
     /**
      * Method to set the value of field password
      *
-     * @param string $password
      *
      * @return $this
      */
@@ -176,8 +173,6 @@ class User extends Model
 
     /**
      * Returns the value of field email
-     *
-     * @return string
      */
     public function getEmail(): string
     {
@@ -186,8 +181,6 @@ class User extends Model
 
     /**
      * Returns the value of field password
-     *
-     * @return string
      */
     public function getPassword(): string
     {
@@ -197,7 +190,6 @@ class User extends Model
     /**
      * Method to set the value of field avatar
      *
-     * @param string $avatar
      *
      * @return $this
      */
@@ -266,7 +258,6 @@ class User extends Model
     /**
      * Method to set the value of field email_verified
      *
-     * @param bool $email_verified
      *
      * @return $this
      */
@@ -278,8 +269,6 @@ class User extends Model
 
     /**
      * Returns the value of field email_verified
-     *
-     * @return bool
      */
     public function getEmailVerified(): bool
     {
@@ -324,7 +313,6 @@ class User extends Model
     /**
      * Method to set the value of field updated_at
      *
-     * @param string $updated_at
      *
      * @return $this
      */
@@ -346,10 +334,8 @@ class User extends Model
 
     /**
      * Validations and business logic
-     *
-     * @return boolean
      */
-    public function validation()
+    public function validation(): bool
     {
         // Basic email validation can be handled at the application level
         // or through database constraints and frontend validation
@@ -359,10 +345,10 @@ class User extends Model
     /**
      * Initialize method for model.
      */
-    public function initialize()
+    public function initialize(): void
     {
         $this->setSource('user');
-        
+
         // Define many-to-many relationship with Role through user_roles
         $this->hasManyToMany(
             'id',
@@ -377,9 +363,6 @@ class User extends Model
 
     /**
      * Check if user has a specific role
-     *
-     * @param string $role
-     * @return bool
      */
     public function hasRole(string $role): bool
     {
@@ -389,9 +372,6 @@ class User extends Model
 
     /**
      * Add a role to the user
-     *
-     * @param string $role
-     * @return bool
      */
     public function addRole(string $role): bool
     {
@@ -401,9 +381,6 @@ class User extends Model
 
     /**
      * Remove a role from the user
-     *
-     * @param string $role
-     * @return bool
      */
     public function removeRole(string $role): bool
     {
@@ -413,8 +390,6 @@ class User extends Model
 
     /**
      * Get all roles for this user
-     *
-     * @return array
      */
     public function getRoles(): array
     {
@@ -429,6 +404,7 @@ class User extends Model
      *
      * @return User[]|Model\ResultsetInterface
      */
+    #[\Override]
     public static function find($parameters = null): ResultsetInterface
     {
         return parent::find($parameters);
@@ -441,9 +417,9 @@ class User extends Model
      *
      * @return User|Model
      */
-    public static function findFirst($parameters = null):mixed
+    #[\Override]
+    public static function findFirst($parameters = null): mixed
     {
         return parent::findFirst($parameters);
     }
-
 }

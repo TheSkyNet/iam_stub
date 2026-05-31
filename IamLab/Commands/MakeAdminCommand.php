@@ -11,9 +11,8 @@ class MakeAdminCommand extends BaseCommand
 {
     /**
      * Get command signature/usage
-     *
-     * @return string
      */
+    #[\Override]
     public function getSignature(): string
     {
         return 'user:make-admin [email] [-v|--verbose]';
@@ -21,9 +20,8 @@ class MakeAdminCommand extends BaseCommand
 
     /**
      * Get command help text
-     *
-     * @return string
      */
+    #[\Override]
     public function getHelp(): string
     {
         return <<<HELP
@@ -49,6 +47,7 @@ HELP;
      *
      * @return int Exit code
      */
+    #[\Override]
     protected function handle(): int
     {
         $this->info("Starting admin assignment...");
@@ -64,16 +63,16 @@ HELP;
             return 1;
         }
 
-        $this->verbose("User email: {$email}");
+        $this->verbose('User email: ' . $email);
 
         // Find the user
         $user = User::findFirstByEmail($email);
         if (!$user) {
-            $this->error("User with email '{$email}' not found");
+            $this->error(sprintf("User with email '%s' not found", $email));
             return 1;
         }
 
-        $this->verbose("User found: {$user->getName()} (ID: {$user->getId()})");
+        $this->verbose(sprintf('User found: %s (ID: %d)', $user->getName(), $user->getId()));
 
         $roleName = 'admin';
 
@@ -81,15 +80,15 @@ HELP;
             $rolesService = new RolesService();
 
             if ($rolesService->hasRole($user, $roleName)) {
-                $this->warn("User '{$email}' already has the role '{$roleName}'");
+                $this->warn(sprintf("User '%s' already has the role '%s'", $email, $roleName));
                 return 0;
             }
 
             // Add the role
-            $this->info("Adding role '{$roleName}' to user '{$email}'...");
+            $this->info(sprintf("Adding role '%s' to user '%s'...", $roleName, $email));
 
             if ($rolesService->addRole($user, $roleName)) {
-                $this->success("Successfully made user '{$email}' an admin");
+                $this->success(sprintf("Successfully made user '%s' an admin", $email));
 
                 // Display current user roles
                 if ($this->isVerbose()) {
@@ -98,22 +97,21 @@ HELP;
                 }
 
                 return 0;
-            } else {
-                $this->error("Failed to add role '{$roleName}' to user '{$email}'");
-                return 1;
             }
-        } catch (Exception $e) {
-            $this->error("Exception occurred while adding role: " . $e->getMessage());
-            $this->verbose("Stack trace: " . $e->getTraceAsString());
+
+            $this->error(sprintf("Failed to add role '%s' to user '%s'", $roleName, $email));
+            return 1;
+        } catch (Exception $exception) {
+            $this->error("Exception occurred while adding role: " . $exception->getMessage());
+            $this->verbose("Stack trace: " . $exception->getTraceAsString());
             return 1;
         }
     }
 
     /**
      * Get command description
-     *
-     * @return string
      */
+    #[\Override]
     public function getDescription(): string
     {
         return 'Make a user an administrator';

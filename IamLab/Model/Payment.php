@@ -74,52 +74,140 @@ class Payment extends Model
      */
     protected $updated_at;
 
-    public function initialize()
+    public function initialize(): void
     {
         $this->setSource('payment');
         $this->belongsTo('user_id', User::class, 'id', ['alias' => 'user']);
     }
 
-    public function getId() { return $this->id; }
-    public function setId($id) { $this->id = $id; return $this; }
+    public function getId()
+    {
+        return $this->id;
+    }
 
-    public function getUserId() { return $this->user_id; }
-    public function setUserId($user_id) { $this->user_id = $user_id; return $this; }
+    public function setId($id): static
+    {
+        $this->id = $id;
+        return $this;
+    }
 
-    public function getPaymentMethod() { return $this->payment_method; }
-    public function setPaymentMethod($payment_method) { $this->payment_method = $payment_method; return $this; }
+    public function getUserId()
+    {
+        return $this->user_id;
+    }
 
-    public function getTransactionId() { return $this->transaction_id; }
-    public function setTransactionId($transaction_id) { $this->transaction_id = $transaction_id; return $this; }
+    public function setUserId($user_id): static
+    {
+        $this->user_id = $user_id;
+        return $this;
+    }
 
-    public function getAmount() { return $this->amount; }
-    public function setAmount($amount) { $this->amount = $amount; return $this; }
+    public function getPaymentMethod()
+    {
+        return $this->payment_method;
+    }
 
-    public function getCurrency() { return $this->currency; }
-    public function setCurrency($currency) { $this->currency = $currency; return $this; }
+    public function setPaymentMethod($payment_method): static
+    {
+        $this->payment_method = $payment_method;
+        return $this;
+    }
 
-    public function getStatus() { return $this->status; }
-    public function setStatus($status) { $this->status = $status; return $this; }
+    public function getTransactionId()
+    {
+        return $this->transaction_id;
+    }
 
-    public function getType() { return $this->type; }
-    public function setType($type) { $this->type = $type; return $this; }
+    public function setTransactionId($transaction_id): static
+    {
+        $this->transaction_id = $transaction_id;
+        return $this;
+    }
 
-    public function getPayload() { return $this->payload; }
-    public function setPayload($payload) { $this->payload = $payload; return $this; }
+    public function getAmount()
+    {
+        return $this->amount;
+    }
 
-    public function getCreatedAt() { return $this->created_at; }
-    public function setCreatedAt($created_at) { $this->created_at = $created_at; return $this; }
+    public function setAmount($amount): static
+    {
+        $this->amount = $amount;
+        return $this;
+    }
 
-    public function getUpdatedAt() { return $this->updated_at; }
-    public function setUpdatedAt($updated_at) { $this->updated_at = $updated_at; return $this; }
+    public function getCurrency()
+    {
+        return $this->currency;
+    }
 
-    public function beforeValidationOnCreate()
+    public function setCurrency($currency): static
+    {
+        $this->currency = $currency;
+        return $this;
+    }
+
+    public function getStatus()
+    {
+        return $this->status;
+    }
+
+    public function setStatus($status): static
+    {
+        $this->status = $status;
+        return $this;
+    }
+
+    public function getType()
+    {
+        return $this->type;
+    }
+
+    public function setType($type): static
+    {
+        $this->type = $type;
+        return $this;
+    }
+
+    public function getPayload()
+    {
+        return $this->payload;
+    }
+
+    public function setPayload($payload): static
+    {
+        $this->payload = $payload;
+        return $this;
+    }
+
+    public function getCreatedAt()
+    {
+        return $this->created_at;
+    }
+
+    public function setCreatedAt($created_at): static
+    {
+        $this->created_at = $created_at;
+        return $this;
+    }
+
+    public function getUpdatedAt()
+    {
+        return $this->updated_at;
+    }
+
+    public function setUpdatedAt($updated_at): static
+    {
+        $this->updated_at = $updated_at;
+        return $this;
+    }
+
+    public function beforeValidationOnCreate(): void
     {
         $this->created_at = date('Y-m-d H:i:s');
         $this->updated_at = date('Y-m-d H:i:s');
     }
 
-    public function beforeValidationOnUpdate()
+    public function beforeValidationOnUpdate(): void
     {
         $this->updated_at = date('Y-m-d H:i:s');
     }

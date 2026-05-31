@@ -8,9 +8,8 @@ class OllamaCommand extends BaseCommand
 {
     /**
      * Get command signature/usage
-     *
-     * @return string
      */
+    #[\Override]
     public function getSignature(): string
     {
         return 'ollama {action} [--force] [-v|--verbose]';
@@ -18,9 +17,8 @@ class OllamaCommand extends BaseCommand
 
     /**
      * Get command description
-     *
-     * @return string
      */
+    #[\Override]
     public function getDescription(): string
     {
         return 'Enable or disable Ollama Docker service';
@@ -28,9 +26,8 @@ class OllamaCommand extends BaseCommand
 
     /**
      * Get command help text
-     *
-     * @return string
      */
+    #[\Override]
     public function getHelp(): string
     {
         return <<<HELP
@@ -65,6 +62,7 @@ HELP;
      *
      * @return int Exit code
      */
+    #[\Override]
     protected function handle(): int
     {
         $action = $this->argument(0);
@@ -74,7 +72,7 @@ HELP;
             return 1;
         }
 
-        switch (strtolower($action)) {
+        switch (strtolower((string) $action)) {
             case 'enable':
                 return $this->enableOllama();
             case 'disable':
@@ -84,7 +82,7 @@ HELP;
             case 'restart':
                 return $this->restartOllama();
             default:
-                $this->error("Invalid action '{$action}'. Use: enable, disable, status, or restart");
+                $this->error(sprintf("Invalid action '%s'. Use: enable, disable, status, or restart", $action));
                 return 1;
         }
     }
@@ -154,14 +152,11 @@ HELP;
             return 0;
         }
 
+        $this->info("Stopping Ollama Docker service...");
+        $result = $this->runDockerCommand('stop ollama');
         // Stop Ollama service if it's running
-        if (!$envAlreadyDisabled || $serviceExistsInCompose) {
-            $this->info("Stopping Ollama Docker service...");
-            $result = $this->runDockerCommand('stop ollama');
-
-            if ($result === 0) {
-                $this->runDockerCommand('rm -f ollama');
-            }
+        if ($result === 0) {
+            $this->runDockerCommand('rm -f ollama');
         }
 
         // Remove Ollama service from docker-compose.yml
@@ -174,11 +169,9 @@ HELP;
         }
 
         // Update .env file
-        if (!$envAlreadyDisabled) {
-            if (!$this->updateEnvFile('LMS_OLLAMA_ENABLED', 'false')) {
-                $this->error("Failed to update .env file");
-                return 1;
-            }
+        if (!$envAlreadyDisabled && !$this->updateEnvFile('LMS_OLLAMA_ENABLED', 'false')) {
+            $this->error("Failed to update .env file");
+            return 1;
         }
 
         $this->success("Ollama service disabled successfully!");
@@ -209,7 +202,7 @@ HELP;
         $this->line("- Port: " . $this->getEnvValue('FORWARD_OLLAMA_PORT', '11435'));
 
         // Test connection if enabled
-        if ($enabled && strpos($dockerStatus, 'RUNNING') === 0) {
+        if ($enabled && str_starts_with($dockerStatus, 'RUNNING')) {
             $this->line("");
             $this->info("Testing connection...");
             if ($this->testOllamaConnection()) {
@@ -270,7 +263,7 @@ HELP;
         }
 
         $content = file_get_contents($composeFile);
-        return strpos($content, 'ollama:') !== false;
+        return str_contains($content, 'ollama:');
     }
 
     /**
@@ -280,7 +273,7 @@ HELP;
     {
         // Since we're running inside a container, we need to check if the service
         // is accessible rather than checking Docker directly
-        $port = $this->getEnvValue('FORWARD_OLLAMA_PORT', '11435');
+        $this->getEnvValue('FORWARD_OLLAMA_PORT', '11435');
         $host = 'ollama'; // Internal Docker network name
 
         // Try to connect to the service
@@ -292,9 +285,9 @@ HELP;
             // Test if the service is responding properly
             if ($this->testOllamaConnection()) {
                 return 'RUNNING (HEALTHY)';
-            } else {
-                return 'RUNNING (UNHEALTHY)';
             }
+
+            return 'RUNNING (UNHEALTHY)';
         }
 
         return 'STOPPED';
@@ -306,7 +299,7 @@ HELP;
     private function testOllamaConnection(): bool
     {
         $port = $this->getEnvValue('FORWARD_OLLAMA_PORT', '11435');
-        $url = "http://localhost:{$port}/api/tags";
+        $url = sprintf('http://localhost:%s/api/tags', $port);
 
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);
@@ -314,7 +307,7 @@ HELP;
         curl_setopt($ch, CURLOPT_TIMEOUT, 5);
         curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 3);
 
-        $result = curl_exec($ch);
+        curl_exec($ch);
         $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         curl_close($ch);
 
@@ -330,14 +323,14 @@ HELP;
         // Instead, we'll provide instructions to the user
         $this->warn("Docker commands must be run from the host system (outside the container).");
         $this->info("Please run the following command from your project root:");
-        $this->line("  docker compose {$command}");
+        $this->line('  docker compose ' . $command);
         $this->line("");
 
         // For enable/disable operations, we'll assume success since the .env update is the main action
         // The user will need to run the docker command manually
-        if (strpos($command, 'up') !== false) {
+        if (str_contains($command, 'up')) {
             $this->info("After running the above command, Ollama should be available.");
-        } elseif (strpos($command, 'stop') !== false || strpos($command, 'rm') !== false) {
+        } elseif (str_contains($command, 'stop') || str_contains($command, 'rm')) {
             $this->info("After running the above command, Ollama will be stopped.");
         }
 
@@ -357,13 +350,13 @@ HELP;
         }
 
         $content = file_get_contents($envFile);
-        $pattern = "/^{$key}=.*$/m";
-        $replacement = "{$key}={$value}";
+        $pattern = sprintf('/^%s=.*$/m', $key);
+        $replacement = sprintf('%s=%s', $key, $value);
 
         if (preg_match($pattern, $content)) {
             $content = preg_replace($pattern, $replacement, $content);
         } else {
-            $content .= "\n{$replacement}\n";
+            $content .= PHP_EOL . $replacement . PHP_EOL;
         }
 
         return file_put_contents($envFile, $content) !== false;
@@ -381,7 +374,7 @@ HELP;
         }
 
         $content = file_get_contents($envFile);
-        $pattern = "/^{$key}=(.*)$/m";
+        $pattern = sprintf('/^%s=(.*)$/m', $key);
 
         if (preg_match($pattern, $content, $matches)) {
             return trim($matches[1]);
@@ -405,7 +398,7 @@ HELP;
         $content = file_get_contents($composeFile);
 
         // Check if Ollama service already exists
-        if (strpos($content, 'ollama:') !== false) {
+        if (str_contains($content, 'ollama:')) {
             $this->verbose("Ollama service already exists in docker-compose.yml");
             return true;
         }
@@ -432,7 +425,7 @@ HELP;
         $content = rtrim($content) . "\n" . $ollamaService;
 
         // Ensure ollama-data volume exists in volumes section
-        if (strpos($content, 'ollama-data:') === false) {
+        if (!str_contains($content, 'ollama-data:')) {
             // Find the volumes section and add ollama-data
             $pattern = '/(volumes:\s*\n(?:\s+[^:\s]+:\s*\n(?:\s+[^\n]+\n)*)*)(services:)/';
             if (preg_match($pattern, $content, $matches)) {
@@ -461,7 +454,7 @@ HELP;
         $content = file_get_contents($composeFile);
 
         // Check if Ollama service exists
-        if (strpos($content, 'ollama:') === false) {
+        if (!str_contains($content, 'ollama:')) {
             $this->verbose("Ollama service not found in docker-compose.yml");
             return true;
         }
@@ -484,15 +477,18 @@ HELP;
                 if (trim($line) === '') {
                     // Skip empty lines within the service
                     continue;
-                } elseif (preg_match('/^(\s+)/', $line, $matches)) {
+                }
+
+                // Check if we're still in the ollama service block
+                if (preg_match('/^(\s+)/', $line, $matches)) {
                     $currentIndentLevel = strlen($matches[1]);
                     if ($currentIndentLevel > $serviceIndentLevel) {
                         // Still inside the ollama service, skip this line
                         continue;
-                    } else {
-                        // We've reached the next service or section
-                        $inOllamaService = false;
                     }
+
+                    // We've reached the next service or section
+                    $inOllamaService = false;
                 } else {
                     // No indentation, we've reached a top-level section
                     $inOllamaService = false;
@@ -505,7 +501,7 @@ HELP;
         $content = implode("\n", $newLines);
 
         // Remove ollama-data volume if it exists and no other service uses it
-        if (strpos($content, 'ollama-data') !== false && substr_count($content, 'ollama-data') === 1) {
+        if (str_contains($content, 'ollama-data') && substr_count($content, 'ollama-data') === 1) {
             $lines = explode("\n", $content);
             $newLines = [];
             $inOllamaDataVolume = false;
@@ -521,13 +517,15 @@ HELP;
                 if ($inOllamaDataVolume) {
                     if (trim($line) === '') {
                         continue;
-                    } elseif (preg_match('/^(\s+)/', $line, $matches)) {
+                    }
+
+                    if (preg_match('/^(\s+)/', $line, $matches)) {
                         $currentIndentLevel = strlen($matches[1]);
                         if ($currentIndentLevel > $volumeIndentLevel) {
                             continue;
-                        } else {
-                            $inOllamaDataVolume = false;
                         }
+
+                        $inOllamaDataVolume = false;
                     } else {
                         $inOllamaDataVolume = false;
                     }

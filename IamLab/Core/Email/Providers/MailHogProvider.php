@@ -8,6 +8,7 @@ use Exception;
 class MailHogProvider implements EmailProviderInterface
 {
     private array $config;
+
     private string $lastError = '';
 
     public function __construct(array $config)
@@ -24,6 +25,7 @@ class MailHogProvider implements EmailProviderInterface
      * @param array $options Additional options
      * @return bool True if email was sent successfully
      */
+    #[\Override]
     public function send(string $to, string $subject, string $body, array $options = []): bool
     {
         try {
@@ -44,8 +46,8 @@ class MailHogProvider implements EmailProviderInterface
             }
 
             return true;
-        } catch (Exception $e) {
-            $this->lastError = $e->getMessage();
+        } catch (Exception $exception) {
+            $this->lastError = $exception->getMessage();
             return false;
         }
     }
@@ -59,6 +61,7 @@ class MailHogProvider implements EmailProviderInterface
      * @param array $options Additional options
      * @return bool True if email was sent successfully
      */
+    #[\Override]
     public function sendBulk(array $recipients, string $subject, string $body, array $options = []): bool
     {
         $allSuccess = true;
@@ -67,7 +70,7 @@ class MailHogProvider implements EmailProviderInterface
         foreach ($recipients as $recipient) {
             if (!$this->send($recipient, $subject, $body, $options)) {
                 $allSuccess = false;
-                $errors[] = "Failed to send to {$recipient}: " . $this->getLastError();
+                $errors[] = sprintf('Failed to send to %s: ', $recipient) . $this->getLastError();
             }
         }
 
@@ -83,6 +86,7 @@ class MailHogProvider implements EmailProviderInterface
      *
      * @return bool True if configuration is valid
      */
+    #[\Override]
     public function validateConfig(): bool
     {
         // MailHog doesn't require authentication, so we just need host and port
@@ -107,6 +111,7 @@ class MailHogProvider implements EmailProviderInterface
      *
      * @return string|null Last error message or null if no error
      */
+    #[\Override]
     public function getLastError(): ?string
     {
         return $this->lastError ?: null;
@@ -124,17 +129,13 @@ class MailHogProvider implements EmailProviderInterface
     private function buildHeaders(string $fromEmail, string $fromName, bool $isHtml, array $options): array
     {
         $headers = [
-            'From' => "{$fromName} <{$fromEmail}>",
+            'From' => sprintf('%s <%s>', $fromName, $fromEmail),
             'Reply-To' => $options['reply_to'] ?? $fromEmail,
             'X-Mailer' => 'Phalcon Stub Email Service',
             'MIME-Version' => '1.0',
         ];
 
-        if ($isHtml) {
-            $headers['Content-Type'] = 'text/html; charset=UTF-8';
-        } else {
-            $headers['Content-Type'] = 'text/plain; charset=UTF-8';
-        }
+        $headers['Content-Type'] = $isHtml ? 'text/html; charset=UTF-8' : 'text/plain; charset=UTF-8';
 
         // Add CC and BCC if provided
         if (!empty($options['cc'])) {
@@ -167,14 +168,14 @@ class MailHogProvider implements EmailProviderInterface
             // Create socket connection to MailHog
             $socket = fsockopen($host, $port, $errno, $errstr, 30);
             if (!$socket) {
-                $this->lastError = "Could not connect to MailHog: {$errstr} ({$errno})";
+                $this->lastError = sprintf('Could not connect to MailHog: %s (%d)', $errstr, $errno);
                 return false;
             }
 
             // Read initial response
             $response = fgets($socket, 512);
-            if (substr($response, 0, 3) !== '220') {
-                $this->lastError = "Invalid SMTP response: {$response}";
+            if (!str_starts_with($response, '220')) {
+                $this->lastError = 'Invalid SMTP response: ' . $response;
                 fclose($socket);
                 return false;
             }
@@ -188,13 +189,13 @@ class MailHogProvider implements EmailProviderInterface
             ];
 
             foreach ($commands as $command) {
-                fputs($socket, $command);
+                fwrite($socket, $command);
                 $response = fgets($socket, 512);
 
                 // Check for SMTP errors
                 $code = substr($response, 0, 3);
                 if (!in_array($code, ['220', '250', '354'])) {
-                    $this->lastError = "SMTP error: {$response}";
+                    $this->lastError = 'SMTP error: ' . $response;
                     fclose($socket);
                     return false;
                 }
@@ -202,21 +203,21 @@ class MailHogProvider implements EmailProviderInterface
 
             // Send email data
             $emailData = $this->formatEmailData($to, $subject, $body, $headers);
-            fputs($socket, $emailData);
-            fputs($socket, "\r\n.\r\n");
+            fwrite($socket, $emailData);
+            fwrite($socket, "\r\n.\r\n");
 
             // Read final response
             $response = fgets($socket, 512);
             fclose($socket);
 
-            if (substr($response, 0, 3) !== '250') {
-                $this->lastError = "Email not accepted: {$response}";
+            if (!str_starts_with($response, '250')) {
+                $this->lastError = 'Email not accepted: ' . $response;
                 return false;
             }
 
             return true;
-        } catch (Exception $e) {
-            $this->lastError = "SMTP error: " . $e->getMessage();
+        } catch (Exception $exception) {
+            $this->lastError = "SMTP error: " . $exception->getMessage();
             return false;
         }
     }
@@ -239,8 +240,6 @@ class MailHogProvider implements EmailProviderInterface
             $data .= "{$key}: {$value}\r\n";
         }
 
-        $data .= "\r\n{$body}\r\n";
-
-        return $data;
+        return $data . "\r\n{$body}\r\n";
     }
 }

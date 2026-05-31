@@ -10,7 +10,9 @@ use Exception;
 class EmailService extends Injectable
 {
     private ?EmailProviderInterface $provider = null;
+
     private array $config;
+
     private string $lastError = '';
 
     public function __construct()
@@ -30,16 +32,16 @@ class EmailService extends Injectable
             $this->provider = match ($providerName) {
                 'mailhog' => new MailHogProvider($this->config),
                 'resend' => new ResendProvider($this->config),
-                default => throw new Exception("Unsupported email provider: {$providerName}"),
+                default => throw new Exception('Unsupported email provider: ' . $providerName),
             };
 
             if (!$this->provider->validateConfig()) {
-                throw new Exception("Invalid configuration for email provider: {$providerName}");
+                throw new Exception('Invalid configuration for email provider: ' . $providerName);
             }
-        } catch (Exception $e) {
-            $this->lastError = $e->getMessage();
+        } catch (Exception $exception) {
+            $this->lastError = $exception->getMessage();
             // Fallback to a null provider or log the error
-            error_log("Email service initialization failed: " . $e->getMessage());
+            error_log("Email service initialization failed: " . $exception->getMessage());
         }
     }
 
@@ -54,7 +56,7 @@ class EmailService extends Injectable
      */
     public function send(string $to, string $subject, string $body, array $options = []): bool
     {
-        if (!$this->provider) {
+        if (!$this->provider instanceof EmailProviderInterface) {
             $this->lastError = "No email provider available";
             return false;
         }
@@ -63,6 +65,7 @@ class EmailService extends Injectable
         if (!isset($options['from_email'])) {
             $options['from_email'] = $this->config['from_email'] ?? 'noreply@example.com';
         }
+
         if (!isset($options['from_name'])) {
             $options['from_name'] = $this->config['from_name'] ?? 'Phalcon Stub';
         }
@@ -72,9 +75,10 @@ class EmailService extends Injectable
             if (!$result) {
                 $this->lastError = $this->provider->getLastError() ?? 'Unknown error occurred';
             }
+
             return $result;
-        } catch (Exception $e) {
-            $this->lastError = $e->getMessage();
+        } catch (Exception $exception) {
+            $this->lastError = $exception->getMessage();
             return false;
         }
     }
@@ -90,7 +94,7 @@ class EmailService extends Injectable
      */
     public function sendBulk(array $recipients, string $subject, string $body, array $options = []): bool
     {
-        if (!$this->provider) {
+        if (!$this->provider instanceof EmailProviderInterface) {
             $this->lastError = "No email provider available";
             return false;
         }
@@ -99,6 +103,7 @@ class EmailService extends Injectable
         if (!isset($options['from_email'])) {
             $options['from_email'] = $this->config['from_email'] ?? 'noreply@example.com';
         }
+
         if (!isset($options['from_name'])) {
             $options['from_name'] = $this->config['from_name'] ?? 'Phalcon Stub';
         }
@@ -108,9 +113,10 @@ class EmailService extends Injectable
             if (!$result) {
                 $this->lastError = $this->provider->getLastError() ?? 'Unknown error occurred';
             }
+
             return $result;
-        } catch (Exception $e) {
-            $this->lastError = $e->getMessage();
+        } catch (Exception $exception) {
+            $this->lastError = $exception->getMessage();
             return false;
         }
     }
@@ -142,6 +148,6 @@ class EmailService extends Injectable
      */
     public function isReady(): bool
     {
-        return $this->provider !== null && $this->provider->validateConfig();
+        return $this->provider instanceof EmailProviderInterface && $this->provider->validateConfig();
     }
 }

@@ -1,9 +1,4 @@
 <?php
-/**
- * Local variables
- *
- * @var Micro $app
- */
 
 use IamLab\Core\Routing\RouteGroup;
 use IamLab\Service\Auth;
@@ -21,17 +16,15 @@ use IamLab\Service\LMSApi;
 use IamLab\Service\SettingsService;
 use Phalcon\Mvc\Micro;
 
-/**
- * Route Groups - Organized routing with guards
- */
+// Route Groups - Organized routing with guards
 
 // =============================================================================
 // PUBLIC ROUTES (No authentication required)
 // =============================================================================
 RouteGroup::create($app)
-    ->group(function ($group) {
+    ->group(function ($group): void {
         // Home page
-        $group->get('/', function ($app) {
+        $group->get('/', function (array $app): void {
             $settingsService = new SettingsService();
             $settingsService->initialize();
             echo $app['view']->render('index', ['settings' => $settingsService->getFormatted()]);
@@ -42,11 +35,11 @@ RouteGroup::create($app)
 // PUBLIC API ROUTES (No authentication required)
 // =============================================================================
 RouteGroup::create($app, '/api')
-    ->group(function ($group) {
+    ->group(function ($group): void {
         // File upload API
         $group->post('/v1/file', [(new FilepondApi()), "process"]);
         $group->patch('/v1/file', [(new FilepondApi()), "patch"]);
-        
+
         // OAuth API (public endpoints)
         $group->get('/oauth/providers', [(new OAuth()), "providersAction"]);
         $group->get('/oauth/redirect', [(new OAuth()), "redirectAction"]);
@@ -70,16 +63,16 @@ RouteGroup::create($app, '/api')
 // =============================================================================
 RouteGroup::create($app, '/api')
     ->requireAuth()
-    ->group(function ($group) {
+    ->group(function ($group): void {
         // Pusher authenticated endpoints
         $group->post('/pusher/auth', [(new PusherApi()), "authAction"]);
         $group->post('/pusher/trigger', [(new PusherApi()), "triggerAction"]);
         $group->get('/pusher/channel-info', [(new PusherApi()), "channelInfoAction"]);
         $group->get('/pusher/channels', [(new PusherApi()), "channelsAction"]);
-        
+
         // OAuth authenticated endpoints
         $group->post('/oauth/unlink', [(new OAuth()), "unlinkAction"]);
-        
+
         // Payment and Subscription API
         $group->get('/payments', [(new PaymentsApi()), "indexAction"]);
         $group->post('/payments', [(new PaymentsApi()), "createAction"]);
@@ -90,8 +83,6 @@ RouteGroup::create($app, '/api')
         $group->get('/subscriptions', [(new PaymentsApi()), "subscriptionsAction"]);
         $group->post('/subscriptions', [(new PaymentsApi()), "createSubscriptionAction"]);
         $group->delete('/subscriptions/{id}', [(new PaymentsApi()), "cancelSubscriptionAction"]);
-        
-
     });
 
 // =============================================================================
@@ -99,7 +90,7 @@ RouteGroup::create($app, '/api')
 // =============================================================================
 RouteGroup::create($app, '/api')
     ->requireAdmin()
-    ->group(function ($group) {
+    ->group(function ($group): void {
         // Role management API
         $group->get('/roles', [(new RolesApi()), "indexAction"]);
         $group->get('/roles/{id}', [(new RolesApi()), "showAction"]);
@@ -107,14 +98,14 @@ RouteGroup::create($app, '/api')
         $group->put('/roles/{id}', [(new RolesApi()), "updateAction"]);
         $group->delete('/roles/{id}', [(new RolesApi()), "deleteAction"]);
         $group->get('/roles/search', [(new RolesApi()), "searchAction"]);
-        
+
         // User management API
         $group->get('/users', [(new UsersApi()), "indexAction"]);
         $group->get('/users/{id}', [(new UsersApi()), "showAction"]);
         $group->post('/users', [(new UsersApi()), "createAction"]);
         $group->put('/users/{id}', [(new UsersApi()), "updateAction"]);
         $group->delete('/users/{id}', [(new UsersApi()), "deleteAction"]);
-      $group->get('/users/search', [(new UsersApi()), "searchAction"]);
+        $group->get('/users/search', [(new UsersApi()), "searchAction"]);
 
         // Errors management endpoints
         $group->get('/errors', [(new ErrorsApi()), "indexAction"]);
@@ -142,14 +133,13 @@ RouteGroup::create($app, '/api')
         $group->post('/jobs/cleanup', [(new JobsApi()), "cleanupAction"]);
         $group->post('/jobs/bulk', [(new JobsApi()), "bulkAction"]);
         $group->post('/jobs/{id}/retry', [(new JobsApi()), "retryAction"]);
-
     });
 
 // =============================================================================
 // PUBLIC AUTH ROUTES (No authentication required)
 // =============================================================================
 RouteGroup::create($app, '/auth')
-    ->group(function ($group) {
+    ->group(function ($group): void {
         // Public authentication endpoints
         $group->post('/login', [(new Auth()), "loginAction"]);
         $group->post('/register', [(new Auth()), "registerAction"]);
@@ -159,7 +149,7 @@ RouteGroup::create($app, '/auth')
         $group->post('/refresh-token', [(new Auth()), "refreshTokenAction"]);
         // Frontend auth behavior config (backend-controlled)
         $group->get('/config', [(new Auth()), "configAction"]);
-        
+
         // QR Code public endpoints
         $group->post('/generate-qr-code', [(new Auth()), "generateQRCodeAction"]);
         $group->post('/check-qr-status', [(new Auth()), "checkQRStatusAction"]);
@@ -172,7 +162,7 @@ RouteGroup::create($app, '/auth')
 // =============================================================================
 RouteGroup::create($app, '/auth')
     ->requireAuth()
-    ->group(function ($group) {
+    ->group(function ($group): void {
         // Authenticated user endpoints
         $group->post('/logout', [(new Auth()), "logoutAction"]);
         $group->get('/user', [(new Auth()), "userAction"]);
@@ -181,7 +171,7 @@ RouteGroup::create($app, '/auth')
         $group->get('/profile', [(new Auth()), "profileAction"]);
         $group->post('/update-profile', [(new Auth()), "updateProfileAction"]);
         $group->post('/update-avatar', [(new Auth()), "updateAvatarAction"]);
-        
+
         // QR Code authenticated endpoints
         $group->post('/authenticate-qr', [(new Auth()), "authenticateQRAction"]);
         $group->post('/authenticate-mobile-qr', [(new Auth()), "authenticateMobileQRAction"]);
@@ -189,11 +179,11 @@ RouteGroup::create($app, '/auth')
 /**
  * Not found handler
  */
-$app->notFound(function () use ($app) {
+$app->notFound(function () use ($app): void {
     /**
      * Check if the request is AJAX or accepts a JSON response.
      */
-    if ($app->request->isAjax() || str_contains($app->request->getHeader('Accept'), 'application/json')) {
+    if ($app->request->isAjax() || str_contains((string) $app->request->getHeader('Accept'), 'application/json')) {
         $app->response->setStatusCode(404, 'Not Found');
         $app->response->setContentType('application/json', 'UTF-8');
         $app->response->setJsonContent([
@@ -201,18 +191,16 @@ $app->notFound(function () use ($app) {
             'message' => 'The requested resource was not found.'
         ]);
         $app->response->send();
-    } else {
+    } elseif ($app->request->isGet() && !str_starts_with((string) $app->request->getURI(), '/api')) {
         /**
          * For non-API GET requests, we serve the index page to support SPA routing (reloads).
          * This allows Mithril to handle the route on the frontend.
          */
-        if ($app->request->isGet() && !str_starts_with($app->request->getURI(), '/api')) {
-            $settingsService = new SettingsService();
-            $settingsService->initialize();
-            echo $app['view']->render('index', ['settings' => $settingsService->getFormatted()]);
-        } else {
-            $app->response->setStatusCode(404, "Not Found")->sendHeaders();
-            echo $app['view']->render('404');
-        }
+        $settingsService = new SettingsService();
+        $settingsService->initialize();
+        echo $app['view']->render('index', ['settings' => $settingsService->getFormatted()]);
+    } else {
+        $app->response->setStatusCode(404, "Not Found")->sendHeaders();
+        echo $app['view']->render('404');
     }
 });

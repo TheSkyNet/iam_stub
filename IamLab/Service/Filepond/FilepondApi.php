@@ -1,10 +1,13 @@
 <?php
+
 namespace IamLab\Service\Filepond;
+
 use IamLab\Core\API\aAPI;
 use IamLab\Service\Filepond\FilepondService;
 use Phalcon\Http\Response;
 use Phalcon\Http\ResponseInterface;
 use Throwable;
+
 use function App\Core\Helpers\config;
 
 /**
@@ -12,7 +15,6 @@ use function App\Core\Helpers\config;
  */
 class FilepondApi extends aAPI
 {
-
     public function process()
     {
         $this->filepond;
@@ -23,7 +25,7 @@ class FilepondApi extends aAPI
             return $this->response;
         }
 
-        $validator = $this->filepond->validator($this->request, config('filepond')['validation_rules']);
+        $this->filepond->validator($this->request, config('filepond')['validation_rules']);
 
 //         if ($validator->fails()) {
 //              $this->dispatchError($validator->errors());
@@ -53,7 +55,6 @@ class FilepondApi extends aAPI
      * FilePond ./head route logic.
      *
      * @param Request $request
-     * @param FilepondService $service
      * @return \Illuminate\Http\Response
      * @throws Throwable
      */
@@ -68,16 +69,15 @@ class FilepondApi extends aAPI
         }
 
         //  return Response::make('Feature not implemented yet!', 406);
+        return null;
     }
 
     /**
      * FilePond ./revert route logic.
      *
      * @param Request $request
-     * @param FilepondService $service
-     * @return \Illuminate\Http\Response
      */
-    public function revert(Request $request, FilepondService $service)
+    public function revert(Request $request, FilepondService $service): void
     {
         $filepond = $service->retrieve($request->getContent());
 

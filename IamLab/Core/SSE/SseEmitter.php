@@ -12,13 +12,12 @@ namespace IamLab\Core\SSE;
  */
 class SseEmitter
 {
-    private OutputWriterInterface $writer;
     private bool $started = false;
+
     private ?int $retryMs = null;
 
-    public function __construct(OutputWriterInterface $writer)
+    public function __construct(private readonly OutputWriterInterface $writer)
     {
-        $this->writer = $writer;
     }
 
     /**
@@ -29,6 +28,7 @@ class SseEmitter
         if ($this->started) {
             return;
         }
+
         $this->started = true;
 
         // Standard SSE headers
@@ -40,7 +40,7 @@ class SseEmitter
         // Optional retry directive (reconnection time in ms)
         if ($retryMs !== null) {
             $this->retryMs = $retryMs;
-            $this->writer->write('retry: ' . (int)$retryMs . "\n\n");
+            $this->writer->write('retry: ' . $retryMs . "\n\n");
         }
 
         $this->writer->flush();
@@ -58,6 +58,7 @@ class SseEmitter
         if ($id !== null) {
             $this->writer->write('id: ' . $this->sanitize($id) . "\n");
         }
+
         if ($event !== null) {
             $this->writer->write('event: ' . $this->sanitize($event) . "\n");
         }
@@ -79,9 +80,11 @@ class SseEmitter
         if (!$this->started) {
             $this->start($this->retryMs);
         }
+
         foreach (preg_split("/\r?\n/", $text) as $line) {
             $this->writer->write(': ' . $line . "\n");
         }
+
         $this->writer->write("\n");
         $this->writer->flush();
     }
@@ -112,9 +115,11 @@ class SseEmitter
         if (is_string($data)) {
             return $data;
         }
+
         if (is_scalar($data)) {
             return (string)$data;
         }
+
         // array/object => JSON
         return json_encode($data, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
     }

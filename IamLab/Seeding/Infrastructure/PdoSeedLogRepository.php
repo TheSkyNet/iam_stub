@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace IamLab\Seeding\Infrastructure;
@@ -6,12 +7,13 @@ namespace IamLab\Seeding\Infrastructure;
 use PDO;
 use PDOException;
 
-final class PdoSeedLogRepository implements SeedLogRepositoryInterface
+final readonly class PdoSeedLogRepository implements SeedLogRepositoryInterface
 {
     public function __construct(private PDO $pdo)
     {
     }
 
+    #[\Override]
     public function ensureTable(): void
     {
         $sql = "CREATE TABLE IF NOT EXISTS seed_log (
@@ -23,6 +25,7 @@ final class PdoSeedLogRepository implements SeedLogRepositoryInterface
         $this->pdo->exec($sql);
     }
 
+    #[\Override]
     public function isSeeded(string $class): bool
     {
         $stmt = $this->pdo->prepare('SELECT 1 FROM seed_log WHERE class = ? LIMIT 1');
@@ -30,6 +33,7 @@ final class PdoSeedLogRepository implements SeedLogRepositoryInterface
         return (bool) $stmt->fetchColumn();
     }
 
+    #[\Override]
     public function markSeeded(string $class, int $batch, \DateTimeImmutable $now): void
     {
         if ($this->isSeeded($class)) {
@@ -41,6 +45,7 @@ final class PdoSeedLogRepository implements SeedLogRepositoryInterface
         }
     }
 
+    #[\Override]
     public function nextBatchNumber(): int
     {
         try {
@@ -49,6 +54,7 @@ final class PdoSeedLogRepository implements SeedLogRepositoryInterface
             if (is_array($row)) {
                 $max = (int) ($row['max_batch'] ?? 0);
             }
+
             return $max + 1;
         } catch (PDOException) {
             // If table does not exist yet, ensure and return 1

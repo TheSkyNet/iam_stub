@@ -6,16 +6,13 @@ use Exception;
 
 /**
  * Cleanup Job
- * 
+ *
  * Example job for performing cleanup and maintenance tasks
  */
 class CleanupJob
 {
     /**
      * Handle the job
-     *
-     * @param array $payload
-     * @return bool|string
      */
     public function handle(array $payload): bool|string
     {
@@ -29,36 +26,21 @@ class CleanupJob
             $options = $payload['options'] ?? [];
 
             // Perform cleanup based on type
-            switch ($cleanupType) {
-                case 'temp_files':
-                    return $this->cleanupTempFiles($options);
-                
-                case 'old_logs':
-                    return $this->cleanupOldLogs($options);
-                
-                case 'cache':
-                    return $this->cleanupCache($options);
-                
-                case 'database':
-                    return $this->cleanupDatabase($options);
-                
-                case 'uploads':
-                    return $this->cleanupUploads($options);
-                
-                default:
-                    return "Unsupported cleanup type: {$cleanupType}";
-            }
-
-        } catch (Exception $e) {
-            return 'Cleanup failed: ' . $e->getMessage();
+            return match ($cleanupType) {
+                'temp_files' => $this->cleanupTempFiles($options),
+                'old_logs' => $this->cleanupOldLogs($options),
+                'cache' => $this->cleanupCache($options),
+                'database' => $this->cleanupDatabase($options),
+                'uploads' => $this->cleanupUploads($options),
+                default => 'Unsupported cleanup type: ' . $cleanupType,
+            };
+        } catch (Exception $exception) {
+            return 'Cleanup failed: ' . $exception->getMessage();
         }
     }
 
     /**
      * Clean up temporary files
-     *
-     * @param array $options
-     * @return bool|string
      */
     protected function cleanupTempFiles(array $options): bool|string
     {
@@ -81,31 +63,27 @@ class CleanupJob
 
             foreach ($simulatedFiles as $file) {
                 // Simulate file age check
-                $fileAge = rand(1, 48); // Random age in hours
-                
+                $fileAge = random_int(1, 48); // Random age in hours
+
                 if ($fileAge >= $maxAge) {
                     // Simulate file deletion
-                    error_log("Deleting temp file: {$tempDir}/{$file} (age: {$fileAge}h)");
+                    error_log(sprintf('Deleting temp file: %s/%s (age: %dh)', $tempDir, $file, $fileAge));
                     $deletedCount++;
-                    
+
                     // Simulate deletion time
                     usleep(50000); // 0.05 seconds
                 }
             }
 
-            error_log("Cleanup completed: Deleted {$deletedCount} temp files older than {$maxAge} hours");
+            error_log(sprintf('Cleanup completed: Deleted %d temp files older than %s hours', $deletedCount, $maxAge));
             return true;
-
-        } catch (Exception $e) {
-            return "Temp files cleanup failed: " . $e->getMessage();
+        } catch (Exception $exception) {
+            return "Temp files cleanup failed: " . $exception->getMessage();
         }
     }
 
     /**
      * Clean up old log files
-     *
-     * @param array $options
-     * @return bool|string
      */
     protected function cleanupOldLogs(array $options): bool|string
     {
@@ -129,42 +107,38 @@ class CleanupJob
 
             foreach ($simulatedLogs as $logFile) {
                 $processedCount++;
-                
+
                 // Simulate log age check
-                $fileAge = rand(1, 60); // Random age in days
-                
+                $fileAge = random_int(1, 60); // Random age in days
+
                 if ($fileAge > $maxAge) {
                     if ($compress && $fileAge <= ($maxAge * 2)) {
                         // Compress old logs instead of deleting
-                        error_log("Compressing log file: {$logDir}/{$logFile} (age: {$fileAge} days)");
+                        error_log(sprintf('Compressing log file: %s/%s (age: %d days)', $logDir, $logFile, $fileAge));
                         $compressedCount++;
                         sleep(1); // Simulate compression time
                     } else {
                         // Delete very old logs
-                        error_log("Deleting log file: {$logDir}/{$logFile} (age: {$fileAge} days)");
+                        error_log(sprintf('Deleting log file: %s/%s (age: %d days)', $logDir, $logFile, $fileAge));
                         $deletedCount++;
                     }
                 }
-                
+
                 usleep(100000); // 0.1 seconds per file
             }
 
-            $message = "Log cleanup completed: Processed {$processedCount} files, ";
-            $message .= "deleted {$deletedCount}, compressed {$compressedCount}";
+            $message = sprintf('Log cleanup completed: Processed %d files, ', $processedCount);
+            $message .= sprintf('deleted %d, compressed %d', $deletedCount, $compressedCount);
             error_log($message);
-            
-            return true;
 
-        } catch (Exception $e) {
-            return "Log cleanup failed: " . $e->getMessage();
+            return true;
+        } catch (Exception $exception) {
+            return "Log cleanup failed: " . $exception->getMessage();
         }
     }
 
     /**
      * Clean up cache files
-     *
-     * @param array $options
-     * @return bool|string
      */
     protected function cleanupCache(array $options): bool|string
     {
@@ -179,37 +153,33 @@ class CleanupJob
                     case 'file':
                         $this->clearFileCache($force);
                         break;
-                    
+
                     case 'view':
                         $this->clearViewCache($force);
                         break;
-                    
+
                     case 'model':
                         $this->clearModelCache($force);
                         break;
-                    
+
                     case 'metadata':
                         $this->clearMetadataCache($force);
                         break;
                 }
-                
+
                 $clearedCount++;
                 sleep(1); // Simulate cache clearing time
             }
 
-            error_log("Cache cleanup completed: Cleared {$clearedCount} cache types");
+            error_log(sprintf('Cache cleanup completed: Cleared %d cache types', $clearedCount));
             return true;
-
-        } catch (Exception $e) {
-            return "Cache cleanup failed: " . $e->getMessage();
+        } catch (Exception $exception) {
+            return "Cache cleanup failed: " . $exception->getMessage();
         }
     }
 
     /**
      * Clean up database records
-     *
-     * @param array $options
-     * @return bool|string
      */
     protected function cleanupDatabase(array $options): bool|string
     {
@@ -223,24 +193,20 @@ class CleanupJob
                 // Simulate database cleanup
                 $deletedRows = $this->cleanupTableRecords($table, $maxAge);
                 $totalDeleted += $deletedRows;
-                
-                error_log("Cleaned up {$deletedRows} records from {$table} table");
+
+                error_log(sprintf('Cleaned up %d records from %s table', $deletedRows, $table));
                 sleep(2); // Simulate database operation time
             }
 
-            error_log("Database cleanup completed: Deleted {$totalDeleted} total records");
+            error_log(sprintf('Database cleanup completed: Deleted %d total records', $totalDeleted));
             return true;
-
-        } catch (Exception $e) {
-            return "Database cleanup failed: " . $e->getMessage();
+        } catch (Exception $exception) {
+            return "Database cleanup failed: " . $exception->getMessage();
         }
     }
 
     /**
      * Clean up uploaded files
-     *
-     * @param array $options
-     * @return bool|string
      */
     protected function cleanupUploads(array $options): bool|string
     {
@@ -264,38 +230,35 @@ class CleanupJob
 
             foreach ($simulatedUploads as $uploadFile) {
                 $scannedCount++;
-                
+
                 // Simulate file age and database check
-                $fileAge = rand(1, 120); // Random age in days
-                $inDatabase = rand(0, 1) === 1; // Random database presence
-                
+                $fileAge = random_int(1, 120); // Random age in days
+                $inDatabase = random_int(0, 1) === 1; // Random database presence
+
                 if ($fileAge > $maxAge || ($checkDatabase && !$inDatabase)) {
-                    error_log("Deleting upload file: {$uploadDir}/{$uploadFile}");
+                    error_log(sprintf('Deleting upload file: %s/%s', $uploadDir, $uploadFile));
                     $deletedCount++;
-                    
+
                     if (!$inDatabase) {
                         $orphanedCount++;
                     }
                 }
-                
+
                 usleep(200000); // 0.2 seconds per file
             }
 
-            $message = "Upload cleanup completed: Scanned {$scannedCount} files, ";
-            $message .= "deleted {$deletedCount} ({$orphanedCount} orphaned)";
+            $message = sprintf('Upload cleanup completed: Scanned %d files, ', $scannedCount);
+            $message .= sprintf('deleted %d (%d orphaned)', $deletedCount, $orphanedCount);
             error_log($message);
-            
-            return true;
 
-        } catch (Exception $e) {
-            return "Upload cleanup failed: " . $e->getMessage();
+            return true;
+        } catch (Exception $exception) {
+            return "Upload cleanup failed: " . $exception->getMessage();
         }
     }
 
     /**
      * Clear file cache
-     *
-     * @param bool $force
      */
     protected function clearFileCache(bool $force): void
     {
@@ -305,8 +268,6 @@ class CleanupJob
 
     /**
      * Clear view cache
-     *
-     * @param bool $force
      */
     protected function clearViewCache(bool $force): void
     {
@@ -316,8 +277,6 @@ class CleanupJob
 
     /**
      * Clear model cache
-     *
-     * @param bool $force
      */
     protected function clearModelCache(bool $force): void
     {
@@ -327,8 +286,6 @@ class CleanupJob
 
     /**
      * Clear metadata cache
-     *
-     * @param bool $force
      */
     protected function clearMetadataCache(bool $force): void
     {
@@ -338,17 +295,13 @@ class CleanupJob
 
     /**
      * Clean up records from a specific table
-     *
-     * @param string $table
-     * @param int $maxAge
-     * @return int
      */
     protected function cleanupTableRecords(string $table, int $maxAge): int
     {
         // Simulate database cleanup
-        $deletedRows = rand(10, 100);
-        error_log("Simulating cleanup of {$deletedRows} records from {$table} older than {$maxAge} days");
-        
+        $deletedRows = random_int(10, 100);
+        error_log(sprintf('Simulating cleanup of %d records from %s older than %d days', $deletedRows, $table, $maxAge));
+
         return $deletedRows;
     }
 }

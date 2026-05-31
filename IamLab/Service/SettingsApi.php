@@ -34,7 +34,7 @@ class SettingsApi extends aAPI
     {
         $this->requireAdmin();
         $id = (int)$this->getRouteParam('id', 0, 'int');
-        
+
         $setting = SiteSetting::findFirst([
             'conditions' => 'id = :id:',
             'bind' => ['id' => $id]
@@ -52,6 +52,7 @@ class SettingsApi extends aAPI
         if (isset($data['value'])) {
             $setting->setValue($data['value']);
         }
+
         if (isset($data['description'])) {
             $setting->setDescription($data['description']);
         }

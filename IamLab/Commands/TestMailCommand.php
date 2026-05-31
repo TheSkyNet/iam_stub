@@ -4,15 +4,15 @@ namespace IamLab\Commands;
 
 use Exception;
 use IamLab\Core\Command\BaseCommand;
+
 use function App\Core\Helpers\email;
 
 class TestMailCommand extends BaseCommand
 {
     /**
      * Get command signature/usage
-     *
-     * @return string
      */
+    #[\Override]
     public function getSignature(): string
     {
         return 'test:mail [recipient] [--subject=] [--message=] [-d|--debug] [-v|--verbose]';
@@ -20,9 +20,8 @@ class TestMailCommand extends BaseCommand
 
     /**
      * Get command description
-     *
-     * @return string
      */
+    #[\Override]
     public function getDescription(): string
     {
         return 'Send a test email to verify email functionality';
@@ -30,9 +29,8 @@ class TestMailCommand extends BaseCommand
 
     /**
      * Get command help text
-     *
-     * @return string
      */
+    #[\Override]
     public function getHelp(): string
     {
         return <<<HELP
@@ -62,6 +60,7 @@ HELP;
      *
      * @return int Exit code
      */
+    #[\Override]
     protected function handle(): int
     {
         $this->info("Starting email test...");
@@ -77,22 +76,23 @@ HELP;
             return 1;
         }
 
-        $this->verbose("Recipient: {$recipient}");
+        $this->verbose('Recipient: ' . $recipient);
 
         // Get email subject
         $subject = $this->option('subject', 'Test Email from Phalcon Stub');
-        $this->verbose("Subject: {$subject}");
+        $this->verbose('Subject: ' . $subject);
 
         // Get email message
         $message = $this->option('message');
         if (!$message) {
             $message = $this->generateTestMessage();
         }
-        $this->verbose("Message length: " . strlen($message) . " characters");
+
+        $this->verbose("Message length: " . strlen((string) $message) . " characters");
 
         // Send the email
         $this->info("Sending test email...");
-        
+
         try {
             $result = email(
                 $recipient,
@@ -105,29 +105,27 @@ HELP;
             );
 
             if ($result) {
-                $this->success("Test email sent successfully to {$recipient}");
+                $this->success('Test email sent successfully to ' . $recipient);
                 $this->info("Check your email client or MailHog dashboard (http://localhost:8025) to view the email");
                 return 0;
-            } else {
-                $this->error("Failed to send test email");
-                return 1;
             }
-        } catch (Exception $e) {
-            $this->error("Exception occurred while sending email: " . $e->getMessage());
-            $this->debug("Stack trace: " . $e->getTraceAsString());
+
+            $this->error("Failed to send test email");
+            return 1;
+        } catch (Exception $exception) {
+            $this->error("Exception occurred while sending email: " . $exception->getMessage());
+            $this->debug("Stack trace: " . $exception->getTraceAsString());
             return 1;
         }
     }
 
     /**
      * Generate a test email message
-     *
-     * @return string
      */
     private function generateTestMessage(): string
     {
         $timestamp = date('Y-m-d H:i:s');
-        
+
         return <<<HTML
 <!DOCTYPE html>
 <html lang="en">

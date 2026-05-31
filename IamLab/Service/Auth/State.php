@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Created by PhpStorm.
  * User: Kevin
@@ -8,23 +9,12 @@
 
 namespace IamLab\Service\Auth;
 
-
 class State
 {
-    public function __construct(array $arguments = array())
+    public function __construct(array $arguments = [])
     {
-        if (!empty($arguments))
-        {
-            foreach ($arguments as $property => $argument) {
-                if ($argument instanceOf Closure)
-                {
-                    $this->{$property} = $argument;
-                }
-                else
-                {
-                    $this->{$property} = $argument;
-                }
-            }
+        foreach ($arguments as $property => $argument) {
+            $this->{$property} = $argument instanceof Closure ? $argument : $argument;
         }
     }
 }

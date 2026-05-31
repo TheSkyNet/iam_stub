@@ -2,6 +2,7 @@
 
 namespace IamLab\Service\Payment;
 
+use Phalcon\Mvc\Model\ResultsetInterface;
 use IamLab\Model\Payment;
 use IamLab\Model\Subscription;
 use IamLab\Service\Payment\Integrations\PaymentIntegrationInterface;
@@ -12,10 +13,12 @@ use Exception;
 class PaymentService
 {
     protected ?PaymentIntegrationInterface $integration = null;
+
     protected string $currentProvider;
+
     protected IntegrationRegistry $registry;
 
-    public function __construct(string $provider = 'stripe', array $config = [])
+    public function __construct(string $provider = 'stripe')
     {
         $this->registry = new IntegrationRegistry(new ConfigurationManager());
         $this->setProvider($provider);
@@ -44,7 +47,7 @@ class PaymentService
      */
     public function processSinglePayment(int $userId, float $amount, string $currency = 'GBP', array $options = []): Payment
     {
-        if (!$this->integration) {
+        if (!$this->integration instanceof PaymentIntegrationInterface) {
             throw new Exception("Payment integration not initialized");
         }
 
@@ -78,7 +81,7 @@ class PaymentService
      */
     public function capturePayment(string $transactionId, array $options = []): Payment
     {
-        if (!$this->integration) {
+        if (!$this->integration instanceof PaymentIntegrationInterface) {
             throw new Exception("Payment integration not initialized");
         }
 
@@ -88,7 +91,7 @@ class PaymentService
         ]);
 
         if (!$payment) {
-            throw new Exception("Payment record not found for transaction: {$transactionId}");
+            throw new Exception('Payment record not found for transaction: ' . $transactionId);
         }
 
         $result = $this->integration->capturePayment($transactionId, $options);
@@ -96,7 +99,7 @@ class PaymentService
         if ($result['success'] ?? false) {
             $payment->setStatus($result['status'] ?? 'completed');
             $payment->setPayload(json_encode(array_merge(
-                json_decode($payment->getPayload(), true) ?? [],
+                json_decode((string) $payment->getPayload(), true) ?? [],
                 $result['provider_payload'] ?? []
             )));
 
@@ -113,7 +116,7 @@ class PaymentService
      */
     public function createSubscription(int $userId, string $planId, array $options = []): Subscription
     {
-        if (!$this->integration) {
+        if (!$this->integration instanceof PaymentIntegrationInterface) {
             throw new Exception("Payment integration not initialized");
         }
 
@@ -153,7 +156,7 @@ class PaymentService
 
         $this->setProvider($subscription->getPaymentMethod());
 
-        if (!$this->integration) {
+        if (!$this->integration instanceof PaymentIntegrationInterface) {
             throw new Exception("Payment integration not initialized");
         }
 
@@ -180,7 +183,7 @@ class PaymentService
 
         $this->setProvider($subscription->getPaymentMethod());
 
-        if (!$this->integration) {
+        if (!$this->integration instanceof PaymentIntegrationInterface) {
             throw new Exception("Payment integration not initialized");
         }
 
@@ -196,7 +199,7 @@ class PaymentService
 
         if (isset($result['provider_payload'])) {
             $subscription->setPayload(json_encode(array_merge(
-                json_decode($subscription->getPayload() ?: '{}', true) ?? [],
+                json_decode((string) ($subscription->getPayload() ?: '{}'), true) ?? [],
                 $result['provider_payload']
             )));
         }
@@ -211,7 +214,7 @@ class PaymentService
     /**
      * Get user payments
      */
-    public function getUserPayments(int $userId)
+    public function getUserPayments(int $userId): ResultsetInterface
     {
         return Payment::find([
             'conditions' => 'user_id = :userId:',
@@ -223,7 +226,7 @@ class PaymentService
     /**
      * Get user subscriptions
      */
-    public function getUserSubscriptions(int $userId)
+    public function getUserSubscriptions(int $userId): ResultsetInterface
     {
         return Subscription::find([
             'conditions' => 'user_id = :userId:',

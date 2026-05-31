@@ -2,6 +2,7 @@
 
 namespace IamLab\Service;
 
+use IamLab\Model\User;
 use Exception;
 use IamLab\Core\API\aAPI;
 use IamLab\Service\Auth\AuthService;
@@ -9,11 +10,12 @@ use IamLab\Service\Auth\GoogleOAuthService;
 use IamLab\Service\Auth\GitHubOAuthService;
 use IamLab\Service\Auth\FacebookOAuthService;
 use IamLab\Service\Auth\GenericOAuthService;
+
 use function App\Core\Helpers\config;
 
 class OAuth extends aAPI
 {
-    private AuthService $authService;
+    private readonly AuthService $authService;
 
     public function __construct()
     {
@@ -44,16 +46,16 @@ class OAuth extends aAPI
                 'generic' => GenericOAuthService::class
             ];
 
-            foreach ($providerClasses as $provider => $class) {
+            foreach (array_keys($providerClasses) as $provider) {
                 // Check if provider is enabled AND properly configured
                 if (!empty($oauthConfig[$provider]['enabled']) && $oauthConfig[$provider]['enabled']) {
                     // Validate that required configuration is present
-                    $isConfigured = !empty($oauthConfig[$provider]['client_id']) && 
+                    $isConfigured = !empty($oauthConfig[$provider]['client_id']) &&
                                    !empty($oauthConfig[$provider]['client_secret']);
 
                     // For generic provider, also check for required URLs
                     if ($provider === 'generic') {
-                        $isConfigured = $isConfigured && 
+                        $isConfigured = $isConfigured &&
                                        !empty($oauthConfig[$provider]['authorization_url']) &&
                                        !empty($oauthConfig[$provider]['token_url']) &&
                                        !empty($oauthConfig[$provider]['user_info_url']);
@@ -64,7 +66,7 @@ class OAuth extends aAPI
                         $providers[] = [
                             'name' => $provider,
                             'display_name' => ucfirst($provider),
-                            'auth_url' => "/auth/oauth/{$provider}"
+                            'auth_url' => '/auth/oauth/' . $provider
                         ];
                     }
                 }
@@ -74,10 +76,10 @@ class OAuth extends aAPI
                 'success' => true,
                 'providers' => $providers
             ]);
-        } catch (Exception $e) {
+        } catch (Exception $exception) {
             $this->dispatch([
                 'success' => false,
-                'message' => 'Failed to get OAuth providers: ' . $e->getMessage()
+                'message' => 'Failed to get OAuth providers: ' . $exception->getMessage()
             ]);
         }
     }
@@ -111,10 +113,10 @@ class OAuth extends aAPI
                 'auth_url' => $authUrl,
                 'state' => $state
             ]);
-        } catch (Exception $e) {
+        } catch (Exception $exception) {
             $this->dispatch([
                 'success' => false,
-                'message' => 'Failed to get authorization URL: ' . $e->getMessage()
+                'message' => 'Failed to get authorization URL: ' . $exception->getMessage()
             ], 500);
         }
     }
@@ -189,10 +191,10 @@ class OAuth extends aAPI
                 ],
                 'auth' => $authData
             ]);
-        } catch (Exception $e) {
+        } catch (Exception $exception) {
             $this->dispatch([
                 'success' => false,
-                'message' => 'OAuth callback failed: ' . $e->getMessage()
+                'message' => 'OAuth callback failed: ' . $exception->getMessage()
             ], 500);
         }
     }
@@ -205,7 +207,7 @@ class OAuth extends aAPI
         try {
             $user = $this->authService->getUser();
 
-            if (!$user) {
+            if (!$user instanceof User) {
                 $this->dispatch([
                     'success' => false,
                     'message' => 'User not authenticated'
@@ -244,10 +246,10 @@ class OAuth extends aAPI
                 'success' => true,
                 'message' => 'OAuth provider unlinked successfully'
             ]);
-        } catch (Exception $e) {
+        } catch (Exception $exception) {
             $this->dispatch([
                 'success' => false,
-                'message' => 'Failed to unlink OAuth provider: ' . $e->getMessage()
+                'message' => 'Failed to unlink OAuth provider: ' . $exception->getMessage()
             ], 500);
         }
     }
@@ -255,19 +257,14 @@ class OAuth extends aAPI
     /**
      * Get OAuth service instance
      */
-    private function getOAuthService(string $provider)
+    private function getOAuthService(string $provider): GoogleOAuthService|GitHubOAuthService|FacebookOAuthService|GenericOAuthService
     {
-        switch ($provider) {
-            case 'google':
-                return new GoogleOAuthService();
-            case 'github':
-                return new GitHubOAuthService();
-            case 'facebook':
-                return new FacebookOAuthService();
-            case 'generic':
-                return new GenericOAuthService();
-            default:
-                throw new Exception("Unsupported OAuth provider: {$provider}");
-        }
+        return match ($provider) {
+            'google' => new GoogleOAuthService(),
+            'github' => new GitHubOAuthService(),
+            'facebook' => new FacebookOAuthService(),
+            'generic' => new GenericOAuthService(),
+            default => throw new Exception('Unsupported OAuth provider: ' . $provider),
+        };
     }
 }

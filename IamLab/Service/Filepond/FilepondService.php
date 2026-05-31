@@ -11,8 +11,10 @@ use League\Flysystem\FilesystemException;
 use Phalcon\Http\Request;
 use SodiumException;
 use Throwable;
+
 use function App\Core\Helpers\collect;
 use function App\Core\Helpers\config;
+use function App\Core\Helpers\crypt;
 use function App\Core\Helpers\dd;
 use function App\Core\Helpers\decrypt;
 use function App\Core\Helpers\di;
@@ -23,24 +25,23 @@ use function App\Core\Helpers\moveTo;
  */
 class FilepondService
 {
+    public $tmp;
+
     private $disk;
-    private $tempDisk;
-    private $tempFolder;
+
+    private string $tempDisk = TMP_DISK;
+
+    private $tempFolder = TMP_PATH;
 
     public function __construct()
     {
         $this->disk = config('filepond', 'public')['disk'];
-        $this->tempDisk = TMP_DISK;
-        $this->tempFolder = TMP_PATH;
     }
 
     /**
      * Get the file from request
-     *
-     * @param Request $request
-     * @return mixed
      */
-    protected function getUploadedFile(Request $request)
+    protected function getUploadedFile(Request $request): mixed
     {
         return collect($request->getUploadedFiles())->first();
     }
@@ -48,11 +49,9 @@ class FilepondService
     /**
      * Validate the filepond file
      *
-     * @param Request $request
-     * @param array $rules
      * @return Validator
      */
-    public function validator(Request $request, array $rules)
+    public function validator(Request $request, array $rules): mixed
     {
         // $field = array_key_first($request->all());
         return $this->getUploadedFile($request);
@@ -61,21 +60,19 @@ class FilepondService
 
     /**
      * Store the uploaded file in the fileponds table
-     *
-     * @param Request $request
-     * @return string
      */
     public function store(Request $request): string
     {
         $file = $this->getUploadedFile($request);
         $name = uniqid() . '.' . $file->getExtension();
-        try{
+        try {
             $mimetypes = $file->getRealType();
             $file->moveTo(TMP_DISK . '/' . $name);
-        }catch ( ErrorException $exception){
-            dd($exception);
+        } catch (ErrorException $errorException) {
+            dd($errorException);
         }
-        $filepond = (new Filepond)->assign([
+
+        $filepond = (new Filepond())->assign([
             'filepath' => $this->tempDisk,
             'filename' => $name, // $file->getOriginalName(),
             'mimetypes' => $mimetypes,
@@ -84,7 +81,7 @@ class FilepondService
         ]);
 
         $filepond->create();
-        return \App\Core\Helpers\crypt(
+        return crypt(
             json_encode(['id' => $filepond->id])
         );
     }
@@ -92,7 +89,6 @@ class FilepondService
     /**
      * Retrieve the filepond file from encrypted text
      *
-     * @param string $content
      * @return mixed
      */
     public function retrieve(string $content)
@@ -110,13 +106,12 @@ class FilepondService
     /**
      * Initialize and make a slot for chunk upload
      *
-     * @return string
      * @throws SodiumException
      * @throws FilesystemException
      */
-    public function initChunk()
+    public function initChunk(): string
     {
-        $filepond = (new Filepond)->assign(
+        $filepond = (new Filepond())->assign(
             [
                 'filepath' => '',
                 'filename' => '',
@@ -132,7 +127,7 @@ class FilepondService
 
         // Storage::disk($this->tempDisk)->makeDirectory($this->tempFolder . '/' . $filepond->id);
 
-        return \App\Core\Helpers\crypt(
+        return crypt(
             json_encode(['id' => $filepond->id])
         );// Crypt::encrypt(['id' => $filepond->id]);
     }
@@ -140,14 +135,12 @@ class FilepondService
     /**
      * Merge chunks
      *
-     * @param Request $request
-     * @return string
      * @throws Throwable
      */
-    public function chunk(Request $request)
+    public function chunk(Request $request): int
     {
         $id = decrypt(
-            json_decode($request->getPatch())['id']
+            json_decode((string) $request->getPatch())['id']
         );
         // $id = Crypt::decrypt($request->patch)['id'];
 
@@ -179,6 +172,7 @@ class FilepondService
 
                 unlink($chunk);
             }
+
             fclose($file);
 
             $filepond = $this->retrieve($request->patch);
@@ -199,10 +193,9 @@ class FilepondService
     /**
      * Get the offset of the last uploaded chunk for resume
      *
-     * @param string $content
      * @return false|int
      */
-    public function offset(string $content)
+    public function offset(string $content): int
     {
         $filepond = $this->retrieve($content);
 
@@ -219,7 +212,6 @@ class FilepondService
     /**
      * Delete the filepond file and record respecting soft delete
      *
-     * @param Filepond $filepond
      * @return bool|null
      */
     public function delete(Filepond $filepond)

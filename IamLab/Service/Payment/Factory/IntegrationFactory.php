@@ -13,7 +13,7 @@ use IamLab\Service\Payment\Integrations\RevolutIntegration;
 
 /**
  * Payment Integration Factory
- * 
+ *
  * Responsible for creating payment integration instances
  */
 class IntegrationFactory
@@ -49,22 +49,15 @@ class IntegrationFactory
      */
     public static function create(string $name, array $config): PaymentIntegrationInterface
     {
-        switch (strtolower($name)) {
-            case 'stripe':
-                return new StripeIntegration($config);
-            case 'paypal':
-                return new PayPalIntegration($config);
-            case 'square':
-                return new SquareIntegration($config);
-            case 'pace':
-                return new PaceIntegration($config);
-            case 'mollie':
-                return new MollieIntegration($config);
-            case 'revolut':
-                return new RevolutIntegration($config);
-            default:
-                throw new Exception("Unknown payment provider: {$name}");
-        }
+        return match (strtolower($name)) {
+            'stripe' => new StripeIntegration($config),
+            'paypal' => new PayPalIntegration($config),
+            'square' => new SquareIntegration($config),
+            'pace' => new PaceIntegration($config),
+            'mollie' => new MollieIntegration($config),
+            'revolut' => new RevolutIntegration($config),
+            default => throw new Exception('Unknown payment provider: ' . $name),
+        };
     }
 
     /**

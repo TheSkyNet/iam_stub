@@ -34,9 +34,9 @@ class PaymentTest extends TestCase
         $payment = new Payment();
         $this->assertNull($payment->getCreatedAt());
         $this->assertNull($payment->getUpdatedAt());
-        
+
         $payment->beforeValidationOnCreate();
-        
+
         $this->assertNotEmpty($payment->getCreatedAt());
         $this->assertNotEmpty($payment->getUpdatedAt());
     }

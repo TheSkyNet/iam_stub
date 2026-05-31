@@ -8,13 +8,11 @@ class AssociativeArrayProcessor implements DataProcessorInterface
 {
     /**
      * Process associative array into normalized table format
-     *
-     * @param array $data
-     * @return array
      */
+    #[\Override]
     public function process(array $data): array
     {
-        if (empty($data)) {
+        if ($data === []) {
             return ['headers' => [], 'rows' => []];
         }
 
@@ -30,13 +28,11 @@ class AssociativeArrayProcessor implements DataProcessorInterface
 
     /**
      * Check if this processor can handle the given data structure
-     *
-     * @param array $data
-     * @return bool
      */
+    #[\Override]
     public function canProcess(array $data): bool
     {
-        if (empty($data)) {
+        if ($data === []) {
             return true;
         }
 

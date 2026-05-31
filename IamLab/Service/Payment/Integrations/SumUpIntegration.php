@@ -4,22 +4,20 @@ namespace IamLab\Service\Payment\Integrations;
 
 /**
  * SumUp Integration
- * 
+ *
  * Implements a real SumUp integration for the payment system.
  * SumUp is very popular in the UK for small business payments.
  */
 class SumUpIntegration implements PaymentIntegrationInterface
 {
-    protected array $config;
-
-    public function __construct(array $config)
+    public function __construct(protected array $config)
     {
-        $this->config = $config;
     }
 
     /**
      * Create a single payment (Checkout)
      */
+    #[\Override]
     public function createPayment(array $paymentData): array
     {
         $apiKey = $this->config['api_key'] ?? '';
@@ -51,7 +49,7 @@ class SumUpIntegration implements PaymentIntegrationInterface
             'status' => $this->mapSumUpStatus($response['status'] ?? 'PENDING'),
             'amount' => $amount,
             'currency' => $currency,
-            'checkout_url' => "https://gateway.sumup.com/checkouts/{$response['id']}", // Public hosted checkout
+            'checkout_url' => 'https://gateway.sumup.com/checkouts/' . $response['id'], // Public hosted checkout
             'provider_payload' => $response
         ];
     }
@@ -59,6 +57,7 @@ class SumUpIntegration implements PaymentIntegrationInterface
     /**
      * Capture a payment
      */
+    #[\Override]
     public function capturePayment(string $transactionId, array $options = []): array
     {
         // SumUp checkouts are usually captured when paid via hosted page.
@@ -72,12 +71,13 @@ class SumUpIntegration implements PaymentIntegrationInterface
     /**
      * Create a subscription
      */
+    #[\Override]
     public function createSubscription(array $subscriptionData): array
     {
         // SumUp supports recurring payments via "Customer" and "Payment Instrument" (card vaulting).
         // For the demo, we simulate the success.
         $planId = $subscriptionData['plan_id'] ?? '';
-        
+
         return [
             'success' => true,
             'subscription_id' => 'sum_sub_' . bin2hex(random_bytes(8)),
@@ -95,6 +95,7 @@ class SumUpIntegration implements PaymentIntegrationInterface
     /**
      * Cancel a subscription
      */
+    #[\Override]
     public function cancelSubscription(string $subscriptionId): bool
     {
         return true;
@@ -103,15 +104,17 @@ class SumUpIntegration implements PaymentIntegrationInterface
     /**
      * Get payment status
      */
+    #[\Override]
     public function getPaymentStatus(string $transactionId): string
     {
-        $response = $this->request('GET', "/checkouts/{$transactionId}");
+        $response = $this->request('GET', '/checkouts/' . $transactionId);
         return $this->mapSumUpStatus($response['status'] ?? 'unknown');
     }
 
     /**
      * Get subscription status
      */
+    #[\Override]
     public function getSubscriptionStatus(string $subscriptionId): string
     {
         return 'active';
@@ -120,6 +123,7 @@ class SumUpIntegration implements PaymentIntegrationInterface
     /**
      * Check if the integration is healthy and accessible
      */
+    #[\Override]
     public function healthCheck(): bool
     {
         if (empty($this->config['api_key'])) {
@@ -130,7 +134,7 @@ class SumUpIntegration implements PaymentIntegrationInterface
             // Check merchant profile
             $response = $this->request('GET', '/me');
             return isset($response['merchant_profile']);
-        } catch (\Exception $e) {
+        } catch (\Exception) {
             return false;
         }
     }
@@ -138,6 +142,7 @@ class SumUpIntegration implements PaymentIntegrationInterface
     /**
      * Get integration-specific capabilities
      */
+    #[\Override]
     public function getCapabilities(): array
     {
         return [
@@ -158,13 +163,13 @@ class SumUpIntegration implements PaymentIntegrationInterface
 
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        
+
         $headers = [
             'Authorization: Bearer ' . $this->config['api_key'],
             'Content-Type: application/json',
             'Accept: application/json'
         ];
-        
+
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 
         if ($method === 'POST') {
@@ -177,7 +182,7 @@ class SumUpIntegration implements PaymentIntegrationInterface
         curl_close($ch);
 
         $result = json_decode($response, true);
-        
+
         if ($httpCode >= 400 && !isset($result['id']) && !isset($result['merchant_profile'])) {
             return [
                 'error' => true,
@@ -194,18 +199,12 @@ class SumUpIntegration implements PaymentIntegrationInterface
      */
     protected function mapSumUpStatus(string $status): string
     {
-        switch (strtoupper($status)) {
-            case 'PAID':
-                return 'completed';
-            case 'PENDING':
-                return 'pending';
-            case 'CANCELLED':
-                return 'canceled';
-            case 'FAILED':
-            case 'EXPIRED':
-                return 'failed';
-            default:
-                return 'unknown';
-        }
+        return match (strtoupper($status)) {
+            'PAID' => 'completed',
+            'PENDING' => 'pending',
+            'CANCELLED' => 'canceled',
+            'FAILED', 'EXPIRED' => 'failed',
+            default => 'unknown',
+        };
     }
 }

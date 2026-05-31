@@ -4,12 +4,11 @@ namespace IamLab\Service\Filepond;
 
 use RuntimeException;
 use SplFileInfo;
+
 use const PATHINFO_FILENAME;
 
 class FilepondFile extends SplFileInfo
 {
-
-
     /**
      * @param string $file The file name
      */
@@ -33,7 +32,7 @@ class FilepondFile extends SplFileInfo
      */
     public function getContents(): string
     {
-        set_error_handler(function ($type, $msg) use (&$error) {
+        set_error_handler(function ($type, $msg) use (&$error): void {
             $error = $msg;
         });
         try {
@@ -41,6 +40,7 @@ class FilepondFile extends SplFileInfo
         } finally {
             restore_error_handler();
         }
+
         if (false === $content) {
             throw new RuntimeException($error);
         }

@@ -6,11 +6,12 @@ use IamLab\Model\Role;
 use IamLab\Model\User;
 use IamLab\Model\UserRole;
 use Phalcon\Di\Injectable;
+
 use function App\Core\Helpers\dd;
 
 /**
  * RolesService - Service for managing user roles and permissions
- * 
+ *
  * This service provides methods to:
  * - Check if a user has a specific role
  * - Add roles to users
@@ -22,10 +23,6 @@ class RolesService extends Injectable
 {
     /**
      * Check if a user has a specific role
-     *
-     * @param User $user
-     * @param string $roleName
-     * @return bool
      */
     public function hasRole(User $user, string $roleName): bool
     {
@@ -42,15 +39,11 @@ class RolesService extends Injectable
             ]
         ]);
 
-        return $userRole !== NULL;
+        return $userRole !== null;
     }
 
     /**
      * Add a role to a user
-     *
-     * @param User $user
-     * @param string $roleName
-     * @return bool
      */
     public function addRole(User $user, string $roleName): bool
     {
@@ -75,7 +68,7 @@ class RolesService extends Injectable
 
     public function listRoles($user): array
     {
-        $return =[];
+        $return = [];
         $userRoles = UserRole::find([
             'conditions' => 'user_id = :user_id:',
             'bind' => ['user_id' => $user->getId()]
@@ -88,15 +81,10 @@ class RolesService extends Injectable
         }
 
         return $return;
-
     }
 
     /**
      * Remove a role from a user
-     *
-     * @param User $user
-     * @param string $roleName
-     * @return bool
      */
     public function removeRole(User $user, string $roleName): bool
     {
@@ -122,9 +110,6 @@ class RolesService extends Injectable
 
     /**
      * Get all roles for a user
-     *
-     * @param User $user
-     * @return array
      */
     public function getUserRoles(User $user): array
     {
@@ -156,10 +141,6 @@ class RolesService extends Injectable
 
     /**
      * Create a new role
-     *
-     * @param string $name
-     * @param string $description
-     * @return bool
      */
     public function createRole(string $name, string $description = ''): bool
     {
@@ -180,9 +161,6 @@ class RolesService extends Injectable
 
     /**
      * Delete a role and all its assignments
-     *
-     * @param string $roleName
-     * @return bool
      */
     public function deleteRole(string $roleName): bool
     {
@@ -208,7 +186,6 @@ class RolesService extends Injectable
     /**
      * Get users with a specific role
      *
-     * @param string $roleName
      * @return User[]
      */
     public function getUsersWithRole(string $roleName): array
@@ -236,10 +213,6 @@ class RolesService extends Injectable
 
     /**
      * Check if a user has any of the specified roles
-     *
-     * @param User $user
-     * @param array $roleNames
-     * @return bool
      */
     public function hasAnyRole(User $user, array $roleNames): bool
     {
@@ -248,15 +221,12 @@ class RolesService extends Injectable
                 return true;
             }
         }
+
         return false;
     }
 
     /**
      * Check if a user has all of the specified roles
-     *
-     * @param User $user
-     * @param array $roleNames
-     * @return bool
      */
     public function hasAllRoles(User $user, array $roleNames): bool
     {
@@ -265,6 +235,7 @@ class RolesService extends Injectable
                 return false;
             }
         }
+
         return true;
     }
 }

@@ -9,6 +9,7 @@ class ConfigurationManagerTest extends TestCase
 {
     private ConfigurationManager $configManager;
 
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();
@@ -23,7 +24,7 @@ class ConfigurationManagerTest extends TestCase
     public function testGetAllConfigurations(): void
     {
         $configs = $this->configManager->getAllConfigurations();
-        
+
         $this->assertIsArray($configs);
         $this->assertArrayHasKey('gemini', $configs);
         $this->assertArrayHasKey('ollama', $configs);
@@ -33,7 +34,7 @@ class ConfigurationManagerTest extends TestCase
     public function testGetIntegrationConfig(): void
     {
         $ollamaConfig = $this->configManager->getIntegrationConfig('ollama');
-        
+
         $this->assertIsArray($ollamaConfig);
         $this->assertArrayHasKey('enabled', $ollamaConfig);
         $this->assertArrayHasKey('host', $ollamaConfig);
@@ -44,7 +45,7 @@ class ConfigurationManagerTest extends TestCase
     {
         // Ollama should be enabled by default
         $this->assertTrue($this->configManager->isIntegrationEnabled('ollama'));
-        
+
         // Gemini should be disabled by default (no API key)
         $this->assertFalse($this->configManager->isIntegrationEnabled('gemini'));
     }
@@ -52,7 +53,7 @@ class ConfigurationManagerTest extends TestCase
     public function testGetEnabledIntegrations(): void
     {
         $enabled = $this->configManager->getEnabledIntegrations();
-        
+
         $this->assertIsArray($enabled);
         $this->assertContains('ollama', $enabled);
     }
@@ -60,7 +61,7 @@ class ConfigurationManagerTest extends TestCase
     public function testValidateConfiguration(): void
     {
         $errors = $this->configManager->validateConfiguration();
-        
+
         $this->assertIsArray($errors);
         // Should have no errors for ollama (enabled by default)
         // May have errors for other integrations if they're enabled but missing credentials
@@ -69,7 +70,7 @@ class ConfigurationManagerTest extends TestCase
     public function testGetNonExistentIntegrationConfig(): void
     {
         $config = $this->configManager->getIntegrationConfig('nonexistent');
-        
+
         $this->assertIsArray($config);
         $this->assertEmpty($config);
     }

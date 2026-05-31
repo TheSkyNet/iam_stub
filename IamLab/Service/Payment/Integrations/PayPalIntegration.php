@@ -4,21 +4,21 @@ namespace IamLab\Service\Payment\Integrations;
 
 /**
  * PayPal Integration (Mock)
- * 
+ *
  * Implements a mock PayPal integration for the payment system
  */
 class PayPalIntegration implements PaymentIntegrationInterface
 {
-    protected array $config;
+    public $logger;
 
-    public function __construct(array $config)
+    public function __construct(protected array $config)
     {
-        $this->config = $config;
     }
 
     /**
      * Create a single payment
      */
+    #[\Override]
     public function createPayment(array $paymentData): array
     {
         $options = $paymentData['options'] ?? [];
@@ -32,7 +32,7 @@ class PayPalIntegration implements PaymentIntegrationInterface
                 return $this->createRealPayPalOrder($amountValue, $currency);
             } catch (\Exception $e) {
                 // Fallback to mock if real fails (or log it)
-                if (isset($this->logger)) {
+                if (property_exists($this, 'logger') && $this->logger !== null) {
                     $this->logger->error('PayPal Real Order Creation failed: ' . $e->getMessage());
                 }
             }
@@ -40,7 +40,7 @@ class PayPalIntegration implements PaymentIntegrationInterface
 
         $paypalOrderId = $options['paypal_order_id'] ?? ('PAYID-' . bin2hex(random_bytes(8)));
         $details = $options['details'] ?? [];
-        
+
         $status = ($intent === 'create_only') ? 'pending' : 'completed';
 
         // Mock processing for PayPal, but preserve provided IDs if any
@@ -62,8 +62,8 @@ class PayPalIntegration implements PaymentIntegrationInterface
     private function createRealPayPalOrder(float $amount, string $currency): array
     {
         $accessToken = $this->getAccessToken();
-        $baseUrl = ($this->config['mode'] ?? 'sandbox') === 'sandbox' 
-            ? 'https://api-m.sandbox.paypal.com' 
+        $baseUrl = ($this->config['mode'] ?? 'sandbox') === 'sandbox'
+            ? 'https://api-m.sandbox.paypal.com'
             : 'https://api-m.paypal.com';
 
         $ch = curl_init($baseUrl . '/v2/checkout/orders');
@@ -111,8 +111,8 @@ class PayPalIntegration implements PaymentIntegrationInterface
      */
     private function getAccessToken(): string
     {
-        $baseUrl = ($this->config['mode'] ?? 'sandbox') === 'sandbox' 
-            ? 'https://api-m.sandbox.paypal.com' 
+        $baseUrl = ($this->config['mode'] ?? 'sandbox') === 'sandbox'
+            ? 'https://api-m.sandbox.paypal.com'
             : 'https://api-m.paypal.com';
 
         $clientId = $this->config['client_id'] ?? '';
@@ -144,15 +144,17 @@ class PayPalIntegration implements PaymentIntegrationInterface
     /**
      * Capture a previously created payment
      */
+    #[\Override]
     public function capturePayment(string $transactionId, array $options = []): array
     {
         try {
             return $this->captureRealPayPalOrder($transactionId);
-        } catch (\Exception $e) {
+        } catch (\Exception $exception) {
             // Fallback to mock for now if real fails
-            if (isset($this->logger)) {
-                $this->logger->error('PayPal Real Capture failed: ' . $e->getMessage());
+            if (property_exists($this, 'logger') && $this->logger !== null) {
+                $this->logger->error('PayPal Real Capture failed: ' . $exception->getMessage());
             }
+
             return [
                 'success' => true,
                 'status' => 'completed',
@@ -160,7 +162,7 @@ class PayPalIntegration implements PaymentIntegrationInterface
                     'captured_at' => date('Y-m-d H:i:s'),
                     'capture_id' => 'CAP-' . bin2hex(random_bytes(8)),
                     'fallback' => true,
-                    'error' => $e->getMessage()
+                    'error' => $exception->getMessage()
                 ]
             ];
         }
@@ -172,11 +174,11 @@ class PayPalIntegration implements PaymentIntegrationInterface
     private function captureRealPayPalOrder(string $orderId): array
     {
         $accessToken = $this->getAccessToken();
-        $baseUrl = ($this->config['mode'] ?? 'sandbox') === 'sandbox' 
-            ? 'https://api-m.sandbox.paypal.com' 
+        $baseUrl = ($this->config['mode'] ?? 'sandbox') === 'sandbox'
+            ? 'https://api-m.sandbox.paypal.com'
             : 'https://api-m.paypal.com';
 
-        $ch = curl_init($baseUrl . "/v2/checkout/orders/$orderId/capture");
+        $ch = curl_init($baseUrl . sprintf('/v2/checkout/orders/%s/capture', $orderId));
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_POST, true);
         curl_setopt($ch, CURLOPT_HTTPHEADER, [
@@ -206,6 +208,7 @@ class PayPalIntegration implements PaymentIntegrationInterface
     /**
      * Create a subscription
      */
+    #[\Override]
     public function createSubscription(array $subscriptionData): array
     {
         // Mock processing for PayPal
@@ -225,6 +228,7 @@ class PayPalIntegration implements PaymentIntegrationInterface
     /**
      * Cancel a subscription
      */
+    #[\Override]
     public function cancelSubscription(string $subscriptionId): bool
     {
         // Mock canceling for PayPal
@@ -234,6 +238,7 @@ class PayPalIntegration implements PaymentIntegrationInterface
     /**
      * Get payment status
      */
+    #[\Override]
     public function getPaymentStatus(string $transactionId): string
     {
         return 'completed';
@@ -242,6 +247,7 @@ class PayPalIntegration implements PaymentIntegrationInterface
     /**
      * Get subscription status
      */
+    #[\Override]
     public function getSubscriptionStatus(string $subscriptionId): string
     {
         return 'active';
@@ -250,6 +256,7 @@ class PayPalIntegration implements PaymentIntegrationInterface
     /**
      * Refresh subscription data from provider
      */
+    #[\Override]
     public function refreshSubscription(string $subscriptionId): array
     {
         return [
@@ -261,6 +268,7 @@ class PayPalIntegration implements PaymentIntegrationInterface
     /**
      * Check if the integration is healthy and accessible
      */
+    #[\Override]
     public function healthCheck(): bool
     {
         return !empty($this->config['client_id']) && !empty($this->config['client_secret']);
@@ -269,6 +277,7 @@ class PayPalIntegration implements PaymentIntegrationInterface
     /**
      * Get integration-specific capabilities
      */
+    #[\Override]
     public function getCapabilities(): array
     {
         return [

@@ -1,7 +1,8 @@
 <?php
+
 /**
  * Pace Integration (Mock)
- * 
+ *
  * Implements a mock Pace integration for the payment system.
  * Pace is a popular payment provider in the UK and Southeast Asia.
  */
@@ -10,16 +11,14 @@ namespace IamLab\Service\Payment\Integrations;
 
 class PaceIntegration implements PaymentIntegrationInterface
 {
-    protected array $config;
-
-    public function __construct(array $config)
+    public function __construct(protected array $config)
     {
-        $this->config = $config;
     }
 
     /**
      * Create a single payment
      */
+    #[\Override]
     public function createPayment(array $paymentData): array
     {
         $apiKey = $this->config['api_key'] ?? '';
@@ -57,9 +56,10 @@ class PaceIntegration implements PaymentIntegrationInterface
     /**
      * Capture a previously created payment
      */
+    #[\Override]
     public function capturePayment(string $transactionId, array $options = []): array
     {
-        $response = $this->request('POST', "/transactions/{$transactionId}/capture");
+        $response = $this->request('POST', sprintf('/transactions/%s/capture', $transactionId));
 
         if (isset($response['error'])) {
             throw new \Exception("Pace Capture Error: " . $response['error']['message']);
@@ -75,10 +75,11 @@ class PaceIntegration implements PaymentIntegrationInterface
     /**
      * Create a subscription
      */
+    #[\Override]
     public function createSubscription(array $subscriptionData): array
     {
         $planId = $subscriptionData['plan_id'] ?? '';
-        
+
         $payload = [
             'planID' => $planId,
             'customerID' => 'PACE-CUST-' . bin2hex(random_bytes(4)),
@@ -112,33 +113,37 @@ class PaceIntegration implements PaymentIntegrationInterface
     /**
      * Cancel a subscription
      */
+    #[\Override]
     public function cancelSubscription(string $subscriptionId): bool
     {
-        $response = $this->request('POST', "/subscriptions/{$subscriptionId}/cancel");
+        $response = $this->request('POST', sprintf('/subscriptions/%s/cancel', $subscriptionId));
         return !isset($response['error']);
     }
 
     /**
      * Get payment status
      */
+    #[\Override]
     public function getPaymentStatus(string $transactionId): string
     {
-        $response = $this->request('GET', "/transactions/{$transactionId}");
+        $response = $this->request('GET', '/transactions/' . $transactionId);
         return strtolower($response['status'] ?? 'unknown');
     }
 
     /**
      * Get subscription status
      */
+    #[\Override]
     public function getSubscriptionStatus(string $subscriptionId): string
     {
-        $response = $this->request('GET', "/subscriptions/{$subscriptionId}");
+        $response = $this->request('GET', '/subscriptions/' . $subscriptionId);
         return strtolower($response['status'] ?? 'unknown');
     }
 
     /**
      * Refresh subscription data from provider
      */
+    #[\Override]
     public function refreshSubscription(string $subscriptionId): array
     {
         return [
@@ -150,6 +155,7 @@ class PaceIntegration implements PaymentIntegrationInterface
     /**
      * Check if the integration is healthy and accessible
      */
+    #[\Override]
     public function healthCheck(): bool
     {
         if (empty($this->config['api_key'])) {
@@ -160,7 +166,7 @@ class PaceIntegration implements PaymentIntegrationInterface
             // Simple ping or balance check
             $response = $this->request('GET', '/merchants/me');
             return !isset($response['error']);
-        } catch (\Exception $e) {
+        } catch (\Exception) {
             return false;
         }
     }
@@ -168,6 +174,7 @@ class PaceIntegration implements PaymentIntegrationInterface
     /**
      * Get integration-specific capabilities
      */
+    #[\Override]
     public function getCapabilities(): array
     {
         return [
@@ -188,12 +195,12 @@ class PaceIntegration implements PaymentIntegrationInterface
 
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        
+
         $headers = [
             'Authorization: Basic ' . base64_encode($this->config['api_key'] . ':' . ($this->config['secret'] ?? '')),
             'Content-Type: application/json'
         ];
-        
+
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 
         if ($method === 'POST') {

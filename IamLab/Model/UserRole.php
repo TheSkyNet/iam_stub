@@ -49,7 +49,7 @@ class UserRole extends Model
      *
      * @return $this
      */
-    public function setId($id)
+    public function setId($id): static
     {
         $this->id = $id;
         return $this;
@@ -58,7 +58,6 @@ class UserRole extends Model
     /**
      * Method to set the value of field user_id
      *
-     * @param integer $user_id
      *
      * @return $this
      */
@@ -71,7 +70,6 @@ class UserRole extends Model
     /**
      * Method to set the value of field role_id
      *
-     * @param integer $role_id
      *
      * @return $this
      */
@@ -84,7 +82,6 @@ class UserRole extends Model
     /**
      * Method to set the value of field created_at
      *
-     * @param string $created_at
      *
      * @return $this
      */
@@ -97,7 +94,6 @@ class UserRole extends Model
     /**
      * Method to set the value of field updated_at
      *
-     * @param string $updated_at
      *
      * @return $this
      */
@@ -119,8 +115,6 @@ class UserRole extends Model
 
     /**
      * Returns the value of field user_id
-     *
-     * @return integer
      */
     public function getUserId(): int
     {
@@ -129,8 +123,6 @@ class UserRole extends Model
 
     /**
      * Returns the value of field role_id
-     *
-     * @return integer
      */
     public function getRoleId(): int
     {
@@ -160,10 +152,10 @@ class UserRole extends Model
     /**
      * Initialize method for model.
      */
-    public function initialize()
+    public function initialize(): void
     {
         $this->setSource('user_roles');
-        
+
         // Define relationships
         $this->belongsTo('user_id', User::class, 'id', ['alias' => 'user']);
         $this->belongsTo('role_id', Role::class, 'id', ['alias' => 'role']);
@@ -176,6 +168,7 @@ class UserRole extends Model
      *
      * @return UserRole[]|Model\ResultsetInterface
      */
+    #[\Override]
     public static function find($parameters = null): ResultsetInterface
     {
         return parent::find($parameters);
@@ -188,6 +181,7 @@ class UserRole extends Model
      *
      * @return UserRole|Model
      */
+    #[\Override]
     public static function findFirst($parameters = null): mixed
     {
         return parent::findFirst($parameters);

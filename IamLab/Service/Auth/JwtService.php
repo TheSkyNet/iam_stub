@@ -12,17 +12,27 @@ use Exception;
 
 class JwtService extends Injectable
 {
-    private string $secretKey;
-    private string $algorithm;
-    private int $accessTokenExpiry;
-    private int $refreshTokenExpiry;
-    private int $rememberMeAccessTokenExpiry;
-    private int $rememberMeRefreshTokenExpiry;
-    private string $refreshTokenCookieName;
-    private ?string $cookieDomain;
-    private bool $cookieSecure;
-    private string $issuer;
-    private string $audience;
+    private readonly string $secretKey;
+
+    private readonly string $algorithm;
+
+    private readonly int $accessTokenExpiry;
+
+    private readonly int $refreshTokenExpiry;
+
+    private readonly int $rememberMeAccessTokenExpiry;
+
+    private readonly int $rememberMeRefreshTokenExpiry;
+
+    private readonly string $refreshTokenCookieName;
+
+    private readonly ?string $cookieDomain;
+
+    private readonly bool $cookieSecure;
+
+    private readonly string $issuer;
+
+    private readonly string $audience;
 
     public function __construct()
     {
@@ -95,7 +105,7 @@ class JwtService extends Injectable
     public function setRefreshTokenCookie(string $token, bool $rememberMe = true): void
     {
         $expiry = $rememberMe ? (time() + $this->rememberMeRefreshTokenExpiry) : (time() + $this->refreshTokenExpiry);
-        
+
         // Use Phalcon's cookies service
         // Signature: set(string $name, $value = null, int $expire = 0, string $path = "/", bool $secure = null, string $domain = null, bool $httpOnly = null, array $options = []): CookiesInterface
         $this->cookies->set(
@@ -103,7 +113,7 @@ class JwtService extends Injectable
             $token,
             $expiry,
             '/',
-            (bool)$this->cookieSecure,
+            $this->cookieSecure,
             (string)$this->cookieDomain,
             true // httpOnly
         );
@@ -119,7 +129,7 @@ class JwtService extends Injectable
             '',
             time() - 3600,
             '/',
-            (bool)$this->cookieSecure,
+            $this->cookieSecure,
             (string)$this->cookieDomain,
             true // httpOnly
         );
@@ -134,6 +144,7 @@ class JwtService extends Injectable
         if ($this->cookies->has($this->refreshTokenCookieName)) {
             return $this->cookies->get($this->refreshTokenCookieName)->getValue();
         }
+
         return null;
     }
 
@@ -145,12 +156,12 @@ class JwtService extends Injectable
         try {
             $decoded = JWT::decode($token, new Key($this->secretKey, $this->algorithm));
             return (array) $decoded;
-        } catch (ExpiredException $e) {
+        } catch (ExpiredException) {
             throw new Exception('Token has expired');
-        } catch (SignatureInvalidException $e) {
+        } catch (SignatureInvalidException) {
             throw new Exception('Invalid token signature');
         } catch (Exception $e) {
-            throw new Exception('Invalid token: ' . $e->getMessage());
+            throw new Exception('Invalid token: ' . $e->getMessage(), $e->getCode(), $e);
         }
     }
 
@@ -167,7 +178,7 @@ class JwtService extends Injectable
         }
 
         // Check for Bearer token format
-        if (preg_match('/Bearer\s+(.*)$/i', $authHeader, $matches)) {
+        if (preg_match('/Bearer\s+(.*)$/i', (string) $authHeader, $matches)) {
             return $matches[1];
         }
 
@@ -187,7 +198,7 @@ class JwtService extends Injectable
             }
 
             return User::findFirstById($payload['user_id']);
-        } catch (Exception $e) {
+        } catch (Exception) {
             return null;
         }
     }
@@ -217,7 +228,7 @@ class JwtService extends Injectable
                 'expires_in' => $expiresIn,
                 'token_type' => 'Bearer'
             ];
-        } catch (Exception $e) {
+        } catch (Exception) {
             return null;
         }
     }
@@ -252,7 +263,7 @@ class JwtService extends Injectable
             }
 
             return User::findFirstById($payload['user_id']);
-        } catch (Exception $e) {
+        } catch (Exception) {
             return null;
         }
     }

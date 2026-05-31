@@ -15,10 +15,10 @@ class UsersApi extends aAPI
     public function indexAction(): void
     {
         $this->requireAdmin();
-        
+
         try {
             $users = User::find();
-            
+
             // Include roles for each user
             $usersData = [];
             foreach ($users as $user) {
@@ -31,11 +31,11 @@ class UsersApi extends aAPI
                 'success' => true,
                 'data' => $usersData
             ]);
-        } catch (Exception $e) {
+        } catch (Exception $exception) {
             $this->dispatchError([
                 'success' => false,
                 'message' => 'Failed to retrieve users',
-                'error' => $e->getMessage()
+                'error' => $exception->getMessage()
             ]);
         }
     }
@@ -66,11 +66,11 @@ class UsersApi extends aAPI
                 'success' => true,
                 'data' => $userData
             ]);
-        } catch (Exception $e) {
+        } catch (Exception $exception) {
             $this->dispatchError([
                 'success' => false,
                 'message' => 'Failed to retrieve user',
-                'error' => $e->getMessage()
+                'error' => $exception->getMessage()
             ]);
         }
     }
@@ -82,20 +82,20 @@ class UsersApi extends aAPI
     public function createAction(): void
     {
         $this->requireAdmin();
-        
+
         try {
             // Validate required fields
             $name = $this->getParam('name');
             $email = $this->getParam('email');
             $password = $this->getParam('password');
-            
+
             if (!$name || !$email || !$password) {
                 $this->dispatchError([
                     'success' => false,
                     'message' => 'Name, email, and password are required'
                 ]);
             }
-            
+
             // Validate email format
             if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
                 $this->dispatchError([
@@ -103,7 +103,7 @@ class UsersApi extends aAPI
                     'message' => 'Invalid email format'
                 ]);
             }
-            
+
             // Check if email already exists
             $existingUser = User::findFirstByEmail($email);
             if ($existingUser) {
@@ -116,10 +116,10 @@ class UsersApi extends aAPI
             $user = new User();
             $user->setName($name);
             $user->setEmail($email);
-            $user->setPassword(password_hash($password, PASSWORD_DEFAULT));
+            $user->setPassword(password_hash((string) $password, PASSWORD_DEFAULT));
             $user->setKey(bin2hex(random_bytes(32)));
             $user->setEmailVerified($this->getParam('email_verified', false));
-            
+
             if ($user->save()) {
                 // Assign roles if provided
                 $roles = $this->getParam('roles', []);
@@ -128,10 +128,10 @@ class UsersApi extends aAPI
                         $user->addRole($roleName);
                     }
                 }
-                
+
                 $userData = $user->toArray();
                 $userData['roles'] = $user->getRoles();
-                
+
                 $this->dispatch([
                     'success' => true,
                     'data' => $userData,
@@ -144,11 +144,11 @@ class UsersApi extends aAPI
                     'errors' => $user->getMessages()
                 ]);
             }
-        } catch (Exception $e) {
+        } catch (Exception $exception) {
             $this->dispatchError([
                 'success' => false,
                 'message' => 'Failed to create user',
-                'error' => $e->getMessage()
+                'error' => $exception->getMessage()
             ]);
         }
     }
@@ -160,7 +160,7 @@ class UsersApi extends aAPI
     public function updateAction(): void
     {
         $this->requireAdmin();
-        
+
         try {
             $id = $this->getRouteParam('id');
             if (!$id) {
@@ -199,7 +199,7 @@ class UsersApi extends aAPI
                     ]);
                     return;
                 }
-                
+
                 // Check if email already exists (excluding current user)
                 $existingUser = User::findFirst([
                     'conditions' => 'email = :email: AND id != :id:',
@@ -212,14 +212,14 @@ class UsersApi extends aAPI
                     ]);
                     return;
                 }
-                
+
                 $user->setEmail($email);
             }
 
             // Update password if provided
             $password = $this->getParam('password');
             if ($password !== null && !empty($password)) {
-                $user->setPassword(password_hash($password, PASSWORD_DEFAULT));
+                $user->setPassword(password_hash((string) $password, PASSWORD_DEFAULT));
             }
 
             // Update email verification status
@@ -233,14 +233,14 @@ class UsersApi extends aAPI
                 if (is_array($roles)) {
                     // Get current roles
                     $currentRoles = $user->getRoles();
-                    
+
                     // Remove roles that are not in the new list
                     foreach ($currentRoles as $currentRole) {
                         if (!in_array($currentRole, $roles)) {
                             $user->removeRole($currentRole);
                         }
                     }
-                    
+
                     // Add new roles
                     foreach ($roles as $roleName) {
                         if (!in_array($roleName, $currentRoles)) {
@@ -248,10 +248,10 @@ class UsersApi extends aAPI
                         }
                     }
                 }
-                
+
                 $userData = $user->toArray();
                 $userData['roles'] = $user->getRoles();
-                
+
                 $this->dispatch([
                     'success' => true,
                     'data' => $userData,
@@ -264,11 +264,11 @@ class UsersApi extends aAPI
                     'errors' => $user->getMessages()
                 ]);
             }
-        } catch (Exception $e) {
+        } catch (Exception $exception) {
             $this->dispatchError([
                 'success' => false,
                 'message' => 'Failed to update user',
-                'error' => $e->getMessage()
+                'error' => $exception->getMessage()
             ]);
         }
     }
@@ -280,7 +280,7 @@ class UsersApi extends aAPI
     public function deleteAction(): void
     {
         $this->requireAdmin();
-        
+
         try {
             $id = $this->getRouteParam('id');
             if (!$id) {
@@ -325,11 +325,11 @@ class UsersApi extends aAPI
                     'errors' => $user->getMessages()
                 ]);
             }
-        } catch (Exception $e) {
+        } catch (Exception $exception) {
             $this->dispatchError([
                 'success' => false,
                 'message' => 'Failed to delete user',
-                'error' => $e->getMessage()
+                'error' => $exception->getMessage()
             ]);
         }
     }
@@ -341,7 +341,7 @@ class UsersApi extends aAPI
     public function searchAction(): void
     {
         $this->requireAdmin();
-        
+
         try {
             $query = $this->getParam('q', '');
             if (empty($query)) {
@@ -355,7 +355,7 @@ class UsersApi extends aAPI
             // Search by name or email
             $users = User::find([
                 "name LIKE :query: OR email LIKE :query:",
-                'bind' => ['query' => "%$query%"]
+                'bind' => ['query' => sprintf('%%%s%%', $query)]
             ]);
 
             // Include roles for each user
@@ -371,11 +371,11 @@ class UsersApi extends aAPI
                 'data' => $usersData,
                 'query' => $query
             ]);
-        } catch (Exception $e) {
+        } catch (Exception $exception) {
             $this->dispatchError([
                 'success' => false,
                 'message' => 'Search failed',
-                'error' => $e->getMessage()
+                'error' => $exception->getMessage()
             ]);
         }
     }

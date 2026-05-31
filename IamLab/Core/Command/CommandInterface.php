@@ -15,22 +15,16 @@ interface CommandInterface
 
     /**
      * Get command signature/usage
-     *
-     * @return string
      */
     public function getSignature(): string;
 
     /**
      * Get command description
-     *
-     * @return string
      */
     public function getDescription(): string;
 
     /**
      * Get command help text
-     *
-     * @return string
      */
     public function getHelp(): string;
 }

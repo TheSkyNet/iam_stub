@@ -10,9 +10,8 @@ class TestPusherCommand extends BaseCommand
 {
     /**
      * Get command signature/usage
-     *
-     * @return string
      */
+    #[\Override]
     public function getSignature(): string
     {
         return 'test:pusher [channel] [--event=] [--message=] [-d|--debug] [-v|--verbose]';
@@ -20,9 +19,8 @@ class TestPusherCommand extends BaseCommand
 
     /**
      * Get command description
-     *
-     * @return string
      */
+    #[\Override]
     public function getDescription(): string
     {
         return 'Test Pusher real-time functionality';
@@ -30,9 +28,8 @@ class TestPusherCommand extends BaseCommand
 
     /**
      * Get command help text
-     *
-     * @return string
      */
+    #[\Override]
     public function getHelp(): string
     {
         return <<<HELP
@@ -62,6 +59,7 @@ HELP;
      *
      * @return int Exit code
      */
+    #[\Override]
     protected function handle(): int
     {
         $this->info("Starting Pusher test...");
@@ -69,8 +67,8 @@ HELP;
         // Initialize Pusher service
         try {
             $pusherService = new PusherService();
-        } catch (Exception $e) {
-            $this->error("Failed to initialize Pusher service: " . $e->getMessage());
+        } catch (Exception $exception) {
+            $this->error("Failed to initialize Pusher service: " . $exception->getMessage());
             return 1;
         }
 
@@ -87,18 +85,19 @@ HELP;
 
         // Get channel name
         $channel = $this->argument(0, 'test-channel');
-        $this->verbose("Channel: {$channel}");
+        $this->verbose('Channel: ' . $channel);
 
         // Get event name
         $event = $this->option('event', 'test-event');
-        $this->verbose("Event: {$event}");
+        $this->verbose('Event: ' . $event);
 
         // Get test message
         $message = $this->option('message');
         if (!$message) {
             $message = $this->generateTestMessage();
         }
-        $this->verbose("Message: {$message}");
+
+        $this->verbose('Message: ' . $message);
 
         // Prepare event data
         $eventData = [
@@ -115,66 +114,61 @@ HELP;
 
         // Send the event
         $this->info("Sending test event to Pusher...");
-        
+
         try {
             $result = $pusherService->trigger($channel, $event, $eventData);
 
             if ($result) {
                 $this->success("Test event sent successfully!");
-                $this->info("Channel: {$channel}");
-                $this->info("Event: {$event}");
-                $this->info("Message: {$message}");
+                $this->info('Channel: ' . $channel);
+                $this->info('Event: ' . $event);
+                $this->info('Message: ' . $message);
                 $this->info("");
                 $this->info("To see the event in action:");
                 $this->info("1. Open your browser to: http://localhost:8080/pusher-test");
-                $this->info("2. Subscribe to channel '{$channel}' and listen for event '{$event}'");
+                $this->info(sprintf("2. Subscribe to channel '%s' and listen for event '%s'", $channel, $event));
                 $this->info("3. Or check your Pusher dashboard for event logs");
-                
+
                 // Test channel info if verbose
                 if ($this->verbose) {
                     $this->testChannelInfo($pusherService, $channel);
                 }
-                
+
                 return 0;
-            } else {
-                $this->error("Failed to send test event: " . $pusherService->getLastError());
-                return 1;
             }
-        } catch (Exception $e) {
-            $this->error("Exception occurred while sending event: " . $e->getMessage());
-            $this->debug("Stack trace: " . $e->getTraceAsString());
+
+            $this->error("Failed to send test event: " . $pusherService->getLastError());
+            return 1;
+        } catch (Exception $exception) {
+            $this->error("Exception occurred while sending event: " . $exception->getMessage());
+            $this->debug("Stack trace: " . $exception->getTraceAsString());
             return 1;
         }
     }
 
     /**
      * Test channel information retrieval
-     *
-     * @param PusherService $pusherService
-     * @param string $channel
      */
     private function testChannelInfo(PusherService $pusherService, string $channel): void
     {
         $this->verbose("Testing channel information retrieval...");
-        
+
         try {
             $channelInfo = $pusherService->getChannelInfo($channel, ['user_count']);
-            
+
             if ($channelInfo !== false) {
                 $this->verbose("Channel info retrieved successfully:");
                 $this->verbose("  User count: " . ($channelInfo['user_count'] ?? 'N/A'));
             } else {
                 $this->verbose("Could not retrieve channel info: " . $pusherService->getLastError());
             }
-        } catch (Exception $e) {
-            $this->verbose("Channel info test failed: " . $e->getMessage());
+        } catch (Exception $exception) {
+            $this->verbose("Channel info test failed: " . $exception->getMessage());
         }
     }
 
     /**
      * Generate a test message
-     *
-     * @return string
      */
     private function generateTestMessage(): string
     {

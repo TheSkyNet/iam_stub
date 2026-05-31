@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace IamLab\Seeders;
@@ -12,7 +13,7 @@ use IamLab\Seeding\Contracts\SeederInterface;
  * This example does NOT perform DB writes; it prints intended actions.
  * Replace with your own DAO/repository to persist changes.
  */
-final class ExampleUserSeeder implements SeederInterface, ProvidesCliOptions, BuildsFromOptions
+final readonly class ExampleUserSeeder implements SeederInterface, ProvidesCliOptions, BuildsFromOptions
 {
     public function __construct(
         private ?string $email = null,
@@ -21,12 +22,14 @@ final class ExampleUserSeeder implements SeederInterface, ProvidesCliOptions, Bu
     ) {
     }
 
+    #[\Override]
     public static function cliOptions(): array
     {
         return ['email:', 'password:', 'name:'];
     }
 
     /** @param array<string,mixed> $options */
+    #[\Override]
     public static function fromOptions(array $options): self
     {
         $email = isset($options['email']) ? (string) $options['email'] : null;
@@ -35,6 +38,7 @@ final class ExampleUserSeeder implements SeederInterface, ProvidesCliOptions, Bu
         return new self($email, $password, $name);
     }
 
+    #[\Override]
     public function run(): void
     {
         $email = $this->email ?? 'admin@example.com';
@@ -44,6 +48,7 @@ final class ExampleUserSeeder implements SeederInterface, ProvidesCliOptions, Bu
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
             throw new \InvalidArgumentException('Invalid email provided: ' . $email);
         }
+
         if (strlen($password) < 6) {
             throw new \InvalidArgumentException('Password must be at least 6 characters long.');
         }

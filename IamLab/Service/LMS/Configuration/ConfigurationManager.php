@@ -4,18 +4,16 @@ namespace IamLab\Service\LMS\Configuration;
 
 /**
  * Configuration Manager for LMS Service
- * 
+ *
  * Handles all configuration loading and management responsibilities
  * Following Single Responsibility Principle (SRP)
  */
 class ConfigurationManager
 {
     private array $config = [];
-    private ?object $configService = null;
 
-    public function __construct(?object $configService = null)
+    public function __construct(private readonly ?object $configService = null)
     {
-        $this->configService = $configService;
         $this->loadConfiguration();
     }
 
@@ -105,7 +103,7 @@ class ConfigurationManager
      */
     private function getConfigValue(string $serviceKey, string $envKey, mixed $default, string $type = 'string'): mixed
     {
-        $value = $this->configService 
+        $value = $this->configService
             ? $this->configService->get($serviceKey, $default)
             : ($_ENV[$envKey] ?? $default);
 
@@ -117,7 +115,7 @@ class ConfigurationManager
      */
     private function castValue(mixed $value, string $type): mixed
     {
-        return match($type) {
+        return match ($type) {
             'bool' => (bool)$value,
             'int' => (int)$value,
             'float' => (float)$value,
@@ -156,18 +154,21 @@ class ConfigurationManager
                 if (empty($config['api_key'])) {
                     $errors[] = "Gemini integration is enabled but API key is missing";
                 }
+
                 break;
 
             case 'tencent_edu':
                 if (empty($config['app_id']) || empty($config['secret_key'])) {
                     $errors[] = "Tencent Education integration is enabled but credentials are missing";
                 }
+
                 break;
 
             case 'ollama':
                 if (empty($config['host'])) {
                     $errors[] = "Ollama integration is enabled but host is missing";
                 }
+
                 break;
         }
 

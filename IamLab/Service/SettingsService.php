@@ -1,4 +1,5 @@
 <?php
+
 // app/services/SettingsService.php
 
 namespace IamLab\Service;
@@ -7,21 +8,22 @@ use IamLab\Model\SiteSetting;
 
 class SettingsService
 {
-    private $settings = [];
-    private $formatted = [];
+    private array $settings = [];
 
-    public function initialize()
+    private array $formatted = [];
+
+    public function initialize(): void
     {
         $this->loadSettings();
         $this->formatSettings();
     }
 
-    private function loadSettings()
+    private function loadSettings(): void
     {
         $this->settings = SiteSetting::find()->toArray();
     }
 
-    private function formatSettings()
+    private function formatSettings(): void
     {
         // Base settings format
         $this->formatted = [
@@ -105,6 +107,7 @@ class SettingsService
                     if ($value) {
                         $this->formatted['meta']['robots'] = 'noindex,nofollow';
                     }
+
                     break;
 
                 case 'analytics_enabled':
@@ -133,24 +136,20 @@ class SettingsService
 
     private function parseValue($value, $type)
     {
-        switch ($type) {
-            case SiteSetting::TYPE_JSON:
-                return json_decode($value, true) ?? [];
-            case SiteSetting::TYPE_BOOL:
-                return (bool)$value;
-            case SiteSetting::TYPE_INT:
-                return (int)$value;
-            default:
-                return $value;
-        }
+        return match ($type) {
+            SiteSetting::TYPE_JSON => json_decode((string) $value, true) ?? [],
+            SiteSetting::TYPE_BOOL => (bool)$value,
+            SiteSetting::TYPE_INT => (int)$value,
+            default => $value,
+        };
     }
 
-    public function getFormatted()
+    public function getFormatted(): array
     {
         return $this->formatted;
     }
 
-    public function getRaw()
+    public function getRaw(): array
     {
         return $this->settings;
     }

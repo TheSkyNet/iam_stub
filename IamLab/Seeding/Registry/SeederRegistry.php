@@ -1,11 +1,12 @@
 <?php
+
 declare(strict_types=1);
 
 namespace IamLab\Seeding\Registry;
 
 use IamLab\Seeding\Contracts\BuildsFromOptions;
 
-final class SeederRegistry
+final readonly class SeederRegistry
 {
     /** @param array<string,class-string> $mapping */
     public function __construct(private array $mapping)
@@ -26,6 +27,7 @@ final class SeederRegistry
                 }
             }
         }
+
         return array_keys($opts);
     }
 
@@ -36,6 +38,7 @@ final class SeederRegistry
             /** @var class-string<BuildsFromOptions> $class */
             return $class::fromOptions($options);
         }
+
         return new $class();
     }
 }

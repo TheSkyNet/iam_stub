@@ -8,7 +8,7 @@ use IamLab\Service\JobQueue;
 
 /**
  * Worker Command
- * 
+ *
  * Processes jobs from the queue
  */
 class WorkerCommand extends BaseCommand
@@ -26,6 +26,7 @@ class WorkerCommand extends BaseCommand
     /**
      * Command signature
      */
+    #[\Override]
     public function getSignature(): string
     {
         return 'worker:run [--jobs=] [--timeout=] [--sleep=] [--max-memory=] [--once]';
@@ -34,6 +35,7 @@ class WorkerCommand extends BaseCommand
     /**
      * Command description
      */
+    #[\Override]
     public function getDescription(): string
     {
         return 'Run the job queue worker to process pending jobs';
@@ -42,6 +44,7 @@ class WorkerCommand extends BaseCommand
     /**
      * Command help
      */
+    #[\Override]
     public function getHelp(): string
     {
         return 'This command starts a worker process that continuously processes jobs from the queue.
@@ -64,7 +67,8 @@ Examples:
     /**
      * Handle the command
      */
-    public function handle(): int
+    #[\Override]
+    protected function handle(): int
     {
         $this->jobQueue = new JobQueue();
 
@@ -104,9 +108,9 @@ Examples:
 
         $this->info('Starting job queue worker...');
         $this->info("Configuration:");
-        $this->info("  Max jobs: " . ($maxJobs ? $maxJobs : 'unlimited'));
-        $this->info("  Timeout: {$timeout} seconds");
-        $this->info("  Sleep time: {$sleepTime} seconds");
+        $this->info("  Max jobs: " . ($maxJobs ?: 'unlimited'));
+        $this->info(sprintf('  Timeout: %d seconds', $timeout));
+        $this->info(sprintf('  Sleep time: %d seconds', $sleepTime));
         $this->info("  Max memory: " . ($maxMemory / 1024 / 1024) . " MB");
         $this->info("  Run once: " . ($once ? 'yes' : 'no'));
         $this->line('');
@@ -133,7 +137,7 @@ Examples:
 
                 // Check max jobs limit
                 if ($maxJobs && $processedJobs >= $maxJobs) {
-                    $this->info("Maximum jobs ({$maxJobs}) processed. Shutting down...");
+                    $this->info(sprintf('Maximum jobs (%s) processed. Shutting down...', $maxJobs));
                     break;
                 }
 
@@ -146,7 +150,7 @@ Examples:
                         break;
                     }
 
-                    $this->verbose("No jobs available. Sleeping for {$sleepTime} seconds...");
+                    $this->verbose(sprintf('No jobs available. Sleeping for %d seconds...', $sleepTime));
                     sleep($sleepTime);
                     continue;
                 }
@@ -163,46 +167,42 @@ Examples:
                 // Small delay to prevent overwhelming the system
                 usleep(100000); // 0.1 seconds
             }
-
-        } catch (Exception $e) {
-            $this->error('Worker encountered an error: ' . $e->getMessage());
+        } catch (Exception $exception) {
+            $this->error('Worker encountered an error: ' . $exception->getMessage());
             return 1;
         }
 
         $duration = time() - $startTime;
-        $this->success("Worker finished. Processed {$processedJobs} jobs in {$duration} seconds.");
-        
+        $this->success(sprintf('Worker finished. Processed %d jobs in %d seconds.', $processedJobs, $duration));
+
         return 0;
     }
 
     /**
      * Process a single job
-     *
-     * @param Job $job
      */
     protected function processJob(Job $job): void
     {
-        $this->info("Processing job #{$job->getId()} ({$job->getType()})...");
-        
+        $this->info(sprintf('Processing job #%s (%s)...', $job->getId(), $job->getType()));
+
         $startTime = microtime(true);
-        
+
         try {
             $success = $this->jobQueue->processJob($job);
-            
+
             $duration = round((microtime(true) - $startTime) * 1000, 2);
-            
+
             if ($success) {
-                $this->success("✓ Job #{$job->getId()} completed successfully in {$duration}ms");
+                $this->success(sprintf('✓ Job #%s completed successfully in %sms', $job->getId(), $duration));
             } else {
-                $this->warn("⚠ Job #{$job->getId()} failed in {$duration}ms");
+                $this->warn(sprintf('⚠ Job #%s failed in %sms', $job->getId(), $duration));
                 if ($job->getErrorMessage()) {
                     $this->error("  Error: " . $job->getErrorMessage());
                 }
             }
-            
-        } catch (Exception $e) {
+        } catch (Exception $exception) {
             $duration = round((microtime(true) - $startTime) * 1000, 2);
-            $this->error("✗ Job #{$job->getId()} threw exception in {$duration}ms: " . $e->getMessage());
+            $this->error(sprintf('✗ Job #%s threw exception in %sms: ', $job->getId(), $duration) . $exception->getMessage());
         }
     }
 
@@ -213,9 +213,9 @@ Examples:
     {
         if (function_exists('pcntl_signal')) {
             // Handle SIGTERM and SIGINT for graceful shutdown
-            pcntl_signal(SIGTERM, [$this, 'handleShutdownSignal']);
-            pcntl_signal(SIGINT, [$this, 'handleShutdownSignal']);
-            
+            pcntl_signal(SIGTERM, $this->handleShutdownSignal(...));
+            pcntl_signal(SIGINT, $this->handleShutdownSignal(...));
+
             $this->verbose('Signal handlers registered for graceful shutdown.');
         } else {
             $this->verbose('PCNTL extension not available. Signal handling disabled.');
@@ -224,13 +224,11 @@ Examples:
 
     /**
      * Handle shutdown signals
-     *
-     * @param int $signal
      */
     public function handleShutdownSignal(int $signal): void
     {
         $signalName = $signal === SIGTERM ? 'SIGTERM' : 'SIGINT';
-        $this->warn("Received {$signalName}. Shutting down gracefully...");
+        $this->warn(sprintf('Received %s. Shutting down gracefully...', $signalName));
         $this->shouldStop = true;
     }
 
@@ -240,7 +238,7 @@ Examples:
     public function getWorkerStatus(): array
     {
         $stats = $this->jobQueue->getStats();
-        
+
         return [
             'memory_usage' => memory_get_usage(true),
             'memory_peak' => memory_get_peak_usage(true),
@@ -255,22 +253,22 @@ Examples:
     protected function displayStats(): void
     {
         $stats = $this->jobQueue->getStats();
-        
+
         $this->line('');
         $this->info('Job Queue Statistics:');
-        $this->line("  Pending: {$stats[Job::STATUS_PENDING]}");
-        $this->line("  Processing: {$stats[Job::STATUS_PROCESSING]}");
-        $this->line("  Completed: {$stats[Job::STATUS_COMPLETED]}");
-        $this->line("  Failed: {$stats[Job::STATUS_FAILED]}");
-        $this->line("  Retrying: {$stats[Job::STATUS_RETRYING]}");
-        
+        $this->line('  Pending: ' . $stats[Job::STATUS_PENDING]);
+        $this->line('  Processing: ' . $stats[Job::STATUS_PROCESSING]);
+        $this->line('  Completed: ' . $stats[Job::STATUS_COMPLETED]);
+        $this->line('  Failed: ' . $stats[Job::STATUS_FAILED]);
+        $this->line('  Retrying: ' . $stats[Job::STATUS_RETRYING]);
+
         $memoryUsage = round(memory_get_usage(true) / 1024 / 1024, 2);
         $memoryPeak = round(memory_get_peak_usage(true) / 1024 / 1024, 2);
-        
+
         $this->line('');
         $this->info('Memory Usage:');
-        $this->line("  Current: {$memoryUsage} MB");
-        $this->line("  Peak: {$memoryPeak} MB");
+        $this->line(sprintf('  Current: %s MB', $memoryUsage));
+        $this->line(sprintf('  Peak: %s MB', $memoryPeak));
         $this->line('');
     }
 }

@@ -16,27 +16,26 @@ class PusherApi extends aAPI
     {
         try {
             $pusherService = new PusherService();
-            
+
             if (!$pusherService->isReady()) {
                 $this->dispatch([
-                    'success' => false, 
+                    'success' => false,
                     'message' => 'Pusher service not available: ' . $pusherService->getLastError()
                 ]);
                 return;
             }
 
             $clientConfig = $pusherService->getClientConfig();
-            
+
             $this->dispatch([
                 'success' => true,
                 'data' => $clientConfig
             ]);
-
-        } catch (Exception $e) {
+        } catch (Exception $exception) {
             $this->dispatch([
                 'success' => false,
                 'message' => 'Failed to get Pusher configuration',
-                'debug' => $e->getMessage()
+                'debug' => $exception->getMessage()
             ]);
         }
     }
@@ -70,7 +69,7 @@ class PusherApi extends aAPI
             }
 
             $pusherService = new PusherService();
-            
+
             if (!$pusherService->isReady()) {
                 $this->dispatch([
                     'success' => false,
@@ -81,7 +80,7 @@ class PusherApi extends aAPI
 
             // Get user data for presence channels
             $customData = [];
-            if (str_starts_with($channelName, 'presence-')) {
+            if (str_starts_with((string) $channelName, 'presence-')) {
                 $user = $authService->getUser();
                 $customData = [
                     'user_id' => $user->getId(),
@@ -107,12 +106,11 @@ class PusherApi extends aAPI
             $this->response->setContentType('application/json', 'UTF-8');
             $this->response->setContent($authSignature);
             $this->response->send();
-
-        } catch (Exception $e) {
+        } catch (Exception $exception) {
             $this->dispatch([
                 'success' => false,
                 'message' => 'Authentication failed',
-                'debug' => $e->getMessage()
+                'debug' => $exception->getMessage()
             ]);
         }
     }
@@ -147,7 +145,7 @@ class PusherApi extends aAPI
             }
 
             $pusherService = new PusherService();
-            
+
             if (!$pusherService->isReady()) {
                 $this->dispatch([
                     'success' => false,
@@ -170,12 +168,11 @@ class PusherApi extends aAPI
                     'message' => 'Failed to trigger event: ' . $pusherService->getLastError()
                 ]);
             }
-
-        } catch (Exception $e) {
+        } catch (Exception $exception) {
             $this->dispatch([
                 'success' => false,
                 'message' => 'Failed to trigger event',
-                'debug' => $e->getMessage()
+                'debug' => $exception->getMessage()
             ]);
         }
     }
@@ -208,7 +205,7 @@ class PusherApi extends aAPI
             }
 
             $pusherService = new PusherService();
-            
+
             if (!$pusherService->isReady()) {
                 $this->dispatch([
                     'success' => false,
@@ -230,12 +227,11 @@ class PusherApi extends aAPI
                     'message' => 'Failed to get channel info: ' . $pusherService->getLastError()
                 ]);
             }
-
-        } catch (Exception $e) {
+        } catch (Exception $exception) {
             $this->dispatch([
                 'success' => false,
                 'message' => 'Failed to get channel info',
-                'debug' => $e->getMessage()
+                'debug' => $exception->getMessage()
             ]);
         }
     }
@@ -259,7 +255,7 @@ class PusherApi extends aAPI
             $options = $this->getParam('options', []);
 
             $pusherService = new PusherService();
-            
+
             if (!$pusherService->isReady()) {
                 $this->dispatch([
                     'success' => false,
@@ -281,12 +277,11 @@ class PusherApi extends aAPI
                     'message' => 'Failed to get channels: ' . $pusherService->getLastError()
                 ]);
             }
-
-        } catch (Exception $e) {
+        } catch (Exception $exception) {
             $this->dispatch([
                 'success' => false,
                 'message' => 'Failed to get channels',
-                'debug' => $e->getMessage()
+                'debug' => $exception->getMessage()
             ]);
         }
     }
@@ -301,7 +296,7 @@ class PusherApi extends aAPI
             $body = $this->request->getRawBody();
 
             $pusherService = new PusherService();
-            
+
             if (!$pusherService->isReady()) {
                 $this->response->setStatusCode(500);
                 $this->dispatch([
@@ -315,8 +310,8 @@ class PusherApi extends aAPI
 
             if ($isValid) {
                 // Process webhook data
-                $webhookData = json_decode($body, true);
-                
+                $webhookData = json_decode((string) $body, true);
+
                 // Log webhook for debugging
                 error_log("Pusher webhook received: " . $body);
 
@@ -335,13 +330,12 @@ class PusherApi extends aAPI
                     'message' => 'Invalid webhook signature'
                 ]);
             }
-
-        } catch (Exception $e) {
+        } catch (Exception $exception) {
             $this->response->setStatusCode(500);
             $this->dispatch([
                 'success' => false,
                 'message' => 'Webhook processing failed',
-                'debug' => $e->getMessage()
+                'debug' => $exception->getMessage()
             ]);
         }
     }

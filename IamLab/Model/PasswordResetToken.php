@@ -52,10 +52,10 @@ class PasswordResetToken extends Model
     /**
      * Initialize method for model.
      */
-    public function initialize()
+    public function initialize(): void
     {
         $this->setSource("password_reset_tokens");
-        
+
         // Define relationship with User model
         $this->belongsTo('user_id', User::class, 'id', [
             'alias' => 'user'
@@ -64,8 +64,6 @@ class PasswordResetToken extends Model
 
     /**
      * Generate a secure reset token
-     *
-     * @return string
      */
     public static function generateToken(): string
     {
@@ -75,8 +73,6 @@ class PasswordResetToken extends Model
     /**
      * Create a new password reset token for a user
      *
-     * @param User $user
-     * @param int $expirationHours
      * @return PasswordResetToken|false
      */
     public static function createForUser(User $user, int $expirationHours = 1): PasswordResetToken|false
@@ -87,7 +83,7 @@ class PasswordResetToken extends Model
         $token = new self();
         $token->setUserId($user->getId());
         $token->setToken(self::generateToken());
-        $token->setExpiresAt(date('Y-m-d H:i:s', strtotime("+{$expirationHours} hours")));
+        $token->setExpiresAt(date('Y-m-d H:i:s', strtotime(sprintf('+%d hours', $expirationHours))));
         $token->setCreatedAt(date('Y-m-d H:i:s'));
 
         if ($token->save()) {
@@ -99,9 +95,6 @@ class PasswordResetToken extends Model
 
     /**
      * Clean up expired tokens for a user
-     *
-     * @param int $userId
-     * @return void
      */
     public static function cleanupExpiredTokens(int $userId): void
     {
@@ -117,8 +110,6 @@ class PasswordResetToken extends Model
 
     /**
      * Check if token is valid and not expired
-     *
-     * @return bool
      */
     public function isValid(): bool
     {
@@ -134,8 +125,6 @@ class PasswordResetToken extends Model
 
     /**
      * Mark token as used
-     *
-     * @return bool
      */
     public function markAsUsed(): bool
     {
@@ -212,8 +201,6 @@ class PasswordResetToken extends Model
 
     /**
      * Get the associated user
-     *
-     * @return User|null
      */
     public function getUser(): ?User
     {

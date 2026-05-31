@@ -2,6 +2,8 @@
 
 use Phalcon\Config\Config;
 
+use function App\Core\Helpers\env;
+
 defined('APP_PATH') || define('APP_PATH', realpath('./IamLab'));
 defined('TMP_PATH') || define('TMP_PATH', sys_get_temp_dir());
 defined('TMP_DISK') || define('TMP_DISK', '/var/www/html/files/tmp');
@@ -10,21 +12,21 @@ defined('FILE_PATH') || define('FILE_PATH', '/var/www/html/public/files');
 
 return new Config([
     'app' => [
-        'encryption_key' => App\Core\Helpers\env('APP_KEY', 'def00000c6bbb616abfcd4abb5664b54c8002f6884d74e9b9778caab38c70c84f87a2c697ae66c9efb625ed18333c372e49311c575f2367ab484b96aa9ca5bb3d81cf4a1'),
-        'baseUri' => App\Core\Helpers\env('APP_BASE_URI'),
-        'env' => App\Core\Helpers\env('APP_ENV'),
-        'name' => App\Core\Helpers\env('APP_NAME'),
-        'timezone' => App\Core\Helpers\env('APP_TIMEZONE'),
-        'url' => App\Core\Helpers\env('APP_URL'),
-        'version' => App\Core\Helpers\env('VERSION'),
+        'encryption_key' => env('APP_KEY', 'def00000c6bbb616abfcd4abb5664b54c8002f6884d74e9b9778caab38c70c84f87a2c697ae66c9efb625ed18333c372e49311c575f2367ab484b96aa9ca5bb3d81cf4a1'),
+        'baseUri' => env('APP_BASE_URI'),
+        'env' => env('APP_ENV'),
+        'name' => env('APP_NAME'),
+        'timezone' => env('APP_TIMEZONE'),
+        'url' => env('APP_URL'),
+        'version' => env('VERSION'),
         'time' => microtime(true),
     ],
     'database' => [
         'adapter' => 'Mysql',
-        'host' => App\Core\Helpers\env('DB_HOST', 'mysql'),
-        'username' => App\Core\Helpers\env('DB_USERNAME', 'phalcons'),
-        'password' => App\Core\Helpers\env('DB_PASSWORD', 'phalcons'),
-        'dbname' => App\Core\Helpers\env('DB_NAME', 'phalcons'),
+        'host' => env('DB_HOST', 'mysql'),
+        'username' => env('DB_USERNAME', 'phalcons'),
+        'password' => env('DB_PASSWORD', 'phalcons'),
+        'dbname' => env('DB_NAME', 'phalcons'),
     ],
 
     'application' => [
@@ -35,23 +37,23 @@ return new Config([
         'baseUri' => '/',
     ],
     'redis' => [
-        'host' => App\Core\Helpers\env('REDIS_HOST', 'redis'),
-        'port' => App\Core\Helpers\env('REDIS_PORT', 6379),
-        'password' => App\Core\Helpers\env('REDIS_PASSWORD', ''),
-        'timeout' => App\Core\Helpers\env('REDIS_TIMEOUT', 0),
-        'persistent' => App\Core\Helpers\env('REDIS_PERSISTENT', false),
-        'database' => App\Core\Helpers\env('REDIS_DATABASE', 0),
-        'prefix' => App\Core\Helpers\env('REDIS_PREFIX', ''),
+        'host' => env('REDIS_HOST', 'redis'),
+        'port' => env('REDIS_PORT', 6379),
+        'password' => env('REDIS_PASSWORD', ''),
+        'timeout' => env('REDIS_TIMEOUT', 0),
+        'persistent' => env('REDIS_PERSISTENT', false),
+        'database' => env('REDIS_DATABASE', 0),
+        'prefix' => env('REDIS_PREFIX', ''),
 
-        'lifetime' => App\Core\Helpers\env('REDIS_LIFETIME', 0),
-        'retryInterval' => App\Core\Helpers\env('REDIS_RETRYINTERVAL', 0),
-        'maxTries' => App\Core\Helpers\env('REDIS_MAXTRIES', 0),
-        'usePipeline' => App\Core\Helpers\env('REDIS_USEPIPELINE', false),
-        'useCluster' => App\Core\Helpers\env('REDIS_USECLUSTER', false),
-        'clusterNodes' => App\Core\Helpers\env('REDIS_CLUSTERNODES', ''),
-        'failover' => App\Core\Helpers\env('REDIS_FAILOVER', false),
-        'maxRedirects' => App\Core\Helpers\env('REDIS_MAXREDIRECTS', 0),
-        'readOnly' => App\Core\Helpers\env('REDIS_READONLY', false),
+        'lifetime' => env('REDIS_LIFETIME', 0),
+        'retryInterval' => env('REDIS_RETRYINTERVAL', 0),
+        'maxTries' => env('REDIS_MAXTRIES', 0),
+        'usePipeline' => env('REDIS_USEPIPELINE', false),
+        'useCluster' => env('REDIS_USECLUSTER', false),
+        'clusterNodes' => env('REDIS_CLUSTERNODES', ''),
+        'failover' => env('REDIS_FAILOVER', false),
+        'maxRedirects' => env('REDIS_MAXREDIRECTS', 0),
+        'readOnly' => env('REDIS_READONLY', false),
     ],
 
     'session' => [
@@ -67,110 +69,110 @@ return new Config([
     ],
 
     'logger' => [
-        'enabled' => App\Core\Helpers\env('LOG_ENABLED', true),
-        'level' => App\Core\Helpers\env('LOG_LEVEL', 'debug'),
-        'path' => App\Core\Helpers\env('LOG_PATH', '/var/www/html/files/logs/app.log'),
-        'format' => App\Core\Helpers\env('LOG_FORMAT', '[%date%][%level%] %message%'),
+        'enabled' => env('LOG_ENABLED', true),
+        'level' => env('LOG_LEVEL', 'debug'),
+        'path' => env('LOG_PATH', '/var/www/html/files/logs/app.log'),
+        'format' => env('LOG_FORMAT', '[%date%][%level%] %message%'),
     ],
     'filepond' => [
-        'temp_folder' => App\Core\Helpers\env('FILEPOND_TEMP_FOLDER', '/tmp'),
-        'temp_disk' => App\Core\Helpers\env('FILEPOND_TEMP_DISK', 'local'),
-        'disk' => App\Core\Helpers\env('FILEPOND_DISK', 'local'),
+        'temp_folder' => env('FILEPOND_TEMP_FOLDER', '/tmp'),
+        'temp_disk' => env('FILEPOND_TEMP_DISK', 'local'),
+        'disk' => env('FILEPOND_DISK', 'local'),
         'validation_rules' => [],
 
     ],
 
     'email' => [
-        'provider' => App\Core\Helpers\env('MAIL_PROVIDER', 'mailhog'),
-        'from_email' => App\Core\Helpers\env('MAIL_FROM_EMAIL', 'noreply@example.com'),
-        'from_name' => App\Core\Helpers\env('MAIL_FROM_NAME', 'Phalcon Stub'),
+        'provider' => env('MAIL_PROVIDER', 'mailhog'),
+        'from_email' => env('MAIL_FROM_EMAIL', 'noreply@example.com'),
+        'from_name' => env('MAIL_FROM_NAME', 'Phalcon Stub'),
 
         'mailhog' => [
-            'host' => App\Core\Helpers\env('MAILHOG_HOST', 'mailhog'),
-            'port' => App\Core\Helpers\env('MAILHOG_PORT', 1025),
-            'username' => App\Core\Helpers\env('MAILHOG_USERNAME', ''),
-            'password' => App\Core\Helpers\env('MAILHOG_PASSWORD', ''),
-            'encryption' => App\Core\Helpers\env('MAILHOG_ENCRYPTION', ''),
+            'host' => env('MAILHOG_HOST', 'mailhog'),
+            'port' => env('MAILHOG_PORT', 1025),
+            'username' => env('MAILHOG_USERNAME', ''),
+            'password' => env('MAILHOG_PASSWORD', ''),
+            'encryption' => env('MAILHOG_ENCRYPTION', ''),
         ],
 
         'resend' => [
-            'api_key' => App\Core\Helpers\env('RESEND_API_KEY', ''),
-            'endpoint' => App\Core\Helpers\env('RESEND_ENDPOINT', 'https://api.resend.com'),
+            'api_key' => env('RESEND_API_KEY', ''),
+            'endpoint' => env('RESEND_ENDPOINT', 'https://api.resend.com'),
         ],
     ],
 
     'pusher' => [
-        'app_id' => App\Core\Helpers\env('PUSHER_APP_ID', ''),
-        'key' => App\Core\Helpers\env('PUSHER_APP_KEY', ''),
-        'secret' => App\Core\Helpers\env('PUSHER_APP_SECRET', ''),
-        'cluster' => App\Core\Helpers\env('PUSHER_APP_CLUSTER', 'mt1'),
-        'use_tls' => App\Core\Helpers\env('PUSHER_USE_TLS', true),
-        'host' => App\Core\Helpers\env('PUSHER_HOST', null),
-        'port' => App\Core\Helpers\env('PUSHER_PORT', null),
-        'scheme' => App\Core\Helpers\env('PUSHER_SCHEME', 'https'),
-        'verify_ssl' => App\Core\Helpers\env('PUSHER_VERIFY_SSL', true),
-        'disable_stats' => App\Core\Helpers\env('PUSHER_DISABLE_STATS', false),
+        'app_id' => env('PUSHER_APP_ID', ''),
+        'key' => env('PUSHER_APP_KEY', ''),
+        'secret' => env('PUSHER_APP_SECRET', ''),
+        'cluster' => env('PUSHER_APP_CLUSTER', 'mt1'),
+        'use_tls' => env('PUSHER_USE_TLS', true),
+        'host' => env('PUSHER_HOST', null),
+        'port' => env('PUSHER_PORT', null),
+        'scheme' => env('PUSHER_SCHEME', 'https'),
+        'verify_ssl' => env('PUSHER_VERIFY_SSL', true),
+        'disable_stats' => env('PUSHER_DISABLE_STATS', false),
         'enabled_transports' => ['ws', 'wss'],
     ],
 
     'jwt' => [
-        'secret' => App\Core\Helpers\env('JWT_SECRET', 'your-secret-key-change-this-in-production'),
-        'algorithm' => App\Core\Helpers\env('JWT_ALGORITHM', 'HS256'),
-        'access_token_expiry' => App\Core\Helpers\env('JWT_ACCESS_TOKEN_EXPIRY', 3600), // 1 hour
-        'refresh_token_expiry' => App\Core\Helpers\env('JWT_REFRESH_TOKEN_EXPIRY', 604800), // 7 days
-        'remember_me_access_token_expiry' => App\Core\Helpers\env('JWT_REMEMBER_ME_ACCESS_TOKEN_EXPIRY', 2592000), // 30 days
-        'remember_me_refresh_token_expiry' => App\Core\Helpers\env('JWT_REMEMBER_ME_REFRESH_TOKEN_EXPIRY', 31536000), // 1 year
-        'refresh_token_cookie' => App\Core\Helpers\env('JWT_REFRESH_TOKEN_COOKIE', 'refresh_token'),
-        'cookie_domain' => App\Core\Helpers\env('COOKIE_DOMAIN', ''),
-        'cookie_secure' => (bool)App\Core\Helpers\env('COOKIE_SECURE', false),
-        'issuer' => App\Core\Helpers\env('JWT_ISSUER', 'phalcon-stub'),
-        'audience' => App\Core\Helpers\env('JWT_AUDIENCE', 'phalcon-stub-users'),
+        'secret' => env('JWT_SECRET', 'your-secret-key-change-this-in-production'),
+        'algorithm' => env('JWT_ALGORITHM', 'HS256'),
+        'access_token_expiry' => env('JWT_ACCESS_TOKEN_EXPIRY', 3600), // 1 hour
+        'refresh_token_expiry' => env('JWT_REFRESH_TOKEN_EXPIRY', 604800), // 7 days
+        'remember_me_access_token_expiry' => env('JWT_REMEMBER_ME_ACCESS_TOKEN_EXPIRY', 2592000), // 30 days
+        'remember_me_refresh_token_expiry' => env('JWT_REMEMBER_ME_REFRESH_TOKEN_EXPIRY', 31536000), // 1 year
+        'refresh_token_cookie' => env('JWT_REFRESH_TOKEN_COOKIE', 'refresh_token'),
+        'cookie_domain' => env('COOKIE_DOMAIN', ''),
+        'cookie_secure' => (bool)env('COOKIE_SECURE', false),
+        'issuer' => env('JWT_ISSUER', 'phalcon-stub'),
+        'audience' => env('JWT_AUDIENCE', 'phalcon-stub-users'),
     ],
 
     // Client-side auth behavior knobs, controlled by backend envs
     // Set AUTH_CLIENT_INACTIVITY_TIMEOUT_MINUTES to 0 or -1 to disable inactivity auto-logout
     'auth_client' => [
-        'inactivity_timeout_minutes' => App\Core\Helpers\env('AUTH_CLIENT_INACTIVITY_TIMEOUT_MINUTES', 30),
-        'token_check_interval_minutes' => App\Core\Helpers\env('AUTH_CLIENT_TOKEN_CHECK_INTERVAL_MINUTES', 5),
+        'inactivity_timeout_minutes' => env('AUTH_CLIENT_INACTIVITY_TIMEOUT_MINUTES', 30),
+        'token_check_interval_minutes' => env('AUTH_CLIENT_TOKEN_CHECK_INTERVAL_MINUTES', 5),
     ],
 
     'oauth' => [
-        'enabled' => App\Core\Helpers\env('OAUTH_ENABLED', false),
-        'redirect_uri' => App\Core\Helpers\env('OAUTH_REDIRECT_URI', '/auth/oauth/callback'),
+        'enabled' => env('OAUTH_ENABLED', false),
+        'redirect_uri' => env('OAUTH_REDIRECT_URI', '/auth/oauth/callback'),
 
         'google' => [
-            'enabled' => App\Core\Helpers\env('OAUTH_GOOGLE_ENABLED', false),
-            'client_id' => App\Core\Helpers\env('OAUTH_GOOGLE_CLIENT_ID', ''),
-            'client_secret' => App\Core\Helpers\env('OAUTH_GOOGLE_CLIENT_SECRET', ''),
-            'redirect_uri' => App\Core\Helpers\env('OAUTH_GOOGLE_REDIRECT_URI', '/auth/oauth/google/callback'),
+            'enabled' => env('OAUTH_GOOGLE_ENABLED', false),
+            'client_id' => env('OAUTH_GOOGLE_CLIENT_ID', ''),
+            'client_secret' => env('OAUTH_GOOGLE_CLIENT_SECRET', ''),
+            'redirect_uri' => env('OAUTH_GOOGLE_REDIRECT_URI', '/auth/oauth/google/callback'),
             'scopes' => ['openid', 'profile', 'email'],
         ],
 
         'github' => [
-            'enabled' => App\Core\Helpers\env('OAUTH_GITHUB_ENABLED', false),
-            'client_id' => App\Core\Helpers\env('OAUTH_GITHUB_CLIENT_ID', ''),
-            'client_secret' => App\Core\Helpers\env('OAUTH_GITHUB_CLIENT_SECRET', ''),
-            'redirect_uri' => App\Core\Helpers\env('OAUTH_GITHUB_REDIRECT_URI', '/auth/oauth/github/callback'),
+            'enabled' => env('OAUTH_GITHUB_ENABLED', false),
+            'client_id' => env('OAUTH_GITHUB_CLIENT_ID', ''),
+            'client_secret' => env('OAUTH_GITHUB_CLIENT_SECRET', ''),
+            'redirect_uri' => env('OAUTH_GITHUB_REDIRECT_URI', '/auth/oauth/github/callback'),
             'scopes' => ['user:email'],
         ],
 
         'facebook' => [
-            'enabled' => App\Core\Helpers\env('OAUTH_FACEBOOK_ENABLED', false),
-            'client_id' => App\Core\Helpers\env('OAUTH_FACEBOOK_CLIENT_ID', ''),
-            'client_secret' => App\Core\Helpers\env('OAUTH_FACEBOOK_CLIENT_SECRET', ''),
-            'redirect_uri' => App\Core\Helpers\env('OAUTH_FACEBOOK_REDIRECT_URI', '/auth/oauth/facebook/callback'),
+            'enabled' => env('OAUTH_FACEBOOK_ENABLED', false),
+            'client_id' => env('OAUTH_FACEBOOK_CLIENT_ID', ''),
+            'client_secret' => env('OAUTH_FACEBOOK_CLIENT_SECRET', ''),
+            'redirect_uri' => env('OAUTH_FACEBOOK_REDIRECT_URI', '/auth/oauth/facebook/callback'),
             'scopes' => ['email', 'public_profile'],
         ],
 
         'generic' => [
-            'enabled' => App\Core\Helpers\env('OAUTH_GENERIC_ENABLED', false),
-            'client_id' => App\Core\Helpers\env('OAUTH_GENERIC_CLIENT_ID', ''),
-            'client_secret' => App\Core\Helpers\env('OAUTH_GENERIC_CLIENT_SECRET', ''),
-            'redirect_uri' => App\Core\Helpers\env('OAUTH_GENERIC_REDIRECT_URI', '/auth/oauth/generic/callback'),
-            'authorization_url' => App\Core\Helpers\env('OAUTH_GENERIC_AUTHORIZATION_URL', ''),
-            'token_url' => App\Core\Helpers\env('OAUTH_GENERIC_TOKEN_URL', ''),
-            'user_info_url' => App\Core\Helpers\env('OAUTH_GENERIC_USER_INFO_URL', ''),
-            'scopes' => explode(',', App\Core\Helpers\env('OAUTH_GENERIC_SCOPES', 'openid,profile,email')),
+            'enabled' => env('OAUTH_GENERIC_ENABLED', false),
+            'client_id' => env('OAUTH_GENERIC_CLIENT_ID', ''),
+            'client_secret' => env('OAUTH_GENERIC_CLIENT_SECRET', ''),
+            'redirect_uri' => env('OAUTH_GENERIC_REDIRECT_URI', '/auth/oauth/generic/callback'),
+            'authorization_url' => env('OAUTH_GENERIC_AUTHORIZATION_URL', ''),
+            'token_url' => env('OAUTH_GENERIC_TOKEN_URL', ''),
+            'user_info_url' => env('OAUTH_GENERIC_USER_INFO_URL', ''),
+            'scopes' => explode(',', (string) env('OAUTH_GENERIC_SCOPES', 'openid,profile,email')),
         ],
     ],
 

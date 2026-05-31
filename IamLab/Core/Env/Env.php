@@ -9,8 +9,6 @@ class Env
 {
     /**
      * The directory where the .env file can be located.
-     *
-     * @var string
      */
     protected string $path;
 
@@ -20,6 +18,7 @@ class Env
         if (!file_exists($path)) {
             throw new InvalidArgumentException(sprintf('%s does not exist', $path));
         }
+
         $this->path = $path;
     }
 
@@ -31,12 +30,11 @@ class Env
 
         $lines = file($this->path, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
         foreach ($lines as $line) {
-
             if (str_starts_with(trim($line), '#')) {
                 continue;
             }
 
-            list($name, $value) = explode('=', $line, 2);
+            [$name, $value] = explode('=', $line, 2);
             $name = trim($name);
             $value = trim($value);
 

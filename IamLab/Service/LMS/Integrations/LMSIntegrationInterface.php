@@ -4,7 +4,7 @@ namespace IamLab\Service\LMS\Integrations;
 
 /**
  * LMS Integration Interface
- * 
+ *
  * Defines the contract that all LMS integrations must implement
  */
 interface LMSIntegrationInterface

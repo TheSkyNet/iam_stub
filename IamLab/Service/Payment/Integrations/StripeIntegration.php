@@ -4,13 +4,11 @@ namespace IamLab\Service\Payment\Integrations;
 
 class StripeIntegration implements PaymentIntegrationInterface
 {
-    protected array $config;
-
-    public function __construct(array $config)
+    public function __construct(protected array $config)
     {
-        $this->config = $config;
     }
 
+    #[\Override]
     public function createPayment(array $paymentData): array
     {
         $apiKey = $this->config['api_key'] ?? '';
@@ -55,10 +53,11 @@ class StripeIntegration implements PaymentIntegrationInterface
         ];
     }
 
+    #[\Override]
     public function capturePayment(string $transactionId, array $options = []): array
     {
         // Check current status first. If already succeeded, no need to capture.
-        $statusResponse = $this->request('GET', "/payment_intents/{$transactionId}");
+        $statusResponse = $this->request('GET', '/payment_intents/' . $transactionId);
         if (isset($statusResponse['status']) && $statusResponse['status'] === 'succeeded') {
             return [
                 'success' => true,
@@ -67,7 +66,7 @@ class StripeIntegration implements PaymentIntegrationInterface
             ];
         }
 
-        $response = $this->request('POST', "/payment_intents/{$transactionId}/capture");
+        $response = $this->request('POST', sprintf('/payment_intents/%s/capture', $transactionId));
 
         if (isset($response['error'])) {
             throw new \Exception("Stripe Capture Error: " . $response['error']['message']);
@@ -80,6 +79,7 @@ class StripeIntegration implements PaymentIntegrationInterface
         ];
     }
 
+    #[\Override]
     public function createSubscription(array $subscriptionData): array
     {
         $planId = $subscriptionData['plan_id'] ?? '';
@@ -180,7 +180,7 @@ class StripeIntegration implements PaymentIntegrationInterface
     protected function getOrCreatePrice(string $planId, float $amount, string $currency): string
     {
         $productId = 'prod_' . preg_replace('/[^a-zA-Z0-9]/', '_', $planId);
-        
+
         // Ensure Product exists
         $this->request('POST', '/products', [
             'id' => $productId,
@@ -198,39 +198,44 @@ class StripeIntegration implements PaymentIntegrationInterface
         return $priceResponse['id'] ?? '';
     }
 
+    #[\Override]
     public function cancelSubscription(string $subscriptionId): bool
     {
-        $response = $this->request('DELETE', "/subscriptions/{$subscriptionId}");
+        $response = $this->request('DELETE', '/subscriptions/' . $subscriptionId);
         return !isset($response['error']);
     }
 
+    #[\Override]
     public function getPaymentStatus(string $transactionId): string
     {
-        $response = $this->request('GET', "/payment_intents/{$transactionId}");
+        $response = $this->request('GET', '/payment_intents/' . $transactionId);
         return $this->mapStripeStatus($response['status'] ?? 'unknown');
     }
 
+    #[\Override]
     public function getSubscriptionStatus(string $subscriptionId): string
     {
-        $response = $this->request('GET', "/subscriptions/{$subscriptionId}");
+        $response = $this->request('GET', '/subscriptions/' . $subscriptionId);
         return $response['status'] ?? 'unknown';
     }
 
+    #[\Override]
     public function refreshSubscription(string $subscriptionId): array
     {
         // If it's a checkout session, try to get the subscription ID from it
-        if (strpos($subscriptionId, 'cs_') === 0) {
-            $session = $this->request('GET', "/checkout/sessions/{$subscriptionId}");
+        if (str_starts_with($subscriptionId, 'cs_')) {
+            $session = $this->request('GET', '/checkout/sessions/' . $subscriptionId);
             if (isset($session['subscription']) && !empty($session['subscription'])) {
                 $subscriptionId = $session['subscription'];
                 // Now get the real subscription status
-                $subscription = $this->request('GET', "/subscriptions/{$subscriptionId}");
+                $subscription = $this->request('GET', '/subscriptions/' . $subscriptionId);
                 return [
                     'status' => $subscription['status'] ?? 'pending',
                     'subscription_id' => $subscriptionId,
                     'provider_payload' => array_merge($session, $subscription)
                 ];
             }
+
             return [
                 'status' => 'pending',
                 'provider_payload' => $session
@@ -238,13 +243,14 @@ class StripeIntegration implements PaymentIntegrationInterface
         }
 
         // Regular subscription refresh
-        $subscription = $this->request('GET', "/subscriptions/{$subscriptionId}");
+        $subscription = $this->request('GET', '/subscriptions/' . $subscriptionId);
         return [
             'status' => $subscription['status'] ?? 'unknown',
             'provider_payload' => $subscription
         ];
     }
 
+    #[\Override]
     public function healthCheck(): bool
     {
         if (empty($this->config['api_key'])) {
@@ -254,11 +260,12 @@ class StripeIntegration implements PaymentIntegrationInterface
         try {
             $response = $this->request('GET', '/balance');
             return !isset($response['error']);
-        } catch (\Exception $e) {
+        } catch (\Exception) {
             return false;
         }
     }
 
+    #[\Override]
     public function getCapabilities(): array
     {
         return [
@@ -299,19 +306,11 @@ class StripeIntegration implements PaymentIntegrationInterface
      */
     protected function mapStripeStatus(string $status): string
     {
-        switch ($status) {
-            case 'succeeded':
-                return 'completed';
-            case 'requires_payment_method':
-            case 'requires_confirmation':
-            case 'requires_action':
-            case 'processing':
-            case 'requires_capture':
-                return 'pending';
-            case 'canceled':
-                return 'canceled';
-            default:
-                return 'failed';
-        }
+        return match ($status) {
+            'succeeded' => 'completed',
+            'requires_payment_method', 'requires_confirmation', 'requires_action', 'processing', 'requires_capture' => 'pending',
+            'canceled' => 'canceled',
+            default => 'failed',
+        };
     }
 }

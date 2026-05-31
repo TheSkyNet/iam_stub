@@ -8,8 +8,11 @@ use Phalcon\Di\Injectable;
 abstract class BaseCommand extends Injectable implements CommandInterface
 {
     protected array $arguments = [];
+
     protected array $options = [];
+
     protected bool $verbose = false;
+
     protected bool $debug = false;
 
     /**
@@ -19,6 +22,7 @@ abstract class BaseCommand extends Injectable implements CommandInterface
      * @param array $options Command options/flags
      * @return int Exit code (0 for success, non-zero for failure)
      */
+    #[\Override]
     public function execute(array $arguments = [], array $options = []): int
     {
         $this->arguments = $arguments;
@@ -28,12 +32,13 @@ abstract class BaseCommand extends Injectable implements CommandInterface
 
         try {
             return $this->handle();
-        } catch (Exception $e) {
-            $this->error("Command failed: " . $e->getMessage());
+        } catch (Exception $exception) {
+            $this->error("Command failed: " . $exception->getMessage());
             if ($this->debug) {
                 $this->error("Stack trace:");
-                $this->error($e->getTraceAsString());
+                $this->error($exception->getTraceAsString());
             }
+
             return 1;
         }
     }
@@ -49,9 +54,8 @@ abstract class BaseCommand extends Injectable implements CommandInterface
     /**
      * Get command signature/usage
      * Override this method to provide custom signature
-     *
-     * @return string
      */
+    #[\Override]
     public function getSignature(): string
     {
         return 'command';
@@ -60,9 +64,8 @@ abstract class BaseCommand extends Injectable implements CommandInterface
     /**
      * Get command description
      * Override this method to provide custom description
-     *
-     * @return string
      */
+    #[\Override]
     public function getDescription(): string
     {
         return 'A command';
@@ -71,9 +74,8 @@ abstract class BaseCommand extends Injectable implements CommandInterface
     /**
      * Get command help text
      * Override this method to provide custom help
-     *
-     * @return string
      */
+    #[\Override]
     public function getHelp(): string
     {
         return $this->getDescription();
@@ -82,11 +84,9 @@ abstract class BaseCommand extends Injectable implements CommandInterface
     /**
      * Get argument by index
      *
-     * @param int $index
-     * @param mixed $default
      * @return mixed
      */
-    protected function argument(int $index, $default = null)
+    protected function argument(int $index, mixed $default = null)
     {
         return $this->arguments[$index] ?? $default;
     }
@@ -94,20 +94,15 @@ abstract class BaseCommand extends Injectable implements CommandInterface
     /**
      * Get option by name
      *
-     * @param string $name
-     * @param mixed $default
      * @return mixed
      */
-    protected function option(string $name, $default = null)
+    protected function option(string $name, mixed $default = null)
     {
         return $this->options[$name] ?? $default;
     }
 
     /**
      * Check if option exists
-     *
-     * @param string $name
-     * @return bool
      */
     protected function hasOption(string $name): bool
     {
@@ -116,8 +111,6 @@ abstract class BaseCommand extends Injectable implements CommandInterface
 
     /**
      * Output information message
-     *
-     * @param string $message
      */
     protected function info(string $message): void
     {
@@ -126,8 +119,6 @@ abstract class BaseCommand extends Injectable implements CommandInterface
 
     /**
      * Output warning message
-     *
-     * @param string $message
      */
     protected function warn(string $message): void
     {
@@ -136,8 +127,6 @@ abstract class BaseCommand extends Injectable implements CommandInterface
 
     /**
      * Output error message
-     *
-     * @param string $message
      */
     protected function error(string $message): void
     {
@@ -146,8 +135,6 @@ abstract class BaseCommand extends Injectable implements CommandInterface
 
     /**
      * Output success message
-     *
-     * @param string $message
      */
     protected function success(string $message): void
     {
@@ -156,8 +143,6 @@ abstract class BaseCommand extends Injectable implements CommandInterface
 
     /**
      * Output debug message (only if debug mode is enabled)
-     *
-     * @param string $message
      */
     protected function debug(string $message): void
     {
@@ -168,8 +153,6 @@ abstract class BaseCommand extends Injectable implements CommandInterface
 
     /**
      * Output verbose message (only if verbose mode is enabled)
-     *
-     * @param string $message
      */
     protected function verbose(string $message): void
     {
@@ -180,8 +163,6 @@ abstract class BaseCommand extends Injectable implements CommandInterface
 
     /**
      * Output plain message
-     *
-     * @param string $message
      */
     protected function line(string $message): void
     {
@@ -190,90 +171,42 @@ abstract class BaseCommand extends Injectable implements CommandInterface
 
     /**
      * Ask user for input
-     *
-     * @param string $question
-     * @param string $default
-     * @return string
      */
     protected function ask(string $question, string $default = ''): string
     {
         echo $question;
-        if ($default) {
-            echo " [default: {$default}]";
+        if ($default !== '' && $default !== '0') {
+            echo sprintf(' [default: %s]', $default);
         }
+
         echo ": ";
-        
+
         $input = trim(fgets(STDIN));
         return $input ?: $default;
     }
 
     /**
      * Ask user for confirmation
-     *
-     * @param string $question
-     * @param bool $default
-     * @return bool
      */
     protected function confirm(string $question, bool $default = false): bool
     {
         $defaultText = $default ? 'Y/n' : 'y/N';
-        echo "{$question} [{$defaultText}]: ";
-        
+        echo sprintf('%s [%s]: ', $question, $defaultText);
+
         $input = trim(strtolower(fgets(STDIN)));
-        
+
         if ($input === '') {
             return $default;
         }
-        
+
         return in_array($input, ['y', 'yes', '1', 'true']);
     }
 
     /**
      * Create a progress bar
-     *
-     * @param int $total
-     * @return ProgressBar
      */
     protected function progressBar(int $total): ProgressBar
     {
         return new ProgressBar($total);
-    }
-}
-
-/**
- * Simple progress bar implementation
- */
-class ProgressBar
-{
-    private int $total;
-    private int $current = 0;
-    private int $width = 50;
-
-    public function __construct(int $total)
-    {
-        $this->total = $total;
-    }
-
-    public function advance(int $step = 1): void
-    {
-        $this->current += $step;
-        $this->display();
-    }
-
-    public function finish(): void
-    {
-        $this->current = $this->total;
-        $this->display();
-        echo "\n";
-    }
-
-    private function display(): void
-    {
-        $percent = $this->total > 0 ? ($this->current / $this->total) * 100 : 100;
-        $filled = (int)(($this->current / $this->total) * $this->width);
-        $empty = $this->width - $filled;
-
-        $bar = str_repeat('=', $filled) . str_repeat('-', $empty);
-        printf("\r[%s] %d%% (%d/%d)", $bar, $percent, $this->current, $this->total);
     }
 }

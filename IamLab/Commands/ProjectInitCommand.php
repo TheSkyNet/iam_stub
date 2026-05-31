@@ -1,20 +1,24 @@
 <?php
+
 namespace IamLab\Commands;
 
 use IamLab\Core\Command\BaseCommand;
 
 class ProjectInitCommand extends BaseCommand
 {
+    #[\Override]
     public function getSignature(): string
     {
         return 'project:init {name?} {namespace?} [--force]';
     }
 
+    #[\Override]
     public function getDescription(): string
     {
         return 'Initialize a new project from this stub by renaming the project and namespace';
     }
 
+    #[\Override]
     public function getHelp(): string
     {
         return <<<HELP
@@ -36,6 +40,7 @@ Example:
 HELP;
     }
 
+    #[\Override]
     protected function handle(): int
     {
         $projectName = $this->argument(0, '');
@@ -46,10 +51,10 @@ HELP;
         $namespace = $this->argument(1, '');
         if (empty($namespace)) {
             $defaultNamespace = str_replace(' ', '', ucwords(str_replace(['-', '_'], ' ', $projectName)));
-            $namespace = $this->ask("Enter your new project namespace (e.g., $defaultNamespace):", $defaultNamespace);
+            $namespace = $this->ask(sprintf('Enter your new project namespace (e.g., %s):', $defaultNamespace), $defaultNamespace);
         }
 
-        $this->info("Initializing project: $projectName with namespace: $namespace...");
+        $this->info(sprintf('Initializing project: %s with namespace: %s...', $projectName, $namespace));
 
         if (!$this->hasOption('force') && !$this->confirm("This will modify files in the current directory. Are you sure you want to continue?", true)) {
             $this->warn('Project initialization cancelled.');
@@ -58,10 +63,10 @@ HELP;
 
         // 1. Rename occurrences in files
         $this->replaceNamespace('IamLab', $namespace);
-        
+
         // 2. Update composer.json
         $this->updateComposerJson($projectName, $namespace);
-        
+
         // 3. Update package.json
         $this->updatePackageJson($projectName);
 
@@ -74,7 +79,7 @@ HELP;
         // 5. Rename IamLab directory
         if (is_dir('IamLab')) {
             rename('IamLab', $namespace);
-            $this->success("Renamed IamLab directory to $namespace");
+            $this->success('Renamed IamLab directory to ' . $namespace);
         }
 
         $this->success("\nProject initialized successfully!");
@@ -82,26 +87,28 @@ HELP;
         $this->line("1. Run: composer update");
         $this->line("2. Run: ./phalcons up -d");
         $this->line("3. Run: ./phalcons migrate");
-        
+
         return 0;
     }
 
     private function replaceNamespace(string $oldNamespace, string $newNamespace): void
     {
-        $this->info("Replacing namespace $oldNamespace with $newNamespace in files...");
-        
+        $this->info(sprintf('Replacing namespace %s with %s in files...', $oldNamespace, $newNamespace));
+
         $files = $this->getFilesToProcess();
         $progressBar = $this->progressBar(count($files));
-        
+
         foreach ($files as $file) {
             $content = file_get_contents($file);
             $newContent = str_replace($oldNamespace, $newNamespace, $content);
-            
+
             if ($newContent !== $content) {
                 file_put_contents($file, $newContent);
             }
+
             $progressBar->advance(1);
         }
+
         $progressBar->finish();
         $this->success("\nNamespace replacement completed.");
     }
@@ -111,39 +118,54 @@ HELP;
         $iterator = new \RecursiveIteratorIterator(
             new \RecursiveDirectoryIterator('.', \RecursiveDirectoryIterator::SKIP_DOTS)
         );
-        
+
         $files = [];
         foreach ($iterator as $file) {
-            if ($file->isDir()) continue;
-            
-            $path = $file->getPathname();
-            
-            // Skip vendor, node_modules, and some other directories
-            if (str_contains($path, './vendor/') || 
-                str_contains($path, './node_modules/') || 
-                str_contains($path, './.git/') ||
-                str_contains($path, './_docs/') ||
-                str_contains($path, './docs/')) {
+            if ($file->isDir()) {
                 continue;
             }
-            
+
+            $path = $file->getPathname();
+            // Skip vendor, node_modules, and some other directories
+            if (str_contains((string) $path, './vendor/')) {
+                continue;
+            }
+
+            if (str_contains((string) $path, './node_modules/')) {
+                continue;
+            }
+
+            if (str_contains((string) $path, './.git/')) {
+                continue;
+            }
+
+            if (str_contains((string) $path, './_docs/')) {
+                continue;
+            }
+
+            if (str_contains((string) $path, './docs/')) {
+                continue;
+            }
+
             // Only process relevant file extensions
-            if (preg_match('/\.(php|js|json|css|md|html|yml|yaml|xml|example)$/', $path)) {
+            if (preg_match('/\.(php|js|json|css|md|html|yml|yaml|xml|example)$/', (string) $path)) {
                 $files[] = $path;
             }
         }
-        
+
         return $files;
     }
 
     private function updateComposerJson(string $projectName, string $namespace): void
     {
-        if (!file_exists('composer.json')) return;
-        
+        if (!file_exists('composer.json')) {
+            return;
+        }
+
         $composer = json_decode(file_get_contents('composer.json'), true);
-        $composer['name'] = "iam-lab/$projectName";
+        $composer['name'] = 'iam-lab/' . $projectName;
         $composer['description'] = "New project generated from IamLab Phalcon Stub";
-        
+
         if (isset($composer['autoload']['psr-4']['IamLab\\'])) {
             $composer['autoload']['psr-4'][$namespace . '\\'] = $namespace . '/';
             unset($composer['autoload']['psr-4']['IamLab\\']);
@@ -160,18 +182,20 @@ HELP;
                 $path = str_replace('IamLab/', $namespace . '/', $path);
             }
         }
-        
+
         file_put_contents('composer.json', json_encode($composer, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
         $this->success("Updated composer.json");
     }
 
     private function updatePackageJson(string $projectName): void
     {
-        if (!file_exists('package.json')) return;
-        
+        if (!file_exists('package.json')) {
+            return;
+        }
+
         $package = json_decode(file_get_contents('package.json'), true);
         $package['name'] = $projectName;
-        
+
         file_put_contents('package.json', json_encode($package, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
         $this->success("Updated package.json");
     }

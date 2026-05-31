@@ -79,9 +79,10 @@ class AuthService extends aAPI
                             'type' => $payload['type'] ?? 'access'
                         ];
                     }
+
                     return $payload;
                 }
-            } catch (Exception $e) {
+            } catch (Exception) {
                 // Token is invalid, fall back to session
             }
         }
@@ -97,9 +98,10 @@ class AuthService extends aAPI
      */
     private function getJwtService(): JwtService
     {
-        if ($this->jwtService === null) {
+        if (!$this->jwtService instanceof JwtService) {
             $this->jwtService = new JwtService();
         }
+
         return $this->jwtService;
     }
 
@@ -114,13 +116,13 @@ class AuthService extends aAPI
         if (!$identity) {
             return null;
         }
-        
+
         // Handle both JWT-based identity (has 'user_id') and session-based identity (has 'id')
         $userId = $identity['user_id'] ?? $identity['id'] ?? null;
         if (!$userId) {
             return null;
         }
-        
+
         return User::findFirstById($userId);
     }
 
@@ -134,7 +136,7 @@ class AuthService extends aAPI
      */
     public function authenticate(User $user, string $authMethod = "post", bool $rememberMe = true): bool|array
     {
-        if ($authMethod == "post") {
+        if ($authMethod === "post") {
             return $this->authenticatePost($user, $rememberMe);
         }
 
@@ -175,8 +177,8 @@ class AuthService extends aAPI
 
             // Set appropriate expires_in based on remember me option
             $config = $this->getDI()->getShared('config');
-            $expiresIn = $rememberMe 
-                ? $config->jwt->remember_me_access_token_expiry 
+            $expiresIn = $rememberMe
+                ? $config->jwt->remember_me_access_token_expiry
                 : $config->jwt->access_token_expiry;
 
             // Create user data with roles
@@ -188,13 +190,14 @@ class AuthService extends aAPI
             ];
 
             return [
-                'user' => $userData, 
-                'access_token' => $accessToken, 
-                'refresh_token' => $refreshToken, 
+                'user' => $userData,
+                'access_token' => $accessToken,
+                'refresh_token' => $refreshToken,
                 'expires_in' => $expiresIn,
                 'token_type' => 'Bearer'
             ];
         }
+
         return false;
     }
 
@@ -207,10 +210,10 @@ class AuthService extends aAPI
     {
         // Get user roles
         $roles = $user->getRoles();
-        
+
         $this->session->set('auth-identity', [
-            'id' => $user->id, 
-            'name' => $user->name, 
+            'id' => $user->id,
+            'name' => $user->name,
             'email' => $user->email,
             'roles' => $roles
         ]);
@@ -242,7 +245,6 @@ class AuthService extends aAPI
         if (!$user->save()) {
             dump($user->getMessages());
             return false;
-
         }
 
         // Generate JWT tokens for the newly registered user
@@ -264,15 +266,15 @@ class AuthService extends aAPI
         ];
 
         $config = $this->getDI()->getShared('config');
-        $expiresIn = $rememberMe 
-            ? $config->jwt->remember_me_access_token_expiry 
+        $expiresIn = $rememberMe
+            ? $config->jwt->remember_me_access_token_expiry
             : $config->jwt->access_token_expiry;
 
         // Return the same authentication data structure as login
         return [
-            'user' => $userData, 
-            'access_token' => $accessToken, 
-            'refresh_token' => $refreshToken, 
+            'user' => $userData,
+            'access_token' => $accessToken,
+            'refresh_token' => $refreshToken,
             'expires_in' => $expiresIn,
             'token_type' => 'Bearer'
         ];
@@ -304,13 +306,13 @@ class AuthService extends aAPI
             $this->session->destroy();
 
             return true;
-
-        } catch (Exception $e) {
+        } catch (Exception $exception) {
             // Log the error if you have a logger configured
-            if (isset($this->logger)) {
-                $this->logger->error('Deauthentication failed: ' . $e->getMessage());
+            if ($this->logger !== null) {
+                $this->logger->error('Deauthentication failed: ' . $exception->getMessage());
             }
-            throw $e;
+
+            throw $exception;
         }
     }
 
@@ -365,15 +367,15 @@ class AuthService extends aAPI
      * @param User $user The user to generate auth data for.
      * @return array The authentication data payload.
      */
-    public function generateAuthData(User $user , $options = []): array
+    public function generateAuthData(User $user, $options = []): array
     {
         $config = $this->getDI()->getShared('config');
-        $defaultOptions =[
+        $defaultOptions = [
             'remember_me' => true,
             'token_type' => 'Bearer'
         ];
         $options = array_merge($defaultOptions, $options);
-        
+
         $rememberMe = (bool)$options['remember_me'];
         $expiresIn = $options['expires_in'] ?? ($rememberMe ? $config->jwt->remember_me_access_token_expiry : $config->jwt->access_token_expiry);
 
@@ -402,7 +404,5 @@ class AuthService extends aAPI
             'expires_in' => $expiresIn,
             'token_type' => $options['token_type']
         ];
-
     }
-
 }

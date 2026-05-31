@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Core\Helpers;
+
 use IamLab\Core\Console\Table\Table;
 use IamLab\Core\Email\EmailService;
 use IamLab\Core\Env\Env;
@@ -25,9 +26,11 @@ function config($key, $default = null)
     if ($config === null) {
         return $default;
     }
+
     if (is_array($config) || is_iterable($config)) {
         return $config->toArray();
     }
+
     return $config;
 }
 
@@ -74,19 +77,22 @@ function moveTo(string $disk, string $from, string $to): bool
  *
  * @param mixed ...$variable The variables to dump.
  */
-#[NoReturn] function dd(...$variable): void
+#[NoReturn] function dd(mixed ...$variable): void
 {
     // if it is cli lets just dump it out
-    if (php_sapi_name() === 'cli') {
-        foreach ($variable as $var){
+    if (PHP_SAPI === 'cli') {
+        foreach ($variable as $var) {
             var_dump($var);
         }
+
         die();
     }
+
     echo "<pre>";
-    foreach ($variable as $var){
+    foreach ($variable as $var) {
         var_dump($var);
     }
+
     echo "</pre>";
     die();
 }
@@ -96,7 +102,7 @@ function moveTo(string $disk, string $from, string $to): bool
  *
  * @param string $path The path to the .env file.
  */
-function loadEnv(string $path =''): void
+function loadEnv(string $path = ''): void
 {
     (new Env($path))->load();
 }
@@ -118,9 +124,9 @@ function email(string $to, string $subject, string $body, array $options = []): 
 
         // Send the email using the service
         return $emailService->send($to, $subject, $body, $options);
-    } catch (Exception $e) {
+    } catch (Exception $exception) {
         // Log error if needed and return false
-        error_log("Email helper error: " . $e->getMessage());
+        error_log("Email helper error: " . $exception->getMessage());
         return false;
     }
 }
@@ -131,7 +137,7 @@ function email(string $to, string $subject, string $body, array $options = []): 
  * @param array $data The data to display in the table.
  * @param string|null $title The title of the table.
  */
-function table(array $data, string $title = null): void
+function table(array $data, ?string $title = null): void
 {
     $table = new Table();
     $table->setData($data)

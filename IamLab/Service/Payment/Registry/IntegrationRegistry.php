@@ -9,19 +9,17 @@ use IamLab\Service\Payment\Configuration\ConfigurationManager;
 
 /**
  * Payment Integration Registry
- * 
+ *
  * Manages payment integration instances
  */
 class IntegrationRegistry
 {
     private array $integrations = [];
-    private array $healthStatus = [];
-    private array $errors = [];
-    private ConfigurationManager $configManager;
 
-    public function __construct(ConfigurationManager $configManager)
+    private array $healthStatus = [];
+
+    public function __construct(private readonly ConfigurationManager $configManager)
     {
-        $this->configManager = $configManager;
         $this->initializeIntegrations();
     }
 
@@ -32,10 +30,9 @@ class IntegrationRegistry
     {
         $configurations = $this->configManager->getAllConfigurations();
         $result = IntegrationFactory::createFromConfig($configurations);
-        
+
         $this->integrations = $result['integrations'];
-        $this->errors = $result['errors'];
-        
+
         $this->refreshHealthStatus();
     }
 
@@ -45,7 +42,7 @@ class IntegrationRegistry
     public function getIntegration(string $name): PaymentIntegrationInterface
     {
         if (!$this->hasIntegration($name)) {
-            throw new Exception("Payment provider '{$name}' is not available");
+            throw new Exception(sprintf("Payment provider '%s' is not available", $name));
         }
 
         return $this->integrations[$name];

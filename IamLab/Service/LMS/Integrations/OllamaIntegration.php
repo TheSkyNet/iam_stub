@@ -6,13 +6,14 @@ use Exception;
 
 /**
  * Ollama Integration
- * 
+ *
  * Integrates with Ollama for local LLM support
  */
 class OllamaIntegration implements LMSIntegrationInterface
 {
-    private string $host;
-    private string $model;
+    private readonly string $host;
+
+    private readonly string $model;
 
     public function __construct(array $config)
     {
@@ -20,10 +21,11 @@ class OllamaIntegration implements LMSIntegrationInterface
         $this->model = $config['model'] ?? 'llama2';
     }
 
+    #[\Override]
     public function generateContent(string $prompt, array $options = []): array
     {
         $url = $this->host . '/api/generate';
-        
+
         $data = [
             'model' => $this->model,
             'prompt' => $prompt,
@@ -38,7 +40,7 @@ class OllamaIntegration implements LMSIntegrationInterface
 
         try {
             $response = $this->makeRequest($url, $data);
-            
+
             if (isset($response['response'])) {
                 return [
                     'success' => true,
@@ -58,15 +60,15 @@ class OllamaIntegration implements LMSIntegrationInterface
                 'error' => 'No content generated',
                 'response' => $response
             ];
-
-        } catch (Exception $e) {
+        } catch (Exception $exception) {
             return [
                 'success' => false,
-                'error' => $e->getMessage()
+                'error' => $exception->getMessage()
             ];
         }
     }
 
+    #[\Override]
     public function createCourse(array $courseData): array
     {
         $prompt = "Create a comprehensive course outline for: " . ($courseData['title'] ?? 'Untitled Course') . "\n";
@@ -82,7 +84,7 @@ class OllamaIntegration implements LMSIntegrationInterface
         $prompt .= "Format the response in a clear, structured manner.";
 
         $result = $this->generateContent($prompt);
-        
+
         if ($result['success']) {
             return [
                 'success' => true,
@@ -100,10 +102,11 @@ class OllamaIntegration implements LMSIntegrationInterface
         return $result;
     }
 
+    #[\Override]
     public function analyzeText(string $text, array $options = []): array
     {
         $analysisType = $options['type'] ?? 'general';
-        
+
         $prompts = [
             'general' => "Analyze the following text and provide insights about its content, structure, tone, and key themes. Be specific and detailed:\n\n",
             'educational' => "Analyze this educational content and provide detailed feedback on:\n1. Clarity and readability\n2. Structure and organization\n3. Learning effectiveness\n4. Areas for improvement\n5. Strengths\n\nText to analyze:\n\n",
@@ -117,13 +120,14 @@ class OllamaIntegration implements LMSIntegrationInterface
         return $this->generateContent($prompt, $options);
     }
 
+    #[\Override]
     public function healthCheck(): bool
     {
         try {
             // First check if Ollama is running
             $url = $this->host . '/api/tags';
             $response = $this->makeRequest($url, [], 'GET');
-            
+
             if (!isset($response['models'])) {
                 return false;
             }
@@ -131,7 +135,7 @@ class OllamaIntegration implements LMSIntegrationInterface
             // Check if our model is available
             $modelExists = false;
             foreach ($response['models'] as $model) {
-                if ($model['name'] === $this->model || strpos($model['name'], $this->model) === 0) {
+                if ($model['name'] === $this->model || str_starts_with((string) $model['name'], $this->model)) {
                     $modelExists = true;
                     break;
                 }
@@ -144,12 +148,12 @@ class OllamaIntegration implements LMSIntegrationInterface
             // Test generation
             $result = $this->generateContent("Hello", ['max_tokens' => 10]);
             return $result['success'] ?? false;
-
-        } catch (Exception $e) {
+        } catch (Exception) {
             return false;
         }
     }
 
+    #[\Override]
     public function getCapabilities(): array
     {
         return [
@@ -175,19 +179,17 @@ class OllamaIntegration implements LMSIntegrationInterface
         try {
             $url = $this->host . '/api/tags';
             $response = $this->makeRequest($url, [], 'GET');
-            
+
             if (isset($response['models'])) {
-                return array_map(function($model) {
-                    return [
-                        'name' => $model['name'],
-                        'size' => $model['size'] ?? null,
-                        'modified_at' => $model['modified_at'] ?? null
-                    ];
-                }, $response['models']);
+                return array_map(fn($model): array => [
+                    'name' => $model['name'],
+                    'size' => $model['size'] ?? null,
+                    'modified_at' => $model['modified_at'] ?? null
+                ], $response['models']);
             }
 
             return [];
-        } catch (Exception $e) {
+        } catch (Exception) {
             return [];
         }
     }
@@ -207,10 +209,10 @@ class OllamaIntegration implements LMSIntegrationInterface
                 'status' => $response['status'] ?? 'unknown',
                 'response' => $response
             ];
-        } catch (Exception $e) {
+        } catch (Exception $exception) {
             return [
                 'success' => false,
-                'error' => $e->getMessage()
+                'error' => $exception->getMessage()
             ];
         }
     }
@@ -218,7 +220,7 @@ class OllamaIntegration implements LMSIntegrationInterface
     private function makeRequest(string $url, array $data = [], string $method = 'POST'): array
     {
         $ch = curl_init();
-        
+
         $options = [
             CURLOPT_URL => $url,
             CURLOPT_RETURNTRANSFER => true,
@@ -241,7 +243,7 @@ class OllamaIntegration implements LMSIntegrationInterface
         $error = curl_error($ch);
         curl_close($ch);
 
-        if ($error) {
+        if ($error !== '' && $error !== '0') {
             throw new Exception("cURL error: " . $error);
         }
 

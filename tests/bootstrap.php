@@ -1,5 +1,10 @@
 <?php
 
+use Phalcon\Di\Injectable;
+use Phalcon\Di\Di;
+use Phalcon\Mvc\Model\Manager;
+use Phalcon\Mvc\Model\Metadata\Memory;
+
 // Bootstrap file for PHPUnit tests
 
 // Load Composer autoloader
@@ -27,38 +32,39 @@ if (!defined('TMP_PATH')) {
     define('TMP_PATH', sys_get_temp_dir());
 }
 
+// Provide a stub for Phalcon\Di\Injectable if Phalcon is not installed
+// This allows aAPI to extend it without breaking PSR-12 or causing fatal errors in tests
+if (!class_exists(Injectable::class)) {
+    eval('namespace Phalcon\Di { abstract class Injectable {} }');
+}
+
 echo "PHPUnit Bootstrap: Test environment initialized\n";
 
 // Provide a minimal Phalcon DI container for unit tests that touch Models
 // This prevents "A dependency injection container is required" exceptions
 try {
-    if (class_exists('Phalcon\\Di\\Di')) {
-        $di = new \Phalcon\Di\Di();
-        \Phalcon\Di\Di::setDefault($di);
+    if (class_exists(Di::class)) {
+        $di = new Di();
+        Di::setDefault($di);
 
         // Minimal services required by Phalcon\Mvc\Model
-        if (class_exists('Phalcon\\Mvc\\Model\\Manager')) {
-            $di->setShared('modelsManager', function () {
-                return new \Phalcon\Mvc\Model\Manager();
-            });
+        if (class_exists(Manager::class)) {
+            $di->setShared('modelsManager', fn(): Manager => new Manager());
         }
-        if (class_exists('Phalcon\\Mvc\\Model\\Metadata\\Memory')) {
-            $di->setShared('modelsMetadata', function () {
-                return new \Phalcon\Mvc\Model\Metadata\Memory();
-            });
+
+        if (class_exists(Memory::class)) {
+            $di->setShared('modelsMetadata', fn(): Memory => new Memory());
         }
 
         // Optional config service stub to satisfy code that looks it up
-        $di->set('config', function () {
-            return new class {
-                public function get(string $key, $default = null)
-                {
-                    // In tests we default to env-stubbed values
-                    return $default;
-                }
-            };
+        $di->set('config', fn(): object => new class {
+            public function get(string $key, $default = null)
+            {
+                // In tests we default to env-stubbed values
+                return $default;
+            }
         });
     }
-} catch (\Throwable $e) {
+} catch (\Throwable) {
     // If Phalcon DI is not available, proceed; tests that need it will be skipped or use fallbacks
 }

@@ -2,6 +2,9 @@
 
 namespace IamLab\Service;
 
+use IamLab\Service\Auth\AuthService;
+use Phalcon\Db\Column;
+use Phalcon\Logger\LoggerInterface;
 use Exception;
 use IamLab\Core\API\aAPI;
 use IamLab\Model\ErrorLog;
@@ -33,7 +36,7 @@ class ErrorsApi extends aAPI
 
         $userId = null;
         try {
-            $identity = (new \IamLab\Service\Auth\AuthService())->getIdentity();
+            $identity = (new AuthService())->getIdentity();
             if ($identity && isset($identity['user_id'])) {
                 $userId = (int)$identity['user_id'];
             }
@@ -64,8 +67,8 @@ class ErrorsApi extends aAPI
         }
 
         // Also write to app logger if available
-        if (isset($this->logger)) {
-            /** @var \Phalcon\Logger\LoggerInterface $logger */
+        if ($this->logger !== null) {
+            /** @var LoggerInterface $logger */
             $logger = $this->logger;
             $logger->error('[FE] ' . $message . ' | url=' . $url);
         }
@@ -94,13 +97,22 @@ class ErrorsApi extends aAPI
 
         $conditions = [];
         $bind = [];
-        if ($level) { $conditions[] = 'level = :level:'; $bind['level'] = $level; }
-        if ($since) { $conditions[] = 'created_at >= :since:'; $bind['since'] = $since; }
+        if ($level) {
+            $conditions[] = 'level = :level:';
+            $bind['level'] = $level;
+        }
+
+        if ($since) {
+            $conditions[] = 'created_at >= :since:';
+            $bind['since'] = $since;
+        }
+
         if ($q) {
             $conditions[] = '(message LIKE :q: OR url LIKE :q:)';
             $bind['q'] = '%' . $q . '%';
         }
-        $where = $conditions ? implode(' AND ', $conditions) : null;
+
+        $where = $conditions !== [] ? implode(' AND ', $conditions) : null;
 
         $total = ErrorLog::count([
             'conditions' => $where,
@@ -155,6 +167,7 @@ class ErrorsApi extends aAPI
                 'message' => 'Error log not found'
             ], 404);
         }
+
         $this->dispatch([
             'success' => true,
             'data' => [
@@ -185,6 +198,7 @@ class ErrorsApi extends aAPI
                 'message' => 'Error log not found'
             ], 404);
         }
+
         $log->delete();
         $this->dispatch(['success' => true], 200);
     }
@@ -200,7 +214,7 @@ class ErrorsApi extends aAPI
         $connection = $this->getDI()->get('db');
         $sql = 'DELETE FROM error_logs WHERE created_at < :th';
         $stmt = $connection->prepare($sql);
-        $result = $connection->executePrepared($stmt, ['th' => $threshold], ['th' => \Phalcon\Db\Column::BIND_PARAM_STR]);
+        $connection->executePrepared($stmt, ['th' => $threshold], ['th' => Column::BIND_PARAM_STR]);
         $this->dispatch([
             'success' => true,
             'data' => [ 'deleted' => (int)$connection->affectedRows() ]

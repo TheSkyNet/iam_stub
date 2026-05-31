@@ -2,7 +2,6 @@
 
 namespace App\Core\Helpers;
 
-
 use IamLab\Core\Collection\Collection;
 use stdClass;
 
@@ -23,7 +22,6 @@ function cast(mixed $value, ?string $cast): mixed
         'string' => (string)$value,
         default => $value,
     };
-
 }
 
 /**
@@ -34,27 +32,28 @@ function cast(mixed $value, ?string $cast): mixed
  * Otherwise, a new instance of the first object's class is created.
  *
  * @param object ...$objects A variable number of objects to merge.
- * @return object|void A new object with merged properties, or void if no objects are provided.
+ * @return object|null A new object with merged properties, or void if no objects are provided.
  */
-function merge_objects(...$objects)
+function merge_objects(...$objects): ?object
 {
 
     if (count($objects) < 1) {
-        return;
+        return null;
     }
+
     if ($objects[0] instanceof stdClass) {
         $new_object = new stdClass();
     } else {
-        $class= get_class($objects[0]);
-        $new_object = new $class;
+        $class = $objects[0]::class;
+        $new_object = new $class();
     }
 
     foreach ($objects as $object) {
         foreach ($object as $property => $value) {
             $new_object->$property = $value;
         }
-
     }
+
     return $new_object;
 }
 
@@ -66,7 +65,7 @@ function merge_objects(...$objects)
  * @param mixed ...$args A variable number of arguments.
  * @return array An array containing all the arguments.
  */
-function splat(...$args): array
+function splat(mixed ...$args): array
 {
     return $args;
 }

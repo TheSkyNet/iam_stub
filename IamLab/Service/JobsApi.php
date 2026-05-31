@@ -8,7 +8,7 @@ use IamLab\Model\Job;
 
 /**
  * Jobs API Service
- * 
+ *
  * Provides REST API endpoints for job management
  */
 class JobsApi extends aAPI
@@ -21,7 +21,7 @@ class JobsApi extends aAPI
     /**
      * Initialize the service
      */
-    public function initialize()
+    public function initialize(): void
     {
         $this->jobQueue = new JobQueue();
     }
@@ -56,7 +56,7 @@ class JobsApi extends aAPI
                 $bind['type'] = $type;
             }
 
-            $whereClause = !empty($conditions) ? implode(' AND ', $conditions) : '';
+            $whereClause = $conditions === [] ? '' : implode(' AND ', $conditions);
 
             $jobs = Job::find([
                 'conditions' => $whereClause,
@@ -87,11 +87,10 @@ class JobsApi extends aAPI
                     'has_more' => ($offset + $limit) < $totalCount
                 ]
             ]);
-
-        } catch (Exception $e) {
+        } catch (Exception $exception) {
             $this->dispatchError([
                 'status' => 'error',
-                'message' => 'Failed to retrieve jobs: ' . $e->getMessage()
+                'message' => 'Failed to retrieve jobs: ' . $exception->getMessage()
             ], 500);
         }
     }
@@ -103,9 +102,8 @@ class JobsApi extends aAPI
     public function showAction(int $id): void
     {
         try {
-
             $job = $this->jobQueue->getJob($id);
-            
+
             if (!$job) {
                 $this->dispatchError([
                     'status' => 'error',
@@ -117,11 +115,10 @@ class JobsApi extends aAPI
                 'status' => 'success',
                 'data' => $this->formatJobData($job, true)
             ]);
-
-        } catch (Exception $e) {
+        } catch (Exception $exception) {
             $this->dispatchError([
                 'status' => 'error',
-                'message' => 'Failed to retrieve job: ' . $e->getMessage()
+                'message' => 'Failed to retrieve job: ' . $exception->getMessage()
             ], 500);
         }
     }
@@ -134,7 +131,7 @@ class JobsApi extends aAPI
     {
         try {
             $data = $this->getData();
-            
+
             // Validate required fields
             if (!isset($data['type']) || empty($data['type'])) {
                 $this->dispatchError([
@@ -166,7 +163,7 @@ class JobsApi extends aAPI
             }
 
             // Validate scheduled_at format if provided
-            if ($scheduledAt && !strtotime($scheduledAt)) {
+            if ($scheduledAt && !strtotime((string) $scheduledAt)) {
                 $this->dispatchError([
                     'status' => 'error',
                     'message' => 'Invalid scheduled_at format. Use Y-m-d H:i:s format'
@@ -174,7 +171,7 @@ class JobsApi extends aAPI
             }
 
             $job = $this->jobQueue->dispatch($type, $payload, $priority, $scheduledAt, $maxAttempts);
-            
+
             if (!$job) {
                 $this->dispatchError([
                     'status' => 'error',
@@ -187,11 +184,10 @@ class JobsApi extends aAPI
                 'message' => 'Job created successfully',
                 'data' => $this->formatJobData($job)
             ], 201);
-
-        } catch (Exception $e) {
+        } catch (Exception $exception) {
             $this->dispatchError([
                 'status' => 'error',
-                'message' => 'Failed to create job: ' . $e->getMessage()
+                'message' => 'Failed to create job: ' . $exception->getMessage()
             ], 500);
         }
     }
@@ -203,9 +199,8 @@ class JobsApi extends aAPI
     public function deleteAction(int $id): void
     {
         try {
-
             $success = $this->jobQueue->cancelJob($id);
-            
+
             if (!$success) {
                 $this->dispatchError([
                     'status' => 'error',
@@ -217,11 +212,10 @@ class JobsApi extends aAPI
                 'status' => 'success',
                 'message' => 'Job cancelled successfully'
             ]);
-
-        } catch (Exception $e) {
+        } catch (Exception $exception) {
             $this->dispatchError([
                 'status' => 'error',
-                'message' => 'Failed to cancel job: ' . $e->getMessage()
+                'message' => 'Failed to cancel job: ' . $exception->getMessage()
             ], 500);
         }
     }
@@ -233,7 +227,6 @@ class JobsApi extends aAPI
     public function retryAction($id): void
     {
         try {
-
             if (!$id) {
                 $this->dispatchError([
                     'status' => 'error',
@@ -242,7 +235,7 @@ class JobsApi extends aAPI
             }
 
             $success = $this->jobQueue->retryJob($id);
-            
+
             if (!$success) {
                 $this->dispatchError([
                     'status' => 'error',
@@ -254,11 +247,10 @@ class JobsApi extends aAPI
                 'status' => 'success',
                 'message' => 'Job queued for retry successfully'
             ]);
-
-        } catch (Exception $e) {
+        } catch (Exception $exception) {
             $this->dispatchError([
                 'status' => 'error',
-                'message' => 'Failed to retry job: ' . $e->getMessage()
+                'message' => 'Failed to retry job: ' . $exception->getMessage()
             ], 500);
         }
     }
@@ -271,16 +263,15 @@ class JobsApi extends aAPI
     {
         try {
             $stats = $this->jobQueue->getStats();
-            
+
             $this->dispatch([
                 'status' => 'success',
                 'data' => $stats
             ]);
-
-        } catch (Exception $e) {
+        } catch (Exception $exception) {
             $this->dispatchError([
                 'status' => 'error',
-                'message' => 'Failed to retrieve job statistics: ' . $e->getMessage()
+                'message' => 'Failed to retrieve job statistics: ' . $exception->getMessage()
             ], 500);
         }
     }
@@ -304,20 +295,19 @@ class JobsApi extends aAPI
             }
 
             $deletedCount = $this->jobQueue->cleanup($days);
-            
+
             $this->dispatch([
                 'status' => 'success',
-                'message' => "Cleaned up {$deletedCount} completed jobs older than {$days} days",
+                'message' => sprintf('Cleaned up %d completed jobs older than %s days', $deletedCount, $days),
                 'data' => [
                     'deleted_count' => $deletedCount,
                     'days' => $days
                 ]
             ]);
-
-        } catch (Exception $e) {
+        } catch (Exception $exception) {
             $this->dispatchError([
                 'status' => 'error',
-                'message' => 'Failed to cleanup jobs: ' . $e->getMessage()
+                'message' => 'Failed to cleanup jobs: ' . $exception->getMessage()
             ], 500);
         }
     }
@@ -332,7 +322,7 @@ class JobsApi extends aAPI
             // Get distinct job types from database
             $result = $this->db->query("SELECT DISTINCT type FROM jobs ORDER BY type");
             $types = [];
-            
+
             while ($row = $result->fetch()) {
                 $types[] = $row['type'];
             }
@@ -341,11 +331,10 @@ class JobsApi extends aAPI
                 'status' => 'success',
                 'data' => $types
             ]);
-
-        } catch (Exception $e) {
+        } catch (Exception $exception) {
             $this->dispatchError([
                 'status' => 'error',
-                'message' => 'Failed to retrieve job types: ' . $e->getMessage()
+                'message' => 'Failed to retrieve job types: ' . $exception->getMessage()
             ], 500);
         }
     }
@@ -358,7 +347,7 @@ class JobsApi extends aAPI
     {
         try {
             $data = $this->getData();
-            
+
             if (!isset($data['action']) || !isset($data['job_ids'])) {
                 $this->dispatchError([
                     'status' => 'error',
@@ -369,7 +358,7 @@ class JobsApi extends aAPI
             $action = $data['action'];
             $jobIds = $data['job_ids'];
 
-            if (!is_array($jobIds) || empty($jobIds)) {
+            if (!is_array($jobIds) || $jobIds === []) {
                 $this->dispatchError([
                     'status' => 'error',
                     'message' => 'job_ids must be a non-empty array'
@@ -389,12 +378,12 @@ class JobsApi extends aAPI
                         $success = $this->jobQueue->cancelJob($jobId);
                         $message = $success ? 'Cancelled' : 'Failed to cancel';
                         break;
-                    
+
                     case 'retry':
                         $success = $this->jobQueue->retryJob($jobId);
                         $message = $success ? 'Queued for retry' : 'Failed to retry';
                         break;
-                    
+
                     default:
                         $message = 'Invalid action';
                         break;
@@ -415,7 +404,7 @@ class JobsApi extends aAPI
 
             $this->dispatch([
                 'status' => 'success',
-                'message' => "Bulk {$action} completed: {$successCount} successful, {$failureCount} failed",
+                'message' => sprintf('Bulk %s completed: %d successful, %d failed', $action, $successCount, $failureCount),
                 'data' => [
                     'results' => $results,
                     'summary' => [
@@ -425,21 +414,16 @@ class JobsApi extends aAPI
                     ]
                 ]
             ]);
-
-        } catch (Exception $e) {
+        } catch (Exception $exception) {
             $this->dispatchError([
                 'status' => 'error',
-                'message' => 'Failed to perform bulk operation: ' . $e->getMessage()
+                'message' => 'Failed to perform bulk operation: ' . $exception->getMessage()
             ], 500);
         }
     }
 
     /**
      * Format job data for API response
-     *
-     * @param Job $job
-     * @param bool $includePayload
-     * @return array
      */
     protected function formatJobData(Job $job, bool $includePayload = false): array
     {

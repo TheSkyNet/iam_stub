@@ -57,10 +57,6 @@ class RolesSeeder extends Migration
 
     /**
      * Assign a role to a user by email
-     *
-     * @param string $email
-     * @param string $roleName
-     * @return bool
      */
     public function assignRoleToUser(string $email, string $roleName): bool
     {
@@ -74,17 +70,14 @@ class RolesSeeder extends Migration
         if ($rolesService->addRole($user, $roleName)) {
             echo "Successfully assigned role '{$roleName}' to user '{$email}'\n";
             return true;
-        } else {
-            echo "Failed to assign role '{$roleName}' to user '{$email}'\n";
-            return false;
         }
+
+        echo "Failed to assign role '{$roleName}' to user '{$email}'\n";
+        return false;
     }
 
     /**
      * Assign default admin role to the first user created
-     *
-     * @param string $email
-     * @return bool
      */
     public function assignAdminRole(string $email): bool
     {

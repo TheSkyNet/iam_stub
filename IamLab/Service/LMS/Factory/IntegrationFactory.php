@@ -13,7 +13,7 @@ use InvalidArgumentException;
 
 /**
  * Integration Factory
- * 
+ *
  * Handles creation of integration instances
  * Following Open/Closed Principle (OCP) and Dependency Inversion Principle (DIP)
  */
@@ -30,29 +30,29 @@ class IntegrationFactory
 
     /**
      * Create an integration instance
-     * 
+     *
      * @throws IntegrationNotFoundException
      * @throws InvalidConfigurationException
      */
     public static function create(string $integration, array $config): LMSIntegrationInterface
     {
         if (!self::isSupported($integration)) {
-            throw new IntegrationNotFoundException("Integration '{$integration}' is not supported");
+            throw new IntegrationNotFoundException(sprintf("Integration '%s' is not supported", $integration));
         }
 
         $className = self::$integrationClasses[$integration];
-        
+
         try {
             return new $className($config);
         } catch (InvalidArgumentException $e) {
             throw new InvalidConfigurationException(
-                "Invalid configuration for integration '{$integration}': " . $e->getMessage(),
+                sprintf("Invalid configuration for integration '%s': ", $integration) . $e->getMessage(),
                 0,
                 $e
             );
         } catch (Exception $e) {
             throw new InvalidConfigurationException(
-                "Failed to create integration '{$integration}': " . $e->getMessage(),
+                sprintf("Failed to create integration '%s': ", $integration) . $e->getMessage(),
                 0,
                 $e
             );
@@ -77,14 +77,14 @@ class IntegrationFactory
 
     /**
      * Register a new integration class
-     * 
+     *
      * This allows extending the factory without modifying existing code (OCP)
      */
     public static function register(string $name, string $className): void
     {
         if (!is_subclass_of($className, LMSIntegrationInterface::class)) {
             throw new InvalidArgumentException(
-                "Class '{$className}' must implement LMSIntegrationInterface"
+                sprintf("Class '%s' must implement LMSIntegrationInterface", $className)
             );
         }
 
@@ -141,7 +141,7 @@ class IntegrationFactory
         $errors = [];
 
         if (!self::isSupported($integration)) {
-            $errors[] = "Integration '{$integration}' is not supported";
+            $errors[] = sprintf("Integration '%s' is not supported", $integration);
             return $errors;
         }
 
@@ -151,21 +151,25 @@ class IntegrationFactory
                 if (empty($config['api_key'])) {
                     $errors[] = "API key is required for Gemini integration";
                 }
+
                 break;
 
             case 'tencent_edu':
                 if (empty($config['app_id'])) {
                     $errors[] = "App ID is required for Tencent Education integration";
                 }
+
                 if (empty($config['secret_key'])) {
                     $errors[] = "Secret key is required for Tencent Education integration";
                 }
+
                 break;
 
             case 'ollama':
                 if (empty($config['host'])) {
                     $errors[] = "Host is required for Ollama integration";
                 }
+
                 break;
         }
 
@@ -182,7 +186,7 @@ class IntegrationFactory
         }
 
         // Return static capabilities for each integration
-        return match($integration) {
+        return match ($integration) {
             'gemini' => [
                 'content_generation' => true,
                 'text_analysis' => true,

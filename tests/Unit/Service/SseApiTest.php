@@ -13,13 +13,26 @@ class SseApiTest extends TestCase
     {
         $api = new class extends SseApi {
             public BufferWriter $writer;
+
             protected array $queries = [
                 'message' => 'Hi there',
                 'retry' => 1234,
             ];
-            protected function createWriter(): OutputWriterInterface { return $this->writer = new BufferWriter(); }
-            protected function terminate(): void { /* no-op for tests */ }
-            protected function getQuery(string $name, mixed $default = null): mixed { return $this->queries[$name] ?? $default; }
+
+            protected function createWriter(): OutputWriterInterface
+            {
+                return $this->writer = new BufferWriter();
+            }
+
+            protected function terminate(): void
+            {
+ /* no-op for tests */
+            }
+
+            protected function getQuery(string $name, mixed $default = null): mixed
+            {
+                return $this->queries[$name] ?? $default;
+            }
         };
 
         $api->echoAction();
@@ -39,15 +52,32 @@ class SseApiTest extends TestCase
     {
         $api = new class extends SseApi {
             public BufferWriter $writer;
+
             protected array $queries = [
                 'count' => 3,
                 'interval' => 0,
                 'retry' => 0,
             ];
-            protected function createWriter(): OutputWriterInterface { return $this->writer = new BufferWriter(); }
-            protected function sleepMs(int $ms): void { /* skip delay in tests */ }
-            protected function terminate(): void { /* no-op for tests */ }
-            protected function getQuery(string $name, mixed $default = null): mixed { return $this->queries[$name] ?? $default; }
+
+            protected function createWriter(): OutputWriterInterface
+            {
+                return $this->writer = new BufferWriter();
+            }
+
+            protected function sleepMs(int $ms): void
+            {
+ /* skip delay in tests */
+            }
+
+            protected function terminate(): void
+            {
+ /* no-op for tests */
+            }
+
+            protected function getQuery(string $name, mixed $default = null): mixed
+            {
+                return $this->queries[$name] ?? $default;
+            }
         };
 
         $api->clockAction();
@@ -65,8 +95,16 @@ class SseApiTest extends TestCase
     {
         $api = new class extends SseApi {
             public BufferWriter $writer;
-            protected function createWriter(): OutputWriterInterface { return $this->writer = new BufferWriter(); }
-            protected function terminate(): void { /* no-op for tests */ }
+
+            protected function createWriter(): OutputWriterInterface
+            {
+                return $this->writer = new BufferWriter();
+            }
+
+            protected function terminate(): void
+            {
+ /* no-op for tests */
+            }
         };
 
         $api->testAction();

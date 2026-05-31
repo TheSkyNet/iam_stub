@@ -8,6 +8,7 @@ use Exception;
 class ResendProvider implements EmailProviderInterface
 {
     private array $config;
+
     private string $lastError = '';
 
     public function __construct(array $config)
@@ -24,6 +25,7 @@ class ResendProvider implements EmailProviderInterface
      * @param array $options Additional options
      * @return bool True if email was sent successfully
      */
+    #[\Override]
     public function send(string $to, string $subject, string $body, array $options = []): bool
     {
         try {
@@ -32,7 +34,7 @@ class ResendProvider implements EmailProviderInterface
             $isHtml = $options['is_html'] ?? true;
 
             $payload = [
-                'from' => "{$fromName} <{$fromEmail}>",
+                'from' => sprintf('%s <%s>', $fromName, $fromEmail),
                 'to' => [$to],
                 'subject' => $subject,
             ];
@@ -62,14 +64,9 @@ class ResendProvider implements EmailProviderInterface
             }
 
             $response = $this->makeApiRequest('/emails', $payload);
-
-            if (!$response) {
-                return false;
-            }
-
-            return true;
-        } catch (Exception $e) {
-            $this->lastError = $e->getMessage();
+            return (bool) $response;
+        } catch (Exception $exception) {
+            $this->lastError = $exception->getMessage();
             return false;
         }
     }
@@ -83,6 +80,7 @@ class ResendProvider implements EmailProviderInterface
      * @param array $options Additional options
      * @return bool True if email was sent successfully
      */
+    #[\Override]
     public function sendBulk(array $recipients, string $subject, string $body, array $options = []): bool
     {
         try {
@@ -91,7 +89,7 @@ class ResendProvider implements EmailProviderInterface
             $isHtml = $options['is_html'] ?? true;
 
             $payload = [
-                'from' => "{$fromName} <{$fromEmail}>",
+                'from' => sprintf('%s <%s>', $fromName, $fromEmail),
                 'to' => $recipients,
                 'subject' => $subject,
             ];
@@ -121,14 +119,9 @@ class ResendProvider implements EmailProviderInterface
             }
 
             $response = $this->makeApiRequest('/emails', $payload);
-
-            if (!$response) {
-                return false;
-            }
-
-            return true;
-        } catch (Exception $e) {
-            $this->lastError = $e->getMessage();
+            return (bool) $response;
+        } catch (Exception $exception) {
+            $this->lastError = $exception->getMessage();
             return false;
         }
     }
@@ -138,6 +131,7 @@ class ResendProvider implements EmailProviderInterface
      *
      * @return bool True if configuration is valid
      */
+    #[\Override]
     public function validateConfig(): bool
     {
         $apiKey = $this->config['api_key'] ?? '';
@@ -147,7 +141,7 @@ class ResendProvider implements EmailProviderInterface
             return false;
         }
 
-        if (!str_starts_with($apiKey, 're_')) {
+        if (!str_starts_with((string) $apiKey, 're_')) {
             $this->lastError = "Invalid Resend API key format";
             return false;
         }
@@ -160,6 +154,7 @@ class ResendProvider implements EmailProviderInterface
      *
      * @return string|null Last error message or null if no error
      */
+    #[\Override]
     public function getLastError(): ?string
     {
         return $this->lastError ?: null;
@@ -205,15 +200,15 @@ class ResendProvider implements EmailProviderInterface
             $curlError = curl_error($ch);
             curl_close($ch);
 
-            if ($curlError) {
-                $this->lastError = "cURL error: {$curlError}";
+            if ($curlError !== '' && $curlError !== '0') {
+                $this->lastError = 'cURL error: ' . $curlError;
                 return false;
             }
 
             if ($httpCode >= 400) {
                 $errorData = json_decode($response, true);
-                $errorMessage = $errorData['message'] ?? "HTTP error {$httpCode}";
-                $this->lastError = "Resend API error: {$errorMessage}";
+                $errorMessage = $errorData['message'] ?? 'HTTP error ' . $httpCode;
+                $this->lastError = 'Resend API error: ' . $errorMessage;
                 return false;
             }
 
@@ -224,8 +219,8 @@ class ResendProvider implements EmailProviderInterface
             }
 
             return $responseData;
-        } catch (Exception $e) {
-            $this->lastError = "API request failed: " . $e->getMessage();
+        } catch (Exception $exception) {
+            $this->lastError = "API request failed: " . $exception->getMessage();
             return false;
         }
     }
@@ -241,8 +236,8 @@ class ResendProvider implements EmailProviderInterface
             // Make a simple API call to test the connection
             $response = $this->makeApiRequest('/domains', []);
             return $response !== false;
-        } catch (Exception $e) {
-            $this->lastError = "Connection test failed: " . $e->getMessage();
+        } catch (Exception $exception) {
+            $this->lastError = "Connection test failed: " . $exception->getMessage();
             return false;
         }
     }

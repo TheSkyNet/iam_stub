@@ -8,7 +8,7 @@ use Phalcon\Di\Injectable;
 
 /**
  * JobQueue Service
- * 
+ *
  * Handles job creation, queuing, and management
  */
 class JobQueue extends Injectable
@@ -43,8 +43,8 @@ class JobQueue extends Injectable
             }
 
             return false;
-        } catch (Exception $e) {
-            error_log("Failed to dispatch job: " . $e->getMessage());
+        } catch (Exception $exception) {
+            error_log("Failed to dispatch job: " . $exception->getMessage());
             return false;
         }
     }
@@ -52,10 +52,6 @@ class JobQueue extends Injectable
     /**
      * Dispatch a job with high priority
      *
-     * @param string $type
-     * @param array $payload
-     * @param string|null $scheduledAt
-     * @param int $maxAttempts
      * @return Job|false
      */
     public function dispatchHigh(
@@ -70,10 +66,6 @@ class JobQueue extends Injectable
     /**
      * Dispatch a critical priority job
      *
-     * @param string $type
-     * @param array $payload
-     * @param string|null $scheduledAt
-     * @param int $maxAttempts
      * @return Job|false
      */
     public function dispatchCritical(
@@ -88,11 +80,6 @@ class JobQueue extends Injectable
     /**
      * Schedule a job to run later
      *
-     * @param string $type
-     * @param array $payload
-     * @param string $scheduledAt
-     * @param int $priority
-     * @param int $maxAttempts
      * @return Job|false
      */
     public function schedule(
@@ -108,11 +95,6 @@ class JobQueue extends Injectable
     /**
      * Schedule a job to run after a delay
      *
-     * @param string $type
-     * @param array $payload
-     * @param int $delaySeconds
-     * @param int $priority
-     * @param int $maxAttempts
      * @return Job|false
      */
     public function delay(
@@ -128,8 +110,6 @@ class JobQueue extends Injectable
 
     /**
      * Get the next job to process
-     *
-     * @return Job|null
      */
     public function getNextJob(): ?Job
     {
@@ -150,14 +130,11 @@ class JobQueue extends Injectable
 
     /**
      * Get multiple jobs to process
-     *
-     * @param int $limit
-     * @return array
      */
     public function getNextJobs(int $limit = 10): array
     {
         $jobs = [];
-        
+
         // Get ready jobs
         $readyJobs = Job::findReadyJobs($limit);
         foreach ($readyJobs as $job) {
@@ -178,9 +155,6 @@ class JobQueue extends Injectable
 
     /**
      * Process a job
-     *
-     * @param Job $job
-     * @return bool
      */
     public function processJob(Job $job): bool
     {
@@ -192,7 +166,7 @@ class JobQueue extends Injectable
 
             // Get the job handler
             $handler = $this->getJobHandler($job->getType());
-            if (!$handler) {
+            if ($handler === null) {
                 throw new Exception("No handler found for job type: " . $job->getType());
             }
 
@@ -204,24 +178,20 @@ class JobQueue extends Injectable
                 $job->markAsCompleted();
                 $job->save();
                 return true;
-            } else {
-                // Job failed
-                $errorMessage = is_string($result) ? $result : "Job handler returned false";
-                $this->handleJobFailure($job, $errorMessage);
-                return false;
             }
 
-        } catch (Exception $e) {
-            $this->handleJobFailure($job, $e->getMessage());
+            // Job failed
+            $errorMessage = is_string($result) ? $result : "Job handler returned false";
+            $this->handleJobFailure($job, $errorMessage);
+            return false;
+        } catch (Exception $exception) {
+            $this->handleJobFailure($job, $exception->getMessage());
             return false;
         }
     }
 
     /**
      * Handle job failure
-     *
-     * @param Job $job
-     * @param string $errorMessage
      */
     protected function handleJobFailure(Job $job, string $errorMessage): void
     {
@@ -230,14 +200,12 @@ class JobQueue extends Injectable
         } else {
             $job->markAsFailed($errorMessage);
         }
+
         $job->save();
     }
 
     /**
      * Get job handler instance
-     *
-     * @param string $type
-     * @return object|null
      */
     protected function getJobHandler(string $type): ?object
     {
@@ -245,7 +213,7 @@ class JobQueue extends Injectable
             // Try to instantiate the job handler class
             if (class_exists($type)) {
                 $handler = new $type();
-                
+
                 // Check if handler has a handle method
                 if (method_exists($handler, 'handle')) {
                     return $handler;
@@ -253,7 +221,7 @@ class JobQueue extends Injectable
             }
 
             // Try to find handler in Jobs namespace
-            $jobClass = "IamLab\\Jobs\\{$type}";
+            $jobClass = 'IamLab\Jobs\\' . $type;
             if (class_exists($jobClass)) {
                 $handler = new $jobClass();
                 if (method_exists($handler, 'handle')) {
@@ -262,16 +230,14 @@ class JobQueue extends Injectable
             }
 
             return null;
-        } catch (Exception $e) {
-            error_log("Failed to create job handler for {$type}: " . $e->getMessage());
+        } catch (Exception $exception) {
+            error_log(sprintf('Failed to create job handler for %s: ', $type) . $exception->getMessage());
             return null;
         }
     }
 
     /**
      * Get job statistics
-     *
-     * @return array
      */
     public function getStats(): array
     {
@@ -280,9 +246,6 @@ class JobQueue extends Injectable
 
     /**
      * Get job by ID
-     *
-     * @param int $id
-     * @return Job|null
      */
     public function getJob(int $id): ?Job
     {
@@ -291,14 +254,11 @@ class JobQueue extends Injectable
 
     /**
      * Cancel a job
-     *
-     * @param int $id
-     * @return bool
      */
     public function cancelJob(int $id): bool
     {
         $job = Job::findFirst($id);
-        if (!$job) {
+        if (!$job instanceof Job) {
             return false;
         }
 
@@ -311,14 +271,11 @@ class JobQueue extends Injectable
 
     /**
      * Retry a failed job
-     *
-     * @param int $id
-     * @return bool
      */
     public function retryJob(int $id): bool
     {
         $job = Job::findFirst($id);
-        if (!$job) {
+        if (!$job instanceof Job) {
             return false;
         }
 
@@ -338,7 +295,6 @@ class JobQueue extends Injectable
     /**
      * Clean up old completed jobs
      *
-     * @param int $days
      * @return int Number of jobs deleted
      */
     public function cleanup(int $days = 7): int
@@ -348,11 +304,6 @@ class JobQueue extends Injectable
 
     /**
      * Get jobs by status
-     *
-     * @param string $status
-     * @param int $limit
-     * @param int $offset
-     * @return array
      */
     public function getJobsByStatus(string $status, int $limit = 50, int $offset = 0): array
     {
@@ -387,9 +338,6 @@ class JobQueue extends Injectable
 
     /**
      * Get recent jobs
-     *
-     * @param int $limit
-     * @return array
      */
     public function getRecentJobs(int $limit = 50): array
     {

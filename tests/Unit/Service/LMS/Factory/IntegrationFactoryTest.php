@@ -18,7 +18,7 @@ class IntegrationFactoryTest extends TestCase
     public function testGetSupportedIntegrations(): void
     {
         $supported = IntegrationFactory::getSupportedIntegrations();
-        
+
         $this->assertIsArray($supported);
         $this->assertContains('ollama', $supported);
         $this->assertContains('gemini', $supported);
@@ -39,9 +39,9 @@ class IntegrationFactoryTest extends TestCase
             'host' => 'http://localhost:11434',
             'model' => 'llama2'
         ];
-        
+
         $integration = IntegrationFactory::create('ollama', $config);
-        
+
         $this->assertInstanceOf(LMSIntegrationInterface::class, $integration);
         $this->assertInstanceOf(OllamaIntegration::class, $integration);
     }
@@ -52,9 +52,9 @@ class IntegrationFactoryTest extends TestCase
             'api_key' => 'test_api_key',
             'model' => 'gemini-pro'
         ];
-        
+
         $integration = IntegrationFactory::create('gemini', $config);
-        
+
         $this->assertInstanceOf(LMSIntegrationInterface::class, $integration);
         $this->assertInstanceOf(GeminiIntegration::class, $integration);
     }
@@ -66,9 +66,9 @@ class IntegrationFactoryTest extends TestCase
             'secret_key' => 'test_secret_key',
             'region' => 'ap-beijing'
         ];
-        
+
         $integration = IntegrationFactory::create('tencent_edu', $config);
-        
+
         $this->assertInstanceOf(LMSIntegrationInterface::class, $integration);
         $this->assertInstanceOf(TencentEduIntegration::class, $integration);
     }
@@ -77,14 +77,14 @@ class IntegrationFactoryTest extends TestCase
     {
         $this->expectException(IntegrationNotFoundException::class);
         $this->expectExceptionMessage("Integration 'nonexistent' is not supported");
-        
+
         IntegrationFactory::create('nonexistent', []);
     }
 
     public function testCreateWithInvalidConfigurationThrowsException(): void
     {
         $this->expectException(InvalidConfigurationException::class);
-        
+
         // Gemini requires API key
         IntegrationFactory::create('gemini', []);
     }
@@ -119,21 +119,21 @@ class IntegrationFactoryTest extends TestCase
                 'enabled' => true // This should cause an error
             ]
         ];
-        
+
         $result = IntegrationFactory::createFromConfig($configurations);
-        
+
         $this->assertIsArray($result);
         $this->assertArrayHasKey('integrations', $result);
         $this->assertArrayHasKey('errors', $result);
-        
+
         // Should have created ollama and gemini
         $this->assertArrayHasKey('ollama', $result['integrations']);
         $this->assertArrayHasKey('gemini', $result['integrations']);
-        
+
         // Should not have created tencent_edu (disabled) or invalid (unsupported)
         $this->assertArrayNotHasKey('tencent_edu', $result['integrations']);
         $this->assertArrayNotHasKey('invalid', $result['integrations']);
-        
+
         // Should have error for invalid integration
         $this->assertArrayHasKey('invalid', $result['errors']);
     }
@@ -145,36 +145,36 @@ class IntegrationFactoryTest extends TestCase
             'host' => 'http://localhost:11434'
         ]);
         $this->assertEmpty($errors);
-        
+
         // Invalid Ollama config (missing host)
         $errors = IntegrationFactory::validateConfig('ollama', []);
         $this->assertNotEmpty($errors);
         $this->assertContains('Host is required for Ollama integration', $errors);
-        
+
         // Valid Gemini config
         $errors = IntegrationFactory::validateConfig('gemini', [
             'api_key' => 'test_key'
         ]);
         $this->assertEmpty($errors);
-        
+
         // Invalid Gemini config (missing API key)
         $errors = IntegrationFactory::validateConfig('gemini', []);
         $this->assertNotEmpty($errors);
         $this->assertContains('API key is required for Gemini integration', $errors);
-        
+
         // Valid Tencent config
         $errors = IntegrationFactory::validateConfig('tencent_edu', [
             'app_id' => 'test_app_id',
             'secret_key' => 'test_secret_key'
         ]);
         $this->assertEmpty($errors);
-        
+
         // Invalid Tencent config (missing credentials)
         $errors = IntegrationFactory::validateConfig('tencent_edu', []);
         $this->assertNotEmpty($errors);
         $this->assertContains('App ID is required for Tencent Education integration', $errors);
         $this->assertContains('Secret key is required for Tencent Education integration', $errors);
-        
+
         // Unsupported integration
         $errors = IntegrationFactory::validateConfig('nonexistent', []);
         $this->assertNotEmpty($errors);
@@ -191,7 +191,7 @@ class IntegrationFactoryTest extends TestCase
         $this->assertArrayHasKey('local_processing', $capabilities);
         $this->assertTrue($capabilities['content_generation']);
         $this->assertTrue($capabilities['local_processing']);
-        
+
         // Test Gemini capabilities
         $capabilities = IntegrationFactory::getIntegrationCapabilities('gemini');
         $this->assertIsArray($capabilities);
@@ -200,7 +200,7 @@ class IntegrationFactoryTest extends TestCase
         $this->assertArrayHasKey('max_tokens', $capabilities);
         $this->assertTrue($capabilities['content_generation']);
         $this->assertEquals(8192, $capabilities['max_tokens']);
-        
+
         // Test Tencent capabilities
         $capabilities = IntegrationFactory::getIntegrationCapabilities('tencent_edu');
         $this->assertIsArray($capabilities);
@@ -210,7 +210,7 @@ class IntegrationFactoryTest extends TestCase
         $this->assertTrue($capabilities['course_creation']);
         $this->assertTrue($capabilities['video_conferencing']);
         $this->assertEquals(1000, $capabilities['max_participants']);
-        
+
         // Test unsupported integration
         $capabilities = IntegrationFactory::getIntegrationCapabilities('nonexistent');
         $this->assertIsArray($capabilities);
@@ -220,26 +220,48 @@ class IntegrationFactoryTest extends TestCase
     public function testRegisterAndUnregisterIntegration(): void
     {
         // Create a mock integration class
-        $mockClass = new class([]) implements LMSIntegrationInterface {
-            public function __construct(array $config) {}
-            public function generateContent(string $prompt, array $options = []): array { return []; }
-            public function createCourse(array $courseData): array { return []; }
-            public function analyzeText(string $text, array $options = []): array { return []; }
-            public function healthCheck(): bool { return true; }
-            public function getCapabilities(): array { return []; }
+        $mockClass = new class ([]) implements LMSIntegrationInterface {
+            public function __construct(array $config)
+            {
+            }
+
+            public function generateContent(string $prompt, array $options = []): array
+            {
+                return [];
+            }
+
+            public function createCourse(array $courseData): array
+            {
+                return [];
+            }
+
+            public function analyzeText(string $text, array $options = []): array
+            {
+                return [];
+            }
+
+            public function healthCheck(): bool
+            {
+                return true;
+            }
+
+            public function getCapabilities(): array
+            {
+                return [];
+            }
         };
-        
-        $className = get_class($mockClass);
-        
+
+        $className = $mockClass::class;
+
         // Register new integration
         IntegrationFactory::register('test_integration', $className);
-        
+
         $this->assertTrue(IntegrationFactory::isSupported('test_integration'));
         $this->assertEquals($className, IntegrationFactory::getIntegrationClass('test_integration'));
-        
+
         // Unregister integration
         IntegrationFactory::unregister('test_integration');
-        
+
         $this->assertFalse(IntegrationFactory::isSupported('test_integration'));
         $this->assertNull(IntegrationFactory::getIntegrationClass('test_integration'));
     }
@@ -248,7 +270,7 @@ class IntegrationFactoryTest extends TestCase
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage("Class 'stdClass' must implement LMSIntegrationInterface");
-        
+
         IntegrationFactory::register('invalid', stdClass::class);
     }
 }

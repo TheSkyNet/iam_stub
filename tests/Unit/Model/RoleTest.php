@@ -22,12 +22,12 @@ class RoleTest extends TestCase
         $role = new Role();
         $this->assertInstanceOf(Role::class, $role);
     }
-    
+
     public function testValidationFailsWithoutName(): void
     {
         $role = new Role();
         $role->setDescription('Only description');
-        
+
         // This is a unit test, we're testing the object state
         $this->assertNull($role->getName());
         $this->assertSame('Only description', $role->getDescription());

@@ -38,9 +38,9 @@ class SubscriptionTest extends TestCase
         $sub = new Subscription();
         $this->assertNull($sub->getCreatedAt());
         $this->assertNull($sub->getUpdatedAt());
-        
+
         $sub->beforeValidationOnCreate();
-        
+
         $this->assertNotEmpty($sub->getCreatedAt());
         $this->assertNotEmpty($sub->getUpdatedAt());
     }

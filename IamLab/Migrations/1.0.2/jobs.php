@@ -13,7 +13,6 @@ class JobsMigration_102 extends Migration
     /**
      * Define the table structure
      *
-     * @return void
      * @throws Exception
      */
     public function morph(): void
@@ -157,8 +156,6 @@ class JobsMigration_102 extends Migration
 
     /**
      * Run the migrations
-     *
-     * @return void
      */
     public function up(): void
     {
@@ -168,8 +165,6 @@ class JobsMigration_102 extends Migration
 
     /**
      * Reverse the migrations
-     *
-     * @return void
      */
     public function down(): void
     {
@@ -178,8 +173,6 @@ class JobsMigration_102 extends Migration
 
     /**
      * This method is called after the table was created
-     *
-     * @return void
      */
     public function afterCreateTable(): void
     {

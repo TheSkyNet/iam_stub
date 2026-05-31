@@ -9,6 +9,7 @@ class PhpOutputWriter implements OutputWriterInterface
 {
     private array $headers = [];
 
+    #[\Override]
     public function setHeader(string $name, string $value): void
     {
         $this->headers[$name] = $value;
@@ -18,30 +19,36 @@ class PhpOutputWriter implements OutputWriterInterface
         }
     }
 
+    #[\Override]
     public function write(string $bytes): void
     {
         echo $bytes;
     }
 
+    #[\Override]
     public function flush(): void
     {
         if (function_exists('fastcgi_finish_request')) {
             // We do not want to terminate request, so just flush buffers
         }
+
         @ob_flush();
         @flush();
     }
 
+    #[\Override]
     public function close(): void
     {
         // Nothing special to close for php output
     }
 
+    #[\Override]
     public function getBuffer(): string
     {
         return '';
     }
 
+    #[\Override]
     public function getHeaders(): array
     {
         return $this->headers;
