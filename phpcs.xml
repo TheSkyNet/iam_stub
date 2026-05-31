@@ -1,0 +1,46 @@
+<?xml version="1.0"?>
+<ruleset name="IamLab">
+    <description>IamLab PHP CodeSniffer configuration</description>
+
+    <!-- Use PSR-12 as base -->
+    <rule ref="PSR12"/>
+
+    <!-- Paths to check -->
+    <file>IamLab</file>
+    <file>tests</file>
+
+    <!-- Exclude Migrations as they follow Phalcon conventions -->
+    <exclude-pattern>*/Migrations/*</exclude-pattern>
+
+    <!-- Exclude vendor directory -->
+    <exclude-pattern>*/vendor/*</exclude-pattern>
+
+    <!-- Customizations -->
+    <rule ref="Generic.Files.LineLength">
+        <properties>
+            <property name="lineLimit" value="120"/>
+            <property name="absoluteLineLimit" value="0"/>
+        </properties>
+    </rule>
+
+    <!-- Ignore side effects in entry point files, config and models with conditional bases -->
+    <rule ref="PSR1.Files.SideEffects.FoundWithSymbols">
+        <exclude-pattern>IamLab/app.php</exclude-pattern>
+        <exclude-pattern>IamLab/config/*</exclude-pattern>
+        <exclude-pattern>IamLab/Model/*</exclude-pattern>
+        <exclude-pattern>IamLab/Core/API/aAPI.php</exclude-pattern>
+        <exclude-pattern>IamLab/Service/Filepond/FilepondService.php</exclude-pattern>
+        <exclude-pattern>IamLab/Service/LMS/LMSService.php</exclude-pattern>
+        <exclude-pattern>tests/bootstrap.php</exclude-pattern>
+        <exclude-pattern>tests/bootstrap/bootstrap.php</exclude-pattern>
+    </rule>
+
+    <!-- Allow multiple classes in files with conditional bases -->
+    <rule ref="PSR1.Classes.ClassDeclaration.MultipleClasses">
+        <exclude-pattern>IamLab/Model/*</exclude-pattern>
+        <exclude-pattern>IamLab/Core/API/aAPI.php</exclude-pattern>
+        <exclude-pattern>IamLab/Service/Filepond/FilepondService.php</exclude-pattern>
+        <exclude-pattern>IamLab/Service/LMS/LMSService.php</exclude-pattern>
+    </rule>
+
+</ruleset>
