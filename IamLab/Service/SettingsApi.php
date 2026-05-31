@@ -45,7 +45,6 @@ class SettingsApi extends aAPI
                 'status' => 'error',
                 'message' => 'Setting not found'
             ], 404);
-            return;
         }
 
         $data = $this->getData();
@@ -63,7 +62,6 @@ class SettingsApi extends aAPI
                 'message' => 'Failed to update setting',
                 'errors' => $setting->getMessages()
             ], 500);
-            return;
         }
 
         $this->dispatch([
@@ -87,7 +85,6 @@ class SettingsApi extends aAPI
                 'status' => 'error',
                 'message' => 'Key and type are required'
             ], 422);
-            return;
         }
 
         $setting = new SiteSetting();
@@ -102,7 +99,6 @@ class SettingsApi extends aAPI
                 'message' => 'Failed to create setting',
                 'errors' => $setting->getMessages()
             ], 500);
-            return;
         }
 
         $this->dispatch([

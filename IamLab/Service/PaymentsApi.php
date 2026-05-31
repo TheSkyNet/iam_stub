@@ -43,7 +43,6 @@ class PaymentsApi extends aAPI
                         'success' => false,
                         'message' => 'Amount is required'
                     ]);
-                    return;
                 }
 
                 $payment = $this->paymentService->processSinglePayment($user->getId(), (float)$amount, $currency, $data);
@@ -55,7 +54,6 @@ class PaymentsApi extends aAPI
                         'message' => 'Payment failed',
                         'data' => $payment->toArray()
                     ]);
-                    return;
                 }
 
                 if ($status === 'canceled') {
@@ -64,7 +62,6 @@ class PaymentsApi extends aAPI
                         'message' => 'Payment was canceled',
                         'data' => $payment->toArray()
                     ]);
-                    return;
                 }
 
                 $message = ($status === 'completed')
@@ -106,7 +103,6 @@ class PaymentsApi extends aAPI
                     'success' => false,
                     'message' => 'Plan ID is required'
                 ]);
-                return;
             }
 
             $user = $this->getCurrentUser();

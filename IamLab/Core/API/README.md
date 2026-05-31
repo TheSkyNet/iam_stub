@@ -229,7 +229,6 @@ class UserApi extends aAPI
                 'success' => false,
                 'message' => 'User not found'
             ]);
-            return;
         }
         
         if ($this->hasParam('name')) {
@@ -253,7 +252,6 @@ class UserApi extends aAPI
                 'success' => false,
                 'message' => 'User not found'
             ]);
-            return;
         }
         
         $this->delete($user);
@@ -331,7 +329,6 @@ if (!$this->hasParam('required_field')) {
         'message' => 'Required field missing',
         'field' => 'required_field'
     ]);
-    return;
 }
 ```
 

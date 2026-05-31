@@ -24,7 +24,6 @@ class PusherApi extends aAPI
                     'success' => false,
                     'message' => 'Pusher service not available: ' . $pusherService->getLastError()
                 ]);
-                return;
             }
 
             $clientConfig = $pusherService->getClientConfig();
@@ -55,7 +54,6 @@ class PusherApi extends aAPI
                     'success' => false,
                     'message' => 'User not authenticated'
                 ]);
-                return;
             }
 
             // Get required parameters
@@ -67,7 +65,6 @@ class PusherApi extends aAPI
                     'success' => false,
                     'message' => 'Missing socket_id or channel_name'
                 ]);
-                return;
             }
 
             $pusherService = new PusherService();
@@ -77,7 +74,6 @@ class PusherApi extends aAPI
                     'success' => false,
                     'message' => 'Pusher service not available'
                 ]);
-                return;
             }
 
             // Get user data for presence channels
@@ -101,7 +97,6 @@ class PusherApi extends aAPI
                     'success' => false,
                     'message' => 'Failed to authenticate channel: ' . $pusherService->getLastError()
                 ]);
-                return;
             }
 
             // Return the authentication signature
@@ -130,7 +125,6 @@ class PusherApi extends aAPI
                     'success' => false,
                     'message' => 'User not authenticated'
                 ]);
-                return;
             }
 
             // Get parameters
@@ -143,7 +137,6 @@ class PusherApi extends aAPI
                     'success' => false,
                     'message' => 'Missing channel or event parameter'
                 ]);
-                return;
             }
 
             $pusherService = new PusherService();
@@ -153,7 +146,6 @@ class PusherApi extends aAPI
                     'success' => false,
                     'message' => 'Pusher service not available'
                 ]);
-                return;
             }
 
             // Trigger the event
@@ -192,7 +184,6 @@ class PusherApi extends aAPI
                     'success' => false,
                     'message' => 'User not authenticated'
                 ]);
-                return;
             }
 
             $channel = $this->getParam('channel');
@@ -203,7 +194,6 @@ class PusherApi extends aAPI
                     'success' => false,
                     'message' => 'Missing channel parameter'
                 ]);
-                return;
             }
 
             $pusherService = new PusherService();
@@ -213,7 +203,6 @@ class PusherApi extends aAPI
                     'success' => false,
                     'message' => 'Pusher service not available'
                 ]);
-                return;
             }
 
             $channelInfo = $pusherService->getChannelInfo($channel, $info);
@@ -251,7 +240,6 @@ class PusherApi extends aAPI
                     'success' => false,
                     'message' => 'User not authenticated'
                 ]);
-                return;
             }
 
             $options = $this->getParam('options', []);
@@ -263,7 +251,6 @@ class PusherApi extends aAPI
                     'success' => false,
                     'message' => 'Pusher service not available'
                 ]);
-                return;
             }
 
             $channels = $pusherService->getChannels($options);
@@ -305,7 +292,6 @@ class PusherApi extends aAPI
                     'success' => false,
                     'message' => 'Pusher service not available'
                 ]);
-                return;
             }
 
             $isValid = $pusherService->verifyWebhook($headers, $body);

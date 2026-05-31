@@ -168,7 +168,6 @@ class UsersApi extends aAPI
                     'success' => false,
                     'message' => 'ID parameter is required'
                 ]);
-                return;
             }
 
             $user = User::findFirst([
@@ -180,7 +179,6 @@ class UsersApi extends aAPI
                     'success' => false,
                     'message' => 'User not found'
                 ]);
-                return;
             }
 
             // Update basic properties
@@ -197,7 +195,6 @@ class UsersApi extends aAPI
                         'success' => false,
                         'message' => 'Invalid email format'
                     ]);
-                    return;
                 }
 
                 // Check if email already exists (excluding current user)
@@ -210,7 +207,6 @@ class UsersApi extends aAPI
                         'success' => false,
                         'message' => 'Email already exists'
                     ]);
-                    return;
                 }
 
                 $user->setEmail($email);
@@ -288,7 +284,6 @@ class UsersApi extends aAPI
                     'success' => false,
                     'message' => 'ID parameter is required'
                 ]);
-                return;
             }
 
             $user = User::findFirst([
@@ -300,7 +295,6 @@ class UsersApi extends aAPI
                     'success' => false,
                     'message' => 'User not found'
                 ]);
-                return;
             }
 
             // Prevent deletion of current admin user
@@ -310,7 +304,6 @@ class UsersApi extends aAPI
                     'success' => false,
                     'message' => 'Cannot delete your own account'
                 ]);
-                return;
             }
 
             if ($user->delete()) {
@@ -349,7 +342,6 @@ class UsersApi extends aAPI
                     'success' => false,
                     'message' => 'Search query is required'
                 ]);
-                return;
             }
 
             // Search by name or email

@@ -861,13 +861,11 @@ class Auth extends aAPI
         // If token is provided, verify the email
         if ($token) {
             $this->handleEmailVerification();
-            return;
         }
 
         // If email is provided, resend verification email
         if ($email) {
             $this->resendEmailVerification($email);
-            return;
         }
 
         $this->dispatchError('Either email or verification token is required');

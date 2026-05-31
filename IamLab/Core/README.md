@@ -141,7 +141,6 @@ class UserAPI extends aAPI
         
         if (!$user) {
             $this->dispatchError(['message' => 'User not found']);
-            return;
         }
         
         $this->dispatch(['success' => true, 'data' => $user]);
@@ -567,7 +566,6 @@ class UserAPI extends aAPI
 
         if (!$email) {
             $this->dispatchError(['message' => 'Invalid email address']);
-            return;
         }
 
         // Process update...
