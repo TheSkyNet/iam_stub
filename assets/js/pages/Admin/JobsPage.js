@@ -45,11 +45,11 @@ const JobsPage = {
                 this.jobs = response.data;
                 this.pagination = response.pagination;
             } else {
-                this.error = response.message || "Failed to load jobs";
+                this.error = window.formatError(response);
             }
             this.loading = false;
         }).catch((err) => {
-            this.error = err.message || "An error occurred while loading jobs";
+            this.error = window.formatError(err);
             this.loading = false;
         });
     },

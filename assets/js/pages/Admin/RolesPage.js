@@ -24,11 +24,11 @@ const RolesPage = {
             if (response.success) {
                 this.roles = response.data;
             } else {
-                this.error = response.message || "Failed to load roles";
+                this.error = window.formatError(response);
             }
             this.loading = false;
         }).catch((err) => {
-            this.error = err.message || "An error occurred while loading roles";
+            this.error = window.formatError(err);
             this.loading = false;
         });
     },
@@ -52,7 +52,7 @@ const RolesPage = {
                 window.showToast(response, "error");
             }
         }).catch((err) => {
-            window.showToast(err.response, "error");
+            window.showToast(err, "error");
         });
     },
 
@@ -68,7 +68,7 @@ const RolesPage = {
                 window.showToast(response, "error");
             }
         }).catch((err) => {
-            window.showToast(err.response, "error");
+            window.showToast(err, "error");
         });
     },
 

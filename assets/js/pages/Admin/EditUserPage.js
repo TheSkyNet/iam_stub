@@ -57,7 +57,7 @@ const EditUserPage = {
             }
             this.saving = false;
         }).catch((err) => {
-            window.showToast(err.response , "error");
+            window.showToast(err , "error");
             this.saving = false;
         });
     },

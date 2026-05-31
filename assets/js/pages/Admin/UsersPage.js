@@ -21,12 +21,12 @@ const UsersPage = {
                 if (response.success) {
                     this.users = response.data;
                 } else {
-                    this.error = response.message || "Failed to load users";
+                    this.error = window.formatError(response);
                 }
                 this.loading = false;
             })
             .catch((err) => {
-                this.error = err.message || "An error occurred while loading users";
+                this.error = window.formatError(err);
                 this.loading = false;
             });
     },
@@ -45,7 +45,7 @@ const UsersPage = {
                 }
             })
             .catch((err) => {
-                window.showToast(err.response, "error");
+                window.showToast(err, "error");
             });
     },
 

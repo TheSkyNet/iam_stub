@@ -151,7 +151,7 @@ export default class PayPalDemoPage {
                 m.redraw();
             })
             .catch(err => {
-                window.showToast(err.response, "error");
+                window.showToast(err, "error");
                 this.isLoading = false;
                 m.redraw();
             });
@@ -166,7 +166,7 @@ export default class PayPalDemoPage {
                 m.redraw();
             })
             .catch(err => {
-                window.showToast(err.response, "error");
+                window.showToast(err, "error");
                 this.isLoading = false;
                 m.redraw();
             });

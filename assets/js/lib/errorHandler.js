@@ -4,88 +4,60 @@ import ToastService from '../services/ToastService';
  * Formats various error types into a human-readable string.
  * This is the central formatter that SHOULD be used by everyone.
  * KISS: Keep it simple. Prefer the backend's 'message' field.
+ * NEVER show [object Object] or JSON dumps in the UI.
  * 
  * @param {any} value 
  * @returns {string}
  */
 export const toMessageStringSync = (value) => {
+    // KISS - Keep it simple, stupid. No more complex recursion or JSON dumps in the UI.
     if (value === null || value === undefined) {
-        return 'An unknown error occurred';
+        return 'An unexpected error occurred';
     }
-    
+
+    // 1. If it's already a string, use it (unless it's just technical noise like [object Object])
     if (typeof value === 'string') {
+        const lower = value.toLowerCase();
+        if (lower.includes('[object ') || lower === 'undefined' || lower === 'null') {
+            return 'An unexpected error occurred';
+        }
         return value;
     }
-    
-    // Handle Error objects
-    if (value instanceof Error) {
-        return value.message || String(value);
-    }
 
-    // Handle common API response shapes
+    // 2. If it's an object, try to extract a human-readable message
     if (typeof value === 'object') {
-        // Priority 1: Backend provided 'message' (from aAPI::dispatchError)
-        if (typeof value.message === 'string' && value.message.trim() !== '') {
-            return value.message;
+        // Mithril.js response object or standard JS Error
+        const response = value.response || value;
+        
+        // Priority for our backend standard: { message: "..." }
+        if (typeof response.message === 'string' && response.message.trim() !== '') {
+            return response.message;
         }
 
-        // Priority 2: Other common string error fields
-        const otherKeys = ['error', 'detail', 'title', 'reason', 'msg', 'response', 'data'];
-        for (const key of otherKeys) {
-            const val = value[key];
-            if (typeof val === 'string' && val.trim() !== '') {
-                return val;
-            }
+        // Validation errors usually have a first error we can show
+        if (response.errors) {
+            const first = Array.isArray(response.errors) ? response.errors[0] : Object.values(response.errors)[0];
+            if (typeof first === 'string') return first;
+            if (Array.isArray(first) && typeof first[0] === 'string') return first[0];
+            if (first && typeof first === 'object' && typeof first.message === 'string') return first.message;
         }
 
-        // Priority 3: Mithril/XHR responseText
-        if (value.responseText && typeof value.responseText === 'string') {
-            try {
-                const parsed = JSON.parse(value.responseText);
-                return toMessageStringSync(parsed);
-            } catch (e) {
-                return value.responseText;
+        // Other common fields in order of preference
+        const commonFields = ['error', 'detail', 'msg', 'title', 'statusText', 'status_message'];
+        for (const field of commonFields) {
+            if (typeof response[field] === 'string' && response[field].trim() !== '' && !response[field].includes('[object ')) {
+                return response[field];
             }
         }
-
-        // Priority 4: If it has validation errors, try to extract something
-        if (value.errors) {
-            if (Array.isArray(value.errors)) {
-                const first = value.errors[0];
-                if (first) {
-                    if (typeof first === 'string') {
-                        return first;
-                    }
-                    if (typeof first.message === 'string') {
-                        return first.message;
-                    }
-                }
-            }
-            if (typeof value.errors === 'object' && value.errors !== null) {
-                const firstVal = Object.values(value.errors)[0];
-                if (typeof firstVal === 'string') {
-                    return firstVal;
-                }
-                if (firstVal && typeof firstVal.message === 'string') {
-                    return firstVal.message;
-                }
-                if (Array.isArray(firstVal) && typeof firstVal[0] === 'string') {
-                    return firstVal[0];
-                }
-            }
+        
+        // Handle HTTP status if available
+        if (typeof value.status === 'number' && value.status > 0) {
+            return `Error ${value.status}: ${value.statusText || 'Request failed'}`;
         }
     }
 
-    // Fallback: Avoid [object Object] if possible by using JSON stringify
-    try {
-        const str = JSON.stringify(value);
-        if (str && str !== '{}' && str !== '[]') {
-            return str;
-        }
-    } catch (e) {}
-
-    const fallback = String(value);
-    return fallback === '[object Object]' ? 'An unexpected error occurred' : fallback;
+    // 3. Final fallback: never show [object Object] or JSON dumps in the UI.
+    return 'An unexpected error occurred';
 };
 
 /**
@@ -99,6 +71,9 @@ window.showToast = (message, type = 'info') => {
     const truncated = msg.length > 2000 ? msg.substring(0, 1997) + '...' : msg;
     ToastService.show(truncated, type);
 };
+
+// Also make the formatter available globally
+window.formatError = toMessageStringSync;
 
 let isProcessingError = false;
 

@@ -336,7 +336,7 @@ const ProfilePage = {
                                             window.showToast(response, 'error');
                                         }
                                     }).catch(err => {
-                                        window.showToast(err.response, 'error');
+                                        window.showToast(err, 'error');
                                     });
                                 }
                             });

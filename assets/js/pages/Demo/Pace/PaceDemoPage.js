@@ -28,7 +28,7 @@ export default class PaceDemoPage {
                 }
             })
             .catch(err => {
-                window.showToast(err.response, "error");
+                window.showToast(err, "error");
                 this.isLoading = false;
                 m.redraw();
             });
@@ -43,7 +43,7 @@ export default class PaceDemoPage {
                 m.redraw();
             })
             .catch(err => {
-                window.showToast(err.response, "error");
+                window.showToast(err, "error");
                 this.isLoading = false;
                 m.redraw();
             });

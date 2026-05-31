@@ -31,7 +31,7 @@ export default class PaymentsPage {
             this.loading = false;
             m.redraw();
         }).catch(err => {
-            this.error = err.response || "Failed to load data";
+            this.error = window.formatError(err);
             this.loading = false;
             window.showToast(this.error, "error");
             m.redraw();
@@ -52,7 +52,7 @@ export default class PaymentsPage {
                     this.loadData();
                 }
             })
-            .catch(err => window.showToast(err.response, "error"));
+            .catch(err => window.showToast(err, "error"));
     }
 
     handleCreateSubscription() {
@@ -69,7 +69,7 @@ export default class PaymentsPage {
                     this.loadData();
                 }
             })
-            .catch(err => window.showToast(err.response, "error"));
+            .catch(err => window.showToast(err, "error"));
     }
 
     handleCancelSubscription(id) {
@@ -78,7 +78,7 @@ export default class PaymentsPage {
                 window.showToast("Subscription canceled", "success");
                 this.loadData();
             })
-            .catch(err => window.showToast(err.response, "error"));
+            .catch(err => window.showToast(err, "error"));
     }
 
     view() {
@@ -213,6 +213,10 @@ export default class PaymentsPage {
             ]),
             m(TestCardInfo, { cards: providerCards[this.selectedProvider] || [] }),
             providerSelector,
+            this.error ? m(".alert.alert-error.mb-6", [
+                m(Icon, { icon: "fa-solid fa-circle-exclamation" }),
+                m("span", this.error)
+            ]) : null,
             loadingSpinner,
             content
         ]);

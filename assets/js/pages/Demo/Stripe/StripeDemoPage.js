@@ -115,7 +115,7 @@ export default class StripeDemoPage {
                 m.redraw();
             })
             .catch(err => {
-                window.showToast(err.response || "Payment failed", "error");
+                window.showToast(err || "Payment failed", "error");
                 this.isLoading = false;
                 m.redraw();
             });
@@ -154,7 +154,7 @@ export default class StripeDemoPage {
                 }
             })
             .catch(err => {
-                window.showToast(err.response, "error");
+                window.showToast(err, "error");
                 this.isLoading = false;
                 m.redraw();
             });

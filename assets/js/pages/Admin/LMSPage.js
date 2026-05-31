@@ -29,11 +29,11 @@ const LMSPage = {
             if (response.success) {
                 this.data = response.data;
             } else {
-                this.error = response.message || "Failed to load LMS status";
+                this.error = window.formatError(response);
             }
             this.loading = false;
         }).catch((err) => {
-            this.error = err.message || "An error occurred while loading LMS status";
+            this.error = window.formatError(err);
             this.loading = false;
         });
     },

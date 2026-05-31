@@ -23,12 +23,12 @@ const SettingsPage = {
                 if (response.success) {
                     this.settings = response.data;
                 } else {
-                    this.error = response.message || "Failed to load settings";
+                    this.error = window.formatError(response);
                 }
                 this.loading = false;
             })
             .catch((err) => {
-                this.error = err.message || "An error occurred while loading settings";
+                this.error = window.formatError(err);
                 this.loading = false;
             });
     },
@@ -55,7 +55,7 @@ const SettingsPage = {
                 }
             })
             .catch((err) => {
-                window.showToast(err.response, "error");
+                window.showToast(err, "error");
             });
     },
 

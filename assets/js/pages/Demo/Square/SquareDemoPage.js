@@ -115,7 +115,7 @@ export default class SquareDemoPage {
                 m.redraw();
             })
             .catch(err => {
-                window.showToast(err.response, "error");
+                window.showToast(err, "error");
                 this.isLoading = false;
                 m.redraw();
             });

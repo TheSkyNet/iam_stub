@@ -40,11 +40,11 @@ const ErrorsPage = {
                 this.errors = response.data.items;
                 this.total = response.data.total;
             } else {
-                this.error = response.message || "Failed to load error logs";
+                this.error = window.formatError(response);
             }
             this.loading = false;
         }).catch((err) => {
-            this.error = err.message || "An error occurred while loading error logs";
+            this.error = window.formatError(err);
             this.loading = false;
         });
     },
