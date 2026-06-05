@@ -56,6 +56,37 @@ return new Config([
         'readOnly' => env('REDIS_READONLY', false),
     ],
 
+    'cache' => [
+        'default' => env('CACHE_DEFAULT', 'file'),
+        'flush_all_by_default' => env('CACHE_FLUSH_ALL', true),
+        'layers' => [
+            'file' => [
+                'adapter' => 'stream',
+                'cacheDir' => env('CACHE_FILE_DIR', '/tmp/cache'),
+                'lifetime' => 3600,
+                'prefix' => 'iam_',
+            ],
+            'redis' => [
+                'adapter' => 'redis',
+                'host' => env('REDIS_HOST', 'redis'),
+                'port' => env('REDIS_PORT', 6379),
+                'index' => 1,
+                'lifetime' => 3600,
+                'prefix' => 'iam_',
+            ],
+            'apcu' => [
+                'adapter' => 'apcu',
+                'lifetime' => 3600,
+                'prefix' => 'iam_',
+            ],
+            'memory' => [
+                'adapter' => 'memory',
+                'lifetime' => 3600,
+                'prefix' => 'iam_',
+            ],
+        ],
+    ],
+
     'session' => [
         'adapter' => 'Files',
         'lifetime' => 3600,

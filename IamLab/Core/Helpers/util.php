@@ -38,13 +38,29 @@ function config($key, $default = null)
  * Get a service from the dependency injection container.
  *
  * @param string $service The name of the service to retrieve.
+ * @param array $parameters Optional parameters to pass to the service constructor/factory.
  * @return mixed The service instance.
  */
-function di(string $service): mixed
+function di(string $service, array $parameters = []): mixed
 {
 
     global $di;
-    return $di->get($service);
+    return $di->get($service, $parameters);
+}
+
+/**
+ * Get the cache manager or a specific cache layer.
+ *
+ * @param string|null $layer The name of the cache layer to retrieve.
+ * @return \IamLab\Core\Cache\CacheFlush|\Phalcon\Cache\Cache
+ */
+function cache(string $layer = null): mixed
+{
+    $manager = di('cache');
+    if ($layer === null) {
+        return $manager;
+    }
+    return $manager->getLayer($layer);
 }
 
 /**

@@ -1,5 +1,6 @@
 <?php
 
+use IamLab\Core\Cache\CacheFlush;
 use Phalcon\Encryption\Crypt;
 use League\Flysystem\Filesystem;
 use IamLab\Core\SSE\SseEmitter;
@@ -164,18 +165,22 @@ $di->setShared(
         );
     }
 );
+/**
+ * Cache service
+ */
+$di->setShared(
+    'cache',
+    function () {
+        $config = config('cache');
+        return new CacheFlush($config);
+    }
+);
+
 // Set the models cache service
 $di->set(
     'modelsCache',
     function (): Cache {
-        $serializerFactory = new SerializerFactory();
-        $adapter = new RedisAdapter($serializerFactory, [
-            'host' => 'redis',
-            'port' => 6379,
-            'lifetime' => 86400
-        ]);
-
-        return new Cache($adapter);
+        return $this->get('cache')->getLayer('redis');
     }
 );
 
