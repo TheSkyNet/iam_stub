@@ -5,6 +5,7 @@ namespace IamLab\Core\Email;
 use Phalcon\Di\Injectable;
 use IamLab\Core\Email\Providers\MailHogProvider;
 use IamLab\Core\Email\Providers\ResendProvider;
+use IamLab\Core\Email\Providers\SystemProvider;
 use Exception;
 
 class EmailService extends Injectable
@@ -32,6 +33,7 @@ class EmailService extends Injectable
             $this->provider = match ($providerName) {
                 'mailhog' => new MailHogProvider($this->config),
                 'resend' => new ResendProvider($this->config),
+                'system' => new SystemProvider($this->config),
                 default => throw new Exception('Unsupported email provider: ' . $providerName),
             };
 

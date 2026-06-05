@@ -138,6 +138,7 @@ if [ ! -f .env ]; then
     cp .env.example .env
     sed -i "s|APP_URL=.*|APP_URL=https://$DOMAIN|" .env
     sed -i "s|APP_PORT=.*|APP_PORT=$APP_PORT|" .env
+    sed -i "s|MAIL_PROVIDER=.*|MAIL_PROVIDER=system|" .env
     
     echo "Please enter database password (will be set in .env):"
     read -s DB_PASS

@@ -11,6 +11,7 @@ This folder contains the complete email service implementation:
 - **Providers/** - Directory containing email provider implementations
   - **MailHogProvider.php** - Development email provider using MailHog
   - **ResendProvider.php** - Production email provider using Resend API
+  - **SystemProvider.php** - System email provider using PHP's mail() function
 
 ## Architecture
 
@@ -21,9 +22,9 @@ EmailService
     ↓
 EmailProviderInterface
     ↓
-┌─────────────────┬─────────────────┐
-│  MailHogProvider │  ResendProvider │
-└─────────────────┴─────────────────┘
+┌─────────────────┬─────────────────┬─────────────────┐
+│  MailHogProvider │  ResendProvider │  SystemProvider │
+└─────────────────┴─────────────────┴─────────────────┘
 ```
 
 ## Components
@@ -174,6 +175,27 @@ Resend is a modern email API service designed for developers, offering reliable 
 - High deliverability rates
 - Advanced email features (tags, tracking, etc.)
 - Production-ready reliability
+
+#### SystemProvider
+
+**File:** `Providers/SystemProvider.php`  
+**Purpose:** System email sending using PHP's `mail()` function
+
+The System provider uses the local system's mail capabilities (via PHP's built-in `mail()` function). This is useful when the server is already configured with a local mail transfer agent (MTA) like Sendmail, Postfix, or Exim.
+
+**Configuration:**
+```php
+// In config.php
+'email' => [
+    'provider' => 'system',
+]
+```
+
+**Features:**
+- Zero additional configuration (uses PHP settings)
+- Uses system-level mail configuration
+- Reliable when server MTA is correctly configured
+- Ideal for servers with local mail relays
 
 ## Configuration
 
