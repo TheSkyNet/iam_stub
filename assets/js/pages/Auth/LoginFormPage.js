@@ -14,7 +14,8 @@ const LoginFormPage = {
         LoginFormPage.isLoading = true;
         
         AuthService.login(LoginFormPage.email, LoginFormPage.password, LoginFormPage.rememberMe)
-            .then(() => {
+            .then((response) => {
+                window.showToast(response.message || 'Login successful!', 'success');
                 m.route.set('/');
             })
             .catch((err) => {

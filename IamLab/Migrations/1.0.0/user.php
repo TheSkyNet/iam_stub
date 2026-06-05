@@ -18,7 +18,7 @@ class UserMigration_100 extends Migration
      */
     public function morph(): void
     {
-        // Create base table structure with minimal columns
+        // Create base table structure
         $this->morphTable('user', [
             'columns' => [
                 new Column(
@@ -32,10 +32,114 @@ class UserMigration_100 extends Migration
                         'primary' => true
                     ]
                 ),
+                new Column(
+                    'name',
+                    [
+                        'type' => Column::TYPE_VARCHAR,
+                        'notNull' => true,
+                        'size' => 50,
+                        'after' => 'id'
+                    ]
+                ),
+                new Column(
+                    'email',
+                    [
+                        'type' => Column::TYPE_VARCHAR,
+                        'notNull' => true,
+                        'size' => 50,
+                        'after' => 'name'
+                    ]
+                ),
+                new Column(
+                    'password',
+                    [
+                        'type' => Column::TYPE_VARCHAR,
+                        'notNull' => false,
+                        'size' => 255,
+                        'after' => 'email'
+                    ]
+                ),
+                new Column(
+                    'key',
+                    [
+                        'type' => Column::TYPE_VARCHAR,
+                        'notNull' => false,
+                        'size' => 255,
+                        'after' => 'password'
+                    ]
+                ),
+                new Column(
+                    'avatar',
+                    [
+                        'type' => Column::TYPE_VARCHAR,
+                        'notNull' => false,
+                        'size' => 255,
+                        'after' => 'key'
+                    ]
+                ),
+                new Column(
+                    'oauth_provider',
+                    [
+                        'type' => Column::TYPE_VARCHAR,
+                        'notNull' => false,
+                        'size' => 50,
+                        'after' => 'avatar'
+                    ]
+                ),
+                new Column(
+                    'oauth_id',
+                    [
+                        'type' => Column::TYPE_VARCHAR,
+                        'notNull' => false,
+                        'size' => 100,
+                        'after' => 'oauth_provider'
+                    ]
+                ),
+                new Column(
+                    'email_verified',
+                    [
+                        'type' => Column::TYPE_BOOLEAN,
+                        'notNull' => true,
+                        'default' => 0,
+                        'after' => 'oauth_id'
+                    ]
+                ),
+                new Column(
+                    'status',
+                    [
+                        'type' => Column::TYPE_VARCHAR,
+                        'notNull' => true,
+                        'size' => 20,
+                        'default' => 'active',
+                        'after' => 'email_verified'
+                    ]
+                ),
+                new Column(
+                    'created_at',
+                    [
+                        'type' => Column::TYPE_TIMESTAMP,
+                        'notNull' => true,
+                        'default' => 'CURRENT_TIMESTAMP',
+                        'after' => 'status'
+                    ]
+                ),
+                new Column(
+                    'updated_at',
+                    [
+                        'type' => Column::TYPE_TIMESTAMP,
+                        'notNull' => true,
+                        'default' => 'CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP',
+                        'after' => 'created_at'
+                    ]
+                ),
             ],
             'indexes' => [
                 new Index('user_id_uindex', ['id'], ''),
                 new Index('user_pkey', ['id'], ''),
+                new Index('user_email_uindex', ['email'], 'UNIQUE'),
+                new Index('user_oauth_provider_index', ['oauth_provider'], ''),
+                new Index('user_oauth_id_index', ['oauth_id'], ''),
+                new Index('user_email_verified_index', ['email_verified'], ''),
             ],
             'options' => [
                 'TABLE_TYPE' => 'BASE TABLE',
@@ -167,6 +271,22 @@ class UserMigration_100 extends Migration
                     'notNull' => true,
                     'default' => 0,
                     'after' => 'oauth_id'
+                ]
+            )
+        );
+
+        // Add status column
+        $this->getConnection()->addColumn(
+            'user',
+            null,
+            new Column(
+                'status',
+                [
+                    'type' => Column::TYPE_VARCHAR,
+                    'notNull' => true,
+                    'size' => 20,
+                    'default' => 'active',
+                    'after' => 'email_verified'
                 ]
             )
         );

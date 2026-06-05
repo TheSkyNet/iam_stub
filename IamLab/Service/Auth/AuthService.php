@@ -155,25 +155,25 @@ class AuthService extends aAPI
     {
         $password = $user->getPassword();
         $email = $user->getEmail();
-        $user = User::findFirst([
+        $dbUser = User::findFirst([
             'conditions' => 'email = :email:',
             'bind'       => ['email' => $email]
         ]);
 
-        if (!$user) {
+        if (!$dbUser) {
             return false;
         }
 
-        if (password_verify($password, $user->getPassword())) {
+        if (password_verify($password, $dbUser->getPassword())) {
             // Generate JWT tokens with extended expiration if "Remember me" is checked
-            $accessToken = $this->getJwtService()->generateAccessToken($user, $rememberMe);
-            $refreshToken = $this->getJwtService()->generateRefreshToken($user, $rememberMe);
+            $accessToken = $this->getJwtService()->generateAccessToken($dbUser, $rememberMe);
+            $refreshToken = $this->getJwtService()->generateRefreshToken($dbUser, $rememberMe);
 
             // Set refresh token in httpOnly cookie for better security
             $this->getJwtService()->setRefreshTokenCookie($refreshToken, $rememberMe);
 
             // Set identity for session compatibility (optional)
-            $this->setIdentity($user);
+            $this->setIdentity($dbUser);
 
             // Set appropriate expires_in based on remember me option
             $config = $this->getDI()->getShared('config');
@@ -183,10 +183,10 @@ class AuthService extends aAPI
 
             // Create user data with roles
             $userData = [
-                'id' => $user->getId(),
-                'name' => $user->getName(),
-                'email' => $user->getEmail(),
-                'roles' => $user->getRoles()
+                'id' => $dbUser->getId(),
+                'name' => $dbUser->getName(),
+                'email' => $dbUser->getEmail(),
+                'roles' => $dbUser->getRoles()
             ];
 
             return [
@@ -230,22 +230,27 @@ class AuthService extends aAPI
      */
     public function register(User $user, bool $rememberMe = true): bool|array
     {
+        // Check if user already exists before hashing password
+        $existingUser = User::findFirstByEmail($user->getEmail());
+        if ($existingUser) {
+            throw new \Exception('Email is already registered');
+        }
+
         $user->setPassword(password_hash($user->getPassword(), PASSWORD_DEFAULT));
 
-        if (!$user->validation()) {
-            return false;
-        }
-
-        $userFind = User::findFirstByEmail($user->getEmail());
-
-        if (!empty($userFind->id)) {
-            return false;
-        }
-
         if (!$user->save()) {
-            dump($user->getMessages());
-            return false;
+            $messages = [];
+            foreach ($user->getMessages() as $message) {
+                $messages[] = $message->getMessage();
+            }
+            throw new \Exception(implode(', ', $messages));
         }
+
+        // Assign default role to new user
+        $user->addRole('member');
+
+        // Generate API key for the new user
+        $this->generateApiKey($user);
 
         // Generate JWT tokens for the newly registered user
         $accessToken = $this->getJwtService()->generateAccessToken($user, $rememberMe);

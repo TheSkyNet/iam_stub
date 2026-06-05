@@ -2,6 +2,9 @@ import m from "mithril";
 import { AuthService } from "../services/AuthserviceService";
 import { Icon } from "./Icon";
 import Footer from "./Footer";
+import Toast from "./DaisyUI/Toast";
+import Alert from "./DaisyUI/Alert";
+import { toastState } from "../lib/errorHandler";
 
 function layout(view) {
     return {
@@ -51,7 +54,22 @@ function layout(view) {
                 m("main.flex-grow.bg-base-200", [
                     m(view, vnode.attrs)
                 ]),
-                m(Footer)
+                m(Footer),
+                
+                // Toast Container
+                m(Toast, { position: "end", align: "bottom" }, 
+                    toastState.toasts.map(toast => 
+                        m(Alert, { 
+                            key: toast.id,
+                            type: toast.type,
+                            class: "shadow-lg cursor-pointer",
+                            onclick: () => toastState.remove(toast.id)
+                        }, [
+                            m(Icon, { name: toast.type === 'error' ? 'fa-circle-xmark' : (toast.type === 'success' ? 'fa-circle-check' : 'fa-circle-info') }),
+                            m("span", toast.message)
+                        ])
+                    )
+                )
             ]);
         }
     };

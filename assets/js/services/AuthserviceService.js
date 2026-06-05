@@ -20,7 +20,9 @@ const AuthService = {
     
     // CSRF protection
     csrfToken: null,
+    csrfKey: null,
     csrfHeader: 'X-CSRF-Token',
+    csrfKeyHeader: 'X-CSRF-Key',
 
     /**
      * Initialize the auth service - check for existing tokens on page load
@@ -70,7 +72,9 @@ const AuthService = {
                 // Load CSRF configuration
                 if (response.data.csrf) {
                     this.csrfToken = response.data.csrf.token;
+                    this.csrfKey = response.data.csrf.key;
                     this.csrfHeader = response.data.csrf.header || 'X-CSRF-Token';
+                    this.csrfKeyHeader = response.data.csrf.key_header || 'X-CSRF-Key';
                 }
                 
                 this._configLoaded = true;
@@ -101,11 +105,11 @@ const AuthService = {
     /**
      * Register new user
      */
-    register: function(name, email, password, rememberMe = true) {
+    register: function(name, email, password, confirmPassword, rememberMe = true) {
         return m.request({
             method: 'POST',
             url: `${this.baseUrl}/register`,
-            body: { name, email, password, remember_me: rememberMe },
+            body: { name, email, password, confirm_password: confirmPassword, remember_me: rememberMe },
             headers: this.getAuthHeaders()
         }).then((response) => {
             if (response.success && response.data) {
@@ -378,6 +382,10 @@ const AuthService = {
         
         if (this.csrfToken) {
             headers[this.csrfHeader] = this.csrfToken;
+        }
+        
+        if (this.csrfKey) {
+            headers[this.csrfKeyHeader] = this.csrfKey;
         }
         
         return headers;

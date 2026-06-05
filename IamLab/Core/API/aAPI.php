@@ -406,13 +406,14 @@ abstract class aAPI extends aAPIBase
             return;
         }
 
-        // Get token from header
+        // Get token and key from headers
         $token = $this->request->getHeader('X-CSRF-Token');
+        $tokenKey = $this->request->getHeader('X-CSRF-Key');
 
         // Check token using Phalcon Security service
-        // We use the second parameter as false to NOT destroy the token on check,
+        // We use the third parameter as false to NOT destroy the token on check,
         // allowing multiple requests with the same token.
-        if (empty($token) || !$this->security->checkToken(null, $token, false)) {
+        if (empty($token) || empty($tokenKey) || !$this->security->checkToken($tokenKey, $token, false)) {
             $this->dispatch([
                 'success' => false,
                 'message' => 'CSRF token validation failed. Please refresh the page.',

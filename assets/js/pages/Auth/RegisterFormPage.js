@@ -7,15 +7,35 @@ const RegisterFormPage = {
     name: '',
     email: '',
     password: '',
+    confirmPassword: '',
+    acceptTerms: false,
     rememberMe: true,
     isLoading: false,
 
     handleRegister: (e) => {
         e.preventDefault();
-        RegisterFormPage.isLoading = true;
 
-        AuthService.register(RegisterFormPage.name, RegisterFormPage.email, RegisterFormPage.password, RegisterFormPage.rememberMe)
-            .then(() => {
+        if (RegisterFormPage.password !== RegisterFormPage.confirmPassword) {
+            window.showToast('Passwords do not match', 'error');
+            return;
+        }
+
+        if (!RegisterFormPage.acceptTerms) {
+            window.showToast('Please accept the terms and conditions', 'error');
+            return;
+        }
+
+        RegisterFormPage.isLoading = true;
+        
+        AuthService.register(
+            RegisterFormPage.name, 
+            RegisterFormPage.email, 
+            RegisterFormPage.password, 
+            RegisterFormPage.confirmPassword, 
+            RegisterFormPage.rememberMe
+        )
+            .then((response) => {
+                window.showToast(response.message || 'Registration successful!', 'success');
                 m.route.set('/');
             })
             .catch((err) => {
@@ -69,6 +89,22 @@ const RegisterFormPage = {
                                     value: RegisterFormPage.password,
                                     oninput: (e) => RegisterFormPage.password = e.target.value,
                                     required: true
+                                }),
+                                m(FormField, {
+                                    label: "Confirm Password",
+                                    icon: "fa-solid fa-lock",
+                                    type: "password",
+                                    placeholder: "••••••••",
+                                    autocomplete: "new-password",
+                                    value: RegisterFormPage.confirmPassword,
+                                    oninput: (e) => RegisterFormPage.confirmPassword = e.target.value,
+                                    required: true
+                                }),
+
+                                m(CheckboxField, {
+                                    label: "I accept the Terms and Conditions",
+                                    checked: RegisterFormPage.acceptTerms,
+                                    onchange: (e) => RegisterFormPage.acceptTerms = e.target.checked
                                 }),
 
                                 m(CheckboxField, {

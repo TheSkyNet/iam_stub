@@ -3,6 +3,10 @@
 namespace IamLab\Model;
 
 use IamLab\Service\RolesService;
+use Phalcon\Filter\Validation;
+use Phalcon\Filter\Validation\Validator\Email;
+use Phalcon\Filter\Validation\Validator\PresenceOf;
+use Phalcon\Filter\Validation\Validator\Uniqueness;
 use Phalcon\Mvc\Model;
 use Phalcon\Mvc\Model\ResultsetInterface;
 
@@ -35,13 +39,13 @@ class User extends Model
 
     /**
      * @var string
-     * @Column(type="string", length=255, nullable=false)
+     * @Column(type="string", length=255, nullable=true)
      */
     protected $password;
 
     /**
      * @var string
-     * @Column(type="string", length=255, nullable=false)
+     * @Column(type="string", length=255, nullable=true)
      */
     protected $key;
 
@@ -337,9 +341,57 @@ class User extends Model
      */
     public function validation(): bool
     {
-        // Basic email validation can be handled at the application level
-        // or through database constraints and frontend validation
-        return true;
+        $validator = new Validation();
+
+        $validator->add(
+            'email',
+            new Email([
+                'message' => 'The e-mail is not valid',
+            ])
+        );
+
+        $validator->add(
+            'email',
+            new Uniqueness([
+                'message' => 'The email is already registered',
+            ])
+        );
+
+        $validator->add(
+            'name',
+            new PresenceOf([
+                'message' => 'The name is required',
+            ])
+        );
+
+        $validator->add(
+            'email',
+            new PresenceOf([
+                'message' => 'The email is required',
+            ])
+        );
+
+        return $this->validate($validator);
+    }
+
+    /**
+     * Set default values before validation on creation
+     */
+    public function beforeValidationOnCreate(): void
+    {
+        if (empty($this->status)) {
+            $this->status = 'active';
+        }
+
+        if ($this->email_verified === null) {
+            $this->email_verified = 0;
+        }
+
+        if (empty($this->key)) {
+            // API Key will be generated after user is created or when requested
+            // to ensure it can contain the user ID.
+            $this->key = null;
+        }
     }
 
     /**

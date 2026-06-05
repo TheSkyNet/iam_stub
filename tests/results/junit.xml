@@ -4,10 +4,10 @@
     <testcase name="testGetRequestDoesNotRequireCsrf" file="/home/morton/apps/Dev/ima_stub/tests/Feature/AuthSecurityTest.php" line="43" class="Tests\Feature\AuthSecurityTest" classname="Tests.Feature.AuthSecurityTest" assertions="0" time="0.000000">
       <skipped/>
     </testcase>
-    <testcase name="testSecurityHeadersArePresentInResponse" file="/home/morton/apps/Dev/ima_stub/tests/Feature/AuthSecurityTest.php" line="92" class="Tests\Feature\AuthSecurityTest" classname="Tests.Feature.AuthSecurityTest" assertions="0" time="0.000000">
+    <testcase name="testPostRequestFailsWithoutCsrfToken" file="/home/morton/apps/Dev/ima_stub/tests/Feature/AuthSecurityTest.php" line="71" class="Tests\Feature\AuthSecurityTest" classname="Tests.Feature.AuthSecurityTest" assertions="0" time="0.000000">
       <skipped/>
     </testcase>
-    <testcase name="testPostRequestFailsWithoutCsrfToken" file="/home/morton/apps/Dev/ima_stub/tests/Feature/AuthSecurityTest.php" line="71" class="Tests\Feature\AuthSecurityTest" classname="Tests.Feature.AuthSecurityTest" assertions="0" time="0.000000">
+    <testcase name="testSecurityHeadersArePresentInResponse" file="/home/morton/apps/Dev/ima_stub/tests/Feature/AuthSecurityTest.php" line="92" class="Tests\Feature\AuthSecurityTest" classname="Tests.Feature.AuthSecurityTest" assertions="0" time="0.000000">
       <skipped/>
     </testcase>
   </testsuite>

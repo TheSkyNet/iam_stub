@@ -60,15 +60,45 @@ export const toMessageStringSync = (value) => {
 };
 
 /**
- * Global function to show a notification (fallback to console)
+ * State for toast notifications
+ */
+export const toastState = {
+    toasts: [],
+    add: (message, type = 'info', duration = 5000) => {
+        const id = Math.random().toString(36).substring(2, 9);
+        const msg = toMessageStringSync(message);
+        const toast = { id, message: msg, type, duration };
+        toastState.toasts.push(toast);
+        
+        if (duration > 0) {
+            setTimeout(() => {
+                toastState.remove(id);
+            }, duration);
+        }
+        
+        m.redraw();
+        return id;
+    },
+    remove: (id) => {
+        toastState.toasts = toastState.toasts.filter(t => t.id !== id);
+        m.redraw();
+    }
+};
+
+/**
+ * Global function to show a notification
  * @param {any} message 
  * @param {string} type 
  */
 window.showToast = (message, type = 'info') => {
     const msg = toMessageStringSync(message);
-    // Truncate if too long (MAX 2000 chars as per guidelines)
     const truncated = msg.length > 2000 ? msg.substring(0, 1997) + '...' : msg;
+    
+    // Log to console for development
     console.log(`[${type.toUpperCase()}] ${truncated}`);
+    
+    // Add to toast state for UI display
+    toastState.add(truncated, type);
 };
 
 // Also make the formatter available globally

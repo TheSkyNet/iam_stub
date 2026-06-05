@@ -65,6 +65,7 @@ class Auth extends aAPI
         $name = $this->getParam('name');
         $email = $this->getParam('email');
         $password = $this->getParam('password');
+        $confirmPassword = $this->getParam('confirm_password');
         $rememberMe = (bool)$this->getParam('remember_me', true);
 
         // Validate input
@@ -82,6 +83,11 @@ class Auth extends aAPI
             $this->dispatchError('Password must be at least 6 characters long');
         }
 
+        // Password confirmation check
+        if ($password !== $confirmPassword) {
+            $this->dispatchError('Passwords do not match');
+        }
+
         try {
             $user = (new User())
                 ->setName($name)
@@ -95,8 +101,8 @@ class Auth extends aAPI
                 $this->dispatch(['success' => true, 'message' => 'Registration successful! You are now logged in.', 'data' => $authData]);
             }
 
-            $this->dispatchError('Registration failed. Email may already be in use.');
-        } catch (Exception $exception) {
+            $this->dispatchError('Registration failed');
+        } catch (\Exception $exception) {
             $this->dispatchError($exception);
         }
     }
@@ -125,8 +131,10 @@ class Auth extends aAPI
                     'inactivity_timeout_minutes' => $inactivity,
                     'token_check_interval_minutes' => $tokenCheck,
                     'csrf' => [
+                        'key' => $this->security->getTokenKey(),
                         'token' => $this->security->getToken(),
-                        'header' => 'X-CSRF-Token'
+                        'header' => 'X-CSRF-Token',
+                        'key_header' => 'X-CSRF-Key'
                     ]
                 ],
             ]);
@@ -172,7 +180,8 @@ class Auth extends aAPI
             }
 
             // 3. Send an email with the reset link
-            $resetUrl = $_SERVER['HTTP_HOST'] . '/reset-password?token=' . $resetToken->getToken();
+            $protocol = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') ? 'https://' : 'http://';
+            $resetUrl = $protocol . $_SERVER['HTTP_HOST'] . '/reset-password?token=' . $resetToken->getToken();
             $emailBody = "
                 <h2>Password Reset Request</h2>
                 <p>Hello {$user->getName()},</p>
@@ -913,7 +922,8 @@ class Auth extends aAPI
             $verificationToken = bin2hex(random_bytes(32));
 
             // Send verification email
-            $verificationUrl = $_SERVER['HTTP_HOST'] . '/verify-email?token=' . $verificationToken;
+            $protocol = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') ? 'https://' : 'http://';
+            $verificationUrl = $protocol . $_SERVER['HTTP_HOST'] . '/verify-email?token=' . $verificationToken;
             $emailBody = "
                 <h2>Email Verification</h2>
                 <p>Hello {$user->getName()},</p>

@@ -73,7 +73,10 @@ class AuthSecurityTest extends TestCase
         // Mock a POST request without token
         $request = $this->createMock(Request::class);
         $request->method('getMethod')->willReturn('POST');
-        $request->method('getHeader')->with('X-CSRF-Token')->willReturn('');
+        $request->method('getHeader')->willReturnMap([
+            ['X-CSRF-Token', ''],
+            ['X-CSRF-Key', '']
+        ]);
         $this->di->setShared('request', $request);
 
         $auth = new class extends aAPI {
