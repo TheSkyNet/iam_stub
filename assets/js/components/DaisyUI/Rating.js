@@ -9,14 +9,20 @@ const Rating = {
             attrs.class
         ].filter(Boolean).join(" ");
 
-        return m("div", { ...props, class: classes }, 
+        return m("div", { 
+            ...props, 
+            class: classes, 
+            role: "radiogroup", 
+            "aria-label": "Rating" 
+        }, 
             Array.from({ length: count }).map((_, i) => 
                 m("input", {
                     type: "radio",
                     name,
                     class: `mask mask-star-2 ${color ? `bg-${color}` : "bg-orange-400"}`,
                     checked: value === i + 1,
-                    onchange: () => onchange && onchange(i + 1)
+                    onchange: () => onchange && onchange(i + 1),
+                    "aria-label": `${i + 1} Star`
                 })
             )
         );

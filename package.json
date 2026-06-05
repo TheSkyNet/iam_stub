@@ -4,7 +4,6 @@
   "description": "",
   "dependencies": {
     "@fortawesome/fontawesome-free": "^7.2.0",
-    "@tailwindcss/postcss": "^4.3.0",
     "easymde": "^2.21.0",
     "extract-colors": "^4.2.1",
     "filepond": "^4.32.12",
@@ -29,6 +28,7 @@
     "test:ui": "node tests/UI/BasicSmokeTest.js"
   },
   "devDependencies": {
+    "@tailwindcss/postcss": "^4.3.0",
     "@tailwindcss/typography": "^0.5.19",
     "ace-builds": "^1.44.0",
     "autoprefixer": "^10.5.0",
@@ -45,6 +45,7 @@
     "sass": "^1.100.0",
     "sass-loader": "^17.0.0",
     "swipyjs": "^0.0.6",
-    "tailwindcss": "^4.3.0"
+    "tailwindcss": "^4.3.0",
+    "webpack": "5.88.2"
   }
 }

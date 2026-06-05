@@ -1,19 +1,5 @@
 import m from "mithril";
 
-const Tabs = {
-    view: ({ attrs, children }) => {
-        const { variant, size, ...props } = attrs;
-        const classes = [
-            "tabs",
-            variant && `tabs-${variant}`,
-            size && `tabs-${size}`,
-            attrs.class
-        ].filter(Boolean).join(" ");
-
-        return m("div", { role: "tablist", ...props, class: classes }, children);
-    }
-};
-
 const Tab = {
     view: ({ attrs, children }) => {
         const { active, ...props } = attrs;
@@ -23,8 +9,13 @@ const Tab = {
             attrs.class
         ].filter(Boolean).join(" ");
 
-        return m("a", { role: "tab", ...props, class: classes }, children);
+        return m("a", { 
+            role: "tab", 
+            ...props, 
+            class: classes,
+            "aria-selected": active ? "true" : "false"
+        }, children);
     }
 };
 
-export { Tabs, Tab };
+export default Tab;

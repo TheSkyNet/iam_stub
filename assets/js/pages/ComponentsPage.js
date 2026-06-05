@@ -1,398 +1,447 @@
 import m from "mithril";
 import { Icon } from "../components/Icon";
 
-// DaisyUI Reusable Components
+// Actions
 import Button from "../components/DaisyUI/Button";
 import Dropdown from "../components/DaisyUI/Dropdown";
+import FAB from "../components/DaisyUI/FAB";
 import Modal from "../components/DaisyUI/Modal";
 import Swap from "../components/DaisyUI/Swap";
 import ThemeController from "../components/DaisyUI/ThemeController";
-import Badge from "../components/DaisyUI/Badge";
-import Alert from "../components/DaisyUI/Alert";
+
+// Data Display
+import Accordion from "../components/DaisyUI/Accordion";
 import Avatar from "../components/DaisyUI/Avatar";
+import Badge from "../components/DaisyUI/Badge";
 import Card from "../components/DaisyUI/Card";
-import { Stat, Stats } from "../components/DaisyUI/Stat";
-import { Step, Steps } from "../components/DaisyUI/Steps";
-import { Tabs, Tab } from "../components/DaisyUI/Tab";
-import { Progress, RadialProgress } from "../components/DaisyUI/Progress";
+import Carousel from "../components/DaisyUI/Carousel";
+import Chat from "../components/DaisyUI/Chat";
+import Collapse from "../components/DaisyUI/Collapse";
+import Countdown from "../components/DaisyUI/Countdown";
+import Diff from "../components/DaisyUI/Diff";
+import Hover3DCard from "../components/DaisyUI/Hover3DCard";
+import HoverGallery from "../components/DaisyUI/HoverGallery";
+import Kbd from "../components/DaisyUI/Kbd";
+import List, { ListRow } from "../components/DaisyUI/List";
+import Stat from "../components/DaisyUI/Stat";
+import Stats from "../components/DaisyUI/Stats";
+import Status from "../components/DaisyUI/Status";
+import Table from "../components/DaisyUI/Table";
+import TextRotate from "../components/DaisyUI/TextRotate";
+import Timeline, { TimelineItem } from "../components/DaisyUI/Timeline";
+
+// Navigation
+import Breadcrumbs from "../components/DaisyUI/Breadcrumbs";
+import Dock, { DockItem } from "../components/DaisyUI/Dock";
+import Link from "../components/DaisyUI/Link";
+import Menu from "../components/DaisyUI/Menu";
+import Navbar from "../components/DaisyUI/Navbar";
+import Pagination from "../components/DaisyUI/Pagination";
+import Step from "../components/DaisyUI/Step";
+import Steps from "../components/DaisyUI/Steps";
+import Tab from "../components/DaisyUI/Tab";
+import Tabs from "../components/DaisyUI/Tabs";
+
+// Feedback
+import Alert from "../components/DaisyUI/Alert";
 import Loading from "../components/DaisyUI/Loading";
-import TextInput from "../components/DaisyUI/TextInput";
+import Progress from "../components/DaisyUI/Progress";
+import RadialProgress from "../components/DaisyUI/RadialProgress";
+import Skeleton from "../components/DaisyUI/Skeleton";
+import Toast from "../components/DaisyUI/Toast";
+import Tooltip from "../components/DaisyUI/Tooltip";
+
+// Data Input
+import Calendar from "../components/DaisyUI/Calendar";
 import Checkbox from "../components/DaisyUI/Checkbox";
+import Fieldset from "../components/DaisyUI/Fieldset";
+import FileInput from "../components/DaisyUI/FileInput";
+import Filter from "../components/DaisyUI/Filter";
+import Label from "../components/DaisyUI/Label";
 import Radio from "../components/DaisyUI/Radio";
-import Toggle from "../components/DaisyUI/Toggle";
 import Range from "../components/DaisyUI/Range";
 import Rating from "../components/DaisyUI/Rating";
 import Select from "../components/DaisyUI/Select";
+import TextInput from "../components/DaisyUI/TextInput";
 import Textarea from "../components/DaisyUI/Textarea";
-import Hero from "../components/DaisyUI/Hero";
-import { BrowserMockup, CodeMockup, PhoneMockup, WindowMockup } from "../components/DaisyUI/Mockup";
+import Toggle from "../components/DaisyUI/Toggle";
+import Validator from "../components/DaisyUI/Validator";
 
-// New Components
-import { Accordion, Collapse, Countdown, Kbd, Status, List, ListRow, Timeline, TimelineItem, Diff } from "../components/DaisyUI/DataDisplay";
-import { Breadcrumbs, Dock, DockItem, Link, Menu, Pagination } from "../components/DaisyUI/Navigation";
-import { Toast, Tooltip } from "../components/DaisyUI/Feedback";
-import { Calendar, Fieldset, Label, Validator } from "../components/DaisyUI/DataInput";
-import Chat from "../components/DaisyUI/Chat";
-import Carousel from "../components/DaisyUI/Carousel";
+// Layout
+import Divider from "../components/DaisyUI/Divider";
+import Drawer from "../components/DaisyUI/Drawer";
+import Footer from "../components/DaisyUI/Footer";
+import Hero from "../components/DaisyUI/Hero";
+import Indicator from "../components/DaisyUI/Indicator";
+import Join from "../components/DaisyUI/Join";
+import Mask from "../components/DaisyUI/Mask";
+import Stack from "../components/DaisyUI/Stack";
+
+// Mockup
+import BrowserMockup from "../components/DaisyUI/BrowserMockup";
+import CodeMockup from "../components/DaisyUI/CodeMockup";
+import PhoneMockup from "../components/DaisyUI/PhoneMockup";
+import WindowMockup from "../components/DaisyUI/WindowMockup";
+
+const Section = {
+    view: ({ attrs, children }) => m("section.space-y-8", [
+        m("div.flex.items-center.gap-4", [
+            m("h2.text-3xl.font-black.tracking-tight", attrs.title),
+            m("div.h-px.flex-1.bg-base-300")
+        ]),
+        m(".grid.grid-cols-1.gap-8.md:grid-cols-2.xl:grid-cols-3", children)
+    ])
+};
+
+const CardWrapper = {
+    view: ({ attrs, children }) => m(".card.bg-base-200/50.border.border-base-300", [
+        m(".card-body.p-6", [
+            m("h3.card-title.text-sm.uppercase.tracking-widest.opacity-50.mb-4", attrs.title),
+            m(".flex.flex-wrap.gap-4.items-start", children)
+        ])
+    ])
+};
 
 const ComponentsPage = {
     view: () => {
-        return m(".container.mx-auto.p-4.space-y-16", [
-            m("header.mb-12.text-center", [
-                m("h1.text-5xl.font-black.mb-4", "DaisyUI 5 Component Gallery"),
-                m("p.text-xl.opacity-60", "Comprehensive showcase of all DaisyUI components, categorized and working.")
+
+        return m(".container.mx-auto.p-6.max-w-7xl.space-y-20", [
+            m("header.py-12.text-center.space-y-4", [
+                m("h1.text-6xl.font-black.bg-clip-text.text-transparent.bg-gradient-to-r.from-primary.to-secondary", "Mithril.js + DaisyUI 5"),
+                m("p.text-xl.opacity-60.max-w-2xl.mx-auto", "ARIA-Compliant, single-file components for rapid development.")
             ]),
 
-            // 1. ACTIONS
-            m("section", [
-                m("h2.text-3xl.font-bold.mb-8.border-b.pb-2", "Actions"),
-                m(".grid.grid-cols-1.gap-12", { class: "md:grid-cols-2" }, [
-                    // Buttons
-                    m(".space-y-4", [
-                        m("h3.text-xl.font-semibold", "Buttons (with v5 soft/dash)"),
-                        m(".flex.flex-wrap.gap-2", [
-                            m(Button, { color: "primary" }, "Primary"),
-                            m(Button, { color: "secondary", soft: true }, "Soft Secondary"),
-                            m(Button, { color: "accent", dash: true }, "Dash Accent"),
-                            m(Button, { outline: true }, "Outline"),
-                            m(Button, { ghost: true }, "Ghost"),
-                            m(Button, { loading: true }, "Loading"),
-                        ])
-                    ]),
-                    // Dropdown
-                    m(".space-y-4", [
-                        m("h3.text-xl.font-semibold", "Dropdown"),
-                        m(Dropdown, { label: "Options", hover: true }, [
-                            m("li", m("a", "Edit")),
-                            m("li", m("a", "Delete")),
-                        ])
-                    ]),
-                    // FAB / Speed Dial
-                    m(".space-y-4", [
-                        m("h3.text-xl.font-semibold", "FAB / Speed Dial"),
-                        m(".relative.h-20", [
-                            m(".absolute.bottom-0.left-0", [
-                                m(Button, { circle: true, color: "primary", class: "shadow-lg" }, m(Icon, { icon: "fa-solid fa-plus" }))
-                            ])
-                        ])
-                    ]),
-                    // Modal
-                    m(".space-y-4", [
-                        m("h3.text-xl.font-semibold", "Modal"),
-                        m(Button, { onclick: () => document.getElementById('my_modal').showModal() }, "Open Modal"),
-                        m(Modal, { id: "my_modal" }, [
-                            m("h3.font-bold.text-lg", "Hello!"),
-                            m("p.py-4", "This modal is working out of the box.")
-                        ])
-                    ]),
-                    // Swap & Theme Controller
-                    m(".space-y-4", [
-                        m("h3.text-xl.font-semibold", "Swap & Theme Controller"),
-                        m(".flex.items-center.gap-4", [
-                            m(Swap, { 
-                                effect: "rotate", 
-                                on: m(Icon, { icon: "fa-solid fa-sun", class: "text-2xl" }),
-                                off: m(Icon, { icon: "fa-solid fa-moon", class: "text-2xl" })
-                            }),
-                            m(ThemeController, { theme: "dark", class: "toggle" })
-                        ])
+            // ACTIONS
+            m(Section, { title: "Actions" }, [
+                m(CardWrapper, { title: "Buttons" }, [
+                    m(Button, { color: "primary" }, "Primary"),
+                    m(Button, { color: "secondary", soft: true }, "Soft"),
+                    m(Button, { color: "accent", dash: true }, "Dash"),
+                    m(Button, { ghost: true }, "Ghost"),
+                    m(Button, { loading: true, color: "primary" })
+                ]),
+                m(CardWrapper, { title: "Dropdown" }, [
+                    m(Dropdown, { label: "Hover Menu", hover: true }, [
+                        m("li", m("a", "Item 1")),
+                        m("li", m("a", "Item 2"))
                     ])
-                ])
-            ]),
-
-            // 2. DATA DISPLAY
-            m("section", [
-                m("h2.text-3xl.font-bold.mb-8.border-b.pb-2", "Data Display"),
-                m(".grid.grid-cols-1.gap-12", { class: "md:grid-cols-2" }, [
-                    m(".space-y-4", [
-                        m("h3.text-xl.font-semibold", "Accordion & Collapse"),
-                        m(Accordion, { name: "acc1", items: [
-                            { title: "Item 1", content: "Content 1", active: true },
-                            { title: "Item 2", content: "Content 2" }
-                        ]})
-                    ]),
-                    m(".space-y-4", [
-                        m("h3.text-xl.font-semibold", "Avatar & Badge"),
-                        m(".flex.items-center.gap-4", [
-                            m(Avatar, { src: "https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp", online: true }),
-                            m(Badge, { color: "primary" }, "New"),
-                            m(Badge, { color: "secondary", outline: true }, "Featured")
-                        ])
-                    ]),
-                    m(".space-y-4", [
-                        m("h3.text-xl.font-semibold", "Card"),
-                        m(Card, { title: "DaisyUI 5", image: "https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.webp" }, "Card component is updated.")
-                    ]),
-                    m(".space-y-4", [
-                        m("h3.text-xl.font-semibold", "Carousel"),
-                        m(Carousel, { class: "rounded-box w-64" }, [
-                            m("img", { src: "https://img.daisyui.com/images/stock/photo-1559703248-dcaaec9fab78.webp" }),
-                            m("img", { src: "https://img.daisyui.com/images/stock/photo-1565098772267-60af42b81ef2.webp" })
-                        ])
-                    ]),
-                    m(".space-y-4", [
-                        m("h3.text-xl.font-semibold", "Chat Bubble"),
-                        m(Chat, { header: "Obi-Wan", footer: "Delivered", image: "https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp" }, "It's over Anakin!")
-                    ]),
-                    m(".space-y-4", [
-                        m("h3.text-xl.font-semibold", "Countdown & Kbd"),
-                        m(".flex.items-center.gap-4", [
-                            m(Countdown, { value: 45, class: "text-4xl font-mono" }),
-                            m("div", [
-                                m(Kbd, "ctrl"),
-                                " + ",
-                                m(Kbd, "c")
-                            ])
-                        ])
-                    ]),
-                    m(".space-y-4", [
-                        m("h3.text-xl.font-semibold", "Diff"),
-                        m(Diff, { 
-                            class: "aspect-[16/9] w-full max-w-xs",
-                            item1: m(".bg-primary.text-primary-content.grid.place-items-center.text-5xl.font-black", "BEFORE"),
-                            item2: m(".bg-secondary.text-secondary-content.grid.place-items-center.text-5xl.font-black", "AFTER")
-                        })
-                    ]),
-                    m(".space-y-4", [
-                        m("h3.text-xl.font-semibold", "List (New in v5) & Status"),
-                        m(List, { class: "bg-base-200 rounded-box p-2" }, [
-                            m(ListRow, [
-                                m(Status, { color: "success" }),
-                                m("div", "User Online")
-                            ]),
-                            m(ListRow, [
-                                m(Status, { color: "error", size: "lg" }),
-                                m("div", "System Alert")
-                            ])
-                        ])
-                    ]),
-                    m(".space-y-4", [
-                        m("h3.text-xl.font-semibold", "Stats"),
-                        m(Stats, [
-                            m(Stat, { label: "Downloads", value: "31K", desc: "Jan 1st - Feb 1st" }),
-                            m(Stat, { label: "New Users", value: "4,200", desc: "400 (22%)" })
-                        ])
-                    ]),
-                    m(".space-y-4.col-span-full", [
-                        m("h3.text-xl.font-semibold", "Timeline"),
-                        m(Timeline, { horizontal: true }, [
-                            m(TimelineItem, { start: "1984", middle: m(Icon, { icon: "fa-solid fa-circle-check", class: "text-primary" }), end: "Mac", connect: "end" }),
-                            m(TimelineItem, { start: "1998", middle: m(Icon, { icon: "fa-solid fa-circle-check", class: "text-primary" }), end: "iMac", connect: "both" }),
-                            m(TimelineItem, { start: "2024", middle: m(Icon, { icon: "fa-solid fa-circle-check" }), end: "Vision Pro", connect: "start" })
-                        ])
-                    ])
-                ])
-            ]),
-
-            // 3. NAVIGATION
-            m("section", [
-                m("h2.text-3xl.font-bold.mb-8.border-b.pb-2", "Navigation"),
-                m(".grid.grid-cols-1.gap-12", { class: "md:grid-cols-2" }, [
-                    m(".space-y-4", [
-                        m("h3.text-xl.font-semibold", "Breadcrumbs & Link"),
-                        m(Breadcrumbs, [
-                            m("li", m(Link, { href: "#" }, "Home")),
-                            m("li", m(Link, { href: "#", color: "primary" }, "Components")),
-                            m("li", "Navigation")
-                        ])
-                    ]),
-                    m(".space-y-4", [
-                        m("h3.text-xl.font-semibold", "Dock (New in v5)"),
-                        m(Dock, { class: "relative" }, [
-                            m(DockItem, { active: true }, [m(Icon, { icon: "fa-solid fa-house" }), m("span", "Home")]),
-                            m(DockItem, [m(Icon, { icon: "fa-solid fa-user" }), m("span", "Profile")])
-                        ])
-                    ]),
-                    m(".space-y-4", [
-                        m("h3.text-xl.font-semibold", "Menu"),
-                        m(Menu, [
-                            m("li", m("a", "Item 1")),
-                            m("li", m("a", "Item 2")),
-                        ])
-                    ]),
-                    m(".space-y-4", [
-                        m("h3.text-xl.font-semibold", "Pagination & Steps"),
-                        m(".space-y-4", [
-                            m(Pagination, { total: 5, current: 2 }),
-                            m(Steps, { horizontal: true }, [
-                                m(Step, { color: "primary" }, "Start"),
-                                m(Step, { color: "primary" }, "Mid"),
-                                m(Step, "End")
-                            ])
-                        ])
-                    ]),
-                    m(".space-y-4", [
-                        m("h3.text-xl.font-semibold", "Tabs"),
-                        m(Tabs, { variant: "boxed" }, [
-                            m(Tab, { active: true }, "Active"),
-                            m(Tab, "Inactive")
-                        ])
-                    ])
-                ])
-            ]),
-
-            // 4. FEEDBACK
-            m("section", [
-                m("h2.text-3xl.font-bold.mb-8.border-b.pb-2", "Feedback"),
-                m(".grid.grid-cols-1.gap-12", { class: "md:grid-cols-2" }, [
-                    m(".space-y-4", [
-                        m("h3.text-xl.font-semibold", "Alert"),
-                        m(Alert, { type: "info" }, "New updates available!")
-                    ]),
-                    m(".space-y-4", [
-                        m("h3.text-xl.font-semibold", "Loading & Progress"),
-                        m(".flex.items-center.gap-4", [
-                            m(Loading, { variant: "spinner" }),
-                            m(Loading, { variant: "dots", color: "primary" }),
-                            m(Progress, { value: 70, max: 100, class: "w-56" }),
-                            m(RadialProgress, { value: 80 })
-                        ])
-                    ]),
-                    m(".space-y-4", [
-                        m("h3.text-xl.font-semibold", "Skeleton & Tooltip"),
-                        m(".flex.items-center.gap-4", [
-                            m(".skeleton.w-12.h-12.rounded-full"),
-                            m(Tooltip, { text: "Useful hint", position: "top" }, m(Button, "Hover me"))
-                        ])
-                    ]),
-                    m(".space-y-4", [
-                        m("h3.text-xl.font-semibold", "Toast"),
-                        m(".relative.h-20", [
-                            m(Toast, { class: "absolute" }, [
-                                m(Alert, { type: "success" }, "Message sent!")
-                            ])
-                        ])
-                    ])
-                ])
-            ]),
-
-            // 5. DATA INPUT
-            m("section", [
-                m("h2.text-3xl.font-bold.mb-8.border-b.pb-2", "Data Input"),
-                m(".grid.grid-cols-1.gap-12", { class: "md:grid-cols-2" }, [
-                    m(".space-y-4", [
-                        m("h3.text-xl.font-semibold", "Fieldset (v5) & Legend"),
-                        m(Fieldset, { legend: "User Info" }, [
-                            m(Label, "Name"),
-                            m(TextInput, { placeholder: "John Doe" })
-                        ])
-                    ]),
-                    m(".space-y-4", [
-                        m("h3.text-xl.font-semibold", "Validator (v5)"),
-                        m(Validator, { hint: "Must be a valid email" }, [
-                            m(TextInput, { type: "email", placeholder: "email@example.com" })
-                        ])
-                    ]),
-                    m(".space-y-4", [
-                        m("h3.text-xl.font-semibold", "Selections"),
-                        m(".grid.grid-cols-2.gap-4", [
-                            m(".flex.items-center.gap-2", [m(Checkbox, { checked: true }), m("span", "Checkbox")]),
-                            m(".flex.items-center.gap-2", [m(Radio, { checked: true }), m("span", "Radio")]),
-                            m(Toggle, { checked: true }),
-                            m(Rating, { value: 4 })
-                        ])
-                    ]),
-                    m(".space-y-4", [
-                        m("h3.text-xl.font-semibold", "Range & Select"),
-                        m(".space-y-4", [
-                            m(Range, { min: 0, max: 100, value: 50 }),
-                            m(Select, [
-                                m("option", "Option 1"),
-                                m("option", "Option 2")
-                            ])
-                        ])
-                    ]),
-                    m(".space-y-4", [
-                        m("h3.text-xl.font-semibold", "Textarea & File Input"),
-                        m(".space-y-4", [
-                            m(Textarea, { placeholder: "Tell us more..." }),
-                            m("input.file-input.w-full", { type: "file" })
-                        ])
-                    ]),
-                    m(".space-y-4", [
-                        m("h3.text-xl.font-semibold", "Calendar (v5)"),
-                        m(Calendar, { class: "bg-base-200 p-4 rounded-xl" }, "Calendar placeholder")
-                    ])
-                ])
-            ]),
-
-            // 6. LAYOUT
-            m("section", [
-                m("h2.text-3xl.font-bold.mb-8.border-b.pb-2", "Layout"),
-                m(".grid.grid-cols-1.gap-12", { class: "md:grid-cols-2" }, [
-                    m(".space-y-4.col-span-full", [
-                        m("h3.text-xl.font-semibold", "Hero"),
-                        m(Hero, { class: "bg-base-200 rounded-xl" }, [
-                            m(".hero-content.text-center", [
-                                m(".max-w-md", [
-                                    m("h1.text-5xl.font-bold", "Hello there"),
-                                    m("p.py-6", "Hero component is ready."),
-                                    m(Button, { color: "primary" }, "Get Started")
-                                ])
-                            ])
-                        ])
-                    ]),
-                    m(".space-y-4", [
-                        m("h3.text-xl.font-semibold", "Divider & Indicator"),
-                        m(".flex.flex-col.w-full", [
-                            m("div.grid.h-20.card.bg-base-300.rounded-box.place-items-center", "Content"),
-                            m(".divider", "OR"),
-                            m(".indicator", [
-                                m("span.indicator-item.badge.badge-secondary", "8"),
-                                m("div.grid.h-20.w-20.card.bg-base-300.rounded-box.place-items-center", "Inbox")
-                            ])
-                        ])
-                    ]),
-                    m(".space-y-4", [
-                        m("h3.text-xl.font-semibold", "Join, Stack & Mask"),
-                        m(".flex.flex-col.gap-4", [
-                            m(".join", [
-                                m(Button, { class: "join-item" }, "L"),
-                                m(Button, { class: "join-item" }, "M"),
-                                m(Button, { class: "join-item" }, "R")
-                            ]),
-                            m(".stack", [
-                                m(".bg-primary.w-20.h-20.rounded"),
-                                m(".bg-secondary.w-20.h-20.rounded"),
-                                m(".bg-accent.w-20.h-20.rounded")
-                            ]),
-                            m("img.mask.mask-heart.w-20", { src: "https://img.daisyui.com/images/stock/photo-1567653418876-5bb0e566e1c2.webp" })
-                        ])
-                    ]),
-                    m(".space-y-4", [
-                        m("h3.text-xl.font-semibold", "Drawer"),
-                        m(".h-40.border.rounded-xl.overflow-hidden", [
-                            m(".drawer", [
-                                m("input.drawer-toggle", { id: "my-drawer", type: "checkbox" }),
-                                m(".drawer-content.p-4", [
-                                    m("label.btn.btn-primary.drawer-button", { for: "my-drawer" }, "Open Drawer")
-                                ]),
-                                m(".drawer-side", [
-                                    m("label.drawer-overlay", { for: "my-drawer" }),
-                                    m("ul.menu.p-4.w-80.min-h-full.bg-base-200", [
-                                        m("li", m("a", "Sidebar Item"))
-                                    ])
-                                ])
-                            ])
-                        ])
-                    ])
-                ])
-            ]),
-
-            // 7. MOCKUP
-            m("section", [
-                m("h2.text-3xl.font-bold.mb-8.border-b.pb-2", "Mockup"),
-                m(".grid.grid-cols-1.gap-12", [
-                    m(BrowserMockup, { url: "daisyui.com" }, "Browser mockup content"),
-                    m(".grid.grid-cols-1.gap-8", { class: "md:grid-cols-2" }, [
-                        m(CodeMockup, [
-                            m("pre", { "data-prefix": "$" }, m("code", "npm i daisyui"))
+                ]),
+                m(CardWrapper, { title: "FAB / Speed Dial", class: "md:col-span-2" }, [
+                    m(".relative.w-full.h-64.bg-base-300/30.rounded-xl.overflow-hidden", [
+                        m(".p-4.text-xs.opacity-50", "Click icons to toggle Speed Dial / Flower menus"),
+                        
+                        // Simple FAB
+                        m(FAB, { class: "absolute left-4 top-12", color: "secondary" }, m(Icon, { icon: "fa-solid fa-heart" })),
+                        
+                        // Speed Dial (Vertical)
+                        m(FAB, { speedDial: true, class: "absolute left-4 bottom-4" }, [
+                            m(Button, { circle: true, color: "primary" }, m(Icon, { icon: "fa-solid fa-plus" })),
+                            m(Button, { circle: true, color: "primary", class: "fab-close" }, m(Icon, { icon: "fa-solid fa-xmark" })),
+                            m(Button, { circle: true, color: "accent", size: "sm" }, m(Icon, { icon: "fa-solid fa-share" })),
+                            m(Button, { circle: true, color: "secondary", size: "sm" }, m(Icon, { icon: "fa-solid fa-envelope" })),
                         ]),
-                        m(WindowMockup, "Hello World")
-                    ]),
+
+                        // Flower Menu (Radial)
+                        m(FAB, { flower: true, class: "absolute right-4 bottom-4" }, [
+                            m(Button, { circle: true, color: "primary" }, m(Icon, { icon: "fa-solid fa-gear" })),
+                            m(Button, { circle: true, color: "primary", class: "fab-close" }, m(Icon, { icon: "fa-solid fa-xmark" })),
+                            m(Button, { circle: true, color: "info" }, m(Icon, { icon: "fa-solid fa-camera" })),
+                            m(Button, { circle: true, color: "success" }, m(Icon, { icon: "fa-solid fa-print" })),
+                            m(Button, { circle: true, color: "warning" }, m(Icon, { icon: "fa-solid fa-trash" })),
+                        ])
+                    ])
+                ]),
+                m(CardWrapper, { title: "Modal" }, [
+                    m(Button, { onclick: () => document.getElementById('comp_modal').showModal() }, "Open Modal")
+                ]),
+                m(CardWrapper, { title: "Swap" }, [
+                    m(Swap, { 
+                        effect: "flip", 
+                        on: m(Icon, { icon: "fa-solid fa-sun", class: "text-3xl text-yellow-500" }),
+                        off: m(Icon, { icon: "fa-solid fa-moon", class: "text-3xl" })
+                    })
+                ]),
+                m(CardWrapper, { title: "Theme Controller" }, [
+                    m(".flex.items-center.gap-2", [
+                        m("span", "Dark Mode"),
+                        m(ThemeController, { theme: "dark", class: "toggle" })
+                    ])
+                ])
+            ]),
+
+            // DATA DISPLAY
+            m(Section, { title: "Data Display" }, [
+                m(CardWrapper, { title: "Accordion" }, [
+                    m(Accordion, { name: "gallery-acc", items: [
+                        { title: "Review", content: "Great components!", active: true },
+                        { title: "Details", content: "Built with Mithril.js" }
+                    ]})
+                ]),
+                m(CardWrapper, { title: "Avatar & Badge" }, [
+                    m(Avatar, { src: "https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp", online: true }),
+                    m(Badge, { color: "secondary" }, "Active")
+                ]),
+                m(CardWrapper, { title: "Card" }, [
+                    m(Card, { title: "v5 Card", class: "w-full shadow-lg" }, "Improved shadow and padding.")
+                ]),
+                m(CardWrapper, { title: "Carousel" }, [
+                    m(Carousel, { class: "rounded-box w-full" }, [
+                        m("img", { src: "https://img.daisyui.com/images/stock/photo-1559703248-dcaaec9fab78.webp" })
+                    ])
+                ]),
+                m(CardWrapper, { title: "Chat Bubble", class: "md:col-span-2 xl:col-span-2" }, [
+                    m(".w-full.space-y-4", [
+                        m(Chat, { 
+                            image: "https://img.daisyui.com/images/profile/demo/kenobee@192.webp",
+                            header: [
+                                "Obi-Wan Kenobi ",
+                                m("time.text-xs.opacity-50", "12:45")
+                            ],
+                            footer: "Delivered",
+                            position: "start"
+                        }, "You were the Chosen One!"),
+                        m(Chat, { 
+                            image: "https://img.daisyui.com/images/profile/demo/anakeen@192.webp",
+                            header: [
+                                "Anakin ",
+                                m("time.text-xs.opacity-50", "12:46")
+                            ],
+                            footer: "Seen at 12:46",
+                            position: "end",
+                            color: "neutral"
+                        }, "I hate you!")
+                    ])
+                ]),
+                m(CardWrapper, { title: "Collapse" }, [
+                    m(Collapse, { title: "Click me", arrow: true, class: "bg-base-100" }, "Hidden content")
+                ]),
+                m(CardWrapper, { title: "Countdown & Kbd" }, [
+                    m(Countdown, { value: 10, class: "text-4xl" }),
+                    m(Kbd, "⌘K")
+                ]),
+                m(CardWrapper, { title: "Diff" }, [
+                    m(Diff, { 
+                        class: "aspect-square w-full rounded-xl",
+                        item1: m(".bg-primary.grid.place-items-center.text-white", "A"),
+                        item2: m(".bg-secondary.grid.place-items-center.text-white", "B")
+                    })
+                ]),
+                m(CardWrapper, { title: "Hover 3D Card" }, [
+                    m(Hover3DCard, { class: "p-8 w-full text-center" }, "3D Hover Effect")
+                ]),
+                m(CardWrapper, { title: "Hover Gallery" }, [
+                    m(HoverGallery, { items: [{ src: "https://img.daisyui.com/images/stock/photo-1559703248-dcaaec9fab78.webp" }] })
+                ]),
+                m(CardWrapper, { title: "List (v5)" }, [
+                    m(List, { class: "w-full" }, [
+                        m(ListRow, [m(Status, { color: "success" }), m("span", "Online")]),
+                        m(ListRow, [m(Status, { color: "error" }), m("span", "Offline")])
+                    ])
+                ]),
+                m(CardWrapper, { title: "Stats" }, [
+                    m(Stats, { class: "stats-vertical lg:stats-horizontal w-full" }, [
+                        m(Stat, { label: "Users", value: "2.5K" })
+                    ])
+                ]),
+                m(CardWrapper, { title: "Table" }, [
+                    m(Table, { zebra: true, class: "w-full" }, [
+                        m("thead", m("tr", [m("th", "Name"), m("th", "Role")])),
+                        m("tbody", m("tr", [m("td", "Morton"), m("td", "Dev")]))
+                    ])
+                ]),
+                m(CardWrapper, { title: "Text Rotate" }, [
+                    m("div.text-xl.font-bold", [
+                        "I am ",
+                        m(TextRotate, { items: ["Fast", "Reliable", "Modern"] })
+                    ])
+                ]),
+                m(CardWrapper, { title: "Timeline", class: "col-span-full" }, [
+                    m(Timeline, { horizontal: true, class: "w-full overflow-x-auto" }, [
+                        m(TimelineItem, { start: "2020", middle: m(Icon, { icon: "fa-solid fa-check" }), connect: "end" }),
+                        m(TimelineItem, { start: "2024", middle: m(Icon, { icon: "fa-solid fa-star" }), connect: "start" })
+                    ])
+                ])
+            ]),
+
+            // NAVIGATION
+            m(Section, { title: "Navigation" }, [
+                m(CardWrapper, { title: "Navbar" }, [
+                    m(Navbar, { class: "shadow-lg rounded-box" }, [
+                        m(".flex-1", m("a.btn.btn-ghost.text-xl", "Brand")),
+                        m(".flex-none", m(Button, { ghost: true }, m(Icon, { icon: "fa-solid fa-bars" })))
+                    ])
+                ]),
+                m(CardWrapper, { title: "Breadcrumbs" }, [
+                    m(Breadcrumbs, [
+                        m("li", m(Link, { href: "#" }, "Home")),
+                        m("li", "Settings")
+                    ])
+                ]),
+                m(CardWrapper, { title: "Dock" }, [
+                    m(Dock, { class: "static rounded-box" }, [
+                        m(DockItem, { active: true }, m(Icon, { icon: "fa-solid fa-house" })),
+                        m(DockItem, m(Icon, { icon: "fa-solid fa-bell" }))
+                    ])
+                ]),
+                m(CardWrapper, { title: "Menu" }, [
+                    m(Menu, { class: "w-full" }, [
+                        m("li", m("a", "Dashboard")),
+                        m("li", m("a", "Projects"))
+                    ])
+                ]),
+                m(CardWrapper, { title: "Pagination" }, [
+                    m(Pagination, { total: 3, current: 1 })
+                ]),
+                m(CardWrapper, { title: "Steps" }, [
+                    m(Steps, { horizontal: true, class: "w-full" }, [
+                        m(Step, { color: "primary" }, "Fly"),
+                        m(Step, "Arrive")
+                    ])
+                ]),
+                m(CardWrapper, { title: "Tabs" }, [
+                    m(Tabs, { variant: "lifted" }, [
+                        m(Tab, { active: true }, "Tab 1"),
+                        m(Tab, "Tab 2")
+                    ])
+                ])
+            ]),
+
+            // FEEDBACK
+            m(Section, { title: "Feedback" }, [
+                m(CardWrapper, { title: "Alert" }, [
+                    m(Alert, { type: "info", class: "w-full" }, "Updates available.")
+                ]),
+                m(CardWrapper, { title: "Loading & Progress" }, [
+                    m(Loading, { variant: "dots" }),
+                    m(Progress, { value: 40, max: 100, class: "w-full" }),
+                    m(RadialProgress, { value: 75 })
+                ]),
+                m(CardWrapper, { title: "Skeleton" }, [
+                    m(".flex.flex-col.gap-4.w-full", [
+                        m(Skeleton, { class: "h-32 w-full" }),
+                        m(Skeleton, { class: "h-4 w-28" })
+                    ])
+                ]),
+                m(CardWrapper, { title: "Toast" }, [
+                    m(".relative.h-20.w-full", [
+                        m(Toast, { class: "absolute" }, [
+                            m(Alert, { type: "success" }, "Saved!")
+                        ])
+                    ])
+                ]),
+                m(CardWrapper, { title: "Tooltip" }, [
+                    m(Tooltip, { text: "Hello!" }, m(Button, "Hover me"))
+                ])
+            ]),
+
+            // DATA INPUT
+            m(Section, { title: "Data Input" }, [
+                m(CardWrapper, { title: "Checkbox & Toggle" }, [
+                    m(Checkbox, { checked: true }),
+                    m(Toggle, { checked: true, color: "secondary" })
+                ]),
+                m(CardWrapper, { title: "Fieldset & Legend" }, [
+                    m(Fieldset, { legend: "Login", class: "w-full" }, [
+                        m(Label, "Password"),
+                        m(TextInput, { type: "password", class: "w-full" })
+                    ])
+                ]),
+                m(CardWrapper, { title: "File Input" }, [
+                    m(FileInput, { class: "w-full" })
+                ]),
+                m(CardWrapper, { title: "Filter" }, [
+                    m(Filter, { 
+                        options: [
+                            { label: "All", value: "all" },
+                            { label: "Recent", value: "recent" }
+                        ],
+                        selected: "all"
+                    })
+                ]),
+                m(CardWrapper, { title: "Radio & Range" }, [
+                    m(Radio, { name: "opt", checked: true }),
+                    m(Range, { min: 0, max: 100, value: 30, class: "w-full" })
+                ]),
+                m(CardWrapper, { title: "Rating" }, [
+                    m(Rating, { value: 4 })
+                ]),
+                m(CardWrapper, { title: "Select & Textarea" }, [
+                    m(Select, { class: "w-full" }, [m("option", "Pick me")]),
+                    m(Textarea, { class: "w-full", placeholder: "Bio" })
+                ]),
+                m(CardWrapper, { title: "Validator" }, [
+                    m(Validator, { hint: "Too short", class: "w-full" }, [
+                        m(TextInput, { class: "w-full" })
+                    ])
+                ]),
+                m(CardWrapper, { title: "Calendar" }, [
+                    m(Calendar, { class: "bg-base-300 p-4 rounded-xl w-full text-center" }, "Calendar widget")
+                ])
+            ]),
+
+            // LAYOUT
+            m(Section, { title: "Layout" }, [
+                m(CardWrapper, { title: "Hero" }, [
+                    m(Hero, { class: "bg-base-300 rounded-box p-4 w-full" }, "Hero Content")
+                ]),
+                m(CardWrapper, { title: "Divider & Join" }, [
+                    m(".flex.flex-col.w-full", [
+                        m("div", "Top"),
+                        m(Divider, "OR"),
+                        m(Join, [
+                            m(Button, { class: "join-item" }, "L"),
+                            m(Button, { class: "join-item" }, "R")
+                        ])
+                    ])
+                ]),
+                m(CardWrapper, { title: "Indicator & Stack" }, [
+                    m(Indicator, { item: m(Badge, { color: "primary" }, "8") }, [
+                        m(Stack, [
+                            m(".bg-base-300.w-20.h-20.rounded"),
+                            m(".bg-base-200.w-20.h-20.rounded")
+                        ])
+                    ])
+                ]),
+                m(CardWrapper, { title: "Mask" }, [
+                    m(Mask, { shape: "heart", src: "https://img.daisyui.com/images/stock/photo-1567653418876-5bb0e566e1c2.webp", class: "w-20" })
+                ]),
+                m(CardWrapper, { title: "Drawer Sidebar" }, [
+                    m(".h-40.w-full.border.rounded-xl.overflow-hidden", [
+                        m(Drawer, { 
+                            id: "demo-drawer",
+                            content: m(Button, { onclick: () => document.getElementById('demo-drawer').click() }, "Open"),
+                            side: m(Menu, { class: "p-4 w-64 min-h-full" }, [m("li", m("a", "Sidebar Item"))])
+                        })
+                    ])
+                ]),
+                m(CardWrapper, { title: "Footer", class: "col-span-full" }, [
+                    m(Footer, { class: "rounded-box" }, [
+                        m("nav", [m("h6.footer-title", "Services"), m("a.link.link-hover", "Branding")]),
+                        m("nav", [m("h6.footer-title", "Company"), m("a.link.link-hover", "About us")])
+                    ])
+                ])
+            ]),
+
+            // MOCKUP
+            m(Section, { title: "Mockup" }, [
+                m(CardWrapper, { title: "Browser", class: "col-span-full" }, [
+                    m(BrowserMockup, { url: "mithril.js.org", class: "w-full" }, "Content")
+                ]),
+                m(CardWrapper, { title: "Code" }, [
+                    m(CodeMockup, { class: "w-full" }, m("pre", m("code", "npm install mithril")))
+                ]),
+                m(CardWrapper, { title: "Window" }, [
+                    m(WindowMockup, { class: "w-full" }, "Hello World")
+                ]),
+                m(CardWrapper, { title: "Phone" }, [
                     m(PhoneMockup, "Calling...")
                 ])
             ]),
+
+            m(Modal, { id: "comp_modal" }, [
+                m("h3.text-lg.font-bold", "Hello!"),
+                m("p.py-4", "Press ESC key or click the button below to close")
+            ])
         ]);
     },
 };

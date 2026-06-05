@@ -11,7 +11,12 @@ const Loading = {
             attrs.class
         ].filter(Boolean).join(" ");
 
-        return m("span", { ...props, class: classes });
+        return m("span", { 
+            ...props, 
+            class: classes, 
+            role: "status", 
+            "aria-label": "loading" 
+        });
     }
 };
 

@@ -1,10 +1,25 @@
 /* Tailwind CSS v4 imports */
 @import "tailwindcss";
+
+@theme {
+  --animate-text-slide: text-slide 8s cubic-bezier(0.83, 0, 0.17, 1) infinite;
+
+  @keyframes text-slide {
+    0%, 20% { transform: translateY(0%); }
+    25%, 45% { transform: translateY(-33.33%); }
+    50%, 70% { transform: translateY(-66.66%); }
+    75%, 100% { transform: translateY(0%); }
+  }
+}
+
 @import "@fortawesome/fontawesome-free/css/all.min.css";
 @import "filepond/dist/filepond.min.css";
 @import "filepond-plugin-image-preview/dist/filepond-plugin-image-preview.min.css";
 
-@plugin "daisyui";
+@plugin "daisyui" {
+  themes: all;
+}
+@plugin "@tailwindcss/typography";
 
 @utility container-fluid {
     width: 100%;

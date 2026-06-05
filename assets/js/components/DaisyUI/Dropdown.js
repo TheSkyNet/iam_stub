@@ -13,8 +13,18 @@ const Dropdown = {
         ].filter(Boolean).join(" ");
 
         return m("div", { ...props, class: classes }, [
-            m("div", { tabindex: 0, role: "button", class: triggerClass || "btn m-1" }, label),
-            m("ul", { tabindex: 0, class: `dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52 ${contentClass || ""}` }, children)
+            m("div", { 
+                tabindex: 0, 
+                role: "button", 
+                class: triggerClass || "btn m-1",
+                "aria-haspopup": "true",
+                "aria-expanded": open ? "true" : "false"
+            }, label),
+            m("ul", { 
+                tabindex: 0, 
+                role: "menu",
+                class: `dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52 ${contentClass || ""}` 
+            }, children)
         ]);
     }
 };

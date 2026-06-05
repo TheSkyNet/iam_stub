@@ -20,8 +20,12 @@ const Button = {
             attrs.class
         ].filter(Boolean).join(" ");
 
-        return m("button", { ...props, class: classes }, [
-            loading && m("span.loading.loading-spinner"),
+        return m("button", { 
+            ...props, 
+            class: classes,
+            "aria-busy": loading ? "true" : undefined
+        }, [
+            loading && m("span.loading.loading-spinner.loading-xs", { "aria-hidden": "true", class: children ? "mr-2" : "" }),
             children
         ]);
     }

@@ -8,8 +8,13 @@ const Carousel = {
             vertical && "carousel-vertical",
             attrs.class
         ].filter(Boolean).join(" ");
-        return m("div", { ...props, class: classes }, children.map(child => 
-            m(".carousel-item", child)
+        return m("div", { 
+            ...props, 
+            class: classes, 
+            role: "region", 
+            "aria-label": "Carousel" 
+        }, [].concat(children).filter(Boolean).map(child => 
+            m(".carousel-item", { role: "group", "aria-roledescription": "slide" }, child)
         ));
     }
 };
