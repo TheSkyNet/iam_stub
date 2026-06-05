@@ -6,7 +6,7 @@ use IamLab\Core\API\aAPI;
 use IamLab\Model\User;
 use Exception;
 
-use function App\Core\Helpers\config;
+use function IamLab\Core\Helpers\config;
 
 abstract class OAuthService extends aAPI
 {

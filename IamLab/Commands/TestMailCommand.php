@@ -5,7 +5,7 @@ namespace IamLab\Commands;
 use Exception;
 use IamLab\Core\Command\BaseCommand;
 
-use function App\Core\Helpers\email;
+use function IamLab\Core\Helpers\email;
 
 class TestMailCommand extends BaseCommand
 {

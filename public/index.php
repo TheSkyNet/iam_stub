@@ -8,12 +8,12 @@ use Phalcon\Mvc\View\Simple;
 use Phalcon\Mvc\Url as UrlResolver;
 use Whoops\Handler\PrettyPageHandler;
 use Whoops\Run;
-use function App\Core\Helpers\loadEnv;
+use function IamLab\Core\Helpers\loadEnv;
 
 
-include "../vendor/autoload.php";
-define('APP_PATH', realpath('../IamLab'));
-define('ROOT_PATH', realpath('../'));
+include __DIR__ . "/../vendor/autoload.php";
+define('APP_PATH', realpath(__DIR__ . '/../IamLab'));
+define('ROOT_PATH', realpath(__DIR__ . '/../'));
 if (php_sapi_name() === 'cli-server') {
     $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
     if (file_exists(__DIR__ . $uri) && is_file(__DIR__ . $uri)) {
@@ -29,8 +29,8 @@ if (!file_exists(__DIR__ . '/' . $_SERVER['REQUEST_URI'])) {
 loadEnv(ROOT_PATH.'/.env');
 
 // Normalize APP_DEBUG and APP_ENV
-$appEnv = strtolower((string) \App\Core\Helpers\env('APP_ENV', 'production'));
-$debugRaw = (string) \App\Core\Helpers\env('APP_DEBUG', 'false');
+$appEnv = strtolower((string) \IamLab\Core\Helpers\env('APP_ENV', 'production'));
+$debugRaw = (string) \IamLab\Core\Helpers\env('APP_DEBUG', 'false');
 $appDebug = in_array(strtolower($debugRaw), ['1','true','on','yes','debug'], true);
 
 // Enable detailed error pages (Whoops) only when explicitly in debug mode

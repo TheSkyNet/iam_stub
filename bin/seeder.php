@@ -14,7 +14,7 @@ use IamLab\Seeding\Support\ConsolePrinter;
 use IamLab\Seeding\Support\SystemClock;
 use Phalcon\Di\FactoryDefault;
 use Phalcon\Di\Di;
-use function App\Core\Helpers\loadEnv;
+use function IamLab\Core\Helpers\loadEnv;
 
 // Paths
 define('APP_PATH', realpath(__DIR__ . '/../IamLab'));
@@ -27,7 +27,7 @@ require_once ROOT_PATH . '/vendor/autoload.php';
 loadEnv(ROOT_PATH . '/.env');
 
 // Error reporting (optional)
-if (\App\Core\Helpers\env('APP_DEBUG') === 'debug') {
+if (\IamLab\Core\Helpers\env('APP_DEBUG') === 'debug') {
     ini_set('display_errors', '1');
     ini_set('display_startup_errors', '1');
     error_reporting(E_ALL);

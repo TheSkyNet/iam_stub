@@ -19,7 +19,7 @@ use Endroid\QrCode\Label\Font\NotoSans;
 use Endroid\QrCode\RoundBlockSizeMode\RoundBlockSizeModeMargin;
 use Endroid\QrCode\Writer\PngWriter;
 
-use function App\Core\Helpers\email;
+use function IamLab\Core\Helpers\email;
 
 class Auth extends aAPI
 {

@@ -51,16 +51,16 @@ The service reads configuration from `config/config.php`:
 
 ```php
 'pusher' => [
-    'app_id' => App\Core\Helpers\env('PUSHER_APP_ID', ''),
-    'key' => App\Core\Helpers\env('PUSHER_APP_KEY', ''),
-    'secret' => App\Core\Helpers\env('PUSHER_APP_SECRET', ''),
-    'cluster' => App\Core\Helpers\env('PUSHER_APP_CLUSTER', 'mt1'),
-    'use_tls' => App\Core\Helpers\env('PUSHER_USE_TLS', true),
-    'host' => App\Core\Helpers\env('PUSHER_HOST', null),
-    'port' => App\Core\Helpers\env('PUSHER_PORT', null),
-    'scheme' => App\Core\Helpers\env('PUSHER_SCHEME', 'https'),
-    'verify_ssl' => App\Core\Helpers\env('PUSHER_VERIFY_SSL', true),
-    'disable_stats' => App\Core\Helpers\env('PUSHER_DISABLE_STATS', false),
+    'app_id' => IamLab\Core\Helpers\env('PUSHER_APP_ID', ''),
+    'key' => IamLab\Core\Helpers\env('PUSHER_APP_KEY', ''),
+    'secret' => IamLab\Core\Helpers\env('PUSHER_APP_SECRET', ''),
+    'cluster' => IamLab\Core\Helpers\env('PUSHER_APP_CLUSTER', 'mt1'),
+    'use_tls' => IamLab\Core\Helpers\env('PUSHER_USE_TLS', true),
+    'host' => IamLab\Core\Helpers\env('PUSHER_HOST', null),
+    'port' => IamLab\Core\Helpers\env('PUSHER_PORT', null),
+    'scheme' => IamLab\Core\Helpers\env('PUSHER_SCHEME', 'https'),
+    'verify_ssl' => IamLab\Core\Helpers\env('PUSHER_VERIFY_SSL', true),
+    'disable_stats' => IamLab\Core\Helpers\env('PUSHER_DISABLE_STATS', false),
     'enabled_transports' => ['ws', 'wss'],
 ]
 ```

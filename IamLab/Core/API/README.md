@@ -401,7 +401,7 @@ The API framework can be extended with:
 ## Dependencies
 
 - Phalcon Framework
-- Helper functions from `App\Core\Helpers`
+- Helper functions from `IamLab\Core\Helpers`
 - JsonSerializable interface (PHP built-in)
 
 ## Related Documentation

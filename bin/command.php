@@ -12,7 +12,7 @@
 require_once __DIR__ . '/../vendor/autoload.php';
 
 use Phalcon\Di\FactoryDefault;
-use function App\Core\Helpers\loadEnv;
+use function IamLab\Core\Helpers\loadEnv;
 
 // Define constants
 define('APP_PATH', realpath(__DIR__ . '/../IamLab'));
@@ -22,7 +22,7 @@ define('ROOT_PATH', realpath(__DIR__ . '/..'));
 loadEnv(ROOT_PATH . '/.env');
 
 // Set up error reporting for CLI
-if (\App\Core\Helpers\env('APP_DEBUG') == 'true') {
+if (\IamLab\Core\Helpers\env('APP_DEBUG') == 'true') {
     ini_set('display_errors', 1);
     ini_set('display_startup_errors', 1);
     error_reporting(E_ALL);

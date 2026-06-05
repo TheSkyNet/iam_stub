@@ -1,4 +1,3 @@
-import ToastService from '../services/ToastService';
 
 /**
  * Formats various error types into a human-readable string.
@@ -61,7 +60,7 @@ export const toMessageStringSync = (value) => {
 };
 
 /**
- * Global function to show a toast
+ * Global function to show a notification (fallback to console)
  * @param {any} message 
  * @param {string} type 
  */
@@ -69,7 +68,7 @@ window.showToast = (message, type = 'info') => {
     const msg = toMessageStringSync(message);
     // Truncate if too long (MAX 2000 chars as per guidelines)
     const truncated = msg.length > 2000 ? msg.substring(0, 1997) + '...' : msg;
-    ToastService.show(truncated, type);
+    console.log(`[${type.toUpperCase()}] ${truncated}`);
 };
 
 // Also make the formatter available globally

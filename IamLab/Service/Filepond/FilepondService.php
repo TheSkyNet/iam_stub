@@ -12,13 +12,13 @@ use Phalcon\Http\Request;
 use SodiumException;
 use Throwable;
 
-use function App\Core\Helpers\collect;
-use function App\Core\Helpers\config;
-use function App\Core\Helpers\crypt;
-use function App\Core\Helpers\dd;
-use function App\Core\Helpers\decrypt;
-use function App\Core\Helpers\di;
-use function App\Core\Helpers\moveTo;
+use function IamLab\Core\Helpers\collect;
+use function IamLab\Core\Helpers\config;
+use function IamLab\Core\Helpers\crypt;
+use function IamLab\Core\Helpers\dd;
+use function IamLab\Core\Helpers\decrypt;
+use function IamLab\Core\Helpers\di;
+use function IamLab\Core\Helpers\moveTo;
 
 /**
  * @property Filesystem $tmp Filesystem

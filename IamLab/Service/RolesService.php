@@ -7,7 +7,7 @@ use IamLab\Model\User;
 use IamLab\Model\UserRole;
 use Phalcon\Di\Injectable;
 
-use function App\Core\Helpers\dd;
+use function IamLab\Core\Helpers\dd;
 
 /**
  * RolesService - Service for managing user roles and permissions

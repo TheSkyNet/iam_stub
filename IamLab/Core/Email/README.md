@@ -205,21 +205,21 @@ The email configuration is defined in `config/config.php`:
 
 ```php
 'email' => [
-    'provider' => App\Core\Helpers\env('MAIL_PROVIDER', 'mailhog'),
-    'from_email' => App\Core\Helpers\env('MAIL_FROM_EMAIL', 'noreply@example.com'),
-    'from_name' => App\Core\Helpers\env('MAIL_FROM_NAME', 'Phalcon Stub'),
+    'provider' => IamLab\Core\Helpers\env('MAIL_PROVIDER', 'mailhog'),
+    'from_email' => IamLab\Core\Helpers\env('MAIL_FROM_EMAIL', 'noreply@example.com'),
+    'from_name' => IamLab\Core\Helpers\env('MAIL_FROM_NAME', 'Phalcon Stub'),
 
     'mailhog' => [
-        'host' => App\Core\Helpers\env('MAILHOG_HOST', 'mailhog'),
-        'port' => App\Core\Helpers\env('MAILHOG_PORT', 1025),
-        'username' => App\Core\Helpers\env('MAILHOG_USERNAME', ''),
-        'password' => App\Core\Helpers\env('MAILHOG_PASSWORD', ''),
-        'encryption' => App\Core\Helpers\env('MAILHOG_ENCRYPTION', ''),
+        'host' => IamLab\Core\Helpers\env('MAILHOG_HOST', 'mailhog'),
+        'port' => IamLab\Core\Helpers\env('MAILHOG_PORT', 1025),
+        'username' => IamLab\Core\Helpers\env('MAILHOG_USERNAME', ''),
+        'password' => IamLab\Core\Helpers\env('MAILHOG_PASSWORD', ''),
+        'encryption' => IamLab\Core\Helpers\env('MAILHOG_ENCRYPTION', ''),
     ],
 
     'resend' => [
-        'api_key' => App\Core\Helpers\env('RESEND_API_KEY', ''),
-        'endpoint' => App\Core\Helpers\env('RESEND_ENDPOINT', 'https://api.resend.com'),
+        'api_key' => IamLab\Core\Helpers\env('RESEND_API_KEY', ''),
+        'endpoint' => IamLab\Core\Helpers\env('RESEND_ENDPOINT', 'https://api.resend.com'),
     ],
 ]
 ```
@@ -366,7 +366,7 @@ $success = sendPasswordResetEmail('user@example.com', 'secure_reset_token_here')
 The project includes a convenient helper function for quick email sending:
 
 ```php
-use function App\Core\Helpers\email;
+use function IamLab\Core\Helpers\email;
 
 // Simple email using helper function
 $result = email(
@@ -639,7 +639,7 @@ The email service can be extended with:
 
 - Phalcon Framework
 - cURL (for API-based providers)
-- Helper functions from `App\Core\Helpers`
+- Helper functions from `IamLab\Core\Helpers`
 
 ## Related Documentation
 

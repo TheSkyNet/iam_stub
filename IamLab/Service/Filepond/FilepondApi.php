@@ -8,7 +8,7 @@ use Phalcon\Http\Response;
 use Phalcon\Http\ResponseInterface;
 use Throwable;
 
-use function App\Core\Helpers\config;
+use function IamLab\Core\Helpers\config;
 
 /**
  * @property FilepondService $filepond

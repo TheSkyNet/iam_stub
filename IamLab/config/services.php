@@ -23,7 +23,7 @@ use Phalcon\Db\Adapter\Pdo\Mysql;
 use Phalcon\Session\Manager;
 use Phalcon\Session\Adapter\Stream;
 
-use function App\Core\Helpers\config;
+use function IamLab\Core\Helpers\config;
 
 /** @var FactoryDefault $di */
 $di->setShared(

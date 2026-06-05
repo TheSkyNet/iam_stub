@@ -13,7 +13,7 @@ const Footer = {
                     m("br"),
                     "Providing reliable tech since 2024"
                 ]),
-                m("p", `Copyright © ${currentYear} - All right reserved`)
+                m("p", `Copyright (c) ${currentYear} - All right reserved`)
             ]),
             m("nav", [
                 m(".grid.grid-flow-col.gap-4", [

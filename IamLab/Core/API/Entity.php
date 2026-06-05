@@ -5,8 +5,8 @@ namespace IamLab\Core\API;
 use JsonSerializable;
 use Phalcon\Mvc\Model;
 
-use function App\Core\Helpers\cast;
-use function App\Core\Helpers\merge_objects;
+use function IamLab\Core\Helpers\cast;
+use function IamLab\Core\Helpers\merge_objects;
 
 abstract class Entity extends Model implements JsonSerializable
 {

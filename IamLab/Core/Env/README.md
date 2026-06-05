@@ -118,7 +118,7 @@ if (file_exists($envFile)) {
 The project includes a helper function for convenient environment loading:
 
 ```php
-use function App\Core\Helpers\loadEnv;
+use function IamLab\Core\Helpers\loadEnv;
 
 // Load environment using helper function
 loadEnv('.env');
@@ -222,7 +222,7 @@ The environment loading is typically done early in the application bootstrap:
 
 ```php
 // In services.php or bootstrap file
-use function App\Core\Helpers\loadEnv;
+use function IamLab\Core\Helpers\loadEnv;
 
 // Load environment variables before configuration
 loadEnv('.env');
@@ -239,7 +239,7 @@ Environment variables are commonly used in configuration files:
 
 ```php
 // In config/config.php
-use function App\Core\Helpers\env;
+use function IamLab\Core\Helpers\env;
 
 return new Config([
     'app' => [

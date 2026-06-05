@@ -2,7 +2,7 @@
 
 use Phalcon\Config\Config;
 
-use function App\Core\Helpers\env;
+use function IamLab\Core\Helpers\env;
 
 defined('APP_PATH') || define('APP_PATH', realpath('./IamLab'));
 defined('TMP_PATH') || define('TMP_PATH', sys_get_temp_dir());

@@ -4,7 +4,7 @@ namespace IamLab\Core\API;
 
 use IamLab\Service\Auth\AuthService;
 use JetBrains\PhpStorm\NoReturn;
-use function App\Core\Helpers\cast;
+use function IamLab\Core\Helpers\cast;
 
 /**
  * Class aAPI

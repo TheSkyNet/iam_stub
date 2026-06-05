@@ -2,7 +2,7 @@
 
 namespace IamLab\Service\Payment\Configuration;
 
-use function App\Core\Helpers\env;
+use function IamLab\Core\Helpers\env;
 
 /**
  * Configuration Manager for Payment Services

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Core\Helpers;
+namespace IamLab\Core\Helpers;
 
 use Defuse\Crypto\Crypto;
 use Defuse\Crypto\Exception\BadFormatException;

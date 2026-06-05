@@ -24,7 +24,7 @@ use Phalcon\Mvc\Micro;
 RouteGroup::create($app)
     ->group(function ($group): void {
         // Home page
-        $group->get('/', function (array $app): void {
+        $group->get('/', function (Micro $app): void {
             $settingsService = new SettingsService();
             $settingsService->initialize();
             echo $app['view']->render('index', ['settings' => $settingsService->getFormatted()]);

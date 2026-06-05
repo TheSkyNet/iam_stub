@@ -153,7 +153,7 @@ class UserAPI extends aAPI
 ```php
 <?php
 
-use function App\Core\Helpers\email;
+use function IamLab\Core\Helpers\email;
 
 // Send welcome email
 $result = email(
@@ -169,7 +169,7 @@ $result = email(
 ```php
 <?php
 
-use function App\Core\Helpers\{collect, cast};
+use function IamLab\Core\Helpers\{collect, cast};
 
 // Process user data
 $users = collect($rawUserData)
@@ -204,7 +204,7 @@ $pusher->trigger(
 ```php
 <?php
 
-use function App\Core\Helpers\{config, env, loadEnv};
+use function IamLab\Core\Helpers\{config, env, loadEnv};
 
 // Load environment
 loadEnv('.env');
@@ -223,7 +223,7 @@ $appName = env('APP_NAME', 'Default App');
 
 use IamLab\Core\Email\EmailService;
 use IamLab\Core\Pusher\PusherService;
-use function App\Core\Helpers\config;
+use function IamLab\Core\Helpers\config;
 
 class NotificationService
 {
@@ -263,7 +263,7 @@ class NotificationService
 ```php
 <?php
 
-use function App\Core\Helpers\{collect, cast, merge_objects};
+use function IamLab\Core\Helpers\{collect, cast, merge_objects};
 
 class DataProcessor
 {
@@ -498,7 +498,7 @@ Implement comprehensive error handling:
 ```php
 <?php
 
-use function App\Core\Helpers\{email, config};
+use function IamLab\Core\Helpers\{email, config};
 
 class NotificationService
 {
@@ -536,7 +536,7 @@ Use environment-based configuration:
 ```php
 <?php
 
-use function App\Core\Helpers\{env, config};
+use function IamLab\Core\Helpers\{env, config};
 
 // Good: Environment-based
 $apiKey = env('THIRD_PARTY_API_KEY');
@@ -554,7 +554,7 @@ Validate and cast data appropriately:
 ```php
 <?php
 
-use function App\Core\Helpers\cast;
+use function IamLab\Core\Helpers\cast;
 
 class UserAPI extends aAPI
 {
@@ -604,7 +604,7 @@ Cache frequently accessed data:
 ```php
 <?php
 
-use function App\Core\Helpers\config;
+use function IamLab\Core\Helpers\config;
 
 class ConfigCache
 {
@@ -651,7 +651,7 @@ Always validate and sanitize input:
 ```php
 <?php
 
-use function App\Core\Helpers\cast;
+use function IamLab\Core\Helpers\cast;
 
 class SecureAPI extends aAPI
 {
@@ -679,7 +679,7 @@ Use encryption for sensitive data:
 ```php
 <?php
 
-use function App\Core\Helpers\{crypt, decrypt};
+use function IamLab\Core\Helpers\{crypt, decrypt};
 
 class SecureDataService
 {
@@ -730,7 +730,7 @@ Enable debug mode for detailed logging:
 ```php
 <?php
 
-use function App\Core\Helpers\{env, dd};
+use function IamLab\Core\Helpers\{env, dd};
 
 if (env('APP_DEBUG')) {
     // Debug configuration

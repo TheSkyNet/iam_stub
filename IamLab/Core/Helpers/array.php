@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Core\Helpers;
+namespace IamLab\Core\Helpers;
 
 use IamLab\Core\Collection\Collection;
 use stdClass;

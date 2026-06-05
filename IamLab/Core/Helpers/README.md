@@ -15,7 +15,7 @@ This folder contains utility functions organized into several files:
 
 ### Core Utilities (util.php)
 
-**Namespace:** `App\Core\Helpers`
+**Namespace:** `IamLab\Core\Helpers`
 
 #### Configuration Functions
 
@@ -29,7 +29,7 @@ Retrieves configuration values using dot notation.
 **Returns:** Mixed - Configuration value or default
 
 ```php
-use function App\Core\Helpers\config;
+use function IamLab\Core\Helpers\config;
 
 // Get database configuration
 $dbHost = config('database.host', 'localhost');
@@ -50,7 +50,7 @@ Retrieves environment variables with optional default values.
 **Returns:** String|null - Environment variable value or default
 
 ```php
-use function App\Core\Helpers\env;
+use function IamLab\Core\Helpers\env;
 
 // Get environment variables
 $appName = env('APP_NAME', 'Phalcon App');
@@ -80,7 +80,7 @@ Retrieves services from the dependency injection container.
 **Returns:** Mixed - Service instance
 
 ```php
-use function App\Core\Helpers\di;
+use function IamLab\Core\Helpers\di;
 
 // Get services from DI container
 $db = di('db');
@@ -104,7 +104,7 @@ Loads environment variables from a .env file.
 - `$path` - Path to the .env file
 
 ```php
-use function App\Core\Helpers\loadEnv;
+use function IamLab\Core\Helpers\loadEnv;
 
 // Load environment variables
 loadEnv('.env');
@@ -129,7 +129,7 @@ Sends an email using the configured email service.
 **Returns:** bool - True if email was sent successfully
 
 ```php
-use function App\Core\Helpers\email;
+use function IamLab\Core\Helpers\email;
 
 // Send simple email
 $result = email(
@@ -170,7 +170,7 @@ Moves files between locations using the specified disk.
 **Returns:** Mixed - Result of move operation
 
 ```php
-use function App\Core\Helpers\moveTo;
+use function IamLab\Core\Helpers\moveTo;
 
 // Move file using file disk
 $result = moveTo('file', '/tmp/upload.jpg', '/images/profile.jpg');
@@ -188,7 +188,7 @@ Dumps variables and dies (debug and die).
 - `...$variable` - Variables to dump
 
 ```php
-use function App\Core\Helpers\dd;
+use function IamLab\Core\Helpers\dd;
 
 // Debug single variable
 $user = User::findFirst();
@@ -205,7 +205,7 @@ if (env('APP_DEBUG')) {
 
 ### Array and Object Manipulation (array.php)
 
-**Namespace:** `App\Core\Helpers`
+**Namespace:** `IamLab\Core\Helpers`
 
 #### Type Casting Functions
 
@@ -219,7 +219,7 @@ Casts a value to a specific type.
 **Returns:** Mixed - Casted value
 
 ```php
-use function App\Core\Helpers\cast;
+use function IamLab\Core\Helpers\cast;
 
 // Cast values
 $id = cast('123', 'int');        // 123 (integer)
@@ -248,7 +248,7 @@ Merges multiple objects into a new object.
 **Returns:** Object - New merged object
 
 ```php
-use function App\Core\Helpers\merge_objects;
+use function IamLab\Core\Helpers\merge_objects;
 
 // Merge stdClass objects
 $obj1 = (object)['name' => 'John', 'age' => 25];
@@ -284,7 +284,7 @@ Converts arguments to an array (splat operator helper).
 **Returns:** array - Array of arguments
 
 ```php
-use function App\Core\Helpers\splat;
+use function IamLab\Core\Helpers\splat;
 
 // Convert arguments to array
 $array = splat('a', 'b', 'c', 'd');
@@ -309,7 +309,7 @@ Concatenates strings and applies a transformation function.
 **Returns:** Mixed - Result of transformation
 
 ```php
-use function App\Core\Helpers\concatenate;
+use function IamLab\Core\Helpers\concatenate;
 
 // Concatenate and transform
 $result = concatenate('strtoupper', 'hello', ' ', 'world');
@@ -337,7 +337,7 @@ Creates a new Collection instance from an array or iterable.
 **Returns:** Collection - Enhanced collection instance
 
 ```php
-use function App\Core\Helpers\collect;
+use function IamLab\Core\Helpers\collect;
 
 // Create collection from array
 $numbers = collect([1, 2, 3, 4, 5]);
@@ -360,7 +360,7 @@ $userCollection = collect($users->toArray())
 
 ### Encryption Functions (crypt.php)
 
-**Namespace:** `App\Core\Helpers`
+**Namespace:** `IamLab\Core\Helpers`
 
 #### Encryption Functions
 
@@ -375,7 +375,7 @@ Encrypts a message using the application's encryption key.
 **Throws:** Exception - If encryption fails
 
 ```php
-use function App\Core\Helpers\crypt;
+use function IamLab\Core\Helpers\crypt;
 
 // Encrypt sensitive data
 $sensitiveData = 'user-secret-token';
@@ -404,7 +404,7 @@ Decrypts a message that was encrypted with the `crypt()` function.
 - `WrongKeyOrModifiedCiphertextException` - If the key is wrong or data is modified
 
 ```php
-use function App\Core\Helpers\decrypt;
+use function IamLab\Core\Helpers\decrypt;
 
 // Decrypt data
 $user = User::findFirst();
@@ -434,7 +434,7 @@ try {
 ```php
 <?php
 
-use function App\Core\Helpers\{config, env, loadEnv};
+use function IamLab\Core\Helpers\{config, env, loadEnv};
 
 // Load environment and get configuration
 loadEnv('.env');
@@ -472,7 +472,7 @@ function createDatabaseConnection() {
 ### Data Processing Pipeline
 
 ```php
-use function App\Core\Helpers\{collect, cast, merge_objects};
+use function IamLab\Core\Helpers\{collect, cast, merge_objects};
 
 // Process user data
 function processUserData($rawData) {
@@ -501,7 +501,7 @@ function processUserData($rawData) {
 ### Email Notification System
 
 ```php
-use function App\Core\Helpers\{email, config, env};
+use function IamLab\Core\Helpers\{email, config, env};
 
 class NotificationService 
 {
@@ -551,7 +551,7 @@ class NotificationService
 ### Secure Data Handling
 
 ```php
-use function App\Core\Helpers\{crypt, decrypt, env};
+use function IamLab\Core\Helpers\{crypt, decrypt, env};
 
 class SecureDataManager 
 {
@@ -595,7 +595,7 @@ class SecureDataManager
 ### Development Debugging
 
 ```php
-use function App\Core\Helpers\{dd, env, config};
+use function IamLab\Core\Helpers\{dd, env, config};
 
 // Debug configuration
 if (env('APP_DEBUG')) {

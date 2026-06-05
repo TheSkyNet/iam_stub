@@ -11,7 +11,7 @@ use IamLab\Service\Auth\GitHubOAuthService;
 use IamLab\Service\Auth\FacebookOAuthService;
 use IamLab\Service\Auth\GenericOAuthService;
 
-use function App\Core\Helpers\config;
+use function IamLab\Core\Helpers\config;
 
 class OAuth extends aAPI
 {

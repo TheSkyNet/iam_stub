@@ -8,7 +8,7 @@ use IamLab\Model\Role;
 use IamLab\Model\User;
 use IamLab\Service\RolesService;
 
-use function App\Core\Helpers\dd;
+use function IamLab\Core\Helpers\dd;
 
 class AddRoleCommand extends BaseCommand
 {
