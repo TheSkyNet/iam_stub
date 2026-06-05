@@ -21,6 +21,7 @@ const ProfilePage = {
         avatar: null,
         oauth_provider: null,
         apiKey: '',
+        whitelistDomains: '',
         isLoading: true
     },
 
@@ -39,6 +40,7 @@ const ProfilePage = {
     },
 
     developer: {
+        whitelistDomains: '',
         isLoading: false
     },
 
@@ -61,10 +63,12 @@ const ProfilePage = {
                 ProfilePage.profileData = {
                     ...data,
                     apiKey: data.api_key,
+                    whitelistDomains: data.whitelist_domains,
                     isLoading: false
                 };
                 ProfilePage.general.name = data.name || '';
                 ProfilePage.general.email = data.email || '';
+                ProfilePage.developer.whitelistDomains = data.whitelist_domains || '';
             }
         }).finally(() => {
             ProfilePage.profileData.isLoading = false;
@@ -126,6 +130,23 @@ const ProfilePage = {
             if (response.success) {
                 window.showToast(response, "success");
                 ProfilePage.profileData.apiKey = response.data.api_key;
+            }
+        }).finally(() => {
+            ProfilePage.developer.isLoading = false;
+            m.redraw();
+        });
+    },
+
+    handleUpdateDeveloperSettings: (e) => {
+        e.preventDefault();
+        ProfilePage.developer.isLoading = true;
+
+        AuthService.updateProfile({
+            whitelist_domains: ProfilePage.developer.whitelistDomains
+        }).then(response => {
+            if (response.success) {
+                window.showToast(response, "success");
+                ProfilePage.profileData.whitelistDomains = ProfilePage.developer.whitelistDomains;
             }
         }).finally(() => {
             ProfilePage.developer.isLoading = false;
@@ -281,12 +302,28 @@ const ProfilePage = {
                     value: ProfilePage.profileData.apiKey || "No API key generated",
                     readonly: true
                 }),
-                m(SubmitButton, {
-                    class: "btn-secondary mt-4",
+                m("button.btn.btn-secondary.btn-sm.mt-2.mb-6", {
                     onclick: ProfilePage.handleGenerateApiKey,
-                    loading: ProfilePage.developer.isLoading,
-                    icon: "fa-solid fa-sync"
-                }, " Regenerate")
+                    disabled: ProfilePage.developer.isLoading,
+                }, [
+                    m(Icon, { icon: "fa-solid fa-sync", class: ProfilePage.developer.isLoading ? "fa-spin" : "" }),
+                    " Regenerate API Key"
+                ]),
+                m("form", { onsubmit: ProfilePage.handleUpdateDeveloperSettings }, [
+                    m(FormField, {
+                        label: "Whitelisted Domains",
+                        icon: "fa-solid fa-globe",
+                        placeholder: "e.g. example.com, app.example.com",
+                        value: ProfilePage.developer.whitelistDomains,
+                        oninput: (e) => ProfilePage.developer.whitelistDomains = e.target.value,
+                        helpText: "Comma-separated list of domains allowed to use your API key from a browser."
+                    }),
+                    m(SubmitButton, {
+                        class: "btn-primary mt-6",
+                        loading: ProfilePage.developer.isLoading,
+                        icon: "fa-solid fa-save"
+                    }, " Save Developer Settings")
+                ])
             ])
         ]);
 

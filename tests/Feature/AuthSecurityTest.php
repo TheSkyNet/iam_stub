@@ -29,6 +29,23 @@ class AuthSecurityTest extends TestCase
         $this->di->setShared('escaper', new Escaper());
         $this->di->setShared('security', new Security());
         
+        // Mock config service
+        $this->di->setShared('config', new \Phalcon\Config\Config([
+            'jwt' => [
+                'secret' => 'test-secret',
+                'algorithm' => 'HS256',
+                'access_token_expiry' => 3600,
+                'refresh_token_expiry' => 604800,
+                'remember_me_access_token_expiry' => 2592000,
+                'remember_me_refresh_token_expiry' => 31536000,
+                'refresh_token_cookie' => 'refresh_token',
+                'cookie_domain' => '',
+                'cookie_secure' => false,
+                'issuer' => 'test-issuer',
+                'audience' => 'test-audience',
+            ]
+        ]));
+
         // Mock session because security needs it for CSRF
         $this->di->setShared('session', new class {
             private $data = [];
@@ -37,7 +54,11 @@ class AuthSecurityTest extends TestCase
             public function has($key) { return isset($this->data[$key]); }
             public function remove($key) { unset($this->data[$key]); }
             public function exists() { return true; }
+            public function destroy() { $this->data = []; }
         });
+
+        // Mock authService
+        $this->di->setShared('authService', $this->createMock(\IamLab\Service\Auth\AuthService::class));
     }
 
     public function testGetRequestDoesNotRequireCsrf(): void

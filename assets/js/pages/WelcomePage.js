@@ -59,10 +59,11 @@ const WelcomePage = {
                     ),
                     m("div", {"class":"card-body p-6"}, [
                         m("h2", {"class":"card-title"}, "Real-time"),
-                        m("p", "WebSockets and Server-Sent Events."),
-                        m("div", {"class":"card-actions justify-end"}, 
-                            m(m.route.Link, { href: "/sse-test", class: "btn btn-primary" }, "Test SSE")
-                        )
+                        m("p", "Native WebSockets and Server-Sent Events."),
+                        m("div", {"class":"card-actions justify-end space-x-2"}, [
+                            m(m.route.Link, { href: "/assets", class: "btn btn-primary" }, "Native WS"),
+                            m(m.route.Link, { href: "/sse-test", class: "btn btn-secondary" }, "SSE")
+                        ])
                     ])
                 ]),
 
@@ -76,6 +77,20 @@ const WelcomePage = {
                         m("p", "Global error handling and reporting."),
                         m("div", {"class":"card-actions justify-end"}, 
                             m(m.route.Link, { href: "/test", class: "btn btn-primary" }, "Run Tests")
+                        )
+                    ])
+                ]),
+
+                // Card 6: Framework Assets
+                m("div", {"class":"card bg-base-100 image-full w-full shadow-sm"}, [
+                    m("figure", 
+                        m("img", {"class": "w-full", "src":"https://images.unsplash.com/photo-1550684847-75bdda21cc95?auto=format&fit=crop&w=800&q=80","alt":"Assets"})
+                    ),
+                    m("div", {"class":"card-body p-6"}, [
+                        m("h2", {"class":"card-title"}, "Framework Assets"),
+                        m("p", "Built-in examples and native tool showcase."),
+                        m("div", {"class":"card-actions justify-end"}, 
+                            m(m.route.Link, { href: "/assets", class: "btn btn-primary" }, "Explore Assets")
                         )
                     ])
                 ])

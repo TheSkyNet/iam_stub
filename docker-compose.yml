@@ -21,6 +21,7 @@ services:
             - 'host.docker.internal:host-gateway'
         ports:
             - '${APP_PORT:-80}:80'
+            - '${WS_PORT:-8081}:8081'
         environment:
             WWWUSER: '${WWWUSER}'
             LARAVEL_SAIL: 1
@@ -73,3 +74,14 @@ services:
             - '${FORWARD_MAILHOG_DASHBOARD_PORT:-8025}:8025'
         networks:
             - phalcons
+    nginx:
+        image: 'nginx:stable-alpine'
+        ports:
+            - '${FORWARD_NGINX_PORT:-8080}:80'
+        volumes:
+            - '.:/var/www/html'
+            - './docker/nginx/nginx.conf:/etc/nginx/conf.d/default.conf'
+        networks:
+            - phalcons
+        depends_on:
+            - laravel.test

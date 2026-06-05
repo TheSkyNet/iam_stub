@@ -51,6 +51,12 @@ class User extends Model
 
     /**
      * @var string
+     * @Column(type="text", nullable=true)
+     */
+    protected $whitelist_domains;
+
+    /**
+     * @var string
      * @Column(type="string", length=255, nullable=true)
      */
     protected $avatar;
@@ -99,6 +105,17 @@ class User extends Model
     public function setKey(string $key): User
     {
         $this->key = $key;
+        return $this;
+    }
+
+    public function getWhitelistDomains(): ?string
+    {
+        return $this->whitelist_domains;
+    }
+
+    public function setWhitelistDomains(?string $whitelist_domains): User
+    {
+        $this->whitelist_domains = $whitelist_domains;
         return $this;
     }
 

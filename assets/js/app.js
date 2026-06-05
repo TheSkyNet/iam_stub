@@ -28,6 +28,7 @@ import SseTestPage from "./pages/Test/SseTestPage";
 import TestPage from "./pages/Test/TestPage";
 import ComponentsPage from "./pages/ComponentsPage";
 import DemoPage from "./pages/Demo/DemoPage";
+import AssetsPage from "./pages/AssetsPage";
 import PayPalDemoPage from "./pages/Demo/PayPal/PayPalDemoPage";
 import StripeDemoPage from "./pages/Demo/Stripe/StripeDemoPage";
 import SquareDemoPage from "./pages/Demo/Square/SquareDemoPage";
@@ -111,6 +112,7 @@ m.route(root, "/", {
     "/reset-password": layout(ResetPasswordFormPage),
     "/components": layout(ComponentsPage),
     "/demo": layout(DemoPage),
+    "/assets": layout(AssetsPage),
     "/demo/paypal": layout(authGuard(PayPalDemoPage)),
     "/demo/stripe": layout(authGuard(StripeDemoPage)),
     "/demo/square": layout(authGuard(SquareDemoPage)),

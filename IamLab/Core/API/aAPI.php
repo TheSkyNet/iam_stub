@@ -5,6 +5,7 @@ namespace IamLab\Core\API;
 use IamLab\Service\Auth\AuthService;
 use JetBrains\PhpStorm\NoReturn;
 use function IamLab\Core\Helpers\cast;
+use function IamLab\Core\Helpers\env;
 
 /**
  * Class aAPI
@@ -273,7 +274,7 @@ abstract class aAPI extends aAPIBase
      */
     protected function requireAuth(): void
     {
-        $authService = new AuthService();
+        $authService = $this->getDI()->getShared('authService');
         if (!$authService->isAuthenticated()) {
             $this->dispatch([
                 'success' => false,
@@ -292,7 +293,7 @@ abstract class aAPI extends aAPIBase
     {
         $this->requireAuth();
         
-        $authService = new AuthService();
+        $authService = $this->getDI()->getShared('authService');
         $user = $authService->getUser();
         
         if (!$user || !$user->hasRole('admin')) {
@@ -314,7 +315,7 @@ abstract class aAPI extends aAPIBase
     {
         $this->requireAuth();
         
-        $authService = new AuthService();
+        $authService = $this->getDI()->getShared('authService');
         $user = $authService->getUser();
         
         if (!$user) {
@@ -359,7 +360,7 @@ abstract class aAPI extends aAPIBase
     {
         $this->requireAuth();
         
-        $authService = new AuthService();
+        $authService = $this->getDI()->getShared('authService');
         $user = $authService->getUser();
         
         if (!$user) {
@@ -406,6 +407,46 @@ abstract class aAPI extends aAPIBase
             return;
         }
 
+        // Check if API key is used and if CSRF can be bypassed
+        $authService = $this->getDI()->getShared('authService');
+        $identity = $authService->getIdentity();
+
+        if ($identity && ($identity['type'] ?? '') === 'api_key') {
+            $origin = $this->request->getHeader('Origin');
+
+            // If no origin, it's likely a direct API call (not from a browser), allow it
+            if (empty($origin)) {
+                return;
+            }
+
+            // Check if global bypass is enabled via environment variable
+            if (env('ALLOW_API_KEY_CSRF_BYPASS', false)) {
+                return;
+            }
+
+            // Check if the origin is in the user's whitelisted domains
+            $user = $authService->getUser();
+            if ($user && $user->getWhitelistDomains()) {
+                $whitelistedDomains = array_map('trim', explode(',', (string) $user->getWhitelistDomains()));
+                $parsedOrigin = parse_url($origin, PHP_URL_HOST);
+
+                if (in_array($origin, $whitelistedDomains) || in_array($parsedOrigin, $whitelistedDomains)) {
+                    return;
+                }
+            }
+
+            // Check if the origin is in the global whitelisted domains
+            $globalWhitelist = env('GLOBAL_API_KEY_WHITELIST', '');
+            if (!empty($globalWhitelist)) {
+                $globalDomains = array_map('trim', explode(',', (string) $globalWhitelist));
+                $parsedOrigin = parse_url($origin, PHP_URL_HOST);
+
+                if ($globalWhitelist === '*' || in_array($origin, $globalDomains) || in_array($parsedOrigin, $globalDomains)) {
+                    return;
+                }
+            }
+        }
+
         // Get token and key from headers
         $token = $this->request->getHeader('X-CSRF-Token');
         $tokenKey = $this->request->getHeader('X-CSRF-Key');
@@ -429,7 +470,7 @@ abstract class aAPI extends aAPIBase
      */
     protected function getCurrentUser()
     {
-        $authService = new AuthService();
+        $authService = $this->getDI()->getShared('authService');
         return $authService->getUser();
     }
 

@@ -15,6 +15,7 @@ use IamLab\Commands\AddRoleCommand;
 use IamLab\Commands\MakeAdminCommand;
 use IamLab\Core\Command\WorkerCommand;
 use IamLab\Commands\ProjectInitCommand;
+use IamLab\Commands\WebSocketServerCommand;
 
 return [
     'test:mail' => [
@@ -25,6 +26,11 @@ return [
     'test:pusher' => [
         'class' => TestPusherCommand::class,
         'description' => 'Test Pusher real-time functionality'
+    ],
+
+    'websocket:serve' => [
+        'class' => WebSocketServerCommand::class,
+        'description' => 'Start the native WebSocket server'
     ],
 
     'make:js' => [

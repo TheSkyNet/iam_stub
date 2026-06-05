@@ -233,7 +233,7 @@ class Auth extends aAPI
     public function logoutAction(): void
     {
         try {
-            $authService = new AuthService();
+            $authService = $this->getDI()->getShared('authService');
             $authService->deauthenticate();
 
             $this->dispatch(['success' => true, 'message' => 'Logged out successfully']);
@@ -247,7 +247,7 @@ class Auth extends aAPI
         $refreshToken = $this->getParam('refresh_token');
 
         try {
-            $authService = new AuthService();
+            $authService = $this->getDI()->getShared('authService');
             $jwtService = new JwtService();
 
             // If refresh token not in params, check cookie
@@ -279,7 +279,7 @@ class Auth extends aAPI
     public function generateApiKeyAction(): void
     {
         try {
-            $authService = new AuthService();
+            $authService = $this->getDI()->getShared('authService');
 
             if (!$authService->isAuthenticated()) {
                 $this->dispatchError('Authentication required', 401);
@@ -304,7 +304,7 @@ class Auth extends aAPI
     public function profileAction(): void
     {
         try {
-            $authService = new AuthService();
+            $authService = $this->getDI()->getShared('authService');
 
             if (!$authService->isAuthenticated()) {
                 $this->dispatchError('Authentication required', 401);
@@ -321,7 +321,8 @@ class Auth extends aAPI
                 'email' => $user->getEmail(),
                 'avatar' => $user->getAvatar(),
                 'oauth_provider' => $user->getOauthProvider(),
-                'api_key' => $user->getKey() ? '***' . substr($user->getKey(), -8) : null // Show only last 8 characters for security
+                'api_key' => $user->getKey() ? '***' . substr($user->getKey(), -8) : null, // Show only last 8 characters for security
+                'whitelist_domains' => $user->getWhitelistDomains()
             ];
 
             $this->dispatch(['success' => true, 'data' => $profile]);
@@ -336,7 +337,7 @@ class Auth extends aAPI
     public function updateProfileAction(): void
     {
         try {
-            $authService = new AuthService();
+            $authService = $this->getDI()->getShared('authService');
 
             if (!$authService->isAuthenticated()) {
                 $this->dispatchError('Authentication required');
@@ -349,17 +350,22 @@ class Auth extends aAPI
 
             $name = $this->getParam('name');
             $email = $this->getParam('email');
+            $whitelistDomains = $this->getParam('whitelist_domains');
 
-            if (!empty($name)) {
+            if ($name !== null) {
                 $user->setName($name);
             }
 
-            if (!empty($email)) {
+            if ($email !== null) {
                 if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
                     $this->dispatchError('Please provide a valid email address');
                 }
 
                 $user->setEmail($email);
+            }
+
+            if ($whitelistDomains !== null) {
+                $user->setWhitelistDomains($whitelistDomains);
             }
 
             if ($user->save()) {
@@ -378,7 +384,7 @@ class Auth extends aAPI
     public function updateAvatarAction(): void
     {
         try {
-            $authService = new AuthService();
+            $authService = $this->getDI()->getShared('authService');
 
             if (!$authService->isAuthenticated()) {
                 $this->dispatchError('Authentication required', 401);
@@ -443,7 +449,7 @@ class Auth extends aAPI
     public function changePasswordAction(): void
     {
         try {
-            $authService = new AuthService();
+            $authService = $this->getDI()->getShared('authService');
 
             if (!$authService->isAuthenticated()) {
                 $this->dispatchError('Authentication required');
@@ -599,7 +605,7 @@ class Auth extends aAPI
     public function authenticateQRAction(): void
     {
         try {
-            $authService = new AuthService();
+            $authService = $this->getDI()->getShared('authService');
 
             // Check if user is authenticated
             if (!$authService->isAuthenticated()) {
@@ -648,7 +654,7 @@ class Auth extends aAPI
     public function generateMobileQRCodeAction(): void
     {
         try {
-            $authService = new AuthService();
+            $authService = $this->getDI()->getShared('authService');
 
             // Check if user is authenticated on mobile
             if (!$authService->isAuthenticated()) {
@@ -719,7 +725,7 @@ class Auth extends aAPI
     public function authenticateMobileQRAction(): void
     {
         try {
-            $authService = new AuthService();
+            $authService = $this->getDI()->getShared('authService');
 
             // Check if user is authenticated on desktop
             if (!$authService->isAuthenticated()) {

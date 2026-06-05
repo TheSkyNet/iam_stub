@@ -61,7 +61,7 @@ class AuthService extends aAPI
         if ($token) {
             try {
                 $payload = $this->getJwtService()->validateToken($token);
-                if ($payload['type'] === 'access') {
+                if ($payload['type'] === 'access' || $payload['type'] === 'api_key') {
                     // Get the full user object to include roles
                     $user = User::findFirstById($payload['user_id']);
                     if ($user) {
@@ -76,7 +76,7 @@ class AuthService extends aAPI
                             'aud' => $payload['aud'] ?? null,
                             'iat' => $payload['iat'] ?? null,
                             'exp' => $payload['exp'] ?? null,
-                            'type' => $payload['type'] ?? 'access'
+                            'type' => $payload['type']
                         ];
                     }
 
