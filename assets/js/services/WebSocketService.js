@@ -1,3 +1,5 @@
+import m from "mithril";
+
 // WebSocketService.js - Native WebSocket client for IamLab
 export const WebSocketService = {
     socket: null,
@@ -17,11 +19,13 @@ export const WebSocketService = {
         // or if we want to support out-of-the-box Nginx proxying,
         // we can try to connect to /ws on the current port first.
         let url;
-        if (window.location.port && window.location.port !== "80" && window.location.port !== "443" && window.location.port !== "8081") {
-            // Likely a proxied environment (like Nginx on 8080)
-            url = `${protocol}//${host}:${window.location.port}/ws`;
+        // If we are on port 80 or 443, we try to use the /ws proxy (common for production/Nginx)
+        if (!window.location.port || window.location.port === "80" || window.location.port === "443") {
+            url = `${protocol}//${host}/ws`;
         } else {
-            url = `${protocol}//${host}:${port}`;
+            // For any other port (including 8080, 8085, etc.), we try to connect directly 
+            // to the WebSocket port (8081). This is more robust for local development.
+            url = `${protocol}//${host}:8081`;
         }
 
         this.socket = new WebSocket(url);

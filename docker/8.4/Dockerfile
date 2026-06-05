@@ -40,6 +40,6 @@ COPY start-container /usr/local/bin/start-container
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 RUN chmod +x /usr/local/bin/start-container
 
-EXPOSE 8000
+EXPOSE 8000 8081
 
 ENTRYPOINT ["start-container"]

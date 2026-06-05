@@ -10,8 +10,9 @@ import Chat from "../components/DaisyUI/Chat";
 
 const AssetsPage = {
     message: "",
-    
+
     oninit: function() {
+        AssetsPage.message = "";
         WebSocketService.connect();
     },
 
@@ -20,9 +21,10 @@ const AssetsPage = {
     },
 
     sendMessage: function() {
-        if (this.message.trim()) {
-            WebSocketService.send(this.message);
-            this.message = "";
+        if (AssetsPage.message && AssetsPage.message.trim()) {
+            WebSocketService.send(AssetsPage.message);
+            AssetsPage.message = "";
+            m.redraw();
         }
     },
 
@@ -64,11 +66,11 @@ const AssetsPage = {
                             m(TextInput, { 
                                 placeholder: "Type a message...", 
                                 class: "flex-1",
-                                value: this.message,
-                                oninput: (e) => this.message = e.target.value,
-                                onkeydown: (e) => e.key === "Enter" && this.sendMessage()
+                                value: AssetsPage.message,
+                                oninput: (e) => { AssetsPage.message = e.target.value; },
+                                onkeydown: (e) => { if (e.key === "Enter") AssetsPage.sendMessage(); }
                             }),
-                            m(Button, { color: "primary", onclick: () => this.sendMessage() }, "Send")
+                            m(Button, { color: "primary", onclick: AssetsPage.sendMessage }, "Send")
                         ]),
                         
                         m(Alert, { type: "info", class: "text-xs" }, [
