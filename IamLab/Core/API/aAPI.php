@@ -424,10 +424,15 @@ abstract class aAPI extends aAPIBase
                 return;
             }
 
-            // Check if the origin is in the user's whitelisted domains
-            $user = $authService->getUser();
-            if ($user && $user->getWhitelistDomains()) {
-                $whitelistedDomains = array_map('trim', explode(',', (string) $user->getWhitelistDomains()));
+            // Check if the origin is in the user's whitelisted domains from identity or model
+            $userWhitelist = $identity['whitelist_domains'] ?? null;
+            if ($userWhitelist === null) {
+                $user = $authService->getUser();
+                $userWhitelist = $user ? $user->getWhitelistDomains() : null;
+            }
+
+            if ($userWhitelist) {
+                $whitelistedDomains = array_map('trim', explode(',', (string) $userWhitelist));
                 $parsedOrigin = parse_url($origin, PHP_URL_HOST);
 
                 if (in_array($origin, $whitelistedDomains) || in_array($parsedOrigin, $whitelistedDomains)) {

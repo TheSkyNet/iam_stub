@@ -431,6 +431,42 @@ class User extends Model
     }
 
     /**
+     * Clear cached user identity on save or delete
+     */
+    public function afterSave(): void
+    {
+        $this->clearCache();
+    }
+
+    /**
+     * Clear cached user identity on delete
+     */
+    public function afterDelete(): void
+    {
+        $this->clearCache();
+    }
+
+    /**
+     * Internal method to clear the user identity cache across layers
+     */
+    protected function clearCache(): void
+    {
+        if ($this->id) {
+            $cache = $this->getDI()->getShared('cache');
+            $cacheKey = 'user_identity_' . $this->id;
+
+            // Try to clear from available layers
+            foreach (['apcu', 'redis', 'memory'] as $layerName) {
+                try {
+                    $cache->getLayer($layerName)->delete($cacheKey);
+                } catch (\Exception) {
+                    // Ignore if layer doesn't exist or is not available
+                }
+            }
+        }
+    }
+
+    /**
      * Check if user has a specific role
      */
     public function hasRole(string $role): bool

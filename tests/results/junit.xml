@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <testsuites>
-  <testsuite name="Tests\Feature\AuthSecurityTest" file="/var/www/html/tests/Feature/AuthSecurityTest.php" tests="3" assertions="7" errors="0" failures="0" skipped="0" time="0.018096">
-    <testcase name="testPostRequestFailsWithoutCsrfToken" file="/var/www/html/tests/Feature/AuthSecurityTest.php" line="92" class="Tests\Feature\AuthSecurityTest" classname="Tests.Feature.AuthSecurityTest" assertions="2" time="0.016926"/>
-    <testcase name="testSecurityHeadersArePresentInResponse" file="/var/www/html/tests/Feature/AuthSecurityTest.php" line="116" class="Tests\Feature\AuthSecurityTest" classname="Tests.Feature.AuthSecurityTest" assertions="4" time="0.000629"/>
-    <testcase name="testGetRequestDoesNotRequireCsrf" file="/var/www/html/tests/Feature/AuthSecurityTest.php" line="64" class="Tests\Feature\AuthSecurityTest" classname="Tests.Feature.AuthSecurityTest" assertions="1" time="0.000541"/>
+  <testsuite name="Tests\Feature\AuthSecurityTest" file="/var/www/html/tests/Feature/AuthSecurityTest.php" tests="3" assertions="7" errors="0" failures="0" skipped="0" time="0.023501">
+    <testcase name="testPostRequestFailsWithoutCsrfToken" file="/var/www/html/tests/Feature/AuthSecurityTest.php" line="92" class="Tests\Feature\AuthSecurityTest" classname="Tests.Feature.AuthSecurityTest" assertions="2" time="0.021982"/>
+    <testcase name="testGetRequestDoesNotRequireCsrf" file="/var/www/html/tests/Feature/AuthSecurityTest.php" line="64" class="Tests\Feature\AuthSecurityTest" classname="Tests.Feature.AuthSecurityTest" assertions="1" time="0.000845"/>
+    <testcase name="testSecurityHeadersArePresentInResponse" file="/var/www/html/tests/Feature/AuthSecurityTest.php" line="116" class="Tests\Feature\AuthSecurityTest" classname="Tests.Feature.AuthSecurityTest" assertions="4" time="0.000674"/>
   </testsuite>
 </testsuites>

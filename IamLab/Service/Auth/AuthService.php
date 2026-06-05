@@ -38,6 +38,11 @@ class AuthService extends aAPI
     private ?JwtService $jwtService = null;
 
     /**
+     * @var User|null Cached User model for the current request.
+     */
+    private ?User $user = null;
+
+    /**
      * Checks if a user is currently authenticated.
      *
      * @return bool True if authenticated, false otherwise.
@@ -62,22 +67,57 @@ class AuthService extends aAPI
             try {
                 $payload = $this->getJwtService()->validateToken($token);
                 if ($payload['type'] === 'access' || $payload['type'] === 'api_key') {
-                    // Get the full user object to include roles
-                    $user = User::findFirstById($payload['user_id']);
-                    if ($user) {
-                        // Return identity with roles included
-                        return [
-                            'id' => $user->getId(),
-                            'user_id' => $user->getId(),
-                            'name' => $user->getName(),
-                            'email' => $user->getEmail(),
-                            'roles' => $user->getRoles(),
+                    $userId = $payload['user_id'];
+                    $cacheKey = 'user_identity_' . $userId;
+                    $cache = $this->getDI()->getShared('cache');
+                    
+                    $identity = null;
+                    // Try fast layers first (apcu, then redis as fallback)
+                    foreach (['apcu', 'redis'] as $layerName) {
+                        try {
+                            $layer = $cache->getLayer($layerName);
+                            if ($layer->has($cacheKey)) {
+                                $identity = $layer->get($cacheKey);
+                                break;
+                            }
+                        } catch (\Exception) {
+                            continue;
+                        }
+                    }
+
+                    if (!$identity) {
+                        // Get the full user object to include roles
+                        $user = User::findFirstById($userId);
+                        if ($user) {
+                            $identity = [
+                                'id' => $user->getId(),
+                                'user_id' => $user->getId(),
+                                'name' => $user->getName(),
+                                'email' => $user->getEmail(),
+                                'roles' => $user->getRoles(),
+                                'whitelist_domains' => $user->getWhitelistDomains(),
+                            ];
+                            
+                            // Store in cache layers
+                            foreach (['apcu', 'redis'] as $layerName) {
+                                try {
+                                    $cache->getLayer($layerName)->set($cacheKey, $identity);
+                                } catch (\Exception) {
+                                    continue;
+                                }
+                            }
+                        }
+                    }
+
+                    if ($identity) {
+                        // Return identity with roles and whitelist domains included, merged with token metadata
+                        return array_merge($identity, [
                             'iss' => $payload['iss'] ?? null,
                             'aud' => $payload['aud'] ?? null,
                             'iat' => $payload['iat'] ?? null,
                             'exp' => $payload['exp'] ?? null,
                             'type' => $payload['type']
-                        ];
+                        ]);
                     }
 
                     return $payload;
@@ -112,6 +152,10 @@ class AuthService extends aAPI
      */
     public function getUser(): ?User
     {
+        if ($this->user !== null) {
+            return $this->user;
+        }
+
         $identity = $this->getIdentity();
         if (!$identity) {
             return null;
@@ -123,7 +167,7 @@ class AuthService extends aAPI
             return null;
         }
 
-        return User::findFirstById($userId);
+        return $this->user = User::findFirstById($userId);
     }
 
     /**
