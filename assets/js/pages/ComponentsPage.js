@@ -84,19 +84,19 @@ import PhoneMockup from "../components/DaisyUI/PhoneMockup";
 import WindowMockup from "../components/DaisyUI/WindowMockup";
 
 const Section = {
-    view: ({ attrs, children }) => m("section.space-y-8", [
+    view: ({ attrs, children }) => m("section.space-y-6", [
         m("div.flex.items-center.gap-4", [
             m("h2.text-3xl.font-black.tracking-tight", attrs.title),
             m("div.h-px.flex-1.bg-base-300")
         ]),
-        m(".grid.grid-cols-1.gap-8.md:grid-cols-2.xl:grid-cols-3", children)
+        m(".grid.grid-cols-1.gap-6.md:grid-cols-2.xl:grid-cols-3", children)
     ])
 };
 
 const CardWrapper = {
     view: ({ attrs, children }) => m(".card.bg-base-200/50.border.border-base-300", [
         m(".card-body.p-6", [
-            m("h3.card-title.text-sm.uppercase.tracking-widest.opacity-50.mb-4", attrs.title),
+            m("h3.card-title.text-sm.uppercase.tracking-widest.opacity-50.mb-6", attrs.title),
             m(".flex.flex-wrap.gap-4.items-start", children)
         ])
     ])
@@ -105,9 +105,9 @@ const CardWrapper = {
 const ComponentsPage = {
     view: () => {
 
-        return m(".container.mx-auto.p-6.max-w-7xl.space-y-20", [
-            m("header.py-12.text-center.space-y-4", [
-                m("h1.text-6xl.font-black.bg-clip-text.text-transparent.bg-gradient-to-r.from-primary.to-secondary", "Mithril.js + DaisyUI 5"),
+        return m(".container.mx-auto.p-6.md:p-10.max-w-7xl.space-y-16", [
+            m("header.py-8.md:py-12.text-center.space-y-4", [
+                m("h1.text-4xl.md:text-6xl.font-black.bg-clip-text.text-transparent.bg-gradient-to-r.from-primary.to-secondary", "Mithril.js + DaisyUI 5"),
                 m("p.text-xl.opacity-60.max-w-2xl.mx-auto", "ARIA-Compliant, single-file components for rapid development.")
             ]),
 
@@ -227,7 +227,7 @@ const ComponentsPage = {
                     })
                 ]),
                 m(CardWrapper, { title: "Hover 3D Card" }, [
-                    m(Hover3DCard, { class: "p-8 w-full text-center" }, "3D Hover Effect")
+                    m(Hover3DCard, { class: "p-6 w-full text-center" }, "3D Hover Effect")
                 ]),
                 m(CardWrapper, { title: "Hover Gallery" }, [
                     m(HoverGallery, { items: [{ src: "https://img.daisyui.com/images/stock/photo-1559703248-dcaaec9fab78.webp" }] })
@@ -375,14 +375,14 @@ const ComponentsPage = {
                     ])
                 ]),
                 m(CardWrapper, { title: "Calendar" }, [
-                    m(Calendar, { class: "bg-base-300 p-4 rounded-xl w-full text-center" }, "Calendar widget")
+                    m(Calendar, { class: "bg-base-300 p-6 rounded-xl w-full text-center" }, "Calendar widget")
                 ])
             ]),
 
             // LAYOUT
             m(Section, { title: "Layout" }, [
                 m(CardWrapper, { title: "Hero" }, [
-                    m(Hero, { class: "bg-base-300 rounded-box p-4 w-full" }, "Hero Content")
+                    m(Hero, { class: "bg-base-300 rounded-box p-6 w-full" }, "Hero Content")
                 ]),
                 m(CardWrapper, { title: "Divider & Join" }, [
                     m(".flex.flex-col.w-full", [
@@ -410,7 +410,7 @@ const ComponentsPage = {
                         m(Drawer, { 
                             id: "demo-drawer",
                             content: m(Button, { onclick: () => document.getElementById('demo-drawer').click() }, "Open"),
-                            side: m(Menu, { class: "p-4 w-64 min-h-full" }, [m("li", m("a", "Sidebar Item"))])
+                            side: m(Menu, { class: "p-6 w-64 min-h-full" }, [m("li", m("a", "Sidebar Item"))])
                         })
                     ])
                 ]),

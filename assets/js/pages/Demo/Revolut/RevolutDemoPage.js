@@ -57,8 +57,8 @@ export default class RevolutDemoPage {
     }
 
     view() {
-        const credentialsCard = m(".card.bg-base-100.shadow-xl.mb-8", [
-            m(".card-body", [
+        const credentialsCard = m(".card.bg-base-100.shadow-xl.mb-10", [
+            m(".card-body.p-6", [
                 m("h2.card-title.flex.items-center.gap-2", [
                     m(Icon, { icon: "fa-solid fa-credit-card text-primary" }),
                     "Revolut Sandbox Credentials"
@@ -88,19 +88,19 @@ export default class RevolutDemoPage {
             { label: "Mastercard", number: "5273 4600 0000 0001" }
         ];
 
-        return m(".container-fluid.p-4.py-12", [
+        return m(".container.mx-auto.p-6.md:p-10.max-w-7xl", [
             m(TestCardInfo, { cards }),
-            m(".flex.items-center.gap-4.mb-12", [
+            m(".flex.items-center.gap-4.mb-10", [
                 m(m.route.Link, { href: "/demo", class: "btn btn-ghost btn-sm" }, [
                     m(Icon, { icon: "fa-solid fa-arrow-left" }),
                     " Back to Demo"
                 ]),
                 m("h1.text-4xl.font-bold", "Revolut Pay Integration Demo")
             ]),
-            m(".grid.grid-cols-1.lg:grid-cols-2.gap-8", [
+            m(".grid.grid-cols-1.lg:grid-cols-2.gap-6", [
                 m(".card.bg-base-100.shadow-xl.relative", [
                     this.renderLoadingOverlay(),
-                    m(".card-body", [
+                    m(".card-body.p-6", [
                         m("h2.card-title", [
                             m(Icon, { icon: "fa-solid fa-credit-card text-primary text-2xl" }),
                             "Revolut Pay Demo"
@@ -136,7 +136,7 @@ export default class RevolutDemoPage {
 
                 m(".card.bg-base-100.shadow-xl.relative", [
                     this.renderLoadingOverlay(),
-                    m(".card-body", [
+                    m(".card-body.p-6", [
                         m("h2.card-title", "Revolut Subscriptions"),
                         m("p.opacity-70", "Handle recurring billing for your UK and global customers."),
                         m(".divider"),
@@ -163,7 +163,7 @@ export default class RevolutDemoPage {
             m(".mt-12", credentialsCard),
 
             m(".mt-12.card.bg-base-100.shadow-xl", [
-                m(".card-body", [
+                m(".card-body.p-6", [
                     m("h2.card-title", "Why Revolut?"),
                     m("p", "Revolut is one of the fastest-growing fintech companies in the world, with a massive user base in the UK and Europe."),
                     m(".flex.items-center.gap-3.mt-4", [

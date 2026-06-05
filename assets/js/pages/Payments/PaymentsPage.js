@@ -87,7 +87,7 @@ export default class PaymentsPage {
             loadingSpinner = m("div", { class: "flex justify-center p-8" }, m("span", { class: "loading loading-spinner loading-lg" }));
         }
         
-        const providerSelector = m("div", { class: "flex items-center gap-4 mb-8 p-4 bg-base-100 rounded-lg shadow-sm" }, [
+        const providerSelector = m("div", { class: "flex items-center gap-4 mb-10 p-6 bg-base-100 rounded-lg shadow-sm" }, [
             m("label", { class: "font-semibold" }, "Select Payment Provider:"),
             m("select", { 
                 class: "select select-bordered select-sm",
@@ -143,7 +143,7 @@ export default class PaymentsPage {
             content = m("div", { class: "grid grid-cols-1 md:grid-cols-2 gap-6" }, [
                 // Subscriptions Card
                 m("div", { class: "card bg-base-100 shadow-xl" }, [
-                    m("div", { class: "card-body" }, [
+                    m("div", { class: "card-body p-6" }, [
                         m("h2", { class: "card-title flex justify-between" }, [
                             m("span", "Your Subscriptions"),
                             m("button", { class: "btn btn-primary btn-sm", onclick: () => this.handleCreateSubscription() }, [
@@ -170,7 +170,7 @@ export default class PaymentsPage {
 
                 // Payments Card
                 m("div", { class: "card bg-base-100 shadow-xl" }, [
-                    m("div", { class: "card-body" }, [
+                    m("div", { class: "card-body p-6" }, [
                         m("h2", { class: "card-title flex justify-between" }, [
                             m("span", "Payment History"),
                             m("button", { class: "btn btn-outline btn-sm", onclick: () => this.handleCreatePayment() }, "Single Payment")
@@ -206,8 +206,8 @@ export default class PaymentsPage {
             ]
         };
 
-        return m("div", { class: "container mx-auto p-4 py-12 max-w-6xl" }, [
-            m("h1", { class: "text-3xl font-bold mb-8 flex items-center gap-3" }, [
+        return m("div", { class: "container mx-auto p-6 md:p-10 max-w-7xl" }, [
+            m("h1", { class: "text-3xl font-bold mb-10 flex items-center gap-3" }, [
                 m(Icon, { icon: "fa-solid fa-credit-card text-primary" }),
                 "Payments & Subscriptions"
             ]),

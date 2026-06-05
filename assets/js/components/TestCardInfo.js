@@ -6,23 +6,27 @@ const TestCardInfo = {
         const { cards = [] } = vnode.attrs;
         if (cards.length === 0) return null;
 
-        return m(".alert.alert-info.shadow-lg.mb-8.bg-info.text-info-content", [
-            m(Icon, { icon: "fa-solid fa-circle-info" }),
-            m("div.flex.flex-col.w-full", [
-                m("h3.font-bold", "Test Card Information (Click to copy)"),
-                m(".flex.flex-wrap.gap-4.mt-2", cards.map(card => {
-                    return m(".badge.badge-outline.p-4.h-auto.flex.items-center.gap-2.bg-base-100.text-base-content.border-none", [
-                        m("div.flex.flex-col.items-start", [
-                            m("span.text-xs.uppercase.font-bold.opacity-60", card.label),
-                            m("code.text-sm", card.number),
-                        ]),
-                        m("button.btn.btn-ghost.btn-xs.p-1", {
-                            onclick: () => {
-                                navigator.clipboard.writeText(card.number.replace(/\s/g, ''));
+        return m(".card.bg-base-200/50.border.border-base-300.mb-10", [
+            m(".card-body.p-4.md:p-6", [
+                m(".flex.items-center.gap-3.mb-4.text-info", [
+                    m(Icon, { icon: "fa-solid fa-circle-info" }),
+                    m("h3.font-bold.text-sm.uppercase.tracking-wider", "Test Card Information (Click to copy)")
+                ]),
+                m(".grid.grid-cols-1.sm:grid-cols-2.md:grid-cols-3.lg:grid-cols-4.gap-3", cards.map(card => {
+                    return m("button.flex.items-center.justify-between.gap-3.p-3.bg-base-100.hover:bg-base-300.rounded-xl.transition-all.group.text-left.border.border-base-300/50", {
+                        onclick: () => {
+                            navigator.clipboard.writeText(card.number.replace(/\s/g, ''));
+                            if (window.showToast) {
                                 window.showToast(`${card.label} copied!`, "success");
-                            },
-                            title: `Copy ${card.label}`
-                        }, m(Icon, { icon: "fa-solid fa-copy" }))
+                            }
+                        },
+                        title: `Copy ${card.label}`
+                    }, [
+                        m(".flex.flex-col", [
+                            m("span.text-[10px].uppercase.font-black.opacity-40", card.label),
+                            m("code.text-sm.font-mono", card.number),
+                        ]),
+                        m(Icon, { icon: "fa-solid fa-copy", class: "opacity-20 group-hover:opacity-100 transition-opacity" })
                     ]);
                 }))
             ])

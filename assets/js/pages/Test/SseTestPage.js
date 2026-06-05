@@ -62,10 +62,10 @@ const SseTestPage = {
             ]));
         }
 
-        return m(".container-fluid.p-4.py-12", [
+        return m(".container.mx-auto.p-6.md:p-10.max-w-4xl", [
             m(".card.bg-base-100.shadow-xl", [
-                m(".card-body", [
-                    m("h2.card-title", [
+                m(".card-body.p-6.md:p-8", [
+                    m("h2.card-title.mb-4", [
                         m(Icon, { icon: "fa-solid fa-stream" }),
                         " Server-Sent Events (SSE) Test"
                     ]),

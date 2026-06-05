@@ -618,11 +618,11 @@ const AuthService = {
     /**
      * Reset password with token
      */
-    resetPassword: function(token, password) {
+    resetPassword: function(token, password, confirmPassword) {
         return m.request({
             method: 'POST',
             url: `${this.baseUrl}/reset-password`,
-            body: { token: token, password: password },
+            body: { token: token, password: password, confirm_password: confirmPassword },
             headers: this.getAuthHeaders()
         });
     },

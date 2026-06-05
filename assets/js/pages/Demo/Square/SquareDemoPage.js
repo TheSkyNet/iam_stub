@@ -130,8 +130,8 @@ export default class SquareDemoPage {
 
     view() {
 
-        const credentialsCard = m(".card.bg-base-100.shadow-xl.mb-8", [
-            m(".card-body", [
+        const credentialsCard = m(".card.bg-base-100.shadow-xl.mb-10", [
+            m(".card-body.p-6", [
                 m("h2.card-title.flex.items-center.gap-2", [
                     m(Icon, { icon: "fa-brands fa-square text-primary" }),
                     "Square Sandbox Credentials"
@@ -165,19 +165,19 @@ export default class SquareDemoPage {
             { label: "Mastercard", number: "5555 5555 5555 4444" }
         ];
 
-        return m(".container-fluid.p-4.py-12", [
+        return m(".container.mx-auto.p-6.md:p-10.max-w-7xl", [
             m(TestCardInfo, { cards }),
-            m(".flex.items-center.gap-4.mb-12", [
+            m(".flex.items-center.gap-4.mb-10", [
                 m(m.route.Link, { href: "/demo", class: "btn btn-ghost btn-sm" }, [
                     m(Icon, { icon: "fa-solid fa-arrow-left" }),
                     " Back to Demo"
                 ]),
                 m("h1.text-4xl.font-bold", "Square Integration Demo")
             ]),
-            m(".grid.grid-cols-1.lg:grid-cols-2.gap-8", [
+            m(".grid.grid-cols-1.lg:grid-cols-2.gap-6", [
                 m(".card.bg-base-100.shadow-xl.relative", [
                     this.renderLoadingOverlay(),
-                    m(".card-body", [
+                    m(".card-body.p-6", [
                         m("h2.card-title", [
                             m(Icon, { icon: "fa-brands fa-square text-primary text-2xl" }),
                             "Square Payment Demo"
@@ -215,7 +215,7 @@ export default class SquareDemoPage {
 
                 m(".card.bg-base-100.shadow-xl.relative", [
                     this.renderLoadingOverlay(),
-                    m(".card-body", [
+                    m(".card-body.p-6", [
                         m("h2.card-title", "Square Subscriptions"),
                         m("p.opacity-70", "Handle recurring billing and customer vaulting with Square."),
                         m(".divider"),
@@ -242,7 +242,7 @@ export default class SquareDemoPage {
             m(".mt-12", credentialsCard),
 
             m(".mt-12.card.bg-base-100.shadow-xl", [
-                m(".card-body", [
+                m(".card-body.p-6", [
                     m("h2.card-title", "Square Terminal & Point of Sale"),
                     m("p", "Square also supports physical terminal integrations for in-person payments."),
                     m(".flex.items-center.gap-3.mt-4", [

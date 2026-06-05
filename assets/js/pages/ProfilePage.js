@@ -186,9 +186,9 @@ const ProfilePage = {
             ]);
         }
 
-        const personalCard = m(".card.bg-base-100.shadow-xl.mb-8", [
-            m(".card-body", [
-                m("h2.card-title.mb-4", [
+        const personalCard = m(".card.bg-base-100.shadow-xl.mb-10", [
+            m(".card-body.p-6.md:p-8", [
+                m("h2.card-title.mb-6", [
                     m(Icon, { icon: "fa-solid fa-id-card" }),
                     "Personal Information"
                 ]),
@@ -221,9 +221,9 @@ const ProfilePage = {
         ]);
 
         // Section: Security
-        const securityCard = m(".card.bg-base-100.shadow-xl.mb-8", [
-            m(".card-body", [
-                m("h2.card-title.mb-4", [
+        const securityCard = m(".card.bg-base-100.shadow-xl.mb-10", [
+            m(".card-body.p-6.md:p-8", [
+                m("h2.card-title.mb-6", [
                     m(Icon, { icon: "fa-solid fa-shield-halved" }),
                     "Security"
                 ]),
@@ -265,9 +265,9 @@ const ProfilePage = {
         ]);
 
         // Section: Developer
-        const developerCard = m(".card.bg-base-100.shadow-xl.mb-8", [
-            m(".card-body", [
-                m("h2.card-title.mb-4", [
+        const developerCard = m(".card.bg-base-100.shadow-xl.mb-10", [
+            m(".card-body.p-6.md:p-8", [
+                m("h2.card-title.mb-6", [
                     m(Icon, { icon: "fa-solid fa-code" }),
                     "Developer Settings"
                 ]),
@@ -290,9 +290,9 @@ const ProfilePage = {
             ])
         ]);
 
-        return m(".container-fluid.p-4", [
+        return m(".container.mx-auto.p-6.md:p-10.max-w-5xl", [
             // Profile Header
-            m(".flex.flex-col.sm:flex-row.items-center.gap-6.mb-10.p-6.bg-base-100.rounded-2xl.shadow-sm", [
+            m(".flex.flex-col.sm:flex-row.items-center.gap-8.mb-10.p-6.md:p-8.bg-base-100.rounded-2xl.shadow-sm", [
                 m("button.avatar.placeholder.cursor-pointer.relative.group.border-none.bg-transparent.p-0", {
                     onclick: () => ProfilePage.pond && ProfilePage.pond.browse(),
                     title: "Click to change avatar",

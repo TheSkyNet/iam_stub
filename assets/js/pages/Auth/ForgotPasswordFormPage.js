@@ -15,6 +15,7 @@ const ForgotPasswordFormPage = {
         AuthService.resendPasswordReset(ForgotPasswordFormPage.email)
             .then(() => {
                 ForgotPasswordFormPage.isSent = true;
+                window.showToast("If an account with that email exists, a password reset link has been sent.", "success");
             })
             .catch((err) => {
                 console.error('Forgot password error:', err);

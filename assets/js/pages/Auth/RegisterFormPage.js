@@ -56,9 +56,9 @@ const RegisterFormPage = {
             m(".hero-content.text-center", [
                 m(".max-w-md", [
                     m(".card.bg-base-100.w-full.max-w-sm.shrink-0.shadow-2xl", [
-                        m(".card-body", [
-                            m("h2.card-title.justify-center.text-2xl.font-bold", "Register"),
-                            m("p.mb-4.text-base-content.opacity-70", "Join us today! Create your account."),
+                        m(".card-body.p-8", [
+                            m("h2.card-title.justify-center.text-2xl.font-bold.mb-2", "Register"),
+                            m("p.mb-6.text-base-content.opacity-70", "Join us today! Create your account."),
 
                             m("form", { onsubmit: RegisterFormPage.handleRegister }, [
                                 m(FormField, {

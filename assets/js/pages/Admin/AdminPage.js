@@ -3,11 +3,11 @@ import { Icon } from "../../components/Icon";
 
 const AdminPage = {
     view: () => {
-        return m(".container-fluid.p-4.py-12", [
-            m("h1.text-3xl.font-bold.mb-8", "Admin Dashboard"),
+        return m(".container.mx-auto.p-6.md:p-10.max-w-7xl", [
+            m("h1.text-3xl.font-bold.mb-10", "Admin Dashboard"),
             m(".grid.grid-cols-1.md:grid-cols-3.gap-6", [
                 m(".card.bg-primary.text-primary-content.shadow-xl", [
-                    m(".card-body", [
+                    m(".card-body.p-6", [
                         m("h2.card-title", [
                             m(Icon, { icon: "fa-solid fa-users" }),
                             " Users"
@@ -19,7 +19,7 @@ const AdminPage = {
                     ])
                 ]),
                 m(".card.bg-secondary.text-secondary-content.shadow-xl", [
-                    m(".card-body", [
+                    m(".card-body.p-6", [
                         m("h2.card-title", [
                             m(Icon, { icon: "fa-solid fa-user-shield" }),
                             " Roles"
@@ -31,7 +31,7 @@ const AdminPage = {
                     ])
                 ]),
                 m(".card.bg-accent.text-accent-content.shadow-xl", [
-                    m(".card-body", [
+                    m(".card-body.p-6", [
                         m("h2.card-title", [
                             m(Icon, { icon: "fa-solid fa-list-check" }),
                             " Jobs"
@@ -43,7 +43,7 @@ const AdminPage = {
                     ])
                 ]),
                 m(".card.bg-error.text-error-content.shadow-xl", [
-                    m(".card-body", [
+                    m(".card-body.p-6", [
                         m("h2.card-title", [
                             m(Icon, { icon: "fa-solid fa-bug" }),
                             " Error Logs"
@@ -55,7 +55,7 @@ const AdminPage = {
                     ])
                 ]),
                 m(".card.bg-info.text-info-content.shadow-xl", [
-                    m(".card-body", [
+                    m(".card-body.p-6", [
                         m("h2.card-title", [
                             m(Icon, { icon: "fa-solid fa-gears" }),
                             " Settings"
@@ -67,7 +67,7 @@ const AdminPage = {
                     ])
                 ]),
                 m(".card.bg-neutral.text-neutral-content.shadow-xl", [
-                    m(".card-body", [
+                    m(".card-body.p-6", [
                         m("h2.card-title", [
                             m(Icon, { icon: "fa-solid fa-brain" }),
                             " LMS & AI"

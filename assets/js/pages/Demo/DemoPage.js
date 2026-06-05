@@ -20,8 +20,8 @@ export default class DemoPage {
         const linkClass = `btn btn-${card.color} ${isDisabled ? 'btn-disabled' : ''}`;
 
         return m(".card.bg-base-100.shadow-xl.hover:shadow-2xl.transition-all", [
-            m(".card-body", [
-                m(".flex.items-center.mb-2", [
+            m(".card-body.p-6", [
+                m(".flex.items-center.mb-4", [
                     m(`.w-12.h-12.rounded-lg.bg-${card.color}.flex.items-center.justify-center.text-white.text-2xl.mr-4`, [
                         m(Icon, { icon: card.icon })
                     ]),
@@ -152,12 +152,20 @@ export default class DemoPage {
                 href: "/demo/revolut",
                 color: "primary",
                 requiresAuth: true
+            },
+            {
+                title: "SumUp Payments",
+                description: "Simple and transparent payment solutions for UK small businesses.",
+                icon: "fa-solid fa-credit-card",
+                href: "/demo/sumup",
+                color: "accent",
+                requiresAuth: true
             }
         ];
 
-        return m(".container-fluid.p-4.py-12", [
-            m(".text-center.mb-12", [
-                m("h1.text-5xl.font-bold.mb-4", [
+        return m(".container.mx-auto.p-6.md:p-10.max-w-7xl", [
+            m(".text-center.mb-16", [
+                m("h1.text-4xl.md:text-6xl.font-bold.mb-6", [
                     m(Icon, { icon: "fa-solid fa-flask text-primary mr-4" }),
                     "Demo & Testing Dashboard"
                 ]),
@@ -168,7 +176,7 @@ export default class DemoPage {
                 m(Icon, { icon: "fa-solid fa-gears text-primary" }),
                 "General Feature Demos"
             ]),
-            m(".grid.grid-cols-1.md:grid-cols-2.lg:grid-cols-3.gap-8.mb-16", 
+            m(".grid.grid-cols-1.md:grid-cols-2.lg:grid-cols-3.gap-6.mb-16", 
                 generalDemos.map(card => this.renderCard(card, isLoggedIn, isAdmin))
             ),
 
@@ -176,7 +184,7 @@ export default class DemoPage {
                 m(Icon, { icon: "fa-solid fa-wallet text-secondary" }),
                 "Payment Provider Demos"
             ]),
-            m(".grid.grid-cols-1.md:grid-cols-2.lg:grid-cols-3.gap-8", 
+            m(".grid.grid-cols-1.md:grid-cols-2.lg:grid-cols-3.gap-6", 
                 paymentDemos.map(card => this.renderCard(card, isLoggedIn, isAdmin))
             )
         ]);

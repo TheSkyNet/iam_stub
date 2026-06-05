@@ -58,8 +58,8 @@ export default class PaceDemoPage {
 
     view() {
 
-        const credentialsCard = m(".card.bg-base-100.shadow-xl.mb-8", [
-            m(".card-body", [
+        const credentialsCard = m(".card.bg-base-100.shadow-xl.mb-10", [
+            m(".card-body.p-6", [
                 m("h2.card-title.flex.items-center.gap-2", [
                     m(Icon, { icon: "fa-solid fa-credit-card text-primary" }),
                     "Pace Sandbox Credentials"
@@ -88,19 +88,19 @@ export default class PaceDemoPage {
             { label: "Visa (Pace Test)", number: "4242 4242 4242 4242" }
         ];
 
-        return m(".container-fluid.p-4.py-12", [
+        return m(".container.mx-auto.p-6.md:p-10.max-w-7xl", [
             m(TestCardInfo, { cards }),
-            m(".flex.items-center.gap-4.mb-12", [
+            m(".flex.items-center.gap-4.mb-10", [
                 m(m.route.Link, { href: "/demo", class: "btn btn-ghost btn-sm" }, [
                     m(Icon, { icon: "fa-solid fa-arrow-left" }),
                     " Back to Demo"
                 ]),
                 m("h1.text-4xl.font-bold", "Pace Integration Demo")
             ]),
-            m(".grid.grid-cols-1.lg:grid-cols-2.gap-8", [
+            m(".grid.grid-cols-1.lg:grid-cols-2.gap-6", [
                 m(".card.bg-base-100.shadow-xl.relative", [
                     this.renderLoadingOverlay(),
-                    m(".card-body", [
+                    m(".card-body.p-6", [
                         m("h2.card-title", [
                             m(Icon, { icon: "fa-solid fa-credit-card text-primary text-2xl" }),
                             "Pace Payment Demo"
@@ -127,7 +127,7 @@ export default class PaceDemoPage {
 
                 m(".card.bg-base-100.shadow-xl.relative", [
                     this.renderLoadingOverlay(),
-                    m(".card-body", [
+                    m(".card-body.p-6", [
                         m("h2.card-title", "Pace Subscriptions"),
                         m("p.opacity-70", "Test recurring payments specifically for the UK market with Pace."),
                         m(".divider"),
@@ -154,7 +154,7 @@ export default class PaceDemoPage {
             m(".mt-12", credentialsCard),
 
             m(".mt-12.card.bg-base-100.shadow-xl", [
-                m(".card-body", [
+                m(".card-body.p-6", [
                     m("h2.card-title", "Why Pace?"),
                     m("p", "Pace is a rapidly growing payment provider known for its cost-effective transaction fees and high reliability in its target markets."),
                     m(".flex.items-center.gap-3.mt-4", [

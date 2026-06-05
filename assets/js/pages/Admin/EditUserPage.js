@@ -75,29 +75,29 @@ const EditUserPage = {
         const userId = vnode.attrs.id;
         
         if (this.loading) {
-            return m(".container-fluid.p-4.py-12", m(".flex.justify-center.p-12", m("span.loading.loading-spinner.loading-lg")));
+            return m(".container.mx-auto.p-6.md:p-10.max-w-4xl", m(".flex.justify-center.p-12", m("span.loading.loading-spinner.loading-lg")));
         }
 
         if (!this.user) {
-            return m(".container-fluid.p-4.py-12", [
-                m(".alert.alert-error", [
+            return m(".container.mx-auto.p-6.md:p-10.max-w-4xl", [
+                m(".alert.alert-error.mb-6", [
                     m(Icon, { icon: "fa-solid fa-circle-exclamation" }),
                     m("span", "User not found")
                 ]),
-                m(m.route.Link, { href: "/admin/users", class: "btn btn-ghost mt-4" }, "Back to Users")
+                m(m.route.Link, { href: "/admin/users", class: "btn btn-ghost" }, "Back to Users")
             ]);
         }
 
-        return m(".container-fluid.p-4.py-12", [
+        return m(".container.mx-auto.p-6.md:p-10.max-w-4xl", [
             m(".max-w-2xl.mx-auto", [
-                m(".flex.items-center.gap-4.mb-6", [
+                m(".flex.items-center.gap-4.mb-10", [
                     m(m.route.Link, { href: "/admin/users", class: "btn btn-circle btn-ghost" }, m(Icon, { name: "fa-solid fa-arrow-left" })),
                     m("h1.text-3xl.font-bold", `Edit User #${userId}`)
                 ]),
                 m(".card.bg-base-100.shadow-xl", [
-                    m(".card-body", [
+                    m(".card-body.p-6.md:p-8", [
                         m(Fieldset, { legend: "Account Details", icon: "fa-solid fa-user-gear" }, [
-                            m(".grid.grid-cols-1.md:grid-cols-2.gap-4", [
+                            m(".grid.grid-cols-1.md:grid-cols-2.gap-6", [
                                 m(FormField, {
                                     label: "Full Name",
                                     icon: "fa-solid fa-user",

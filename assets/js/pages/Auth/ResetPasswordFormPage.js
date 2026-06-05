@@ -28,7 +28,7 @@ const ResetPasswordFormPage = {
 
         ResetPasswordFormPage.isLoading = true;
 
-        AuthService.resetPassword(ResetPasswordFormPage.token, ResetPasswordFormPage.password)
+        AuthService.resetPassword(ResetPasswordFormPage.token, ResetPasswordFormPage.password, ResetPasswordFormPage.confirmPassword)
             .then(() => {
                 ResetPasswordFormPage.isSuccess = true;
                 window.showToast("Password has been reset successfully.", "success");

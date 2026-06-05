@@ -119,7 +119,7 @@ const SettingsPage = {
             ]);
         }
 
-        return m(".overflow-x-auto.bg-base-100.rounded-xl.shadow", [
+        return m(".overflow-x-auto.bg-base-100.rounded-xl.shadow.p-6", [
             m("table.table.table-zebra", [
                 m("thead", [
                     m("tr", [
@@ -153,8 +153,8 @@ const SettingsPage = {
     },
 
     view: function() {
-        return m(".container-fluid.p-4", [
-            m(".flex.justify-between.items-center.mb-6", [
+        return m(".container.mx-auto.p-6.md:p-10.max-w-7xl", [
+            m(".flex.justify-between.items-center.mb-10", [
                 m("h1.text-3xl.font-bold", "Site Settings"),
                 m("button.btn.btn-outline.btn-sm", { onclick: () => this.loadSettings() }, [
                     m(Icon, { icon: "fa-solid fa-rotate" }),

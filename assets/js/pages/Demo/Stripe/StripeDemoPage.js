@@ -201,19 +201,19 @@ export default class StripeDemoPage {
             { label: "Visa (Decline)", number: "4000 0000 0000 0002" }
         ];
 
-        return m(".container-fluid.p-4.py-12", [
+        return m(".container.mx-auto.p-6.md:p-10.max-w-7xl", [
             m(TestCardInfo, { cards }),
-            m(".flex.items-center.gap-4.mb-12", [
+            m(".flex.items-center.gap-4.mb-10", [
                 m(m.route.Link, { href: "/demo", class: "btn btn-ghost btn-sm" }, [
                     m(Icon, { icon: "fa-solid fa-arrow-left" }),
                     " Back to Demo"
                 ]),
                 m("h1.text-4xl.font-bold", "Stripe Integration Demo")
             ]),
-            m(".grid.grid-cols-1.lg:grid-cols-2.gap-8", [
+            m(".grid.grid-cols-1.lg:grid-cols-2.gap-6", [
                 m(".card.bg-base-100.shadow-xl.relative", [
                     this.renderLoadingOverlay(),
-                    m(".card-body", [
+                    m(".card-body.p-6", [
                         m("h2.card-title", [
                             m(Icon, { icon: "fa-brands fa-stripe text-primary text-2xl" }),
                             "Stripe Payment Demo"
@@ -262,7 +262,7 @@ export default class StripeDemoPage {
 
                 m(".card.bg-base-100.shadow-xl.relative", [
                     this.renderLoadingOverlay(),
-                    m(".card-body", [
+                    m(".card-body.p-6", [
                         m("h2.card-title", "Stripe Subscriptions"),
                         m("p.opacity-70", "Redirect to Stripe Checkout for recurring billing."),
                         m(".divider"),
@@ -298,7 +298,7 @@ export default class StripeDemoPage {
             m(".mt-12", publicKeyCard),
 
             m(".mt-12.card.bg-base-100.shadow-xl", [
-                m(".card-body", [
+                m(".card-body.p-6", [
                     m("h2.card-title", "Stripe Features"),
                     m(".grid.grid-cols-1.md:grid-cols-3.gap-4.mt-4", [
                         m(".flex.items-center.gap-3", [

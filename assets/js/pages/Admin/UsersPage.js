@@ -61,7 +61,7 @@ const UsersPage = {
             ]);
         }
 
-        return m(".overflow-x-auto.bg-base-100.rounded-xl.shadow", [
+        return m(".overflow-x-auto.bg-base-100.rounded-xl.shadow.p-6", [
             m("table.table.table-zebra", [
                 m("thead", [
                     m("tr", [
@@ -94,8 +94,8 @@ const UsersPage = {
     },
 
     view: function() {
-        return m(".container-fluid.p-4.py-12", [
-            m(".flex.justify-between.items-center.mb-8", [
+        return m(".container.mx-auto.p-6.md:p-10.max-w-7xl", [
+            m(".flex.justify-between.items-center.mb-10", [
                 m("h1.text-3xl.font-bold", "Users Management"),
                 m(".flex.gap-2", [
                     m("button.btn.btn-outline.btn-sm", { onclick: () => this.loadUsers() }, [

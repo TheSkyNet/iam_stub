@@ -15,11 +15,11 @@ const TestPage = {
     },
 
     view: () => {
-        return m(".container-fluid.p-4", [
-            m("h1.text-3xl.font-bold.mb-6", "Generic Test Page"),
+        return m(".container.mx-auto.p-6.md:p-10.max-w-7xl", [
+            m("h1.text-3xl.font-bold.mb-10", "Generic Test Page"),
             m(".grid.grid-cols-1.md:grid-cols-2.gap-6", [
                 m(".card.bg-base-100.shadow-xl", [
-                    m(".card-body", [
+                    m(".card-body.p-6", [
                         m("h2.card-title", "Toast & Error Service"),
                         m("p", "Test the notification system."),
                         m(".flex.gap-2.flex-wrap.mt-4", [
@@ -36,7 +36,7 @@ const TestPage = {
                     ])
                 ]),
                 m(".card.bg-base-100.shadow-xl", [
-                    m(".card-body", [
+                    m(".card-body.p-6", [
                         m("h2.card-title", "Route Tests"),
                         m("p", "Testing SPA routing and parameters."),
                         m(m.route.Link, { href: "/test?param=value", class: "btn btn-outline" }, "Test with Params")

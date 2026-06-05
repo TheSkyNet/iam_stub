@@ -147,6 +147,22 @@ class Auth extends aAPI
         }
     }
 
+    /**
+     * Gets the current protocol (http or https)
+     */
+    private function getProtocol(): string
+    {
+        if (isset($_SERVER['HTTPS']) && ($_SERVER['HTTPS'] === 'on' || $_SERVER['HTTPS'] === 1)) {
+            return 'https://';
+        }
+        
+        if (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https') {
+            return 'https://';
+        }
+
+        return 'http://';
+    }
+
     public function forgotPasswordAction(): void
     {
         $email = $this->getParam('email');
@@ -180,7 +196,7 @@ class Auth extends aAPI
             }
 
             // 3. Send an email with the reset link
-            $protocol = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') ? 'https://' : 'http://';
+            $protocol = $this->getProtocol();
             $resetUrl = $protocol . $_SERVER['HTTP_HOST'] . '/reset-password?token=' . $resetToken->getToken();
             $emailBody = "
                 <h2>Password Reset Request</h2>
@@ -812,12 +828,13 @@ class Auth extends aAPI
     }
 
     /**
-     * Reset password action - resends password reset email
+     * Reset password action - resets the user password using a valid token
      */
     public function resetPasswordAction(): void
     {
         $token = $this->getParam('token');
         $password = $this->getParam('password');
+        $confirmPassword = $this->getParam('confirm_password');
 
         // Validate input
         if (empty($token) || empty($password)) {
@@ -827,6 +844,11 @@ class Auth extends aAPI
         // Basic password validation
         if (strlen((string) $password) < 6) {
             $this->dispatchError('Password must be at least 6 characters long');
+        }
+
+        // Password confirmation check
+        if ($password !== $confirmPassword) {
+            $this->dispatchError('Passwords do not match');
         }
 
         try {
@@ -852,7 +874,11 @@ class Auth extends aAPI
 
                 $this->dispatch(['success' => true, 'message' => 'Password reset successfully']);
             } else {
-                $this->dispatchError('Failed to update password');
+                $messages = [];
+                foreach ($user->getMessages() as $message) {
+                    $messages[] = $message->getMessage();
+                }
+                $this->dispatchError(implode(', ', $messages));
             }
         } catch (Exception $exception) {
             $this->dispatchError($exception);
@@ -922,7 +948,7 @@ class Auth extends aAPI
             $verificationToken = bin2hex(random_bytes(32));
 
             // Send verification email
-            $protocol = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') ? 'https://' : 'http://';
+            $protocol = $this->getProtocol();
             $verificationUrl = $protocol . $_SERVER['HTTP_HOST'] . '/verify-email?token=' . $verificationToken;
             $emailBody = "
                 <h2>Email Verification</h2>
