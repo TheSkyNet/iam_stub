@@ -54,9 +54,6 @@
         },
         "files": [
             "IamLab/Core/Helpers/include.php"
-        ],
-        "include-path": [
-            "IamLab/Core/Helpers/"
         ]
     },
     "require-dev": {
