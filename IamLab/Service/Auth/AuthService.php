@@ -70,7 +70,7 @@ class AuthService extends aAPI
                     $userId = $payload['user_id'];
                     $cacheKey = 'user_identity_' . $userId;
                     $cache = $this->getDI()->getShared('cache');
-                    
+
                     $identity = null;
                     // Try fast layers first (apcu, then redis as fallback)
                     foreach (['apcu', 'redis'] as $layerName) {
@@ -97,7 +97,7 @@ class AuthService extends aAPI
                                 'roles' => $user->getRoles(),
                                 'whitelist_domains' => $user->getWhitelistDomains(),
                             ];
-                            
+
                             // Store in cache layers
                             foreach (['apcu', 'redis'] as $layerName) {
                                 try {

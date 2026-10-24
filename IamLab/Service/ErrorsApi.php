@@ -11,6 +11,7 @@ use IamLab\Model\ErrorLog;
 
 class ErrorsApi extends aAPI
 {
+    #[\Override]
     protected bool $skipCsrf = true;
 
     /**
@@ -38,7 +39,7 @@ class ErrorsApi extends aAPI
 
         $userId = null;
         try {
-            $identity = (new AuthService())->getIdentity();
+            $identity = new AuthService()->getIdentity();
             if ($identity && isset($identity['user_id'])) {
                 $userId = (int)$identity['user_id'];
             }

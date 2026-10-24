@@ -1,22 +1,30 @@
 <?php
-defined('APP_PATH') || define('APP_PATH', realpath('./IamLab'));
+
 use Phalcon\Config\Config;
+
+use function IamLab\Core\Helpers\env;
+use function IamLab\Core\Helpers\loadEnv;
+
+$rootPath = dirname(__DIR__);
+require_once $rootPath . '/vendor/autoload.php';
+loadEnv($rootPath . '/.env');
 
 return new Config([
     'database' => [
-        'adapter' => 'mysql',
-        'host' => 'mysql',
-        'username' => 'phalcons',
-        'password' => 'phalcons',
-        'dbname' => 'phalcons',
-        'charset' => 'utf8',
+        'adapter' => 'Mysql',
+        'host' => env('DB_HOST', 'mysql'),
+        'port' => env('DB_PORT', 3306),
+        'username' => env('DB_USERNAME', 'phalcons'),
+        'password' => env('DB_PASSWORD', 'phalcons'),
+        'dbname' => env('DB_NAME', env('DB_DATABASE', 'phalcons')),
+        'charset' => env('DB_CHARSET', 'utf8mb4'),
     ],
     'application' => [
         'logInDb' => true,
         'no-auto-increment' => true,
         'skip-ref-schema' => true,
         'skip-foreign-checks' => true,
-        'migrationsDir' => APP_PATH . '/Migrations/',
+        'migrationsDir' => $rootPath . '/IamLab/Migrations/',
         'migrationsTsBased' => false, // true - Use TIMESTAMP as version name, false - use versions
         'exportDataFromTables' => [
             // Tables names

@@ -16,9 +16,9 @@ class WebSocketHandler implements MessageComponentInterface
 
     public function onOpen(ConnectionInterface $conn): void
     {
-        $this->clients->attach($conn);
+        $this->clients->offsetSet($conn);
         echo "New connection! ({$conn->resourceId})\n";
-        
+
         $conn->send(json_encode([
             'type' => 'welcome',
             'message' => 'Connected to IamLab WebSocket Server',
@@ -31,7 +31,7 @@ class WebSocketHandler implements MessageComponentInterface
         echo sprintf("Connection %d sending message \"%s\"\n", $from->resourceId, $msg);
 
         $data = json_decode($msg, true);
-        
+
         // Broadcast to all clients
         foreach ($this->clients as $client) {
             $client->send(json_encode([
@@ -45,7 +45,7 @@ class WebSocketHandler implements MessageComponentInterface
 
     public function onClose(ConnectionInterface $conn): void
     {
-        $this->clients->detach($conn);
+        $this->clients->offsetUnset($conn);
         echo "Connection {$conn->resourceId} has disconnected\n";
     }
 

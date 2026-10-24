@@ -1,6 +1,8 @@
 import m from "mithril";
 import { Icon } from "../../components/Icon";
 import { AuthService } from "../../services/AuthserviceService";
+import { OAuthService } from "../../services/OAuthService";
+import Modal from "../../components/DaisyUI/Modal";
 import { Fieldset, FormField, CheckboxField, SubmitButton } from "../../components/Form";
 
 const LoginFormPage = {
@@ -8,6 +10,25 @@ const LoginFormPage = {
     password: '',
     rememberMe: true,
     isLoading: false,
+    
+    // QR Login state
+    showQrModal: false,
+    qrCodeData: null,
+    qrLoading: false,
+    qrStatus: 'pending', // pending, authenticated, expired, error
+
+    // OAuth state
+    providers: [],
+
+    oninit: function() {
+        // Load OAuth providers
+        OAuthService.getProviders().then(providers => {
+            this.providers = providers || [];
+            m.redraw();
+        }).catch(() => {
+            this.providers = [];
+        });
+    },
 
     handleLogin: (e) => {
         e.preventDefault();
@@ -26,6 +47,57 @@ const LoginFormPage = {
                 LoginFormPage.isLoading = false;
                 m.redraw();
             });
+    },
+
+    handleOAuthLogin: (provider) => {
+        OAuthService.initiateLogin(provider).catch(err => {
+            window.showToast(err, 'error');
+        });
+    },
+
+    handleShowQR: () => {
+        LoginFormPage.showQrModal = true;
+        LoginFormPage.qrLoading = true;
+        LoginFormPage.qrStatus = 'pending';
+        
+        AuthService.generateQRCode()
+            .then(response => {
+                if (response.success) {
+                    LoginFormPage.qrCodeData = response.data;
+                    LoginFormPage.startQRPolling(response.data.session_token);
+                } else {
+                    LoginFormPage.qrStatus = 'error';
+                    window.showToast(response.message, 'error');
+                }
+            })
+            .catch(err => {
+                LoginFormPage.qrStatus = 'error';
+                window.showToast(err, 'error');
+            })
+            .finally(() => {
+                LoginFormPage.qrLoading = false;
+                m.redraw();
+            });
+    },
+
+    startQRPolling: (token) => {
+        AuthService.startQRPolling(
+            token,
+            (response) => {
+                LoginFormPage.qrStatus = 'authenticated';
+                window.showToast('Login successful!', 'success');
+                LoginFormPage.showQrModal = false;
+                m.route.set('/');
+            },
+            (error) => {
+                LoginFormPage.qrStatus = 'error';
+                window.showToast(error, 'error');
+            },
+            () => {
+                LoginFormPage.qrStatus = 'expired';
+                window.showToast('QR code expired. Please try again.', 'warning');
+            }
+        );
     },
 
     view: () => {
@@ -78,12 +150,60 @@ const LoginFormPage = {
                                 }, " Login")
                             ]),
 
+                            // QR Login Button
+                            m("button.btn.btn-outline.w-full.mt-4", {
+                                onclick: LoginFormPage.handleShowQR
+                            }, [
+                                m(Icon, { icon: "fa-solid fa-qrcode" }),
+                                " Login with QR Code"
+                            ]),
+
+                            // OAuth Buttons
+                            LoginFormPage.providers.length > 0 && [
+                                m(".divider", "OR"),
+                                m(".flex.flex-wrap.justify-center.gap-4", LoginFormPage.providers.map(provider => {
+                                    const config = OAuthService.getProviderConfig(provider);
+                                    return m("button.btn.btn-circle.btn-outline", {
+                                        title: `Login with ${config.name}`,
+                                        onclick: () => LoginFormPage.handleOAuthLogin(provider),
+                                        style: { color: config.color, borderColor: config.color }
+                                    }, m(Icon, { icon: config.icon }));
+                                }))
+                            ],
+
                             m(".divider", "OR"),
                             m(".text-center", [
                                 m("p.text-sm", "Don't have an account?"),
                                 m(m.route.Link, { href: "/register", class: "link link-primary font-semibold" }, "Register now")
                             ])
                         ])
+                    ]),
+
+                    // QR Modal
+                    m(Modal, {
+                        id: "qr-modal",
+                        open: LoginFormPage.showQrModal,
+                        onClose: () => {
+                            LoginFormPage.showQrModal = false;
+                            // Polling will stop automatically on next check if we add a flag, 
+                            // but for now let's just keep it simple.
+                        },
+                        boxClass: "max-w-xs text-center"
+                    }, [
+                        m("h3.font-bold.text-lg.mb-4", "Scan to Login"),
+                        LoginFormPage.qrLoading 
+                            ? m(".flex.justify-center.p-8", m("span.loading.loading-spinner.loading-lg"))
+                            : LoginFormPage.qrCodeData 
+                                ? m(".flex.flex-col.items-center", [
+                                    m("img.rounded-lg.shadow-md.mb-4", { 
+                                        src: LoginFormPage.qrCodeData.qr_code,
+                                        style: { width: '200px', height: '200px' }
+                                    }),
+                                    m("p.text-sm.opacity-70", "Open the mobile app and scan this code to log in instantly."),
+                                    LoginFormPage.qrStatus === 'expired' && m(".alert.alert-warning.mt-4", "Code expired"),
+                                    LoginFormPage.qrStatus === 'error' && m(".alert.alert-error.mt-4", "Login failed")
+                                ])
+                                : m("p.text-error", "Failed to load QR code")
                     ])
                 ])
             ])

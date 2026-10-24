@@ -220,7 +220,7 @@ class IntegrationFactoryTest extends TestCase
     public function testRegisterAndUnregisterIntegration(): void
     {
         // Create a mock integration class
-        $mockClass = new class ([]) implements LMSIntegrationInterface {
+        $mockClass = new readonly class ([]) implements LMSIntegrationInterface {
             public function __construct(array $config)
             {
             }

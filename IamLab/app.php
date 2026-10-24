@@ -1,5 +1,6 @@
 <?php
 
+use IamLab\Model\ErrorLog;
 use IamLab\Core\Routing\RouteGroup;
 use IamLab\Service\Auth;
 use IamLab\Service\Filepond\FilepondApi;
@@ -176,6 +177,59 @@ RouteGroup::create($app, '/auth')
         $group->post('/authenticate-qr', [(new Auth()), "authenticateQRAction"]);
         $group->post('/authenticate-mobile-qr', [(new Auth()), "authenticateMobileQRAction"]);
     });
+/**
+ * Not found handler
+ */
+$app->error(function ($exception) use ($app) {
+    $di = $app->getDI();
+
+    // Log to database
+    try {
+        $userId = null;
+        if ($di->has('authService')) {
+            $auth = $di->getShared('authService');
+            if ($auth->isAuthenticated()) {
+                $user = $auth->getUser();
+                if ($user) {
+                    $userId = $user->getId();
+                }
+            }
+        }
+
+        $log = new ErrorLog();
+        $log->setLevel('critical')
+            ->setMessage($exception->getMessage())
+            ->setUrl($app->request->getURI())
+            ->setUserAgent($app->request->getUserAgent())
+            ->setIp($app->request->getClientAddress())
+            ->setUserId($userId)
+            ->setContext([
+                'exception' => $exception::class,
+                'file' => $exception->getFile(),
+                'line' => $exception->getLine(),
+                'trace' => $exception->getTraceAsString()
+            ]);
+        $log->save();
+    } catch (\Throwable) {
+        // Silent fail for logging errors
+    }
+
+    // Log to file
+    if ($di->has('logger')) {
+        $di->getShared('logger')->critical($exception->getMessage() . ' in ' . $exception->getFile() . ':' . $exception->getLine());
+    }
+
+    // Response
+    $app->response->setStatusCode(500, 'Internal Server Error');
+    $app->response->setContentType('application/json', 'UTF-8');
+    $app->response->setJsonContent([
+        'success' => false,
+        'message' => 'An internal server error occurred.',
+        'error' => 'SERVER_ERROR'
+    ]);
+    return false; // Stop execution
+});
+
 /**
  * Not found handler
  */

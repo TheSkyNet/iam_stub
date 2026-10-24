@@ -7,12 +7,10 @@ use Exception;
 
 class SystemProvider implements EmailProviderInterface
 {
-    private array $config;
     private ?string $lastError = null;
 
-    public function __construct(array $config)
+    public function __construct(private array $config)
     {
-        $this->config = $config;
     }
 
     /**

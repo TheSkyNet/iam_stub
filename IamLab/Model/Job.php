@@ -15,26 +15,26 @@ class Job extends Model
     /**
      * Job statuses
      */
-    const STATUS_PENDING = 'pending';
+    public const STATUS_PENDING = 'pending';
 
-    const STATUS_PROCESSING = 'processing';
+    public const STATUS_PROCESSING = 'processing';
 
-    const STATUS_COMPLETED = 'completed';
+    public const STATUS_COMPLETED = 'completed';
 
-    const STATUS_FAILED = 'failed';
+    public const STATUS_FAILED = 'failed';
 
-    const STATUS_RETRYING = 'retrying';
+    public const STATUS_RETRYING = 'retrying';
 
     /**
      * Job priorities
      */
-    const PRIORITY_LOW = 1;
+    public const PRIORITY_LOW = 1;
 
-    const PRIORITY_NORMAL = 5;
+    public const PRIORITY_NORMAL = 5;
 
-    const PRIORITY_HIGH = 10;
+    public const PRIORITY_HIGH = 10;
 
-    const PRIORITY_CRITICAL = 15;
+    public const PRIORITY_CRITICAL = 15;
 
     /**
      * @var int

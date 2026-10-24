@@ -9,6 +9,7 @@ use IamLab\Service\Auth\AuthService;
 
 class PusherApi extends aAPI
 {
+    #[\Override]
     protected array $skipCsrfActions = ['webhook'];
 
     /**

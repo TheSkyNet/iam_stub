@@ -2,6 +2,8 @@
 
 namespace Tests\Feature;
 
+use Phalcon\Config\Config;
+use IamLab\Service\Auth\AuthService;
 use IamLab\Core\API\aAPI;
 use IamLab\Service\Auth;
 use PHPUnit\Framework\TestCase;
@@ -28,9 +30,9 @@ class AuthSecurityTest extends TestCase
         $this->di->setShared('response', new Response());
         $this->di->setShared('escaper', new Escaper());
         $this->di->setShared('security', new Security());
-        
+
         // Mock config service
-        $this->di->setShared('config', new \Phalcon\Config\Config([
+        $this->di->setShared('config', new Config([
             'jwt' => [
                 'secret' => 'test-secret',
                 'algorithm' => 'HS256',
@@ -49,32 +51,54 @@ class AuthSecurityTest extends TestCase
         // Mock session because security needs it for CSRF
         $this->di->setShared('session', new class {
             private $data = [];
-            public function set($key, $value) { $this->data[$key] = $value; }
-            public function get($key) { return $this->data[$key] ?? null; }
-            public function has($key) { return isset($this->data[$key]); }
-            public function remove($key) { unset($this->data[$key]); }
-            public function exists() { return true; }
-            public function destroy() { $this->data = []; }
+            public function set($key, $value)
+            {
+                $this->data[$key] = $value;
+            }
+            public function get($key)
+            {
+                return $this->data[$key] ?? null;
+            }
+            public function has($key)
+            {
+                return isset($this->data[$key]);
+            }
+            public function remove($key)
+            {
+                unset($this->data[$key]);
+            }
+            public function exists()
+            {
+                return true;
+            }
+            public function destroy()
+            {
+                $this->data = [];
+            }
         });
 
         // Mock authService
-        $this->di->setShared('authService', $this->createMock(\IamLab\Service\Auth\AuthService::class));
+        $this->di->setShared('authService', $this->createStub(AuthService::class));
     }
 
     public function testGetRequestDoesNotRequireCsrf(): void
     {
         // Mock a GET request
-        $request = $this->createMock(Request::class);
+        $request = $this->createStub(Request::class);
         $request->method('getMethod')->willReturn('GET');
         $this->di->setShared('request', $request);
 
         $auth = new class extends aAPI {
             public $verified = false;
-            protected function verifyCsrf(): void {
+            protected function verifyCsrf(): void
+            {
                 parent::verifyCsrf();
                 $this->verified = true;
             }
-            public function testAction() { $this->dispatch(['ok' => true]); }
+            public function testAction()
+            {
+                $this->dispatch(['ok' => true]);
+            }
         };
 
         // This should not throw an exit/exception from verifyCsrf
@@ -85,14 +109,14 @@ class AuthSecurityTest extends TestCase
                 $this->fail('CSRF check failed on GET request');
             }
         }
-        
+
         $this->assertTrue($auth->verified);
     }
 
     public function testPostRequestFailsWithoutCsrfToken(): void
     {
         // Mock a POST request without token
-        $request = $this->createMock(Request::class);
+        $request = $this->createStub(Request::class);
         $request->method('getMethod')->willReturn('POST');
         $request->method('getHeader')->willReturnMap([
             ['X-CSRF-Token', ''],
@@ -102,7 +126,8 @@ class AuthSecurityTest extends TestCase
 
         $auth = new class extends aAPI {
             // Override dispatch to catch it instead of exiting
-            protected function dispatch(mixed $data, int $status = 200): void {
+            protected function dispatch(mixed $data, int $status = 200): void
+            {
                 throw new \Exception("Dispatch called with status $status: " . json_encode($data));
             }
         };
@@ -116,15 +141,17 @@ class AuthSecurityTest extends TestCase
     public function testSecurityHeadersArePresentInResponse(): void
     {
         $response = $this->di->getShared('response');
-        
+
         $auth = new class extends aAPI {
-            public function testAction() { 
-                $this->dispatch(['ok' => true]); 
+            public function testAction()
+            {
+                $this->dispatch(['ok' => true]);
             }
             // Override dispatch to NOT exit so we can inspect response
-            protected function dispatch(mixed $data, int $status = 200): void {
+            protected function dispatch(mixed $data, int $status = 200): void
+            {
                 $this->response->setStatusCode($status);
-                // We don't call parent::dispatch because it exits, 
+                // We don't call parent::dispatch because it exits,
                 // but we test the headers that were added in the real class.
                 $this->response->setHeader('X-Content-Type-Options', 'nosniff');
                 $this->response->setHeader('X-Frame-Options', 'SAMEORIGIN');
@@ -134,7 +161,7 @@ class AuthSecurityTest extends TestCase
         };
 
         $auth->testAction();
-        
+
         $headers = $response->getHeaders();
         $this->assertSame('nosniff', $headers->get('X-Content-Type-Options'));
         $this->assertSame('SAMEORIGIN', $headers->get('X-Frame-Options'));

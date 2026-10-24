@@ -223,7 +223,6 @@ class SquareIntegration implements PaymentIntegrationInterface
         }
 
         $response = curl_exec($ch);
-        curl_close($ch);
 
         return json_decode($response, true) ?? ['errors' => [['detail' => 'Failed to parse response']]];
     }

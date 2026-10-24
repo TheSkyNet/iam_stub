@@ -2,29 +2,31 @@
 
 namespace IamLab\Core\API;
 
+use Phalcon\Di\Injectable;
+use IamLab\Model\ErrorLog;
+use IamLab\Model\User;
 use IamLab\Service\Auth\AuthService;
 use JetBrains\PhpStorm\NoReturn;
+
 use function IamLab\Core\Helpers\cast;
 use function IamLab\Core\Helpers\env;
 
-/**
- * Class aAPI
- * @package IamLab\Core\API
- *
- * Abstract base class for API controllers.
- * Provides common helper methods for handling API requests and responses.
- *
- * Note: This class is designed to operate even when Phalcon is not installed,
- * to support unit tests that do not boot the full framework. In such cases,
- * it falls back to a plain base class without DI-provided properties.
- */
 // Create a conditional base to avoid fatal errors when Phalcon is not available
-if (class_exists('Phalcon\\Di\\Injectable')) {
-    abstract class aAPIBase extends \Phalcon\Di\Injectable {}
+if (class_exists(Injectable::class)) {
+    abstract class aAPIBase extends Injectable
+    {
+    }
 } else {
-    abstract class aAPIBase {}
+    abstract class aAPIBase
+    {
+    }
 }
 
+/**
+ * Abstract base class for API controllers.
+ *
+ * Provides common helper methods for handling API requests and responses.
+ */
 abstract class aAPI extends aAPIBase
 {
     /**
@@ -55,8 +57,8 @@ abstract class aAPI extends aAPIBase
     /**
      * Placeholder method for index actions.
      */
-    protected function runIndex(){
-
+    protected function runIndex()
+    {
     }
 
     /**
@@ -69,13 +71,13 @@ abstract class aAPI extends aAPIBase
     {
         $this->response->setStatusCode($status);
         $this->response->setContentType('application/json', 'UTF-8');
-        
+
         // Add security headers
         $this->response->setHeader('X-Content-Type-Options', 'nosniff');
         $this->response->setHeader('X-Frame-Options', 'SAMEORIGIN');
         $this->response->setHeader('X-XSS-Protection', '1; mode=block');
         $this->response->setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
-        
+
         $this->response->setContent(json_encode($data));
         $this->response->send();
         exit();
@@ -131,7 +133,12 @@ abstract class aAPI extends aAPIBase
             $message = $data;
         } elseif ($data instanceof \Throwable) {
             $message = $data->getMessage();
-            $payload['exception'] = get_class($data);
+            $payload['exception'] = $data::class;
+
+            // Auto-log server errors (500) or exceptions to the database
+            if ($status >= 500 || $status === 400) {
+                 $this->logErrorToDatabase($data);
+            }
         } elseif (is_array($data)) {
             // Prefer explicit keys
             foreach (['message', 'error', 'error_description', 'detail', 'title'] as $key) {
@@ -162,11 +169,17 @@ abstract class aAPI extends aAPIBase
                     if (is_object($item)) {
                         if (method_exists($item, 'getMessage')) {
                             $m = (string)$item->getMessage();
-                            if (trim($m) !== '') { $message = trim($m); break; }
+                            if (trim($m) !== '') {
+                                $message = trim($m);
+                                break;
+                            }
                         }
                         if (method_exists($item, '__toString')) {
                             $m = (string)$item;
-                            if (trim($m) !== '') { $message = trim($m); break; }
+                            if (trim($m) !== '') {
+                                $message = trim($m);
+                                break;
+                            }
                         }
                     }
                 }
@@ -232,18 +245,18 @@ abstract class aAPI extends aAPIBase
         if (isset($this->routeParams[$name])) {
             return cast($this->routeParams[$name], $cast);
         }
-        
+
         // Method 2: Try dispatcher
         $value = null;
         if ($this->dispatcher) {
             $value = $this->dispatcher->getParam($name);
         }
-        
+
         // Method 3: Try request query parameters
         if ($value === null && $this->request) {
             $value = $this->request->get($name);
         }
-        
+
         // Method 4: Try router parameters (if available)
         if ($value === null && $this->router) {
             $matches = $this->router->getMatches();
@@ -251,8 +264,8 @@ abstract class aAPI extends aAPIBase
                 $value = $matches[$name];
             }
         }
-        
-        $value = $value !== null ? $value : $default;
+
+        $value ??= $default;
         return cast($value, $cast);
     }
 
@@ -292,10 +305,10 @@ abstract class aAPI extends aAPIBase
     protected function requireAdmin(): void
     {
         $this->requireAuth();
-        
+
         $authService = $this->getDI()->getShared('authService');
         $user = $authService->getUser();
-        
+
         if (!$user || !$user->hasRole('admin')) {
             $this->dispatch([
                 'success' => false,
@@ -314,10 +327,10 @@ abstract class aAPI extends aAPIBase
     protected function requireRole($roles): void
     {
         $this->requireAuth();
-        
+
         $authService = $this->getDI()->getShared('authService');
         $user = $authService->getUser();
-        
+
         if (!$user) {
             $this->dispatch([
                 'success' => false,
@@ -359,10 +372,10 @@ abstract class aAPI extends aAPIBase
     protected function requireAllRoles(array $roles): void
     {
         $this->requireAuth();
-        
+
         $authService = $this->getDI()->getShared('authService');
         $user = $authService->getUser();
-        
+
         if (!$user) {
             $this->dispatch([
                 'success' => false,
@@ -390,7 +403,10 @@ abstract class aAPI extends aAPIBase
     public function initialize(): void
     {
         // Check if current action is in skip list
-        if ($this->dispatcher && in_array($this->dispatcher->getActionName(), $this->skipCsrfActions)) {
+        if (
+            $this->getDI()->has('dispatcher')
+            && in_array($this->dispatcher->getActionName(), $this->skipCsrfActions, true)
+        ) {
             $this->skipCsrf = true;
         }
 
@@ -432,7 +448,7 @@ abstract class aAPI extends aAPIBase
             }
 
             if ($userWhitelist) {
-                $whitelistedDomains = array_map('trim', explode(',', (string) $userWhitelist));
+                $whitelistedDomains = array_map(trim(...), explode(',', (string) $userWhitelist));
                 $parsedOrigin = parse_url($origin, PHP_URL_HOST);
 
                 if (in_array($origin, $whitelistedDomains) || in_array($parsedOrigin, $whitelistedDomains)) {
@@ -443,7 +459,7 @@ abstract class aAPI extends aAPIBase
             // Check if the origin is in the global whitelisted domains
             $globalWhitelist = env('GLOBAL_API_KEY_WHITELIST', '');
             if (!empty($globalWhitelist)) {
-                $globalDomains = array_map('trim', explode(',', (string) $globalWhitelist));
+                $globalDomains = array_map(trim(...), explode(',', (string) $globalWhitelist));
                 $parsedOrigin = parse_url($origin, PHP_URL_HOST);
 
                 if ($globalWhitelist === '*' || in_array($origin, $globalDomains) || in_array($parsedOrigin, $globalDomains)) {
@@ -469,14 +485,62 @@ abstract class aAPI extends aAPIBase
     }
 
     /**
+     * Logs an error to the database.
+     *
+     * @param mixed $error
+     */
+    protected function logErrorToDatabase(mixed $error): void
+    {
+        try {
+            $message = $error instanceof \Throwable ? $error->getMessage() : (string)$error;
+            $level = 'error';
+            $context = [];
+
+            if ($error instanceof \Throwable) {
+                $context = [
+                    'exception' => $error::class,
+                    'file' => $error->getFile(),
+                    'line' => $error->getLine(),
+                    'trace' => $error->getTraceAsString()
+                ];
+            }
+
+            $userId = null;
+            $authService = $this->getDI()->getShared('authService');
+            if ($authService->isAuthenticated()) {
+                $user = $authService->getUser();
+                if ($user) {
+                    $userId = $user->getId();
+                }
+            }
+
+            $log = new ErrorLog();
+            $log->setLevel($level)
+                ->setMessage($message)
+                ->setUrl($this->request->getURI())
+                ->setUserAgent($this->request->getUserAgent())
+                ->setIp($this->request->getClientAddress())
+                ->setUserId($userId)
+                ->setContext($context);
+
+            $log->save();
+        } catch (\Throwable $e) {
+            // Fallback to file logger if DB logging fails to avoid infinite loops
+            if ($this->getDI()->has('logger')) {
+                $this->getDI()->getShared('logger')->error("Failed to log error to DB: " . $e->getMessage());
+                $this->getDI()->getShared('logger')->error("Original error: " . ($error instanceof \Throwable ? $error->getMessage() : $error));
+            }
+        }
+    }
+
+    /**
      * Gets the currently authenticated user.
      *
-     * @return \IamLab\Model\User|null
+     * @return User|null
      */
     protected function getCurrentUser()
     {
         $authService = $this->getDI()->getShared('authService');
         return $authService->getUser();
     }
-
 }

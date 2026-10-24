@@ -35,6 +35,7 @@ class SiteSetting extends Model
     public function initialize(): void
     {
         $this->setSource('site_settings');
+        $this->getModelsMetaData()->setEmptyStringAttributes($this, ['value' => true]);
     }
 
     public function beforeSave(): void

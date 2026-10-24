@@ -62,7 +62,9 @@ function display_help {
     echo
     echo
     echo "${YELLOW}NPM Commands:${NC}"
-    echo "  ${GREEN}phalcons npm ...${NC}        Run a npm command"
+    echo "  ${GREEN}phalcons npm ...${NC}        Run an npm command"
+    echo "  ${GREEN}phalcons npm ci${NC}         Install the locked frontend dependencies"
+    echo "  ${GREEN}phalcons npm run browser:install${NC}  Install Chrome for UI smoke tests"
     echo "  ${GREEN}phalcons npm run prod${NC}"
     echo
     echo
@@ -72,6 +74,7 @@ function display_help {
     echo "  ${GREEN}phalcons mysql:file path.sql${NC}    Execute MySQL commands from a file (non-interactive)"
     echo "  ${GREEN}phalcons mysql:dump [file]${NC}      Create a MySQL database dump (non-interactive)"
     echo "  ${GREEN}phalcons migrate${NC}           Run database migrations"
+    echo "  ${GREEN}phalcons migrate:seed${NC}      Run migrations, then seed the database"
     echo "  ${GREEN}phalcons migrate:generate${NC}  Generate database migrations"
     echo "  ${GREEN}phalcons migrate:list${NC}      List all migrations"
     echo
@@ -521,15 +524,11 @@ elif [ "$1" == "migrate:seed" ]; then
     shift 1
 
     if [ "$EXEC" == "yes" ]; then
-        ARGS+=(exec -u www-data)
+        ARGS+=(exec -u phalcons)
         [ ! -t 0 ] && ARGS+=(-T)
 
-        # Pass all additional arguments to the seeder
-        if [ $# -gt 0 ]; then
-            ARGS+=("$APP_SERVICE" php bin/seeder.php "$@")
-        else
-            ARGS+=("$APP_SERVICE" php bin/seeder.php)
-        fi
+        # Apply the schema before seeding, preserving every seeder option as an argument.
+        ARGS+=("$APP_SERVICE" sh -c './vendor/bin/phalcon-migrations run --config=./bin/migrations.php && exec php bin/seeder.php "$@"' phalcons "$@")
     else
         phalcons_is_not_running
     fi

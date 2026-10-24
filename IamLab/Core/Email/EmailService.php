@@ -64,13 +64,9 @@ class EmailService extends Injectable
         }
 
         // Add default from email and name if not provided
-        if (!isset($options['from_email'])) {
-            $options['from_email'] = $this->config['from_email'] ?? 'noreply@example.com';
-        }
+        $options['from_email'] ??= $this->config['from_email'] ?? 'noreply@example.com';
 
-        if (!isset($options['from_name'])) {
-            $options['from_name'] = $this->config['from_name'] ?? 'Phalcon Stub';
-        }
+        $options['from_name'] ??= $this->config['from_name'] ?? 'Phalcon Stub';
 
         try {
             $result = $this->provider->send($to, $subject, $body, $options);
@@ -102,13 +98,9 @@ class EmailService extends Injectable
         }
 
         // Add default from email and name if not provided
-        if (!isset($options['from_email'])) {
-            $options['from_email'] = $this->config['from_email'] ?? 'noreply@example.com';
-        }
+        $options['from_email'] ??= $this->config['from_email'] ?? 'noreply@example.com';
 
-        if (!isset($options['from_name'])) {
-            $options['from_name'] = $this->config['from_name'] ?? 'Phalcon Stub';
-        }
+        $options['from_name'] ??= $this->config['from_name'] ?? 'Phalcon Stub';
 
         try {
             $result = $this->provider->sendBulk($recipients, $subject, $body, $options);

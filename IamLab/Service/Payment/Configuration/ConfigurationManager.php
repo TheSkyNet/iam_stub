@@ -72,7 +72,7 @@ class ConfigurationManager
     public function getEnabledIntegrations(): array
     {
         $all = ['stripe', 'paypal', 'square', 'pace', 'mollie', 'revolut'];
-        return array_filter($all, fn($name): bool => $this->isIntegrationEnabled($name));
+        return array_filter($all, $this->isIntegrationEnabled(...));
     }
 
     /**

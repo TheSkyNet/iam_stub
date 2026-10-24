@@ -2,6 +2,9 @@
 
 namespace Tests\Feature;
 
+use Phalcon\Config\Config;
+use IamLab\Service\Auth\AuthService;
+use IamLab\Model\User;
 use IamLab\Core\API\aAPI;
 use PHPUnit\Framework\TestCase;
 use Phalcon\Di\Di;
@@ -25,14 +28,14 @@ class ApiKeyCsrfBypassTest extends TestCase
         $this->di->setShared('request', new Request());
         $this->di->setShared('response', new Response());
         $this->di->setShared('security', new Security());
-        
+
         // Mock config
-        $this->di->setShared('config', new \Phalcon\Config\Config([]));
+        $this->di->setShared('config', new Config([]));
     }
 
     private function setupMockAuthService($identity = null, $user = null)
     {
-        $mock = $this->createMock(\IamLab\Service\Auth\AuthService::class);
+        $mock = $this->createStub(AuthService::class);
         $mock->method('getIdentity')->willReturn($identity);
         $mock->method('getUser')->willReturn($user);
         $this->di->setShared('authService', $mock);
@@ -43,7 +46,7 @@ class ApiKeyCsrfBypassTest extends TestCase
     {
         $this->setupMockAuthService(['type' => 'api_key']);
 
-        $request = $this->createMock(Request::class);
+        $request = $this->createStub(Request::class);
         $request->method('getMethod')->willReturn('POST');
         $request->method('getHeader')->willReturnMap([
             ['Origin', ''],
@@ -54,7 +57,8 @@ class ApiKeyCsrfBypassTest extends TestCase
 
         $api = new class extends aAPI {
             public $csrfVerified = false;
-            protected function verifyCsrf(): void {
+            protected function verifyCsrf(): void
+            {
                 parent::verifyCsrf();
                 $this->csrfVerified = true;
             }
@@ -66,12 +70,12 @@ class ApiKeyCsrfBypassTest extends TestCase
 
     public function testBypassWhenDomainWhitelistedForUser(): void
     {
-        $mockUser = $this->createMock(\IamLab\Model\User::class);
+        $mockUser = $this->createStub(User::class);
         $mockUser->method('getWhitelistDomains')->willReturn('example.com, test.org');
-        
+
         $this->setupMockAuthService(['type' => 'api_key'], $mockUser);
 
-        $request = $this->createMock(Request::class);
+        $request = $this->createStub(Request::class);
         $request->method('getMethod')->willReturn('POST');
         $request->method('getHeader')->willReturnMap([
             ['Origin', 'https://example.com'],
@@ -80,7 +84,8 @@ class ApiKeyCsrfBypassTest extends TestCase
 
         $api = new class extends aAPI {
             public $csrfVerified = false;
-            protected function verifyCsrf(): void {
+            protected function verifyCsrf(): void
+            {
                 parent::verifyCsrf();
                 $this->csrfVerified = true;
             }
@@ -97,7 +102,7 @@ class ApiKeyCsrfBypassTest extends TestCase
         // Set global whitelist env
         putenv('GLOBAL_API_KEY_WHITELIST=global.com,another.net');
 
-        $request = $this->createMock(Request::class);
+        $request = $this->createStub(Request::class);
         $request->method('getMethod')->willReturn('POST');
         $request->method('getHeader')->willReturnMap([
             ['Origin', 'https://global.com'],
@@ -106,28 +111,29 @@ class ApiKeyCsrfBypassTest extends TestCase
 
         $api = new class extends aAPI {
             public $csrfVerified = false;
-            protected function verifyCsrf(): void {
+            protected function verifyCsrf(): void
+            {
                 parent::verifyCsrf();
                 $this->csrfVerified = true;
             }
         };
 
         $api->initialize();
-        
+
         // Clean up env
         putenv('GLOBAL_API_KEY_WHITELIST');
-        
+
         $this->assertTrue($api->csrfVerified);
     }
 
     public function testNoBypassWhenDomainNotWhitelisted(): void
     {
-        $mockUser = $this->createMock(\IamLab\Model\User::class);
+        $mockUser = $this->createStub(User::class);
         $mockUser->method('getWhitelistDomains')->willReturn('example.com');
-        
+
         $this->setupMockAuthService(['type' => 'api_key'], $mockUser);
 
-        $request = $this->createMock(Request::class);
+        $request = $this->createStub(Request::class);
         $request->method('getMethod')->willReturn('POST');
         $request->method('getHeader')->willReturnMap([
             ['Origin', 'https://malicious.com'],
@@ -137,7 +143,8 @@ class ApiKeyCsrfBypassTest extends TestCase
         $this->di->setShared('request', $request);
 
         $api = new class extends aAPI {
-            protected function dispatch(mixed $data, int $status = 200): void {
+            protected function dispatch(mixed $data, int $status = 200): void
+            {
                 throw new \Exception("CSRF FAILED: " . $status);
             }
         };
@@ -150,13 +157,13 @@ class ApiKeyCsrfBypassTest extends TestCase
 
     public function testNoBypassWhenTypeIsAccessEvenIfWhitelisted(): void
     {
-        $mockUser = $this->createMock(\IamLab\Model\User::class);
+        $mockUser = $this->createStub(User::class);
         $mockUser->method('getWhitelistDomains')->willReturn('example.com');
-        
+
         // Identity type is 'access'
         $this->setupMockAuthService(['type' => 'access'], $mockUser);
 
-        $request = $this->createMock(Request::class);
+        $request = $this->createStub(Request::class);
         $request->method('getMethod')->willReturn('POST');
         $request->method('getHeader')->willReturnMap([
             ['Origin', 'https://example.com'],
@@ -166,7 +173,8 @@ class ApiKeyCsrfBypassTest extends TestCase
         $this->di->setShared('request', $request);
 
         $api = new class extends aAPI {
-            protected function dispatch(mixed $data, int $status = 200): void {
+            protected function dispatch(mixed $data, int $status = 200): void
+            {
                 throw new \Exception("CSRF FAILED: " . $status);
             }
         };
@@ -184,7 +192,7 @@ class ApiKeyCsrfBypassTest extends TestCase
         // Set global bypass env
         putenv('ALLOW_API_KEY_CSRF_BYPASS=true');
 
-        $request = $this->createMock(Request::class);
+        $request = $this->createStub(Request::class);
         $request->method('getMethod')->willReturn('POST');
         $request->method('getHeader')->willReturnMap([
             ['Origin', 'https://any-domain.com'],
@@ -193,17 +201,18 @@ class ApiKeyCsrfBypassTest extends TestCase
 
         $api = new class extends aAPI {
             public $csrfVerified = false;
-            protected function verifyCsrf(): void {
+            protected function verifyCsrf(): void
+            {
                 parent::verifyCsrf();
                 $this->csrfVerified = true;
             }
         };
 
         $api->initialize();
-        
+
         // Clean up env
         putenv('ALLOW_API_KEY_CSRF_BYPASS');
-        
+
         $this->assertTrue($api->csrfVerified);
     }
 }

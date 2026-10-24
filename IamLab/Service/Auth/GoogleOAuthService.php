@@ -71,7 +71,6 @@ class GoogleOAuthService extends OAuthService
 
             $response = curl_exec($curl);
             $httpCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
-            curl_close($curl);
 
             if ($httpCode !== 200) {
                 throw new Exception('Failed to get access token from Google');
@@ -111,7 +110,6 @@ class GoogleOAuthService extends OAuthService
 
             $response = curl_exec($curl);
             $httpCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
-            curl_close($curl);
 
             if ($httpCode !== 200) {
                 throw new Exception('Failed to get user info from Google');

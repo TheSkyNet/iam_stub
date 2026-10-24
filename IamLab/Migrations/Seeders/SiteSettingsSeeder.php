@@ -4,6 +4,7 @@ namespace IamLab\Migrations\Seeders;
 
 use IamLab\Model\SiteSetting;
 use Phalcon\Migrations\Mvc\Model\Migration;
+use RuntimeException;
 
 class SiteSettingsSeeder extends Migration
 {
@@ -184,10 +185,12 @@ class SiteSettingsSeeder extends Migration
             $setting->setDescription($settingData['description']);
 
             if (!$setting->save()) {
-                echo "Failed to save setting: " . $setting->getKey() . "\n";
-                foreach ($setting->getMessages() as $message) {
-                    echo $message->getMessage() . "\n";
-                }
+                $messages = array_map(
+                    static fn($message): string => $message->getMessage(),
+                    $setting->getMessages()
+                );
+                $details = $messages === [] ? 'Unknown persistence error' : implode('; ', $messages);
+                throw new RuntimeException(sprintf('Failed to save setting "%s": %s', $setting->getKey(), $details));
             } else {
                 echo "Successfully created setting: " . $setting->getKey() . "\n";
             }

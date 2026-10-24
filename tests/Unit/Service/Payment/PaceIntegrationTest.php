@@ -35,7 +35,7 @@ class PaceIntegrationTest extends TestCase
             ->onlyMethods(['request'])
             ->getMock();
 
-        $mock->method('request')->willReturn([
+        $mock->expects($this->once())->method('request')->willReturn([
             'transactionID' => 'PACE-TEST-123',
             'status' => 'completed',
             'checkoutURL' => 'http://pace.test'
@@ -69,7 +69,7 @@ class PaceIntegrationTest extends TestCase
             ->onlyMethods(['request'])
             ->getMock();
 
-        $mock->method('request')->willReturn(['success' => true]);
+        $mock->expects($this->once())->method('request')->willReturn(['success' => true]);
 
         // Integration healthCheck checks for API key and connectivity
         $this->assertTrue($mock->healthCheck());

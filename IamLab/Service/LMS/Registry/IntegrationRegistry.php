@@ -236,7 +236,7 @@ class IntegrationRegistry
         }
 
         // Filter by health status
-        $healthyCandidates = array_filter($candidates, fn($name): bool => $this->isIntegrationHealthy($name));
+        $healthyCandidates = array_filter($candidates, $this->isIntegrationHealthy(...));
 
         if ($healthyCandidates !== []) {
             $candidates = $healthyCandidates;

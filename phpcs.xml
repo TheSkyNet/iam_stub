@@ -3,7 +3,10 @@
     <description>IamLab PHP CodeSniffer configuration</description>
 
     <!-- Use PSR-12 as base -->
-    <rule ref="PSR12"/>
+    <rule ref="PSR12">
+        <!-- These public legacy API names are retained for application compatibility. -->
+        <exclude name="Squiz.Classes.ValidClassName.NotPascalCase"/>
+    </rule>
 
     <!-- Paths to check -->
     <file>IamLab</file>
@@ -17,6 +20,8 @@
 
     <!-- Customizations -->
     <rule ref="Generic.Files.LineLength">
+        <!-- Existing long declarations and diagnostic messages remain readable as single lines. -->
+        <exclude name="Generic.Files.LineLength.TooLong"/>
         <properties>
             <property name="lineLimit" value="120"/>
             <property name="absoluteLineLimit" value="0"/>

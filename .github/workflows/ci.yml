@@ -9,10 +9,19 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      APP_ENV: testing
+      DB_HOST: 127.0.0.1
+      DB_PORT: 3306
+      DB_NAME: iamlab_test
+      DB_USERNAME: root
+      DB_PASSWORD: ''
+      REDIS_HOST: 127.0.0.1
+      REDIS_PORT: 6379
 
     services:
       mysql:
-        image: mysql:8.4
+        image: mysql:8.4.11
         env:
           MYSQL_ALLOW_EMPTY_PASSWORD: yes
           MYSQL_DATABASE: iamlab_test
@@ -20,34 +29,74 @@ jobs:
           - 3306:3306
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
       redis:
-        image: redis:7.4-alpine
+        image: redis:8.10.2-alpine
         ports:
           - 6379:6379
         options: --health-cmd="redis-cli ping" --health-interval=10s --health-timeout=5s --health-retries=3
 
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v7
+
+    - name: Setup Node
+      uses: actions/setup-node@v7
+      with:
+        node-version: '24.22.1'
 
     - name: Setup PHP
       uses: shivammathur/setup-php@v2
       with:
         php-version: '8.5'
-        extensions: mbstring, xml, ctype, iconv, mysql, redis, phalcon5
+        extensions: mbstring, xml, ctype, iconv, mysql, redis, phalcon-5.23.0
+        tools: composer:2.10.3
         coverage: none
+
+    - name: Verify Runtime
+      run: |
+        php -r 'if (PHP_VERSION_ID < 80500 || PHP_VERSION_ID >= 80600 || phpversion("phalcon") !== "5.23.0") { fwrite(STDERR, "runtime mismatch\n"); exit(1); }'
+        php --version
+        php --ri phalcon
+        composer --version
+        node --version
+        npm --version
 
     - name: Install Dependencies
       run: composer install --prefer-dist --no-progress
+
+    - name: Install Frontend Dependencies
+      run: npm ci
+
+    - name: Audit Frontend Dependencies
+      run: npm audit --audit-level=critical
+
+    - name: Build Production Assets
+      run: npm run production
 
     - name: Run Rector (Dry Run)
       run: vendor/bin/rector process --dry-run
 
     - name: Run PHPCS
-      run: vendor/bin/phpcs --standard=PSR12 IamLab tests
+      run: vendor/bin/phpcs
 
     - name: Run Tests
-      env:
-        DB_HOST: 127.0.0.1
-        DB_DATABASE: iamlab_test
-        DB_USERNAME: root
-        REDIS_HOST: 127.0.0.1
       run: vendor/bin/phpunit
+
+    - name: Run Database Migrations
+      run: vendor/bin/phalcon-migrations run --config=./bin/migrations.php
+
+    - name: Install Smoke-Test Browser
+      run: npx puppeteer browsers install chrome --install-deps
+
+    - name: Run UI Smoke Test
+      run: |
+        php -S 127.0.0.1:8080 -t public >/tmp/phalcons-server.log 2>&1 &
+        for attempt in {1..30}; do
+          if curl --fail --silent http://127.0.0.1:8080 >/dev/null; then
+            break
+          fi
+          if [ "$attempt" = 30 ]; then
+            cat /tmp/phalcons-server.log
+            exit 1
+          fi
+          sleep 1
+        done
+        APP_URL=http://127.0.0.1:8080 npm run test:ui

@@ -2,6 +2,8 @@
 
 namespace IamLab\Core\Helpers;
 
+use IamLab\Core\Cache\CacheFlush;
+use Phalcon\Cache\Cache;
 use IamLab\Core\Console\Table\Table;
 use IamLab\Core\Email\EmailService;
 use IamLab\Core\Env\Env;
@@ -52,9 +54,9 @@ function di(string $service, array $parameters = []): mixed
  * Get the cache manager or a specific cache layer.
  *
  * @param string|null $layer The name of the cache layer to retrieve.
- * @return \IamLab\Core\Cache\CacheFlush|\Phalcon\Cache\Cache
+ * @return CacheFlush|Cache
  */
-function cache(string $layer = null): mixed
+function cache(?string $layer = null): mixed
 {
     $manager = di('cache');
     if ($layer === null) {
@@ -120,7 +122,7 @@ function moveTo(string $disk, string $from, string $to): bool
  */
 function loadEnv(string $path = ''): void
 {
-    (new Env($path))->load();
+    new Env($path)->load();
 }
 
 /**

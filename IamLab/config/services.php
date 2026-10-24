@@ -35,190 +35,190 @@ $di->setShared(
 /**
  * Shared encryption service
  */
-$di->setShared(
-    'crypt',
-    function (): Crypt {
-        $config = $this->getConfig();
-        $crypt = new Crypt();
-        $crypt->setKey($config->app->encryption_key);
-        return $crypt;
-    }
-);
+    $di->setShared(
+        'crypt',
+        function (): Crypt {
+            $config = $this->getConfig();
+            $crypt = new Crypt();
+            $crypt->setKey($config->app->encryption_key);
+            return $crypt;
+        }
+    );
 
 /**
  * Shared loader service
  */
-$di->setShared(
-    'loader',
-    function (): Loader {
-        $loader = new Loader();
-        $config = $this->getConfig();
+    $di->setShared(
+        'loader',
+        function (): Loader {
+            $loader = new Loader();
+            $config = $this->getConfig();
 
 
-        $loader->setDirectories(
-            [
-                $config->application->modelsDir,
-            ]
-        )->register();
+            $loader->setDirectories(
+                [
+                    $config->application->modelsDir,
+                ]
+            )->register();
 
-        return $loader;
-    }
-);
+            return $loader;
+        }
+    );
 
 /**
  * Sets the view component
  */
-$di->set(
-    'view',
-    function (): Simple {
-        $config = $this->getConfig();
+    $di->set(
+        'view',
+        function (): Simple {
+            $config = $this->getConfig();
 
-        $view = new Simple();
-        $view->setViewsDir($config->application->viewsDir);
+            $view = new Simple();
+            $view->setViewsDir($config->application->viewsDir);
 
-        return $view;
-    }
-);
+            return $view;
+        }
+    );
 
 /**
  * The URL component is used to generate all kind of urls in the application
  */
-$di->setShared(
-    'url',
-    function (): UrlResolver {
-        $config = $this->getConfig();
+    $di->setShared(
+        'url',
+        function (): UrlResolver {
+            $config = $this->getConfig();
 
-        $url = new UrlResolver();
-        $url->setBaseUri($config->application->baseUri);
+            $url = new UrlResolver();
+            $url->setBaseUri($config->application->baseUri);
 
-        return $url;
-    }
-);
-$di->setShared(
-    'logger',
-    function (): Logger {
-        $cfg = config('logger');
-        // If disabled, return a basic logger to /dev/null to avoid null checks
-        $path = $cfg['path'] ?? '/var/www/html/files/logs/app.log';
-        $enabled = (bool)($cfg['enabled'] ?? true);
-        $level = strtolower((string)($cfg['level'] ?? 'debug'));
-        $format = (string)($cfg['format'] ?? '[%date%][%level%] %message%');
-
-        // Ensure directory exists
-        $dir = dirname((string) $path);
-        if (!is_dir($dir)) {
-            @mkdir($dir, 0775, true);
+            return $url;
         }
+    );
+    $di->setShared(
+        'logger',
+        function (): Logger {
+            $cfg = config('logger');
+            // If disabled, return a basic logger to /dev/null to avoid null checks
+            $path = $cfg['path'] ?? '/var/www/html/files/logs/app.log';
+            $enabled = (bool)($cfg['enabled'] ?? true);
+            $level = strtolower((string)($cfg['level'] ?? 'debug'));
+            $format = (string)($cfg['format'] ?? '[%date%][%level%] %message%');
 
-        $adapter = new FileLogger($enabled ? $path : '/dev/null');
-        $formatter = new LineFormatter($format, 'Y-m-d H:i:s');
-        $adapter->setFormatter($formatter);
+            // Ensure directory exists
+            $dir = dirname((string) $path);
+            if (!is_dir($dir)) {
+                @mkdir($dir, 0775, true);
+            }
 
-        $logger = new Logger('app');
-        $logger->addAdapter('file', $adapter);
+            $adapter = new FileLogger($enabled ? $path : '/dev/null');
+            $formatter = new LineFormatter($format, 'Y-m-d H:i:s');
+            $adapter->setFormatter($formatter);
 
-        return $logger;
-    }
-);
-$di->setShared(
-    'filepond',
-    fn(): FilepondService => new FilepondService()
-);
-$di->setShared(
-    'file',
-    function (): Filesystem {
-        $adapter = new LocalFilesystemAdapter(FILE_PATH);
+            $logger = new Logger('app');
+            $logger->addAdapter('file', $adapter);
 
-        return new Filesystem($adapter);
-    }
-);
-$di->setShared(
-    'tmp',
-    function (): Filesystem {
+            return $logger;
+        }
+    );
+    $di->setShared(
+        'filepond',
+        fn(): FilepondService => new FilepondService()
+    );
+    $di->setShared(
+        'file',
+        function (): Filesystem {
+            $adapter = new LocalFilesystemAdapter(FILE_PATH);
 
-        $adapter = new LocalFilesystemAdapter(TMP_DISK);
-        return new Filesystem($adapter);
-    }
-);
-$di->setShared(
-    'fs',
-    function (): Filesystem {
-        $adapter = new LocalFilesystemAdapter(ROOT_DISK);
-        return new Filesystem($adapter);
-    }
-);
+            return new Filesystem($adapter);
+        }
+    );
+    $di->setShared(
+        'tmp',
+        function (): Filesystem {
+
+            $adapter = new LocalFilesystemAdapter(TMP_DISK);
+            return new Filesystem($adapter);
+        }
+    );
+    $di->setShared(
+        'fs',
+        function (): Filesystem {
+            $adapter = new LocalFilesystemAdapter(ROOT_DISK);
+            return new Filesystem($adapter);
+        }
+    );
 /**
  * Database connection is created based in the parameters defined in the
  * configuration file
  */
-$di->setShared(
-    'db',
-    function (): Mysql {
-        $config = config('database');
-        return new Mysql(
-            [
-                'host' => $config['host'],
-                'username' => $config['username'],
-                'password' => $config['password'],
-                'dbname' => $config['dbname'],
-            ]
-        );
-    }
-);
+    $di->setShared(
+        'db',
+        function (): Mysql {
+            $config = config('database');
+            return new Mysql(
+                [
+                    'host' => $config['host'],
+                    'port' => $config['port'],
+                    'username' => $config['username'],
+                    'password' => $config['password'],
+                    'dbname' => $config['dbname'],
+                    'charset' => $config['charset'],
+                ]
+            );
+        }
+    );
 /**
  * Cache service
  */
-$di->setShared(
-    'cache',
-    function () {
-        $config = config('cache');
-        return new CacheFlush($config);
-    }
-);
+    $di->setShared(
+        'cache',
+        function () {
+            $config = config('cache');
+            return new CacheFlush($config);
+        }
+    );
 
 // Set the models cache service
-$di->set(
-    'modelsCache',
-    function (): Cache {
-        return $this->get('cache')->getLayer('redis');
-    }
-);
+    $di->set(
+        'modelsCache',
+        fn(): Cache => $this->get('cache')->getLayer('redis')
+    );
 
-$di->setShared(
-    'authService',
-    fn(): AuthService => new  AuthService()
-);
-$di->setShared(
-    'session',
-    function (): Manager {
+    $di->setShared(
+        'authService',
+        fn(): AuthService => new  AuthService()
+    );
+    $di->setShared(
+        'session',
+        function (): Manager {
 
-        $session = new Manager();
-        $files = new Stream(
-            [
-                'savePath' => '/tmp',
-            ]
-        );
-        $session->setAdapter($files)->start();
-        return $session;
-    }
-);
-
-$di->setShared(
-    'isAuthenticated',
-    function (): true {
-        if (!(new AuthService())->isAuthenticated()) {
-            $response = new Response();
-            $response->redirect('/auth');
-            $response->send();
+            $session = new Manager();
+            $files = new Stream(
+                [
+                    'savePath' => '/tmp',
+                ]
+            );
+            $session->setAdapter($files)->start();
+            return $session;
         }
+    );
 
-        return true;
-    }
-);
+    $di->setShared(
+        'isAuthenticated',
+        function (): true {
+            if (!new AuthService()->isAuthenticated()) {
+                $response = new Response();
+                $response->redirect('/auth');
+                $response->send();
+            }
+
+            return true;
+        }
+    );
 
 
 // Server-Sent Events: shared emitter factory
-$di->set(
-    'sseEmitter',
-    fn(): \SseEmitter => new SseEmitter(new PhpOutputWriter())
-);
+    $di->set(
+        'sseEmitter',
+        fn(): \SseEmitter => new SseEmitter(new PhpOutputWriter())
+    );

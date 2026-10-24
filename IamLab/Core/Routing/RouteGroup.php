@@ -204,7 +204,7 @@ class RouteGroup
                     // Backward compatibility: if no 'id' key but we have arguments,
                     // map the first one to 'id' as it's the most common case.
                     if (!isset($routeParams['id']) && $args !== []) {
-                        $routeParams['id'] = array_values($args)[0];
+                        $routeParams['id'] = array_first($args);
                     }
 
                     $instance->setRouteParams($routeParams);
@@ -267,13 +267,7 @@ class RouteGroup
             }
 
             $roles = is_array($guard['role']) ? $guard['role'] : [$guard['role']];
-            $hasRole = false;
-            foreach ($roles as $role) {
-                if ($user->hasRole($role)) {
-                    $hasRole = true;
-                    break;
-                }
-            }
+            $hasRole = array_any($roles, fn($role) => $user->hasRole($role));
 
             if (!$hasRole) {
                 $rolesList = implode(', ', $roles);

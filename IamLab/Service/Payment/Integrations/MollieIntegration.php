@@ -203,7 +203,6 @@ class MollieIntegration implements PaymentIntegrationInterface
         }
 
         $response = curl_exec($ch);
-        curl_close($ch);
 
         return json_decode($response, true) ?? ['error' => ['message' => 'Failed to parse response']];
     }

@@ -1,8 +1,8 @@
 /vendor
 .idea
 /node_modules
+/.cache
 /assets/components
-composer.lock
 /public/css
 /public/files
 /public/js

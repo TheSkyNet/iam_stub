@@ -26,29 +26,28 @@
         "github-protocols": [
             "https"
         ],
-        "preferred-install": "dist",
-        "allow-plugins": {
-            "vildanbina/composer-upgrader": true
-        }
+        "preferred-install": "dist"
     },
     "require": {
-        "php": ">=8.4.0",
-        "marc-mabe/php-enum": "^4.7.2",
-        "symfony/var-dumper": "^6.4",
-        "symfony/finder": "^6.4",
-        "filp/whoops": "^2.15",
+        "php": "^8.5",
+        "ext-curl": "*",
+        "ext-gd": "*",
+        "ext-pdo": "*",
+        "ext-phalcon": "^5.23",
         "ext-redis": "*",
         "ext-sodium": "*",
+        "cboden/ratchet": "^0.4.4",
         "defuse/php-encryption": "^2.4",
-        "nesbot/carbon": "^3.7",
-        "league/flysystem": "^3.0",
-        "ext-curl": "*",
-        "pusher/pusher-php-server": "^7.2.7",
-        "phpunit/phpunit": "^10.5",
-        "firebase/php-jwt": "^7.0",
-        "endroid/qr-code": "^4.8",
-        "ext-pdo": "*",
-        "cboden/ratchet": "^0.4.4"
+        "endroid/qr-code": "^6.1",
+        "filp/whoops": "^2.18",
+        "firebase/php-jwt": "^7.2",
+        "league/flysystem": "^3.36",
+        "marc-mabe/php-enum": "^4.7.2",
+        "nesbot/carbon": "^3.15",
+        "phalcon/migrations": "^3.0",
+        "pusher/pusher-php-server": "^7.3",
+        "symfony/finder": "^8.1",
+        "symfony/var-dumper": "^8.1"
     },
     "autoload": {
         "psr-4": {
@@ -56,20 +55,14 @@
         },
         "files": [
             "IamLab/Core/Helpers/include.php"
-        ],
-        "include-path": [
-            "IamLab/Core/Helpers/"
         ]
     },
     "require-dev": {
+        "phalcon/ide-stubs": "^5.23",
+        "phpunit/phpunit": "^13.4",
+        "rector/rector": "^2.7",
         "roave/security-advisories": "dev-latest",
-        "phalcon/devtools": "^5.0",
-        "phalcon/migrations": "^3.0",
-        "mpyw/php-hyper-builtin-server": "^3.0",
-        "phalcon/ide-stubs": "dev-master",
-        "rector/rector": "^1.1",
-        "vildanbina/composer-upgrader": "^1.2",
-        "squizlabs/php_codesniffer": "^3.11"
+        "squizlabs/php_codesniffer": "^4.0"
     },
     "scripts": {
         "post-create-project-cmd": [

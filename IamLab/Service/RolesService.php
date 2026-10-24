@@ -216,13 +216,7 @@ class RolesService extends Injectable
      */
     public function hasAnyRole(User $user, array $roleNames): bool
     {
-        foreach ($roleNames as $roleName) {
-            if ($this->hasRole($user, $roleName)) {
-                return true;
-            }
-        }
-
-        return false;
+        return array_any($roleNames, fn($roleName) => $this->hasRole($user, $roleName));
     }
 
     /**
@@ -230,12 +224,6 @@ class RolesService extends Injectable
      */
     public function hasAllRoles(User $user, array $roleNames): bool
     {
-        foreach ($roleNames as $roleName) {
-            if (!$this->hasRole($user, $roleName)) {
-                return false;
-            }
-        }
-
-        return true;
+        return array_all($roleNames, fn($roleName) => $this->hasRole($user, $roleName));
     }
 }

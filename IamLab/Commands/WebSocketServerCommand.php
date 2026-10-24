@@ -2,6 +2,8 @@
 
 namespace IamLab\Commands;
 
+use React\EventLoop\Factory;
+use React\Socket\Server;
 use IamLab\Core\Command\BaseCommand;
 use IamLab\Core\WebSockets\WebSocketHandler;
 use Ratchet\Server\IoServer;
@@ -27,8 +29,8 @@ class WebSocketServerCommand extends BaseCommand
 
         $this->info("Starting WebSocket server on {$host}:{$port}...");
 
-        $loop = \React\EventLoop\Factory::create();
-        $socket = new \React\Socket\Server($loop);
+        $loop = Factory::create();
+        $socket = new Server($loop);
         $socket->listen($port, $host);
 
         $server = new IoServer(

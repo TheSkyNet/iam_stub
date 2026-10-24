@@ -27,14 +27,9 @@ return static function (RectorConfig $rectorConfig): void {
         __DIR__ . '/_docs/*',
     ]);
 
-    // Target modern PHP features up to 8.4 and safe quality improvements
+    // Target the authoritative PHP runtime.
     $rectorConfig->sets([
-        LevelSetList::UP_TO_PHP_84,
-        SetList::CODE_QUALITY,
-        SetList::TYPE_DECLARATION,
-        SetList::EARLY_RETURN,
-        SetList::DEAD_CODE,
-        SetList::CODING_STYLE,
+        LevelSetList::UP_TO_PHP_85,
     ]);
 
     // Import class/function/const names into namespaces

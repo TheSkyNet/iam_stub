@@ -72,7 +72,7 @@ class FilepondService
             dd($errorException);
         }
 
-        $filepond = (new Filepond())->assign([
+        $filepond = new Filepond()->assign([
             'filepath' => $this->tempDisk,
             'filename' => $name, // $file->getOriginalName(),
             'mimetypes' => $mimetypes,
@@ -111,7 +111,7 @@ class FilepondService
      */
     public function initChunk(): string
     {
-        $filepond = (new Filepond())->assign(
+        $filepond = new Filepond()->assign(
             [
                 'filepath' => '',
                 'filename' => '',

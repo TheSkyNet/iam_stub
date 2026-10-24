@@ -24,9 +24,11 @@ return new Config([
     'database' => [
         'adapter' => 'Mysql',
         'host' => env('DB_HOST', 'mysql'),
+        'port' => env('DB_PORT', 3306),
         'username' => env('DB_USERNAME', 'phalcons'),
         'password' => env('DB_PASSWORD', 'phalcons'),
-        'dbname' => env('DB_NAME', 'phalcons'),
+        'dbname' => env('DB_NAME', env('DB_DATABASE', 'phalcons')),
+        'charset' => env('DB_CHARSET', 'utf8mb4'),
     ],
 
     'application' => [

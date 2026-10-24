@@ -13,10 +13,8 @@ use IamLab\Service\Auth\AuthService;
 use IamLab\Service\Filepond\FilepondService;
 use Endroid\QrCode\Builder\Builder;
 use Endroid\QrCode\Encoding\Encoding;
-use Endroid\QrCode\ErrorCorrectionLevel\ErrorCorrectionLevelLow;
-use Endroid\QrCode\Label\Alignment\LabelAlignmentCenter;
-use Endroid\QrCode\Label\Font\NotoSans;
-use Endroid\QrCode\RoundBlockSizeMode\RoundBlockSizeModeMargin;
+use Endroid\QrCode\ErrorCorrectionLevel;
+use Endroid\QrCode\RoundBlockSizeMode;
 use Endroid\QrCode\Writer\PngWriter;
 
 use function IamLab\Core\Helpers\email;
@@ -35,7 +33,7 @@ class Auth extends aAPI
         }
 
         try {
-            $auth = (new AuthService())->authenticate((new User())->setEmail($email)->setPassword($password), "post", $rememberMe);
+            $auth = new AuthService()->authenticate(new User()->setEmail($email)->setPassword($password), "post", $rememberMe);
 
             if ($auth) {
                 $this->dispatch(['success' => true, 'message' => 'Login successful', 'data' => $auth]);
@@ -52,8 +50,8 @@ class Auth extends aAPI
      */
     public function userAction(): void
     {
-        if ((new AuthService())->isAuthenticated()) {
-            $this->dispatch((new AuthService())->getIdentity());
+        if (new AuthService()->isAuthenticated()) {
+            $this->dispatch(new AuthService()->getIdentity());
         }
     }
 
@@ -89,7 +87,7 @@ class Auth extends aAPI
         }
 
         try {
-            $user = (new User())
+            $user = new User()
                 ->setName($name)
                 ->setEmail($email)
                 ->setPassword($password);
@@ -155,7 +153,7 @@ class Auth extends aAPI
         if (isset($_SERVER['HTTPS']) && ($_SERVER['HTTPS'] === 'on' || $_SERVER['HTTPS'] === 1)) {
             return 'https://';
         }
-        
+
         if (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https') {
             return 'https://';
         }
@@ -517,15 +515,15 @@ class Auth extends aAPI
             ]);
 
             // Generate QR code image
-            $result = Builder::create()
-                ->writer(new PngWriter())
-                ->data($qrData)
-                ->encoding(new Encoding('UTF-8'))
-                ->errorCorrectionLevel(new ErrorCorrectionLevelLow())
-                ->size(300)
-                ->margin(10)
-                ->roundBlockSizeMode(new RoundBlockSizeModeMargin())
-                ->build();
+            $result = new Builder()->build(
+                writer: new PngWriter(),
+                data: $qrData,
+                encoding: new Encoding('UTF-8'),
+                errorCorrectionLevel: ErrorCorrectionLevel::Low,
+                size: 300,
+                margin: 10,
+                roundBlockSizeMode: RoundBlockSizeMode::Margin,
+            );
 
             // Convert to base64 for easy frontend consumption
             $qrCodeBase64 = base64_encode($result->getString());

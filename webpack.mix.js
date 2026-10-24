@@ -14,7 +14,10 @@ if (process.env.MIX_BROWSER_SYNC) {
 mix.setPublicPath('public');
 
 mix.webpackConfig({
-    stats: 'errors-warnings',
+    stats: {
+        preset: 'errors-warnings',
+        children: true,
+    },
     watchOptions: {
         ignored: [
             '**/node_modules/**',
@@ -29,6 +32,9 @@ mix.js('assets/js/app.js', 'js')
     .postCss('assets/css/main.css', 'css')
     .options({
         clearConsole: false,
+        cssNano: {
+            calc: false,
+        },
         processCssUrls: true,
         postCss: [
             require('@tailwindcss/postcss'),

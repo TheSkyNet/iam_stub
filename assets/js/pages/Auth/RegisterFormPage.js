@@ -1,6 +1,7 @@
 import m from "mithril";
 import { Icon } from "../../components/Icon";
 import { AuthService } from "../../services/AuthserviceService";
+import { OAuthService } from "../../services/OAuthService";
 import { Fieldset, FormField, CheckboxField, SubmitButton } from "../../components/Form";
 
 const RegisterFormPage = {
@@ -11,6 +12,25 @@ const RegisterFormPage = {
     acceptTerms: false,
     rememberMe: true,
     isLoading: false,
+
+    // OAuth state
+    providers: [],
+
+    oninit: function() {
+        // Load OAuth providers
+        OAuthService.getProviders().then(providers => {
+            this.providers = providers || [];
+            m.redraw();
+        }).catch(() => {
+            this.providers = [];
+        });
+    },
+
+    handleOAuthLogin: (provider) => {
+        OAuthService.initiateLogin(provider).catch(err => {
+            window.showToast(err, 'error');
+        });
+    },
 
     handleRegister: (e) => {
         e.preventDefault();
@@ -119,6 +139,19 @@ const RegisterFormPage = {
                                     icon: "fa-solid fa-user-plus"
                                 }, " Register")
                             ]),
+
+                            // OAuth Buttons
+                            RegisterFormPage.providers.length > 0 && [
+                                m(".divider", "OR"),
+                                m(".flex.flex-wrap.justify-center.gap-4", RegisterFormPage.providers.map(provider => {
+                                    const config = OAuthService.getProviderConfig(provider);
+                                    return m("button.btn.btn-circle.btn-outline", {
+                                        title: `Register with ${config.name}`,
+                                        onclick: () => RegisterFormPage.handleOAuthLogin(provider),
+                                        style: { color: config.color, borderColor: config.color }
+                                    }, m(Icon, { icon: config.icon }));
+                                }))
+                            ],
 
                             m(".divider", "OR"),
                             m(".text-center", [

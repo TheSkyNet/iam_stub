@@ -2,6 +2,7 @@
 
 namespace IamLab\Core\Cache;
 
+use Phalcon\Config\Config;
 use Phalcon\Cache\Adapter\AdapterInterface;
 use Phalcon\Cache\Adapter\Apcu;
 use Phalcon\Cache\Adapter\Memory;
@@ -14,12 +15,10 @@ use RuntimeException;
 class CacheFlush
 {
     protected SerializerFactory $serializerFactory;
-    protected array $config;
     protected array $instances = [];
 
-    public function __construct(array $config)
+    public function __construct(protected array $config)
     {
-        $this->config = $config;
         $this->serializerFactory = new SerializerFactory();
     }
 
@@ -60,7 +59,7 @@ class CacheFlush
 
         if ($layer === null) {
             $layers = $this->config['layers'] ?? [];
-            if ($layers instanceof \Phalcon\Config\Config) {
+            if ($layers instanceof Config) {
                 $layers = $layers->toArray();
             }
 
@@ -79,7 +78,7 @@ class CacheFlush
     /**
      * Create an adapter instance.
      *
-     * @param array|\Phalcon\Config\Config $config
+     * @param array|Config $config
      * @return AdapterInterface
      */
     protected function createAdapter($config): AdapterInterface

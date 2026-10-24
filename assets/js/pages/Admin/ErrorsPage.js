@@ -10,6 +10,8 @@ const ErrorsPage = {
     total: 0,
     limit: 20,
     offset: 0,
+    selectedError: null,
+    showDetailModal: false,
     filters: {
         level: "",
         q: ""
@@ -88,6 +90,11 @@ const ErrorsPage = {
         }).catch((err) => {
             window.showToast(err, "error");
         });
+    },
+
+    showErrorDetail: function(log) {
+        this.selectedError = log;
+        this.showDetailModal = true;
     },
 
     getLevelBadgeClass: function(level) {
@@ -171,13 +178,15 @@ const ErrorsPage = {
                             m("tbody", [
                                 this.errors.length === 0 
                                     ? m("tr", m("td.text-center[colspan=6]", "No log entries found"))
-                                    : this.errors.map(log => m("tr", [
+                                    : this.errors.map(log => m("tr.cursor-pointer.hover", {
+                                        onclick: () => this.showErrorDetail(log)
+                                    }, [
                                         m("td", log.id),
                                         m("td", m(".badge", { class: this.getLevelBadgeClass(log.level) }, log.level)),
                                         m("td.max-w-md.truncate", { title: log.message }, log.message),
                                         m("td.max-w-xs.truncate", { title: log.url }, log.url),
                                         m("td", log.created_at),
-                                        m("td.text-right", [
+                                        m("td.text-right", { onclick: (e) => e.stopPropagation() }, [
                                             m("button.btn.btn-xs.btn-ghost.text-error", {
                                                 onclick: () => this.deleteError(log.id),
                                                 title: "Delete Entry"
@@ -207,7 +216,72 @@ const ErrorsPage = {
                                 }, "Next")
                             ])
                         ])
+                    ]),
+            
+            // Error Detail Modal
+            this.selectedError && m("dialog.modal", {
+                class: this.showDetailModal ? "modal-open" : "",
+                onclick: () => { this.showDetailModal = false; }
+            }, [
+                m(".modal-box.max-w-3xl", { onclick: (e) => e.stopPropagation() }, [
+                    m("form[method=dialog]", [
+                        m("button.btn.btn-sm.btn-circle.btn-ghost.absolute.right-2.top-2", {
+                            onclick: () => { this.showDetailModal = false; }
+                        }, "✕")
+                    ]),
+                    m("h3.font-bold.text-lg.mb-4.flex.items-center.gap-2", [
+                        m(".badge", { class: this.getLevelBadgeClass(this.selectedError.level) }, this.selectedError.level),
+                        "Error Details"
+                    ]),
+                    m(".space-y-4", [
+                        m("div", [
+                            m("label.label.text-xs.font-bold.opacity-50.uppercase", "Message"),
+                            m(".bg-base-200.p-3.rounded.font-mono.text-sm.break-words", this.selectedError.message)
+                        ]),
+                        m(".grid.grid-cols-1.md:grid-cols-2.gap-4", [
+                            m("div", [
+                                m("label.label.text-xs.font-bold.opacity-50.uppercase", "URL"),
+                                m(".bg-base-200.p-2.rounded.text-sm.truncate", { title: this.selectedError.url }, this.selectedError.url)
+                            ]),
+                            m("div", [
+                                m("label.label.text-xs.font-bold.opacity-50.uppercase", "Time"),
+                                m(".bg-base-200.p-2.rounded.text-sm", this.selectedError.created_at)
+                            ])
+                        ]),
+                        m(".grid.grid-cols-1.md:grid-cols-2.gap-4", [
+                            m("div", [
+                                m("label.label.text-xs.font-bold.opacity-50.uppercase", "IP Address"),
+                                m(".bg-base-200.p-2.rounded.text-sm", this.selectedError.ip || "Unknown")
+                            ]),
+                            m("div", [
+                                m("label.label.text-xs.font-bold.opacity-50.uppercase", "User ID"),
+                                m(".bg-base-200.p-2.rounded.text-sm", this.selectedError.user_id || "Guest")
+                            ])
+                        ]),
+                        m("div", [
+                            m("label.label.text-xs.font-bold.opacity-50.uppercase", "User Agent"),
+                            m(".bg-base-200.p-2.rounded.text-sm.text-xs", this.selectedError.user_agent)
+                        ]),
+                        this.selectedError.context && m("div", [
+                            m("label.label.text-xs.font-bold.opacity-50.uppercase", "Context / Stack Trace"),
+                            m("pre.bg-neutral.text-neutral-content.p-4.rounded.overflow-x-auto.text-xs.max-h-96", 
+                                JSON.stringify(this.selectedError.context, null, 2)
+                            )
+                        ])
+                    ]),
+                    m(".modal-action", [
+                        m("button.btn.btn-error.btn-sm", {
+                            onclick: () => {
+                                this.deleteError(this.selectedError.id);
+                                this.showDetailModal = false;
+                            }
+                        }, "Delete Entry"),
+                        m("button.btn.btn-sm", {
+                            onclick: () => { this.showDetailModal = false; }
+                        }, "Close")
                     ])
+                ])
+            ])
         ]);
     }
 };

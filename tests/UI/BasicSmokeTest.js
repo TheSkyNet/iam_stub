@@ -1,4 +1,5 @@
 const puppeteer = require('puppeteer');
+const appUrl = process.env.APP_URL || 'http://localhost';
 
 (async() => {
     const browser = await puppeteer.launch({
@@ -9,7 +10,15 @@ const puppeteer = require('puppeteer');
 
 try {
     console.log('Testing Home Page...');
-    await page.goto('http://localhost');
+    const response = await page.goto(appUrl, {waitUntil: 'networkidle2'});
+    if (!response || !response.ok()) {
+        throw new Error(`Home page returned HTTP ${response?.status() ?? 'unknown'}`);
+    }
+
+    const bodyText = await page.$eval('body', body => body.innerText);
+    if (!bodyText.trim()) {
+        throw new Error('Home page rendered an empty document');
+    }
     const title = await page.title();
     console.log('Title:', title);
 

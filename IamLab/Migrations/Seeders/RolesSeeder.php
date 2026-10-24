@@ -6,6 +6,7 @@ use IamLab\Model\Role;
 use IamLab\Model\User;
 use IamLab\Service\RolesService;
 use Phalcon\Migrations\Mvc\Model\Migration;
+use RuntimeException;
 
 class RolesSeeder extends Migration
 {
@@ -45,10 +46,12 @@ class RolesSeeder extends Migration
             $role->setUpdatedAt(date('Y-m-d H:i:s'));
 
             if (!$role->save()) {
-                echo "Failed to save role: " . $role->getName() . "\n";
-                foreach ($role->getMessages() as $message) {
-                    echo $message->getMessage() . "\n";
-                }
+                $messages = array_map(
+                    static fn($message): string => $message->getMessage(),
+                    $role->getMessages()
+                );
+                $details = $messages === [] ? 'Unknown persistence error' : implode('; ', $messages);
+                throw new RuntimeException(sprintf('Failed to save role "%s": %s', $role->getName(), $details));
             } else {
                 echo "Successfully created role: " . $role->getName() . "\n";
             }

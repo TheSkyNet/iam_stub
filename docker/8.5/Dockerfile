@@ -1,11 +1,12 @@
-ARG PHALCON_VERSION=5.13.0
+ARG PHALCON_VERSION=5.23.0
 FROM phalconphp/cphalcon:v${PHALCON_VERSION}-php8.5
+
+COPY --from=composer:2.10.3 /usr/bin/composer /usr/bin/composer
+COPY --from=node:24.22.1-trixie-slim /usr/local/ /usr/local/
 
 LABEL maintainer=""
 
 ARG WWWGROUP
-ARG NODE_VERSION=22
-ARG POSTGRES_VERSION=16
 
 WORKDIR /var/www/html
 
@@ -19,14 +20,12 @@ RUN ln -snf /usr/share/zoneinfo/${TZ} /etc/localtime && echo ${TZ} > /etc/timezo
 
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
-        gosu supervisor curl ca-certificates zip unzip git gnupg sqlite3 libcap2-bin dnsutils libpng-dev \
-    && curl -sLS https://deb.nodesource.com/setup_${NODE_VERSION}.x | bash - \
-    && apt-get install -y --no-install-recommends nodejs \
-    && curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | gpg --dearmor | tee /usr/share/keyrings/yarn.gpg >/dev/null \
-    && echo "deb [signed-by=/usr/share/keyrings/yarn.gpg] https://dl.yarnpkg.com/debian/ stable main" > /etc/apt/sources.list.d/yarn.list \
-    && apt-get update \
-    && apt-get install -y --no-install-recommends yarn default-mysql-client postgresql-client \
-    && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin --filename=composer \
+        gosu supervisor curl ca-certificates zip unzip git sqlite3 libcap2-bin dnsutils libpng-dev \
+        fonts-liberation libasound2 libatk-bridge2.0-0 libatk1.0-0 libcairo2 libcups2 libdbus-1-3 \
+        libfontconfig1 libgbm1 libglib2.0-0 libgtk-3-0 libnspr4 libnss3 libpango-1.0-0 \
+        libpangocairo-1.0-0 libx11-6 libx11-xcb1 libxcb1 libxcomposite1 libxdamage1 libxext6 \
+        libxfixes3 libxi6 libxkbcommon0 libxrandr2 libxrender1 libxss1 libxtst6 xdg-utils \
+    && apt-get install -y --no-install-recommends default-mysql-client \
     && install-php-extensions psr igbinary msgpack memcached redis pcov xdebug imap ldap intl gd zip soap bcmath \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 

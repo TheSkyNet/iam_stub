@@ -151,7 +151,7 @@ chmod +x phalcons
 ./phalcons up -d
 ./phalcons composer install --no-dev
 ./phalcons migrate
-./phalcons npm install
+./phalcons npm ci
 ./phalcons npm run prod
 
 # 10. Configure Nginx

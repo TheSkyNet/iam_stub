@@ -10,11 +10,10 @@ The Phalcon Stub project is designed as a Composer package template that provide
 
 Before generating a new project, ensure you have:
 
-- **PHP 8.0+** installed
-- **Composer** installed globally
 - **Docker & Docker Compose** (for development environment)
-- **Node.js & NPM** (for frontend assets)
 - **Git** (for version control)
+
+The application image supplies PHP 8.5.12, Phalcon 5.23.0, Composer 2.10, Node.js 24, and npm 11.
 
 ## Method 1: Using Composer Create-Project (Recommended)
 
@@ -63,8 +62,9 @@ PUSHER_APP_CLUSTER=your_cluster
 # Install PHP dependencies (if not already done)
 ./phalcons composer install
 
-# Install Node.js dependencies
-./phalcons npm install
+# Install locked Node.js dependencies and the smoke-test browser
+./phalcons npm ci
+./phalcons npm run browser:install
 
 # Run database migrations
 ./phalcons migrate
@@ -75,9 +75,9 @@ PUSHER_APP_CLUSTER=your_cluster
 
 ### Step 5: Access Your Application
 
-- **Main Application**: http://localhost:8080
-- **MailHog Dashboard**: http://localhost:8025 (for email testing)
-- **Database**: PostgreSQL on localhost:5432
+- **Main Application**: http://localhost:8085
+- **Mailpit Dashboard**: http://localhost:8025 (for email testing)
+- **Database**: MySQL 8.4 on localhost:3306
 
 ## Method 2: Manual Clone and Setup
 
@@ -146,7 +146,7 @@ DB_NAME=your_db_name
 
 ### 3. Configure Email Service
 
-For **development** (using MailHog):
+For **development** (using Mailpit with compatibility environment names):
 ```env
 MAIL_PROVIDER=mailhog
 MAILHOG_HOST=mailhog
@@ -169,7 +169,7 @@ PUSHER_APP_SECRET=your_app_secret
 PUSHER_APP_CLUSTER=your_cluster
 ```
 
-Test the configuration at: http://localhost:8080/pusher-test
+Test the configuration at: http://localhost:8085/pusher-test
 
 ### 5. Customize Namespace (Optional)
 
@@ -198,7 +198,7 @@ Your new project includes:
 
 ### ✅ Core Features
 - **User Authentication**: Registration, login, logout, password reset
-- **Email Service**: Multi-provider support (MailHog, Resend)
+- **Email Service**: Multi-provider support (Mailpit-compatible SMTP, Resend)
 - **Real-time Communication**: Pusher.js integration
 - **File Upload**: FilePond integration
 - **Site Settings**: Flexible configuration system
@@ -211,8 +211,8 @@ Your new project includes:
 
 ### 🐳 Development Environment
 - **Docker Compose**: Complete development environment
-- **PostgreSQL**: Database
-- **MailHog**: Email testing
+- **MySQL 8.4 LTS**: Database
+- **Mailpit**: Email testing
 - **Hot Reloading**: Asset watching and compilation
 
 ## Development Workflow
@@ -250,7 +250,7 @@ Your new project includes:
 ./phalcons command test:mail your@email.com -v
 
 # Test real-time features
-# Visit: http://localhost:8080/pusher-test
+# Visit: http://localhost:8085/pusher-test
 
 # Run custom commands
 ./phalcons command list
@@ -283,16 +283,16 @@ chmod +x phalcons
 
 2. **Database Connection Issues**:
 - Check database credentials in `.env`
-- Ensure PostgreSQL container is running: `./phalcons ps`
+- Ensure the MySQL container is running: `./phalcons ps`
 
 3. **Asset Compilation Issues**:
 ```bash
-./phalcons npm install
+./phalcons npm ci
 ./phalcons npm run dev
 ```
 
 4. **Email Not Working**:
-- For development: Check MailHog at http://localhost:8025
+- For development: Check Mailpit at http://localhost:8025
 - For production: Verify email provider credentials
 
 ### Getting Help
@@ -333,7 +333,8 @@ cp .env.example .env
 
 # Install dependencies
 ./phalcons composer install
-./phalcons npm install
+./phalcons npm ci
+./phalcons npm run browser:install
 
 # Set up database
 ./phalcons migrate
@@ -342,13 +343,13 @@ cp .env.example .env
 ./phalcons npm run dev
 
 # Test the application
-open http://localhost:8080
+open http://localhost:8085
 
 # Test email functionality
 ./phalcons command test:mail your@email.com
 
 # Test real-time features
-open http://localhost:8080/pusher-test
+open http://localhost:8085/pusher-test
 ```
 
 Your new Phalcon project is now ready for development! 🚀
