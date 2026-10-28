@@ -99,66 +99,60 @@ This project serves as a template/stub for creating new Phalcon-based applicatio
 
 ### 🚀 Generating a New Project
 
-The easiest way to start a new project from this stub is to use the `project:init` command. This will automatically rename the default `IamLab` namespace and project names throughout the codebase to your chosen project name.
+After the first stable release is available on Packagist, create a project with:
 
-1. **Clone or download this stub project**:
-   ```bash
-   git clone <your-stub-repo-url> your-new-project
-   cd your-new-project
-   ```
+```bash
+composer create-project iam-lab/phalcon-stub <directory> --no-install
+```
 
-2. **Initialize your project**:
-   ```bash
-   # Make sure you have the environment running
-   ./phalcons up -d
-   
-   # Run the initialization command
-   ./phalcons project:init my-new-project MyNewProject
-   ```
+*Note: If your host environment does not provide PHP 8.5 and Phalcon, append `--ignore-platform-reqs`.*
 
-This command will:
-- Rename the `IamLab` namespace to `MyNewProject` in all files.
-- Update `composer.json` and `package.json`.
-- Rename the `IamLab/` directory to `MyNewProject/`.
-- Create a `.env` file from `.env.example`.
+Until then, use the currently available development branch. `--ignore-platform-reqs`
+allows Composer to select the template when the host does not provide PHP 8.5 and
+Phalcon; the application container provides those requirements.
 
----
+```bash
+composer create-project iam-lab/phalcon-stub:dev-main <directory> --no-install --ignore-platform-reqs
+```
 
 ### Prerequisites
 
 - Docker & Docker Compose
+- Composer on the host, for the `composer create-project` command above.
 
-PHP, Phalcon, Composer, Node.js, and npm are provided by the application image; no matching host runtimes are required.
+PHP, Phalcon, Node.js, and npm are provided by the application image; no matching host runtimes are required.
 
 ### Installation
 
-1. **Clone or download this stub project**:
-   ```bash
-   git clone <your-stub-repo-url> your-new-project
-   cd your-new-project
-   ```
+From the generated directory, run the complete Docker-first setup:
 
-2. **Start Docker containers**:
-   ```bash
-   ./phalcons up -d
-   ```
+```bash
+cd <directory>
 
-3. **Install dependencies**:
-   ```bash
-   ./phalcons composer install
-   ./phalcons npm ci
-   ./phalcons npm run browser:install
-   ```
+# Keep an existing environment file; otherwise create it from the example.
+[ -f .env ] || cp .env.example .env
 
-4. **Migrate and seed the database**:
-   ```bash
-   ./phalcons migrate:seed --email="admin@example.com" --password="YourSecurePassword123!"
-   ```
+./phalcons up -d
+./phalcons composer install
+./phalcons npm ci
+./phalcons npm run browser:install
 
-5. **Build frontend assets**:
-   ```bash
-   ./phalcons npm run dev
-   ```
+# Optional: rename the package and the default IamLab namespace.
+./phalcons project:init my-new-project MyNewProject --force
+# Required only when project:init was run.
+./phalcons composer dump-autoload
+
+./phalcons migrate
+# Optional: create the first administrator account.
+./phalcons migrate:seed --email="admin@example.com" --password="YourSecurePassword123!"
+./phalcons npm run dev
+```
+
+Open `http://localhost:8085`.
+
+For extended application customization, see
+[the project-generation guide](_docs/PROJECT_GENERATION.md). Package maintainers
+should use the separate [Packagist publication checklist](_docs/PACKAGIST.md).
 
 ### Development
 
@@ -621,43 +615,6 @@ Each new feature should follow the established patterns:
 - Services in `IamLab/Service/`
 - API endpoints in `IamLab/app.php`
 - Frontend components in `assets/js/components/`
-
-## Generating New Projects from This Stub
-
-This Phalcon Stub project is designed as a Composer package template for generating new PHfalcon and Miral projects. You can use it to quickly bootstrap new applications with all the essential components already configured.
-
-### Quick Start - Generate a New Project
-
-```bash
-# Generate a new project using Composer
-composer create-project iam-lab/phalcon-stub your-new-project
-
-# Navigate to your new project
-cd your-new-project
-
-# Start development environment
-./phalcons up -d
-
-# Run migrations and build assets
-./phalcons migrate
-./phalcons npm run dev
-
-# Visit your new application
-open http://localhost:8085
-```
-
-### Comprehensive Guide
-
-For detailed instructions on project generation, customization, and deployment, see:
-
-**📖 [PROJECT_GENERATION.md](_docs/PROJECT_GENERATION.md)** - Complete guide for generating and customizing new projects
-
-This guide covers:
-- Two methods for project generation (Composer create-project and manual clone)
-- Environment configuration and customization
-- Namespace changes and branding updates
-- Development workflow and deployment
-- Troubleshooting common issues
 
 ## Contributing
 

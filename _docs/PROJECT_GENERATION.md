@@ -15,112 +15,56 @@ Before generating a new project, ensure you have:
 
 The application image supplies PHP 8.5.12, Phalcon 5.23.0, Composer 2.10, Node.js 24, and npm 11.
 
-## Method 1: Using Composer Create-Project (Recommended)
+## Create the project
 
-### Step 1: Generate New Project
-
-Use Composer's `create-project` command to generate a new project from this stub:
+After the first stable release is imported by Packagist, generate a new project with:
 
 ```bash
-composer create-project iam-lab/phalcon-stub your-new-project
+composer create-project iam-lab/phalcon-stub <directory> --no-install
 ```
 
-Replace `your-new-project` with your desired project name.
+*Note: If your host environment does not provide PHP 8.5 and Phalcon, append `--ignore-platform-reqs`.*
 
-### Step 2: Navigate to Project Directory
+Until a stable release is available, select the development branch explicitly:
 
 ```bash
-cd your-new-project
+composer create-project iam-lab/phalcon-stub:dev-main <directory> --no-install --ignore-platform-reqs
 ```
 
-### Step 3: Configure Environment
+`--no-install` defers dependency installation to the application container.
+Composer still checks the template's platform requirements while selecting it, so
+use `--ignore-platform-reqs` when the host does not provide PHP 8.5 and Phalcon.
+The application container provides those requirements.
 
-The `.env` file will be automatically created from `.env.example`. Update it with your project-specific configuration:
-
-```bash
-# Edit the environment file
-nano .env
-
-# Update these key values:
-APP_NAME="Your Project Name"
-MAIL_FROM_EMAIL=noreply@yourproject.com
-MAIL_FROM_NAME="Your Project Name"
-
-# Add your Pusher credentials if using real-time features
-PUSHER_APP_ID=your_app_id
-PUSHER_APP_KEY=your_app_key
-PUSHER_APP_SECRET=your_app_secret
-PUSHER_APP_CLUSTER=your_cluster
-```
-
-### Step 4: Start Development Environment
+## Set up the generated project
 
 ```bash
-# Start Docker containers
+cd <directory>
+[ -f .env ] || cp .env.example .env
 ./phalcons up -d
-
-# Install PHP dependencies (if not already done)
 ./phalcons composer install
-
-# Install locked Node.js dependencies and the smoke-test browser
 ./phalcons npm ci
 ./phalcons npm run browser:install
 
-# Run database migrations
-./phalcons migrate
+# Optional: rename the package and the default IamLab namespace.
+./phalcons project:init my-new-project MyNewProject --force
+# Required only when project:init was run.
+./phalcons composer dump-autoload
 
-# Build frontend assets
+./phalcons migrate
+# Optional: create the first administrator account.
+./phalcons migrate:seed --email="admin@example.com" --password="YourSecurePassword123!"
 ./phalcons npm run dev
 ```
 
-### Step 5: Access Your Application
+The environment command preserves an existing `.env`. Edit that file to set your
+application name, email settings, database credentials, and optional Pusher credentials.
+
+### Access your application
 
 - **Main Application**: http://localhost:8085
 - **Mailpit Dashboard**: http://localhost:8025 (for email testing)
 - **Database**: MySQL 8.4 on localhost:3306
-
-## Method 2: Manual Clone and Setup
-
-If you prefer to clone the repository manually:
-
-### Step 1: Clone Repository
-
-```bash
-git clone https://github.com/iam-lab/phalcon-stub.git your-new-project
-cd your-new-project
-```
-
-### Step 2: Remove Git History and Reinitialize
-
-```bash
-# Remove existing git history
-rm -rf .git
-
-# Initialize new git repository
-git init
-git add .
-git commit -m "Initial commit from Phalcon Stub"
-```
-
-### Step 3: Update Project Configuration
-
-```bash
-# Copy environment file
-cp .env.example .env
-
-# Update composer.json with your project details
-nano composer.json
-```
-
-Update the following in `composer.json`:
-- `name`: Change to your project name (e.g., "your-company/your-project")
-- `description`: Update with your project description
-- `homepage`: Update with your project URL
-- `authors`: Update with your information
-
-### Step 4: Follow Steps 3-5 from Method 1
-
-Continue with environment configuration and setup as described in Method 1.
 
 ## Post-Generation Customization
 
@@ -173,24 +117,13 @@ Test the configuration at: http://localhost:8085/pusher-test
 
 ### 5. Customize Namespace (Optional)
 
-If you want to change the namespace from `IamLab` to your own:
+After installing dependencies, use the project initializer to rename the package,
+the `IamLab` namespace, and its directory. Then regenerate Composer autoloading:
 
-1. **Update composer.json autoload section**:
-```json
-{
-    "autoload": {
-        "psr-4": {
-            "YourNamespace\\": "YourNamespace/"
-        }
-    }
-}
+```bash
+./phalcons project:init my-new-project MyNewProject --force
+./phalcons composer dump-autoload
 ```
-
-2. **Rename directory**: `mv IamLab YourNamespace`
-
-3. **Update all PHP files** to use the new namespace
-
-4. **Run composer dump-autoload**: `./phalcons composer dump-autoload`
 
 ## Available Features
 
@@ -319,14 +252,13 @@ Here's a complete example of generating a new project called "MyAwesomeApp":
 
 ```bash
 # Generate new project
-composer create-project iam-lab/phalcon-stub my-awesome-app
+composer create-project iam-lab/phalcon-stub:dev-main my-awesome-app --no-install --ignore-platform-reqs
 
 # Navigate to project
 cd my-awesome-app
 
-# Update environment
-cp .env.example .env
-# Edit .env with your configuration
+# Preserve an existing environment file, or create it from the example.
+[ -f .env ] || cp .env.example .env
 
 # Start development environment
 ./phalcons up -d
@@ -336,8 +268,16 @@ cp .env.example .env
 ./phalcons npm ci
 ./phalcons npm run browser:install
 
+# Optionally customize the project and namespace.
+./phalcons project:init my-awesome-app MyAwesomeApp --force
+# Required only when project:init was run.
+./phalcons composer dump-autoload
+
 # Set up database
 ./phalcons migrate
+
+# Optionally create the first administrator account.
+./phalcons migrate:seed --email="admin@example.com" --password="YourSecurePassword123!"
 
 # Build assets
 ./phalcons npm run dev
