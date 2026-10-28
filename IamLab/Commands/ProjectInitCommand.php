@@ -84,9 +84,10 @@ HELP;
 
         $this->success("\nProject initialized successfully!");
         $this->info("Next steps:");
-        $this->line("1. Run: composer update");
-        $this->line("2. Run: ./phalcons up -d");
-        $this->line("3. Run: ./phalcons migrate");
+        $this->line("1. Run: ./phalcons composer dump-autoload");
+        $this->line("2. Run: ./phalcons migrate");
+        $this->line("3. Run: ./phalcons npm run dev");
+        $this->line("4. Visit: http://localhost:8085");
 
         return 0;
     }
